@@ -16,5 +16,8 @@
 			"database_id": "0db91852-71d7-4355-a296-5760f6a35587",
 			"remote": true
 		}
-	]
+	],
+  "vars": {
+    "JWT_SECRET": ""
+  }
 }
