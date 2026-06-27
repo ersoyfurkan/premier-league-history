@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const body = await request.json();
+    const body = (await request.json()) as { clubId: string };
     const { clubId } = body;
 
     if (!clubId) {

@@ -7,7 +7,7 @@ export async function POST(request: NextRequest) {
   try {
     const { env } = getCloudflareContext();
 
-    const body = await request.json();
+    const body = (await request.json()) as { email: string; username: string; password: string };
     const { email, username, password } = body;
 
     // Validate required fields
