@@ -8,7 +8,7 @@ export const clubs = [
     capacity: 55097,
     colors: "#6CABDE",
     manager: "Pep Guardiola",
-    bestSeason: "2023-24",
+    bestSeason: "2017-18",
     worstSeason: "1998-99",
     topScorer: "Sergio Agüero",
     legendPlayer: "Sergio Agüero",
@@ -32,7 +32,7 @@ export const clubs = [
   {
     id: "arsenal",
     name: "Arsenal",
-    titles: 3,
+    titles: 4,
     founded: 1886,
     stadium: "Emirates Stadium",
     capacity: 60704,
@@ -62,7 +62,7 @@ export const clubs = [
   {
     id: "liverpool",
     name: "Liverpool",
-    titles: 1,
+    titles: 2,
     founded: 1892,
     stadium: "Anfield",
     capacity: 61294,
