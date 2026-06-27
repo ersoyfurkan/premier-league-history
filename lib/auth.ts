@@ -1,6 +1,6 @@
 import { SignJWT, jwtVerify } from "jose";
 
-function bufferToHex(buffer: ArrayBuffer): string {
+function bufferToHex(buffer: ArrayBuffer | Uint8Array): string {
   return Array.from(new Uint8Array(buffer))
     .map((b) => b.toString(16).padStart(2, "0"))
     .join("");
