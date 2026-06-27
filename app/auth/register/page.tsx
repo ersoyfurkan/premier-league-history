@@ -84,7 +84,7 @@ export default function RegisterPage() {
         }),
       });
 
-      const data = await response.json();
+      const data = await response.json() as { error?: string };
 
       if (!response.ok) {
         setApiError(data.error || "Registration failed");
