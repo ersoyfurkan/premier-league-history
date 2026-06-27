@@ -17,6 +17,7 @@ Create the ultimate Premier League history website covering every season from 19
 - Best XI for every club
 - Best & worst seasons
 - Top 5 managers
+- Top 5 worst managers
 - Transfer records and flops
 - Prediction maker
 - 2026/27 fixtures
