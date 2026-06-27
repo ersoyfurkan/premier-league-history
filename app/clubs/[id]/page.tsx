@@ -2,6 +2,7 @@ import Link from "next/link";
 import { clubs } from "@/data/clubs";
 import { managers } from "@/data/managers";
 import { notFound } from "next/navigation";
+import FavouriteButton from "@/components/FavouriteButton";
 
 export async function generateStaticParams() {
   return clubs.map((club) => ({
@@ -33,7 +34,10 @@ export default async function ClubPage({ params }: { params: Promise<{ id: strin
             style={{ backgroundColor: club.colors, borderColor: club.colors }}
           ></div>
           <div className="flex-1">
-            <h1 className="text-5xl font-bold mb-3">{club.name}</h1>
+            <div className="flex items-start gap-4 mb-3">
+              <h1 className="text-5xl font-bold flex-1">{club.name}</h1>
+              <FavouriteButton clubId={club.id} clubName={club.name} />
+            </div>
             <p className="text-purple-300 text-lg mb-4">Founded {club.founded}</p>
             {club.titles > 0 && (
               <div className="bg-purple-600 px-6 py-3 rounded-lg inline-block">
