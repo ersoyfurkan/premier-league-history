@@ -9,8 +9,9 @@ export async function generateStaticParams() {
   }));
 }
 
-export default function ClubPage({ params }: { params: { id: string } }) {
-  const club = clubs.find((c) => c.id === params.id);
+export default async function ClubPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const club = clubs.find((c) => c.id === id);
 
   if (!club) {
     notFound();
