@@ -22,7 +22,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const response = await fetch("/api/auth/me");
 
       if (response.ok) {
-        const data = await response.json();
+        const data = await response.json() as { data: User & { favouriteClubId: string | null } };
         setUser(data.data);
       } else {
         setUser(null);
