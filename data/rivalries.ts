@@ -24,8 +24,8 @@ export const rivalries = [
     club1Wins: 20,
     club2Wins: 15,
     draws: 17,
-    biggestWin: "Manchester United 7-1 Liverpool (2008)",
-    mostGoals: "Wayne Rooney",
+    biggestWin: "Liverpool 7-0 Manchester United (2023)",
+    mostGoals: "Mohamed Salah",
   },
   {
     id: "merseyside-derby",
