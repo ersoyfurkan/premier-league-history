@@ -38,19 +38,22 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-purple-950 via-purple-900 to-purple-950 text-purple-100 flex items-center justify-center px-6 py-12">
-      <section className="w-full max-w-sm rounded-2xl border border-purple-700/60 bg-purple-900/70 p-8 shadow-2xl shadow-purple-950/80 backdrop-blur-sm">
-        <h1 className="text-center text-2xl font-bold tracking-wide text-purple-100">Admin Access</h1>
+    <main className="min-h-screen bg-background text-foreground grid-bg flex items-center justify-center px-6 py-12 relative overflow-hidden">
+      <div className="glow-orb glow-orb-cyan w-[420px] h-[420px] -top-16 -left-16" />
+      <div className="glow-orb glow-orb-purple w-[420px] h-[420px] -bottom-24 -right-20" />
+      <section className="relative z-10 w-full max-w-sm rounded-2xl border border-border bg-surface/85 p-8 shadow-glow-card backdrop-blur-md scanline">
+        <p className="section-eyebrow text-primary text-center mb-2">Restricted Layer</p>
+        <h1 className="text-center text-[44px] leading-none font-black tracking-wide bg-[linear-gradient(135deg,#ffffff_25%,#00e5ff_65%,#a855f7_100%)] [-webkit-background-clip:text] [-webkit-text-fill-color:transparent]">Admin Access</h1>
 
         {error && (
-          <p className="mt-5 rounded-lg border border-red-500/60 bg-red-900/30 px-3 py-2 text-sm text-red-200">
+          <p className="mt-5 rounded-lg border border-danger/60 bg-danger/20 px-3 py-2 font-mono text-xs uppercase tracking-[0.1em] text-danger">
             Invalid credentials
           </p>
         )}
 
         <form onSubmit={handleSubmit} className="mt-6 space-y-5">
           <div>
-            <label htmlFor="username" className="mb-2 block text-sm font-medium text-purple-200">
+            <label htmlFor="username" className="mb-2 block font-mono text-[11px] uppercase tracking-[0.14em] text-primary">
               Username
             </label>
             <input
@@ -58,14 +61,14 @@ export default function AdminLoginPage() {
               type="text"
               value={username}
               onChange={(event) => setUsername(event.target.value)}
-              className="w-full rounded-lg border border-purple-700 bg-purple-950/70 px-3 py-2 text-purple-100 placeholder-purple-400/70 outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/40"
+              className="w-full rounded-lg border border-border bg-muted px-3 py-3 text-foreground placeholder-fore-muted outline-none focus:border-primary focus:ring-2 focus:ring-primary/30"
               placeholder="Enter username"
               required
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="mb-2 block text-sm font-medium text-purple-200">
+            <label htmlFor="password" className="mb-2 block font-mono text-[11px] uppercase tracking-[0.14em] text-primary">
               Password
             </label>
             <input
@@ -73,7 +76,7 @@ export default function AdminLoginPage() {
               type="password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
-              className="w-full rounded-lg border border-purple-700 bg-purple-950/70 px-3 py-2 text-purple-100 placeholder-purple-400/70 outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/40"
+              className="w-full rounded-lg border border-border bg-muted px-3 py-3 text-foreground placeholder-fore-muted outline-none focus:border-primary focus:ring-2 focus:ring-primary/30"
               placeholder="Enter password"
               required
             />
@@ -82,7 +85,7 @@ export default function AdminLoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-lg bg-purple-500 px-4 py-2.5 font-semibold text-white transition hover:bg-purple-400 disabled:cursor-not-allowed disabled:bg-purple-700"
+            className="btn-primary w-full disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {loading ? "Signing in..." : "Sign In"}
           </button>

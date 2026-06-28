@@ -14,16 +14,22 @@ export default function ClubsPage() {
   );
 
   return (
-    <main className="min-h-screen bg-purple-950 text-white p-8">
-      <h1 className="text-4xl font-bold mb-8 text-center">Premier League Clubs</h1>
-      
-      <div className="max-w-5xl mx-auto mb-8">
+    <main className="min-h-screen bg-background text-foreground p-8 grid-bg">
+      <div className="max-w-6xl mx-auto">
+        <div className="mb-6 text-center">
+          <p className="section-eyebrow text-primary">Club Network</p>
+          <h1 className="section-title bg-[linear-gradient(135deg,#ffffff_30%,#00e5ff_100%)] [-webkit-background-clip:text] [-webkit-text-fill-color:transparent]">
+            Premier League Clubs
+          </h1>
+        </div>
+
+        <div className="data-card max-w-5xl mx-auto mb-8 p-4">
         <input
           type="text"
           placeholder="Search clubs..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full px-4 py-3 rounded-lg bg-purple-900 text-white placeholder-purple-400 border border-purple-700 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500"
+          className="w-full rounded-lg border border-border bg-muted px-4 py-3 text-foreground placeholder:text-fore-muted focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/30"
         />
       </div>
 
@@ -33,17 +39,18 @@ export default function ClubsPage() {
 
           return (
             <Link key={club.id} href={`/clubs/${club.id}`}>
-              <div className="bg-purple-900 rounded-xl p-6 hover:bg-purple-800 transition cursor-pointer h-full">
+              <div className="cyber-card h-full cursor-pointer">
                 <div className="mb-3 flex items-center justify-between gap-4">
                   <h2 className="text-xl font-bold mb-1">{club.name}</h2>
                   {logo && (
-                    <div className="relative h-10 w-10 overflow-hidden rounded-lg bg-white/90 shadow-md shadow-purple-950/40">
+                    <div className="relative h-10 w-10 overflow-hidden rounded-lg bg-white/90 shadow-glow-cyan">
                       <Image src={logo} alt={`${club.name} logo`} fill className="object-contain p-1" />
                     </div>
                   )}
                 </div>
-                <p className="text-purple-300">Titles: {club.titles}</p>
-                <p className="text-purple-300">Stadium: {club.stadium}</p>
+                <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-primary mb-3">Club Intelligence</p>
+                <p className="text-fore-muted">Titles: <span className="font-mono text-foreground">{club.titles}</span></p>
+                <p className="text-fore-muted">Stadium: <span className="text-foreground">{club.stadium}</span></p>
               </div>
             </Link>
           );
@@ -51,10 +58,11 @@ export default function ClubsPage() {
       </div>
 
       {filteredClubs.length === 0 && (
-        <div className="text-center text-purple-400 mt-12">
+        <div className="text-center text-fore-muted mt-12">
           <p className="text-lg">No clubs found matching "{search}"</p>
         </div>
       )}
+      </div>
     </main>
   );
 }

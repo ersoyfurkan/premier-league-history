@@ -102,13 +102,16 @@ export default function RegisterPage() {
   };
 
   return (
-    <main className="min-h-screen bg-purple-950 text-white p-8">
-      <div className="max-w-md mx-auto mt-20">
-        <div className="bg-purple-900 rounded-xl p-8">
-          <h1 className="text-3xl font-bold mb-8 text-center">Create Account</h1>
+    <main className="min-h-screen bg-background text-foreground p-8 grid-bg relative overflow-hidden">
+      <div className="glow-orb glow-orb-cyan w-[380px] h-[380px] top-12 -left-20" />
+      <div className="glow-orb glow-orb-purple w-[420px] h-[420px] -bottom-24 -right-24" />
+      <div className="max-w-md mx-auto mt-12 relative z-10">
+        <div className="data-card rounded-2xl p-8 scanline">
+          <p className="section-eyebrow text-accent text-center mb-2">Identity Provisioning</p>
+          <h1 className="text-5xl leading-none font-black mb-8 text-center bg-[linear-gradient(135deg,#ffffff_30%,#a855f7_100%)] [-webkit-background-clip:text] [-webkit-text-fill-color:transparent]">Create Account</h1>
 
           {apiError && (
-            <div className="bg-red-500/20 border border-red-500 text-red-300 px-4 py-3 rounded-lg mb-6">
+            <div className="bg-danger/15 border border-danger/45 text-danger px-4 py-3 rounded-lg mb-6 font-mono text-xs uppercase tracking-[0.1em]">
               {apiError}
             </div>
           )}
@@ -116,7 +119,7 @@ export default function RegisterPage() {
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Username */}
             <div>
-              <label className="block text-sm font-semibold mb-2 text-purple-200">
+              <label className="block font-mono text-[11px] uppercase tracking-[0.14em] mb-2 text-primary">
                 Username
               </label>
               <input
@@ -124,7 +127,7 @@ export default function RegisterPage() {
                 name="username"
                 value={formData.username}
                 onChange={handleInputChange}
-                className="w-full px-4 py-2 rounded-lg bg-purple-800 border border-purple-700 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500"
+                className="w-full px-4 py-3 rounded-lg bg-muted border border-border focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/30"
                 placeholder="Choose a username"
               />
               {errors.username && (
@@ -134,7 +137,7 @@ export default function RegisterPage() {
 
             {/* Email */}
             <div>
-              <label className="block text-sm font-semibold mb-2 text-purple-200">
+              <label className="block font-mono text-[11px] uppercase tracking-[0.14em] mb-2 text-primary">
                 Email
               </label>
               <input
@@ -142,7 +145,7 @@ export default function RegisterPage() {
                 name="email"
                 value={formData.email}
                 onChange={handleInputChange}
-                className="w-full px-4 py-2 rounded-lg bg-purple-800 border border-purple-700 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500"
+                className="w-full px-4 py-3 rounded-lg bg-muted border border-border focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/30"
                 placeholder="your@email.com"
               />
               {errors.email && (
@@ -152,7 +155,7 @@ export default function RegisterPage() {
 
             {/* Password */}
             <div>
-              <label className="block text-sm font-semibold mb-2 text-purple-200">
+              <label className="block font-mono text-[11px] uppercase tracking-[0.14em] mb-2 text-primary">
                 Password
               </label>
               <input
@@ -160,7 +163,7 @@ export default function RegisterPage() {
                 name="password"
                 value={formData.password}
                 onChange={handleInputChange}
-                className="w-full px-4 py-2 rounded-lg bg-purple-800 border border-purple-700 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500"
+                className="w-full px-4 py-3 rounded-lg bg-muted border border-border focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/30"
                 placeholder="At least 8 characters"
               />
               {errors.password && (
@@ -170,7 +173,7 @@ export default function RegisterPage() {
 
             {/* Confirm Password */}
             <div>
-              <label className="block text-sm font-semibold mb-2 text-purple-200">
+              <label className="block font-mono text-[11px] uppercase tracking-[0.14em] mb-2 text-primary">
                 Confirm Password
               </label>
               <input
@@ -178,7 +181,7 @@ export default function RegisterPage() {
                 name="confirmPassword"
                 value={formData.confirmPassword}
                 onChange={handleInputChange}
-                className="w-full px-4 py-2 rounded-lg bg-purple-800 border border-purple-700 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500"
+                className="w-full px-4 py-3 rounded-lg bg-muted border border-border focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/30"
                 placeholder="Confirm your password"
               />
               {errors.confirmPassword && (
@@ -190,16 +193,16 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-purple-500 hover:bg-purple-400 disabled:bg-purple-600 disabled:cursor-not-allowed px-6 py-3 rounded-lg font-semibold transition"
+              className="btn-primary w-full disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? "Creating account..." : "Register"}
             </button>
           </form>
 
           {/* Login Link */}
-          <p className="text-center text-purple-300 mt-6">
+          <p className="text-center text-fore-muted mt-6 text-sm">
             Already have an account?{" "}
-            <Link href="/auth/login" className="text-purple-400 hover:text-purple-300 font-semibold">
+            <Link href="/auth/login" className="text-accent hover:text-primary font-semibold">
               Sign in
             </Link>
           </p>

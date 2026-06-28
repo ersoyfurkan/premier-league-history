@@ -1,26 +1,254 @@
+@config "../tailwind.config.ts";
+@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Barlow+Condensed:wght@400;600;700;800;900&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap");
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+body {
+  font-family: "Inter", sans-serif;
+  background: #03040a;
+  color: #e8eaf6;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+h1,
+h2,
+h3,
+h4 {
+  font-family: "Barlow Condensed", sans-serif;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+.font-display {
+  font-family: "Orbitron", sans-serif;
+}
+
+.font-mono,
+code,
+kbd,
+data {
+  font-family: "JetBrains Mono", monospace;
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 229, 255, 0.3);
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 229, 255, 0.6);
+}
+
+::selection {
+  background: rgba(0, 229, 255, 0.25);
+  color: #e8eaf6;
+}
+
+.grid-bg {
+  background-image:
+    linear-gradient(rgba(0, 229, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 229, 255, 0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+.glow-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.15;
+  pointer-events: none;
+}
+
+.glow-orb-cyan {
+  background: #00e5ff;
+}
+
+.glow-orb-purple {
+  background: #a855f7;
+}
+
+.glow-orb-violet {
+  background: #7c3aed;
+}
+
+@keyframes scanline {
+  from {
+    top: -2px;
+  }
+  to {
+    top: 100%;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+.scanline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0, 229, 255, 0.4), transparent);
+  animation: scanline 5s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes glow-pulse {
+  0%,
+  100% {
+    text-shadow: 0 0 10px rgba(0, 229, 255, 0.4);
+  }
+  50% {
+    text-shadow: 0 0 30px rgba(0, 229, 255, 0.9), 0 0 60px rgba(0, 229, 255, 0.3);
+  }
+}
+
+.stat-number {
+  animation: glow-pulse 3s ease-in-out infinite;
+}
+
+.hero-title {
+  font-family: "Barlow Condensed", sans-serif;
+  font-weight: 900;
+  line-height: 0.95;
+  font-size: clamp(56px, 10vw, 120px);
+  background: linear-gradient(135deg, #ffffff 0%, #00e5ff 50%, #a855f7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.section-title {
+  font-family: "Barlow Condensed", sans-serif;
+  font-weight: 800;
+  line-height: 1;
+  font-size: clamp(40px, 6vw, 80px);
+}
+
+.section-eyebrow {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+}
+
+.cyber-card {
+  position: relative;
+  background: linear-gradient(135deg, #0a0d1a 0%, rgba(0, 229, 255, 0.09) 100%);
+  border: 1px solid rgba(0, 229, 255, 0.14);
+  border-radius: 16px;
+  padding: 22px;
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4), 0 1px 0 rgba(0, 229, 255, 0.06) inset;
+  overflow: hidden;
+}
+
+.cyber-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  background: radial-gradient(circle at 50% 0%, rgba(0, 229, 255, 0.15), transparent 70%);
+}
+
+.cyber-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 0 30px rgba(0, 229, 255, 0.2), 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.cyber-card:hover::before {
+  opacity: 1;
+}
+
+.data-card {
+  background: #0a0d1a;
+  border: 1px solid rgba(0, 229, 255, 0.08);
+  border-radius: 16px;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, rgba(0, 229, 255, 0.15), rgba(0, 229, 255, 0.08));
+  border: 1px solid rgba(0, 229, 255, 0.35);
+  color: #00e5ff;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 10px 24px;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, rgba(0, 229, 255, 0.2), rgba(0, 229, 255, 0.12));
+  box-shadow: 0 0 20px rgba(0, 229, 255, 0.25);
+}
+
+.btn-primary:active {
+  transform: scale(0.97);
+}
+
+.btn-ghost {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #6b7280;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 10px 24px;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+}
+
+.btn-ghost:hover {
+  border-color: rgba(168, 85, 247, 0.4);
+  color: #a855f7;
+}
+
+.pill-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.progress-track {
+  background: rgba(255, 255, 255, 0.05);
+  height: 6px;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  width: 0;
+  transition: width 0.6s ease;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(3, 4, 10, 0.92);
+  backdrop-filter: blur(16px);
+}
+
+.modal-panel {
+  max-width: 42rem;
+  border-radius: 1rem;
+  background: linear-gradient(135deg, #0a0d1a, rgba(168, 85, 247, 0.08), #0a0d1a);
+  border: 1px solid rgba(168, 85, 247, 0.2);
+  box-shadow: 0 0 60px rgba(168, 85, 247, 0.14), 0 20px 80px rgba(0, 0, 0, 0.6);
 }

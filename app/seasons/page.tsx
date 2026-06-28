@@ -26,13 +26,18 @@ export default function SeasonsPage() {
   });
 
   return (
-    <main className="min-h-screen bg-purple-950 text-white p-8">
-      <Link href="/" className="text-purple-300 hover:text-purple-200 mb-8 inline-block">
+    <main className="min-h-screen bg-background text-foreground p-8 grid-bg">
+      <Link href="/" className="font-mono text-[11px] uppercase tracking-[0.14em] text-primary hover:text-accent mb-8 inline-block">
         ← Home
       </Link>
 
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-4xl font-bold mb-8 text-center">Premier League Seasons</h1>
+        <div className="text-center mb-8">
+          <p className="section-eyebrow text-warning">Timeline Matrix</p>
+          <h1 className="section-title bg-[linear-gradient(135deg,#ffffff_30%,#f59e0b_100%)] [-webkit-background-clip:text] [-webkit-text-fill-color:transparent]">
+            Premier League Seasons
+          </h1>
+        </div>
 
         {/* Decade Filter */}
         <div className="flex flex-wrap justify-center gap-3 mb-8">
@@ -40,10 +45,10 @@ export default function SeasonsPage() {
             <button
               key={d}
               onClick={() => setDecade(d)}
-              className={`px-6 py-2 rounded-lg font-semibold transition ${
+              className={`font-mono text-[12px] uppercase tracking-[0.1em] px-5 py-2 rounded-lg border transition ${
                 decade === d
-                  ? "bg-purple-500 text-white"
-                  : "bg-purple-900 text-purple-300 hover:bg-purple-800"
+                  ? "bg-primary-dim text-primary border-primary/40 shadow-glow-cyan"
+                  : "bg-surface text-fore-muted border-border-dim hover:border-accent/40 hover:text-accent"
               }`}
             >
               {d === "all" ? "All Seasons" : d}
@@ -52,26 +57,32 @@ export default function SeasonsPage() {
         </div>
 
         {/* Seasons Table */}
-        <div className="overflow-x-auto bg-purple-900 rounded-xl">
+        <div className="overflow-x-auto data-card">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-purple-700">
-                <th className="px-6 py-4 text-left font-bold text-purple-200">Season</th>
-                <th className="px-6 py-4 text-left font-bold text-purple-200">Champion</th>
-                <th className="px-6 py-4 text-left font-bold text-purple-200">Runner-up</th>
-                <th className="px-6 py-4 text-left font-bold text-purple-200">Third Place</th>
-                <th className="px-6 py-4 text-left font-bold text-purple-200">Top Scorer</th>
+              <tr className="border-b border-border bg-surface2">
+                <th className="px-6 py-4 text-left font-mono text-[11px] uppercase tracking-[0.14em] text-primary">Season</th>
+                <th className="px-6 py-4 text-left font-mono text-[11px] uppercase tracking-[0.14em] text-primary">Champion</th>
+                <th className="px-6 py-4 text-left font-mono text-[11px] uppercase tracking-[0.14em] text-primary">Runner-up</th>
+                <th className="px-6 py-4 text-left font-mono text-[11px] uppercase tracking-[0.14em] text-primary">Third Place</th>
+                <th className="px-6 py-4 text-left font-mono text-[11px] uppercase tracking-[0.14em] text-primary">Top Scorer</th>
               </tr>
             </thead>
             <tbody>
-              {filteredSeasons.map((season) => (
-                <tr key={season.year} className="border-b border-purple-800 hover:bg-purple-800 transition">
-                  <td className="px-6 py-4 font-semibold">{season.year}</td>
-                  <td className="px-6 py-4 text-green-400 font-semibold">{season.champion}</td>
-                  <td className="px-6 py-4">{season.runnerUp}</td>
-                  <td className="px-6 py-4 text-purple-300">{season.thirdPlace}</td>
+              {filteredSeasons.map((season, index) => (
+                <tr
+                  key={season.year}
+                  className={`border-b border-border-dim transition hover:bg-primary/5 ${
+                    index % 2 === 0 ? "bg-primary/2" : "bg-transparent"
+                  }`}
+                >
+                  <td className="px-6 py-4 font-mono text-sm font-semibold">{season.year}</td>
+                  <td className="px-6 py-4 text-success font-semibold">{season.champion}</td>
+                  <td className="px-6 py-4 text-foreground">{season.runnerUp}</td>
+                  <td className="px-6 py-4 text-fore-muted">{season.thirdPlace}</td>
                   <td className="px-6 py-4">
-                    {season.topScorer} ({season.topScorerGoals} goals)
+                    <span className="text-foreground">{season.topScorer}</span>{" "}
+                    <span className="font-mono text-primary">({season.topScorerGoals} goals)</span>
                   </td>
                 </tr>
               ))}
@@ -80,7 +91,7 @@ export default function SeasonsPage() {
         </div>
 
         {filteredSeasons.length === 0 && (
-          <div className="text-center text-purple-400 mt-12">
+          <div className="text-center text-fore-muted mt-12">
             <p className="text-lg">No seasons found</p>
           </div>
         )}

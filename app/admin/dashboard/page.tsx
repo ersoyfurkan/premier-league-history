@@ -147,7 +147,11 @@ export default function AdminDashboardPage() {
   const topClubName = topClub ? clubMap.get(topClub.club_id) ?? topClub.club_id : "None";
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="min-h-screen bg-background text-foreground grid-bg flex items-center justify-center">
+        <div className="font-mono text-xs uppercase tracking-[0.14em] text-primary">Loading...</div>
+      </div>
+    );
   }
 
   if (!authed) {
@@ -155,49 +159,54 @@ export default function AdminDashboardPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-purple-950 via-purple-900 to-purple-950 px-6 py-10 text-purple-100">
+    <main className="min-h-screen bg-background grid-bg px-6 py-10 text-foreground">
       <div className="mx-auto max-w-6xl">
         <div className="mb-8 flex items-center justify-between">
-          <h1 className="text-3xl font-bold tracking-wide">Admin Dashboard</h1>
+          <div>
+            <p className="section-eyebrow text-primary mb-1">Command Layer</p>
+            <h1 className="text-[clamp(38px,6vw,68px)] leading-[0.95] font-black bg-[linear-gradient(135deg,#ffffff_20%,#00e5ff_60%,#a855f7_100%)] [-webkit-background-clip:text] [-webkit-text-fill-color:transparent]">
+              Admin Dashboard
+            </h1>
+          </div>
           <button
             onClick={handleLogout}
-            className="rounded-lg border border-purple-500 bg-purple-800 px-4 py-2 font-semibold text-purple-100 transition hover:bg-purple-700"
+            className="btn-ghost"
           >
             Logout
           </button>
         </div>
 
         <section className="mb-8 grid gap-4 md:grid-cols-3">
-          <div className="rounded-xl border border-purple-700 bg-purple-900/60 p-5">
-            <p className="text-sm text-purple-300">Total Users</p>
-            <p className="mt-2 text-3xl font-bold">{stats?.totalUsers ?? 0}</p>
+          <div className="rounded-2xl border border-primary/25 bg-primary-dim p-5 shadow-glow-card">
+            <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-primary">Total Users</p>
+            <p className="mt-2 font-display text-4xl text-primary stat-number">{stats?.totalUsers ?? 0}</p>
           </div>
-          <div className="rounded-xl border border-purple-700 bg-purple-900/60 p-5">
-            <p className="text-sm text-purple-300">Total Favourites</p>
-            <p className="mt-2 text-3xl font-bold">{stats?.totalFavourites ?? 0}</p>
+          <div className="rounded-2xl border border-accent/30 bg-accent-dim p-5 shadow-glow-purple">
+            <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-accent">Total Favourites</p>
+            <p className="mt-2 font-display text-4xl text-accent">{stats?.totalFavourites ?? 0}</p>
           </div>
-          <div className="rounded-xl border border-purple-700 bg-purple-900/60 p-5">
-            <p className="text-sm text-purple-300">Top Club</p>
-            <p className="mt-2 text-2xl font-bold">{topClubName}</p>
+          <div className="rounded-2xl border border-secondary/40 bg-secondary/15 p-5 shadow-glow-card">
+            <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-accent">Top Club</p>
+            <p className="mt-2 text-2xl font-bold text-foreground">{topClubName}</p>
           </div>
         </section>
 
-        <section className="overflow-x-auto rounded-xl border border-purple-700 bg-purple-900/40">
+        <section className="overflow-x-auto data-card">
           <table className="min-w-full text-left text-sm">
-            <thead className="bg-purple-800/80 text-purple-200">
+            <thead className="bg-surface2 text-primary">
               <tr>
-                <th className="px-4 py-3">ID</th>
-                <th className="px-4 py-3">Username</th>
-                <th className="px-4 py-3">Email</th>
-                <th className="px-4 py-3">Joined</th>
-                <th className="px-4 py-3">Favourite Club</th>
-                <th className="px-4 py-3">Actions</th>
+                <th className="px-4 py-3 font-mono text-[11px] uppercase tracking-[0.14em]">ID</th>
+                <th className="px-4 py-3 font-mono text-[11px] uppercase tracking-[0.14em]">Username</th>
+                <th className="px-4 py-3 font-mono text-[11px] uppercase tracking-[0.14em]">Email</th>
+                <th className="px-4 py-3 font-mono text-[11px] uppercase tracking-[0.14em]">Joined</th>
+                <th className="px-4 py-3 font-mono text-[11px] uppercase tracking-[0.14em]">Favourite Club</th>
+                <th className="px-4 py-3 font-mono text-[11px] uppercase tracking-[0.14em]">Actions</th>
               </tr>
             </thead>
             <tbody>
               {users.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-4 py-6 text-center text-purple-300">
+                  <td colSpan={6} className="px-4 py-6 text-center text-fore-muted">
                     No users found
                   </td>
                 </tr>
@@ -205,12 +214,12 @@ export default function AdminDashboardPage() {
                 users.map((user, index) => (
                   <tr
                     key={user.id}
-                    className={index % 2 === 0 ? "bg-purple-950/30" : "bg-purple-900/30"}
+                    className={index % 2 === 0 ? "bg-primary/2 hover:bg-primary/5" : "bg-transparent hover:bg-primary/5"}
                   >
-                    <td className="px-4 py-3">{user.id}</td>
+                    <td className="px-4 py-3 font-mono text-primary">{user.id}</td>
                     <td className="px-4 py-3">{user.username}</td>
                     <td className="px-4 py-3">{user.email}</td>
-                    <td className="px-4 py-3">{new Date(user.created_at).toLocaleDateString()}</td>
+                    <td className="px-4 py-3 font-mono text-fore-muted">{new Date(user.created_at).toLocaleDateString()}</td>
                     <td className="px-4 py-3">
                       {user.favouriteClubId
                         ? clubMap.get(user.favouriteClubId) ?? user.favouriteClubId
@@ -220,7 +229,7 @@ export default function AdminDashboardPage() {
                       <button
                         onClick={() => handleDelete(user.id)}
                         disabled={deletingUserId === user.id}
-                        className="rounded-md bg-red-600 px-3 py-1.5 font-semibold text-white transition hover:bg-red-500 disabled:cursor-not-allowed disabled:bg-red-800"
+                        className="rounded-md border border-danger/45 bg-danger/20 px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.1em] text-danger transition hover:bg-danger/30 disabled:cursor-not-allowed disabled:opacity-50"
                       >
                         {deletingUserId === user.id ? "Deleting..." : "Delete"}
                       </button>
