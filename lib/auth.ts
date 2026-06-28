@@ -17,33 +17,23 @@ function hexToBuffer(hex: string): Uint8Array {
 export async function hashPassword(
   password: string
 ): Promise<{ hash: string; salt: string }> {
-  const saltBuffer = crypto.getRandomValues(new Uint8Array(16));
-  const salt = bufferToHex(saltBuffer);
-
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const saltHex = Array.from(salt).map(b => b.toString(16).padStart(2, '0')).join('');
   const encoder = new TextEncoder();
-  const data = encoder.encode(password);
-  const key = await crypto.subtle.importKey(
+  const keyMaterial = await crypto.subtle.importKey(
     "raw",
-    data,
-    { name: "PBKDF2" },
+    encoder.encode(password),
+    "PBKDF2",
     false,
     ["deriveBits"]
   );
-
   const hashBuffer = await crypto.subtle.deriveBits(
-    {
-      name: "PBKDF2",
-      salt: saltBuffer as Uint8Array<ArrayBuffer>,
-      iterations: 100000,
-      hash: "SHA-256",
-    },
-    key,
+    { name: "PBKDF2", salt, iterations: 100000, hash: "SHA-256" },
+    keyMaterial,
     256
   );
-
-  const hash = bufferToHex(hashBuffer);
-
-  return { hash, salt };
+  const hashHex = Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+  return { hash: hashHex, salt: saltHex };
 }
 
 export async function verifyPassword(
@@ -51,31 +41,22 @@ export async function verifyPassword(
   hash: string,
   salt: string
 ): Promise<boolean> {
+  const saltBytes = new Uint8Array(salt.match(/.{2}/g)!.map(b => parseInt(b, 16)));
   const encoder = new TextEncoder();
-  const data = encoder.encode(password);
-  const saltBuffer = hexToBuffer(salt);
-
-  const key = await crypto.subtle.importKey(
+  const keyMaterial = await crypto.subtle.importKey(
     "raw",
-    data,
-    { name: "PBKDF2" },
+    encoder.encode(password),
+    "PBKDF2",
     false,
     ["deriveBits"]
   );
-
   const hashBuffer = await crypto.subtle.deriveBits(
-    {
-      name: "PBKDF2",
-      salt: saltBuffer as Uint8Array<ArrayBuffer>,
-      iterations: 100000,
-      hash: "SHA-256",
-    },
-    key,
+    { name: "PBKDF2", salt: saltBytes, iterations: 100000, hash: "SHA-256" },
+    keyMaterial,
     256
   );
-
-  const computedHash = bufferToHex(hashBuffer);
-  return computedHash === hash;
+  const hashHex = Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+  return hashHex === hash;
 }
 
 export async function createJWT(
