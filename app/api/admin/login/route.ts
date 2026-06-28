@@ -22,9 +22,12 @@ export async function POST(request: NextRequest) {
   const response = NextResponse.json({ success: true }, { status: 200 });
 
   response.cookies.set("admin_token", token, {
-    httpOnly: true,
-    maxAge: 3600,
-  });
+  httpOnly: true,
+  secure: true,
+  sameSite: "lax",
+  path: "/",
+  maxAge: 3600,
+});
 
   return response;
 }
