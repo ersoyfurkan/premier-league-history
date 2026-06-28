@@ -1,8 +1,10 @@
 import Link from "next/link";
+import Image from "next/image";
 import { clubs } from "@/data/clubs";
 import { managers } from "@/data/managers";
 import { notFound } from "next/navigation";
 import FavouriteButton from "@/components/FavouriteButton";
+import { getClubLogo } from "@/data/clubLogos";
 
 export async function generateStaticParams() {
   return clubs.map((club) => ({
@@ -19,6 +21,7 @@ export default async function ClubPage({ params }: { params: Promise<{ id: strin
   }
 
   const rivalClubs = clubs.filter((c) => club.rivals.includes(c.id));
+  const clubLogo = getClubLogo(club.id);
 
   return (
     <main className="min-h-screen bg-purple-950 text-white p-8">
@@ -29,10 +32,16 @@ export default async function ClubPage({ params }: { params: Promise<{ id: strin
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="flex items-start gap-8 mb-12">
-          <div
-            className="w-32 h-32 rounded-xl flex-shrink-0 border-4 shadow-lg"
-            style={{ backgroundColor: club.colors, borderColor: club.colors }}
-          ></div>
+          {clubLogo ? (
+            <div className="relative w-32 h-32 rounded-xl flex-shrink-0 border-4 border-white/60 bg-white/95 shadow-lg overflow-hidden">
+              <Image src={clubLogo} alt={`${club.name} logo`} fill className="object-contain p-3" />
+            </div>
+          ) : (
+            <div
+              className="w-32 h-32 rounded-xl flex-shrink-0 border-4 shadow-lg"
+              style={{ backgroundColor: club.colors, borderColor: club.colors }}
+            ></div>
+          )}
           <div className="flex-1">
             <div className="flex items-start gap-4 mb-3">
               <h1 className="text-5xl font-bold flex-1">{club.name}</h1>
