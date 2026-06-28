@@ -17,9 +17,6 @@
 			"remote": true
 		}
 	],
-  "vars": {
-    "JWT_SECRET": ""
-  },
   "observability": {
     "logs": {
       "enabled": true,
