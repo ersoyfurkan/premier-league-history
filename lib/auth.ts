@@ -88,12 +88,19 @@ export async function verifyJWT(
 
     const verified = await jwtVerify(token, secretKey);
     const { userId, email, username } = verified.payload as any;
+    const parsedUserId = Number(userId);
 
-    if (!userId || !email || !username) {
+    if (
+      userId === undefined ||
+      userId === null ||
+      !email ||
+      !username ||
+      Number.isNaN(parsedUserId)
+    ) {
       return null;
     }
 
-    return { userId: Number(userId), email, username };
+    return { userId: parsedUserId, email, username };
   } catch {
     return null;
   }
