@@ -23,6 +23,8 @@ export default function AdminDashboardPage() {
   const [stats, setStats] = useState<StatsResponse | null>(null);
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState(true);
+  const [authed, setAuthed] = useState(false);
+  const [unauthorized, setUnauthorized] = useState(false);
   const [deletingUserId, setDeletingUserId] = useState<number | null>(null);
 
   const clubMap = useMemo(() => {
@@ -48,48 +50,63 @@ export default function AdminDashboardPage() {
   useEffect(() => {
     let active = true;
 
-    const loadData = async () => {
-      setLoading(true);
-
-      try {
-        const [statsResponse, usersResponse] = await Promise.all([
-          fetch("/api/admin/stats", { method: "GET" }),
-          fetch("/api/admin/users", { method: "GET" }),
-        ]);
-
-        if (statsResponse.status === 401 || usersResponse.status === 401) {
-          router.replace("/admin/login");
+    fetch("/api/admin/stats", { method: "GET" })
+      .then(async (res) => {
+        if (res.status === 401) {
+          if (active) {
+            setUnauthorized(true);
+          }
           return;
         }
 
-        if (!statsResponse.ok || !usersResponse.ok) {
+        if (!res.ok) {
           return;
         }
 
-        const [statsData, usersData] = (await Promise.all([
-          statsResponse.json(),
-          usersResponse.json(),
-        ])) as [StatsResponse, AdminUser[]];
+        if (active) {
+          setAuthed(true);
+        }
 
-        if (!active) {
+        const statsData = (await res.json()) as StatsResponse;
+        if (active) {
+          setStats(statsData);
+        }
+
+        const usersResponse = await fetch("/api/admin/users", { method: "GET" });
+
+        if (usersResponse.status === 401) {
+          if (active) {
+            setAuthed(false);
+            setUnauthorized(true);
+          }
           return;
         }
 
-        setStats(statsData);
-        setUsers(usersData);
-      } finally {
+        if (!usersResponse.ok) {
+          return;
+        }
+
+        const usersData = (await usersResponse.json()) as AdminUser[];
+        if (active) {
+          setUsers(usersData);
+        }
+      })
+      .finally(() => {
         if (active) {
           setLoading(false);
         }
-      }
-    };
-
-    void loadData();
+      });
 
     return () => {
       active = false;
     };
-  }, [router]);
+  }, []);
+
+  useEffect(() => {
+    if (!loading && unauthorized) {
+      router.push("/admin/login");
+    }
+  }, [loading, unauthorized, router]);
 
   const handleDelete = async (userId: number) => {
     const confirmed = window.confirm("Are you sure you want to delete this user?");
@@ -128,6 +145,14 @@ export default function AdminDashboardPage() {
 
   const topClub = stats?.topClubs?.[0];
   const topClubName = topClub ? clubMap.get(topClub.club_id) ?? topClub.club_id : "None";
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!authed) {
+    return null;
+  }
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-purple-950 via-purple-900 to-purple-950 px-6 py-10 text-purple-100">
@@ -170,13 +195,7 @@ export default function AdminDashboardPage() {
               </tr>
             </thead>
             <tbody>
-              {loading ? (
-                <tr>
-                  <td colSpan={6} className="px-4 py-6 text-center text-purple-300">
-                    Loading...
-                  </td>
-                </tr>
-              ) : users.length === 0 ? (
+              {users.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-4 py-6 text-center text-purple-300">
                     No users found
