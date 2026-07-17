@@ -31,7 +31,7 @@ export default function SeasonsPage() {
         ← Home
       </Link>
 
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-[90rem] mx-auto">
         <div className="text-center mb-8">
           <p className="section-eyebrow text-warning">Timeline Matrix</p>
           <h1 className="section-title bg-[linear-gradient(135deg,#ffffff_30%,#f59e0b_100%)] [-webkit-background-clip:text] [-webkit-text-fill-color:transparent]">
@@ -66,6 +66,7 @@ export default function SeasonsPage() {
                 <th className="px-6 py-4 text-left font-mono text-[11px] uppercase tracking-[0.14em] text-primary">Runner-up</th>
                 <th className="px-6 py-4 text-left font-mono text-[11px] uppercase tracking-[0.14em] text-primary">Third Place</th>
                 <th className="px-6 py-4 text-left font-mono text-[11px] uppercase tracking-[0.14em] text-primary">Top Scorer</th>
+                <th className="px-6 py-4 text-left font-mono text-[11px] uppercase tracking-[0.14em] text-primary whitespace-nowrap">Relegated</th>
               </tr>
             </thead>
             <tbody>
@@ -84,6 +85,7 @@ export default function SeasonsPage() {
                     <span className="text-foreground">{season.topScorer}</span>{" "}
                     <span className="font-mono text-primary">({season.topScorerGoals} goals)</span>
                   </td>
+                  <td className="px-6 py-4 text-fore-muted whitespace-nowrap">{season.relegated.join(", ")}</td>
                 </tr>
               ))}
             </tbody>

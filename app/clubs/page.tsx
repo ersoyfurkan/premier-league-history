@@ -48,7 +48,7 @@ export default function ClubsPage() {
                     </div>
                   )}
                 </div>
-                <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-primary mb-3">Club Intelligence</p>
+              
                 <p className="text-fore-muted">Titles: <span className="font-mono text-foreground">{club.titles}</span></p>
                 <p className="text-fore-muted">Stadium: <span className="text-foreground">{club.stadium}</span></p>
               </div>
