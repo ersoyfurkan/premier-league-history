@@ -149,6 +149,19 @@ export default function GamePage() {
     return () => clearTimeout(timer);
   }, [roundReady, roundResolved, winner, mode, currentPicker, p2Card]);
 
+  useEffect(() => {
+    if (!roundResolved || winner) {
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      setRound((prev) => prev + 1);
+      setupRound();
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, [roundResolved, winner]);
+
   const turnLabel =
     currentPicker === "p1" ? "Player 1" : mode === "ai" ? "AI" : "Player 2";
   const winnerLabel =
