@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 
 type StatKey = "appearances" | "goals" | "assists";
 type Side = "p1" | "p2";
@@ -62,7 +62,7 @@ function pickAiStat(card: PlayerCard) {
   return scored[0].key;
 }
 
-export default function GamePlayPage() {
+function GamePlayClient() {
   const searchParams = useSearchParams();
   const modeParam = searchParams.get("mode");
   const mode: Mode = modeParam === "ai" ? "ai" : "pvp";
@@ -300,5 +300,21 @@ export default function GamePlayPage() {
         </div>
       </section>
     </main>
+  );
+}
+
+export default function GamePlayPage() {
+  return (
+    <Suspense
+      fallback={
+        <main className="min-h-screen bg-background text-foreground grid-bg px-4 md:px-8 py-8 md:py-12">
+          <section className="mx-auto w-full max-w-[110rem]">
+            <p className="section-eyebrow text-primary">Loading match...</p>
+          </section>
+        </main>
+      }
+    >
+      <GamePlayClient />
+    </Suspense>
   );
 }
