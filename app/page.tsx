@@ -24,6 +24,9 @@ export default function Home() {
             <Link href="/seasons" className="btn-ghost">
               Season Matrix
             </Link>
+            <Link href="/game" className="btn-ghost">
+              Play Stat Duel
+            </Link>
           </div>
 
           <div className="mt-10 inline-flex items-center gap-3 rounded-full border border-border bg-surface/80 px-4 py-2 shadow-glow-card">

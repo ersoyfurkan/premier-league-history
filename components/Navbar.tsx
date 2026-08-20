@@ -16,6 +16,7 @@ export default function Navbar() {
     { href: "/clubs", label: "Clubs" },
     { href: "/seasons", label: "Seasons" },
     { href: "/rivalries", label: "Rivalries" },
+    { href: "/game", label: "Game" },
   ];
 
   const isActive = (href: string) => pathname === href;
