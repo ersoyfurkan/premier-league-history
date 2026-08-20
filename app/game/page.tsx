@@ -49,8 +49,6 @@ export default function GamePage() {
   const [mode, setMode] = useState<Mode>("pvp");
   const [p1Card, setP1Card] = useState<PlayerCard | null>(null);
   const [p2Card, setP2Card] = useState<PlayerCard | null>(null);
-  const [p1RandomStat, setP1RandomStat] = useState<StatKey>("goals");
-  const [p2RandomStat, setP2RandomStat] = useState<StatKey>("goals");
   const [currentPicker, setCurrentPicker] = useState<Side>("p1");
   const [scores, setScores] = useState({ p1: 0, p2: 0 });
   const [round, setRound] = useState(1);
@@ -66,8 +64,6 @@ export default function GamePage() {
   const setupRound = () => {
     setP1Card(randomFrom(TEST_PLAYERS));
     setP2Card(randomFrom(TEST_PLAYERS));
-    setP1RandomStat(randomFrom(STAT_KEYS));
-    setP2RandomStat(randomFrom(STAT_KEYS));
     setCurrentPicker(randomFrom<Side>(["p1", "p2"]));
     setRoundResolved(false);
     setSelectedStat(null);
@@ -169,8 +165,8 @@ export default function GamePage() {
             <p className="section-eyebrow text-primary">Minigame Test Build</p>
             <h1 className="section-title mt-2">Stat Duel: 1v1 or AI</h1>
             <p className="mt-4 max-w-3xl text-sm md:text-base text-fore-muted leading-7">
-              Each round both sides receive a random player card and a random stat hint. The picker is chosen
-              randomly. Picker selects a stat, higher value wins the point. First to 10 points wins the match.
+              Each round both sides receive a random player card. The picker is chosen randomly. Picker selects a
+              stat, higher value wins the point. First to 10 points wins the match.
             </p>
 
             <div className="mt-6 flex flex-wrap gap-3">
@@ -231,9 +227,6 @@ export default function GamePage() {
                   <p>Appearances: {p1Card.appearances}</p>
                   <p>Goals: {p1Card.goals}</p>
                   <p>Assists: {p1Card.assists}</p>
-                  <p className="mt-3 text-accent uppercase tracking-[0.08em]">
-                    Random Stat: {p1RandomStat}
-                  </p>
                 </div>
               ) : (
                 <p className="mt-4 text-fore-muted">Card hidden.</p>
@@ -255,9 +248,6 @@ export default function GamePage() {
                   <p>Appearances: {p2Card.appearances}</p>
                   <p>Goals: {p2Card.goals}</p>
                   <p>Assists: {p2Card.assists}</p>
-                  <p className="mt-3 text-accent uppercase tracking-[0.08em]">
-                    Random Stat: {p2RandomStat}
-                  </p>
                 </div>
               ) : (
                 <p className="mt-4 text-fore-muted">Card hidden.</p>
