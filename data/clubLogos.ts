@@ -1,7 +1,26 @@
-export function getClubLogo(clubId: string): string | null {
-  if (clubId === "liverpool") {
-    return "/club-logos/liverpool.webp";
-  }
+const CLUBS_WITH_LOGOS = new Set([
+  "man-city",
+  "man-utd",
+  "arsenal",
+  "chelsea",
+  "liverpool",
+  "tottenham",
+  "aston-villa",
+  "newcastle",
+  "leicester",
+  "everton",
+  "brighton",
+  "brentford",
+  "fulham",
+  "west-ham",
+  "crystal-palace",
+  "nottingham-forest",
+  "wolverhampton",
+  "blackburn",
+  "southampton",
+  "ipswich-town",
+]);
 
-  return null;
+export function getClubLogo(clubId: string): string | null {
+  return CLUBS_WITH_LOGOS.has(clubId) ? `/club-logos/${clubId}.png` : null;
 }
