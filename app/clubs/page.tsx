@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { clubs } from "@/data/clubs";
-import { getClubLogo, logoBackdropClass } from "@/data/clubLogos";
+import { getClubLogo } from "@/data/clubLogos";
 
 export default function ClubsPage() {
   const [search, setSearch] = useState("");
@@ -43,7 +43,7 @@ export default function ClubsPage() {
                 <div className="mb-3 flex items-center justify-between gap-4">
                   <h2 className="text-xl font-bold mb-1">{club.name}</h2>
                   {logo && (
-                    <div className={`relative h-16 w-16 shrink-0 ${logoBackdropClass(club.id)}`}>
+                    <div className="relative h-16 w-16 shrink-0">
                       <Image src={logo} alt={`${club.name} logo`} fill unoptimized className="object-contain" />
                     </div>
                   )}
