@@ -42,6 +42,14 @@ const CLUBS_WITH_LOGOS = new Set([
   "reading",
   "stoke",
   "wigan",
+  "wimbledon",
+  "barnsley",
+  "swindon",
+  "bradford",
+  "oldham",
+  "sheffield-wednesday",
+  "derby",
+  "charlton",
 ]);
 
 export function getClubLogo(clubId: string): string | null {
