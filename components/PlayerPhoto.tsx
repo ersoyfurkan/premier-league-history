@@ -8,15 +8,17 @@ const sizes = {
   lg: "h-36 w-28 md:h-44 md:w-36",
 };
 
+// Cut-out photos (transparent background) are bundled in /public/players; players without one
+// fall back to the Premier League photo, then to initials.
 export default function PlayerPhoto({ id, name, size = "sm" }: { id?: string; name: string; size?: keyof typeof sizes }) {
-  const [failed, setFailed] = useState(false);
+  const [stage, setStage] = useState<"local" | "remote" | "none">("local");
   const initials = name
     .split(" ")
     .map((part) => part[0])
     .slice(0, 2)
     .join("");
 
-  if (!id || failed) {
+  if (!id || stage === "none") {
     return (
       <span
         className={`${sizes[size]} inline-flex shrink-0 items-center justify-center rounded-md bg-surface2 font-mono text-xs text-fore-muted`}
@@ -30,11 +32,12 @@ export default function PlayerPhoto({ id, name, size = "sm" }: { id?: string; na
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
-      src={playerPhotoUrl(id)}
+      key={stage}
+      src={stage === "local" ? `/players/${id}.webp` : playerPhotoUrl(id)}
       alt={name}
       loading="lazy"
-      onError={() => setFailed(true)}
-      className={`${sizes[size]} shrink-0 rounded-md bg-white/90 object-cover object-top`}
+      onError={() => setStage(stage === "local" ? "remote" : "none")}
+      className={`${sizes[size]} shrink-0 object-contain object-bottom`}
     />
   );
 }
