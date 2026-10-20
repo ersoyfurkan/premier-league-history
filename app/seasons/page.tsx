@@ -2,13 +2,14 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import LiveSeasonBoard from "@/components/LiveSeasonBoard";
+import CurrentSeason from "@/components/CurrentSeason";
 import { seasons } from "@/data/seasons";
 
 type Decade = "all" | "1990s" | "2000s" | "2010s" | "2020s";
 
 export default function SeasonsPage() {
   const [decade, setDecade] = useState<Decade>("all");
+  const [tab, setTab] = useState<"history" | "current">("history");
 
   const filteredSeasons = seasons.filter((season) => {
     const year = parseInt(season.year.split("-")[0]);
@@ -40,6 +41,26 @@ export default function SeasonsPage() {
           </h1>
         </div>
 
+        <div className="flex justify-center gap-3 mb-8">
+          {([["history", "Past Seasons"], ["current", "Current Season 26/27"]] as const).map(([id, label]) => (
+            <button
+              key={id}
+              onClick={() => setTab(id)}
+              className={`font-mono text-[12px] uppercase tracking-[0.1em] px-6 py-2 rounded-lg border transition ${
+                tab === id
+                  ? "bg-primary-dim text-primary border-primary/40 shadow-glow-cyan"
+                  : "bg-surface text-fore-muted border-border-dim hover:border-accent/40 hover:text-accent"
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+
+        {tab === "current" ? (
+          <CurrentSeason />
+        ) : (
+          <>
         {/* Decade Filter */}
         <div className="flex flex-wrap justify-center gap-3 mb-8">
           {(["all", "1990s", "2000s", "2010s", "2020s"] as const).map((d) => (
@@ -56,8 +77,6 @@ export default function SeasonsPage() {
             </button>
           ))}
         </div>
-
-        <LiveSeasonBoard />
 
         {/* Seasons Table */}
         <div className="overflow-x-auto data-card">
@@ -99,6 +118,8 @@ export default function SeasonsPage() {
           <div className="text-center text-fore-muted mt-12">
             <p className="text-lg">No seasons found</p>
           </div>
+        )}
+          </>
         )}
       </div>
     </main>
