@@ -1,13 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useMemo, useState } from "react";
 import { PLAYERS, type PlayerCard } from "@/data/players";
 
 type StatKey = "appearances" | "goals" | "assists";
 type Side = "p1" | "p2";
-type Mode = "pvp" | "ai";
 
 const STAT_KEYS: StatKey[] = ["goals", "assists", "appearances"];
 
@@ -51,10 +49,6 @@ function pickAiStat(card: PlayerCard) {
 }
 
 function GamePlayClient() {
-  const searchParams = useSearchParams();
-  const modeParam = searchParams.get("mode");
-  const mode: Mode = modeParam === "ai" ? "ai" : "pvp";
-
   const [p1Card, setP1Card] = useState<PlayerCard | null>(null);
   const [p2Card, setP2Card] = useState<PlayerCard | null>(null);
   const [currentPicker, setCurrentPicker] = useState<Side>("p1");
@@ -64,8 +58,6 @@ function GamePlayClient() {
   const [selectedStat, setSelectedStat] = useState<StatKey | null>(null);
   const [message, setMessage] = useState("Preparing match...");
   const [winner, setWinner] = useState<Side | null>(null);
-  const [showP1Card, setShowP1Card] = useState(false);
-  const [showP2Card, setShowP2Card] = useState(false);
 
   const roundReady = useMemo(() => Boolean(p1Card && p2Card), [p1Card, p2Card]);
 
@@ -76,15 +68,13 @@ function GamePlayClient() {
     setCurrentPicker(picker);
     setRoundResolved(false);
     setSelectedStat(null);
-    setShowP1Card(false);
-    setShowP2Card(false);
   };
 
   const startNewGame = () => {
     setScores({ p1: 0, p2: 0 });
     setRound(1);
     setWinner(null);
-    setMessage(mode === "ai" ? "You are Player 1. The AI is Player 2." : "Local 1v1 mode. Keep cards hidden from each other.");
+    setMessage("You are Player 1. The AI is Player 2.");
     setupRound(randomFrom<Side>(["p1", "p2"]));
   };
 
@@ -113,8 +103,6 @@ function GamePlayClient() {
 
     setSelectedStat(stat);
     setRoundResolved(true);
-    setShowP1Card(true);
-    setShowP2Card(true);
 
     if (!pointSide) {
       setMessage(
@@ -130,7 +118,7 @@ function GamePlayClient() {
     setScores(nextScores);
 
     const pointWinnerLabel =
-      pointSide === "p1" ? "Player 1" : mode === "ai" ? "AI" : "Player 2";
+      pointSide === "p1" ? "Player 1" : "AI";
     setMessage(
       `Round ${round}: ${stat.toUpperCase()} -> P1 ${p1Value} vs P2 ${p2Value}. ${pointWinnerLabel} gets the point.`
     );
@@ -142,10 +130,10 @@ function GamePlayClient() {
 
   useEffect(() => {
     startNewGame();
-  }, [mode]);
+  }, []);
 
   useEffect(() => {
-    if (!roundReady || roundResolved || winner || mode !== "ai" || currentPicker !== "p2") {
+    if (!roundReady || roundResolved || winner || currentPicker !== "p2") {
       return;
     }
 
@@ -158,12 +146,12 @@ function GamePlayClient() {
     }, 1000);
 
     return () => clearTimeout(timer);
-  }, [roundReady, roundResolved, winner, mode, currentPicker, p2Card]);
+  }, [roundReady, roundResolved, winner, currentPicker, p2Card]);
 
   const turnLabel =
-    currentPicker === "p1" ? "Player 1" : mode === "ai" ? "AI" : "Player 2";
+    currentPicker === "p1" ? "Player 1" : "AI";
   const winnerLabel =
-    winner === "p1" ? "Player 1" : winner === "p2" ? (mode === "ai" ? "AI" : "Player 2") : null;
+    winner === "p1" ? "Player 1" : winner === "p2" ? "AI" : null;
 
   return (
     <main className="min-h-screen bg-background text-foreground grid-bg px-4 md:px-8 py-8 md:py-12">
@@ -182,7 +170,7 @@ function GamePlayClient() {
               {scores.p1} - {scores.p2}
             </p>
             <p className="mt-3 text-base md:text-lg text-fore-muted">
-              Player 1 vs {mode === "ai" ? "AI" : "Player 2"}
+              Player 1 vs AI
             </p>
           </div>
 
@@ -215,13 +203,8 @@ function GamePlayClient() {
             <div className="cyber-card p-6 md:p-8">
               <div className="flex items-center justify-between gap-3">
                 <h2 className="text-3xl md:text-5xl">Player 1 Card</h2>
-                {mode === "pvp" && (
-                  <button className="btn-ghost" onClick={() => setShowP1Card((prev) => !prev)}>
-                    {showP1Card ? "Hide" : "Show"}
-                  </button>
-                )}
               </div>
-              {(showP1Card || mode === "ai" || roundResolved) && p1Card ? (
+              {p1Card ? (
                 <div className="mt-6 space-y-4 font-mono text-lg md:text-2xl">
                   <p className="text-primary uppercase tracking-[0.08em]">{p1Card.name}</p>
                   <p>Appearances: {p1Card.appearances}</p>
@@ -235,14 +218,9 @@ function GamePlayClient() {
 
             <div className="cyber-card p-6 md:p-8">
               <div className="flex items-center justify-between gap-3">
-                <h2 className="text-3xl md:text-5xl">{mode === "ai" ? "AI Card" : "Player 2 Card"}</h2>
-                {mode === "pvp" && (
-                  <button className="btn-ghost" onClick={() => setShowP2Card((prev) => !prev)}>
-                    {showP2Card ? "Hide" : "Show"}
-                  </button>
-                )}
+                <h2 className="text-3xl md:text-5xl">AI Card</h2>
               </div>
-              {(showP2Card || roundResolved) && p2Card ? (
+              {roundResolved && p2Card ? (
                 <div className="mt-6 space-y-4 font-mono text-lg md:text-2xl">
                   <p className="text-primary uppercase tracking-[0.08em]">{p2Card.name}</p>
                   <p>Appearances: {p2Card.appearances}</p>
@@ -267,7 +245,7 @@ function GamePlayClient() {
                   !roundReady ||
                   roundResolved ||
                   Boolean(winner) ||
-                  (mode === "ai" && currentPicker === "p2")
+                  currentPicker === "p2"
                 }
                 onClick={() => resolvePick(stat)}
               >

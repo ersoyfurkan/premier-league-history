@@ -1,6 +1,33 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function GameModePage() {
+  const router = useRouter();
+  const [creating, setCreating] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const createRoom = async () => {
+    setCreating(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/game/room", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "create" }),
+      });
+      const data = (await res.json()) as { error?: string; code?: string; token?: string };
+      if (!res.ok) throw new Error(data.error ?? "Could not create room");
+      localStorage.setItem(`plroom:${data.code}`, data.token ?? "");
+      router.push(`/game/room?code=${data.code}`);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Could not create room");
+      setCreating(false);
+    }
+  };
+
   return (
     <main className="min-h-screen bg-background text-foreground grid-bg px-6 py-10">
       <section className="mx-auto w-full max-w-5xl">
@@ -16,16 +43,19 @@ export default function GameModePage() {
             </p>
 
             <div className="mt-10 grid gap-4 md:grid-cols-2">
-              <Link
-                href="/game/play?mode=pvp"
-                className="rounded-2xl border border-primary/30 bg-primary-dim px-6 py-8 text-left transition hover:shadow-glow-card"
+              <button
+                type="button"
+                onClick={createRoom}
+                disabled={creating}
+                className="rounded-2xl border border-primary/30 bg-primary-dim px-6 py-8 text-left transition hover:shadow-glow-card disabled:opacity-60"
               >
-                <p className="section-eyebrow text-primary">Local</p>
-                <h2 className="mt-2 text-3xl md:text-4xl">1v1</h2>
+                <p className="section-eyebrow text-primary">Online</p>
+                <h2 className="mt-2 text-3xl md:text-4xl">{creating ? "Creating…" : "1v1 with a Friend"}</h2>
                 <p className="mt-3 text-sm md:text-base text-fore-muted">
-                  Two players on one device. Cards stay hidden until the round resolves.
+                  Get an invite link to send to a friend. Each of you plays on your own device and cards stay hidden until the round resolves.
                 </p>
-              </Link>
+                {error && <p className="mt-3 text-sm text-warning">{error}</p>}
+              </button>
 
               <Link
                 href="/game/play?mode=ai"
