@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 
 export default function Home() {
   return (
@@ -26,15 +25,6 @@ export default function Home() {
             </Link>
             <Link href="/game" className="btn-ghost">
               Play Stat Duel
-            </Link>
-          </div>
-
-          <div className="mt-10 inline-flex items-center gap-3 rounded-full border border-border bg-surface/80 px-4 py-2 shadow-glow-card">
-            <div className="relative h-9 w-9 overflow-hidden rounded-full bg-white/90">
-              <Image src="/club-logos/liverpool.webp" alt="Liverpool logo" fill className="object-contain p-1" />
-            </div>
-            <Link href="/clubs/liverpool" className="font-mono text-[11px] uppercase tracking-[0.14em] text-accent hover:text-primary">
-              Featured Crest: Liverpool
             </Link>
           </div>
 
