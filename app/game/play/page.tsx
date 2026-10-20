@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import PlayerPhoto from "@/components/PlayerPhoto";
 import { Suspense, useEffect, useMemo, useState } from "react";
 import { PLAYERS, type PlayerCard } from "@/data/players";
 
@@ -206,6 +207,7 @@ function GamePlayClient() {
               </div>
               {p1Card ? (
                 <div className="mt-6 space-y-4 font-mono text-lg md:text-2xl">
+                  <PlayerPhoto id={p1Card.id} name={p1Card.name} size="lg" />
                   <p className="text-primary uppercase tracking-[0.08em]">{p1Card.name}</p>
                   <p>Appearances: {p1Card.appearances}</p>
                   <p>Goals: {p1Card.goals}</p>
@@ -222,6 +224,7 @@ function GamePlayClient() {
               </div>
               {roundResolved && p2Card ? (
                 <div className="mt-6 space-y-4 font-mono text-lg md:text-2xl">
+                  <PlayerPhoto id={p2Card.id} name={p2Card.name} size="lg" />
                   <p className="text-primary uppercase tracking-[0.08em]">{p2Card.name}</p>
                   <p>Appearances: {p2Card.appearances}</p>
                   <p>Goals: {p2Card.goals}</p>

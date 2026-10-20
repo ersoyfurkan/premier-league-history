@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import PlayerPhoto from "@/components/PlayerPhoto";
 
 type View = "table" | "stats";
 type StatKind = "goals" | "assists";
@@ -30,7 +31,7 @@ type Match = {
 };
 
 type PlayerRow = {
-  playerMetadata: { name: string; position?: string; currentTeam?: { shortName: string } };
+  playerMetadata: { id: string; name: string; position?: string; currentTeam?: { shortName: string } };
   stats: Record<string, number>;
 };
 
@@ -145,7 +146,12 @@ function PlayerStats() {
               {list.map((p, i) => (
                 <tr key={p.playerMetadata.name + i} className="border-b border-border-dim text-sm">
                   <td className="px-3 py-3 font-mono text-primary">{i + 1}</td>
-                  <td className="px-3 py-3 font-semibold">{p.playerMetadata.name}</td>
+                  <td className="px-3 py-2">
+                    <div className="flex items-center gap-3 font-semibold">
+                      <PlayerPhoto id={p.playerMetadata.id} name={p.playerMetadata.name} />
+                      {p.playerMetadata.name}
+                    </div>
+                  </td>
                   <td className="px-3 py-3 text-fore-muted">{p.playerMetadata.currentTeam?.shortName ?? "-"}</td>
                   <td className="px-3 py-3 font-semibold text-primary">{p.stats[key] ?? 0}</td>
                 </tr>

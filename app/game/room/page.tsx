@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useCallback, useEffect, useRef, useState } from "react";
+import PlayerPhoto from "@/components/PlayerPhoto";
 import type { RoomView, StatKey } from "@/lib/gameRoom";
 
 const STATS: StatKey[] = ["goals", "assists", "appearances"];
@@ -10,7 +11,7 @@ const POLL_MS = 1500;
 
 type Api = { error?: string; token?: string; view?: RoomView };
 
-type Card = { name: string; appearances: number; goals: number; assists: number };
+type Card = { id?: string; name: string; appearances: number; goals: number; assists: number };
 
 function CardPanel({ title, card, hiddenText }: { title: string; card: Card | null; hiddenText: string }) {
   return (
@@ -18,6 +19,7 @@ function CardPanel({ title, card, hiddenText }: { title: string; card: Card | nu
       <h2 className="text-3xl md:text-5xl">{title}</h2>
       {card ? (
         <div className="mt-6 space-y-4 font-mono text-lg md:text-2xl">
+          <PlayerPhoto id={card.id} name={card.name} size="lg" />
           <p className="text-primary uppercase tracking-[0.08em]">{card.name}</p>
           <p>Appearances: {card.appearances}</p>
           <p>Goals: {card.goals}</p>
