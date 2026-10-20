@@ -4,7 +4,7 @@ import { clubs } from "@/data/clubs";
 import { managers } from "@/data/managers";
 import { notFound } from "next/navigation";
 import FavouriteButton from "@/components/FavouriteButton";
-import { getClubLogo } from "@/data/clubLogos";
+import { getClubLogo, logoBackdropClass } from "@/data/clubLogos";
 
 function ordinal(n: number) {
   if ([11, 12, 13].includes(n % 100)) return "th";
@@ -40,7 +40,7 @@ export default async function ClubPage({ params }: { params: Promise<{ id: strin
           <p className="section-eyebrow text-primary mb-2">Club Signal</p>
           <div className="flex items-start gap-8">
           {clubLogo ? (
-            <div className="relative w-44 h-44 flex-shrink-0">
+            <div className={`relative w-44 h-44 flex-shrink-0 ${logoBackdropClass(club.id)}`}>
               <Image src={clubLogo} alt={`${club.name} logo`} fill unoptimized className="object-contain" />
             </div>
           ) : (

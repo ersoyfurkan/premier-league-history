@@ -55,3 +55,30 @@ const CLUBS_WITH_LOGOS = new Set([
 export function getClubLogo(clubId: string): string | null {
   return CLUBS_WITH_LOGOS.has(clubId) ? `/club-logos/${clubId}.svg` : null;
 }
+
+const LOGOS_NEEDING_WHITE_BACKDROP = new Set([
+  "sheffield-wednesday",
+  "sheffield-united",
+  "southampton",
+  "ipswich-town",
+  "swindon",
+  "barnsley",
+  "newcastle",
+  "leicester",
+  "middlesbrough",
+  "leeds",
+  "aston-villa",
+  "birmingham",
+  "huddersfield",
+  "charlton",
+  "luton",
+  "bradford",
+  "wolverhampton",
+  "derby",
+  "wimbledon",
+  "oldham",
+]);
+
+export function logoBackdropClass(clubId: string): string {
+  return LOGOS_NEEDING_WHITE_BACKDROP.has(clubId) ? "rounded-full bg-white p-1.5" : "";
+}
