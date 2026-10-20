@@ -1153,7 +1153,7 @@ export const clubs = [
     topScorer: "—",
     legendPlayer: "—",
     rivals: [
-      "wolves",
+      "wolverhampton",
       "aston-villa",
       "birmingham"
     ],
