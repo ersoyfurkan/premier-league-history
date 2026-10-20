@@ -42,7 +42,7 @@ async function saveRoom(db: D1Database, code: string, state: RoomState, version:
 const normalizeCode = (value: unknown) =>
   typeof value === "string" ? value.trim().toUpperCase().slice(0, 12) : "";
 
-export async function GET(request: NextRequest) {
+async function handleGet(request: NextRequest) {
   const { env } = getCloudflareContext();
   const code = normalizeCode(request.nextUrl.searchParams.get("code"));
   const token = request.nextUrl.searchParams.get("token") ?? "";
@@ -56,7 +56,7 @@ export async function GET(request: NextRequest) {
   return json({ view: viewFor(room.state, side) });
 }
 
-export async function POST(request: NextRequest) {
+async function handlePost(request: NextRequest) {
   const { env } = getCloudflareContext();
   const db = env.DB;
 
@@ -122,3 +122,17 @@ export async function POST(request: NextRequest) {
   if (!(await saveRoom(db, code, state, version))) return json({ error: "Room is busy, try again" }, 409);
   return json({ view: viewFor(state, side) });
 }
+
+async function safely(handler: () => Promise<NextResponse>) {
+  try {
+    return await handler();
+  } catch (e) {
+    const message = e instanceof Error ? e.message : "";
+    console.error("game room error", message);
+    const hint = message.includes("no such table") ? "Game database is not set up yet (run the D1 migration)." : "Server error, please try again.";
+    return json({ error: hint }, 500);
+  }
+}
+
+export const GET = (request: NextRequest) => safely(() => handleGet(request));
+export const POST = (request: NextRequest) => safely(() => handlePost(request));
