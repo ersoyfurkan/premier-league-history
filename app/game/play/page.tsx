@@ -3,25 +3,13 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useMemo, useState } from "react";
+import { PLAYERS, type PlayerCard } from "@/data/players";
 
 type StatKey = "appearances" | "goals" | "assists";
 type Side = "p1" | "p2";
 type Mode = "pvp" | "ai";
 
-type PlayerCard = {
-  name: string;
-  appearances: number;
-  goals: number;
-  assists: number;
-};
-
 const STAT_KEYS: StatKey[] = ["goals", "assists", "appearances"];
-
-const TEST_PLAYERS: PlayerCard[] = [
-  { name: "Haaland", appearances: 132, goals: 112, assists: 24 },
-  { name: "Aguero", appearances: 275, goals: 184, assists: 47 },
-  { name: "Salah", appearances: 328, goals: 193, assists: 94 },
-];
 
 function randomFrom<T>(items: T[]): T {
   return items[Math.floor(Math.random() * items.length)];
@@ -48,9 +36,9 @@ function otherSide(side: Side): Side {
 
 function pickAiStat(card: PlayerCard) {
   const maxValues = {
-    appearances: Math.max(...TEST_PLAYERS.map((p) => p.appearances)),
-    goals: Math.max(...TEST_PLAYERS.map((p) => p.goals)),
-    assists: Math.max(...TEST_PLAYERS.map((p) => p.assists)),
+    appearances: Math.max(...PLAYERS.map((p) => p.appearances)),
+    goals: Math.max(...PLAYERS.map((p) => p.goals)),
+    assists: Math.max(...PLAYERS.map((p) => p.assists)),
   };
 
   const scored = STAT_KEYS.map((key) => ({
@@ -81,11 +69,11 @@ function GamePlayClient() {
 
   const roundReady = useMemo(() => Boolean(p1Card && p2Card), [p1Card, p2Card]);
 
-  const setupRound = () => {
-    const [nextP1Card, nextP2Card] = drawDistinctPlayers(TEST_PLAYERS);
+  const setupRound = (picker: Side) => {
+    const [nextP1Card, nextP2Card] = drawDistinctPlayers(PLAYERS);
     setP1Card(nextP1Card);
     setP2Card(nextP2Card);
-    setCurrentPicker(randomFrom<Side>(["p1", "p2"]));
+    setCurrentPicker(picker);
     setRoundResolved(false);
     setSelectedStat(null);
     setShowP1Card(false);
@@ -97,7 +85,14 @@ function GamePlayClient() {
     setRound(1);
     setWinner(null);
     setMessage(mode === "ai" ? "You are Player 1. The AI is Player 2." : "Local 1v1 mode. Keep cards hidden from each other.");
-    setupRound();
+    setupRound(randomFrom<Side>(["p1", "p2"]));
+  };
+
+  // Pickers alternate every round
+  const nextRound = () => {
+    setRound((prev) => prev + 1);
+    setMessage("");
+    setupRound(otherSide(currentPicker));
   };
 
   const resolvePick = (stat: StatKey) => {
@@ -165,19 +160,6 @@ function GamePlayClient() {
     return () => clearTimeout(timer);
   }, [roundReady, roundResolved, winner, mode, currentPicker, p2Card]);
 
-  useEffect(() => {
-    if (!roundResolved || winner) {
-      return;
-    }
-
-    const timer = setTimeout(() => {
-      setRound((prev) => prev + 1);
-      setupRound();
-    }, 3000);
-
-    return () => clearTimeout(timer);
-  }, [roundResolved, winner]);
-
   const turnLabel =
     currentPicker === "p1" ? "Player 1" : mode === "ai" ? "AI" : "Player 2";
   const winnerLabel =
@@ -222,7 +204,9 @@ function GamePlayClient() {
         <div className="mt-6 rounded-2xl border border-border bg-surface/70 p-6 md:p-7">
           <p className="text-base md:text-xl text-foreground">{message}</p>
           {roundResolved && !winner && (
-            <p className="mt-2 text-sm md:text-base text-accent">Next round starts in 3 seconds...</p>
+            <button className="btn-primary mt-4" onClick={nextRound}>
+              Next Round
+            </button>
           )}
         </div>
 
