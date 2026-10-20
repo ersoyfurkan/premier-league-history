@@ -6,6 +6,11 @@ import { notFound } from "next/navigation";
 import FavouriteButton from "@/components/FavouriteButton";
 import { getClubLogo } from "@/data/clubLogos";
 
+function ordinal(n: number) {
+  if ([11, 12, 13].includes(n % 100)) return "th";
+  return ["th", "st", "nd", "rd"][n % 10 > 3 ? 0 : n % 10];
+}
+
 export async function generateStaticParams() {
   return clubs.map((club) => ({
     id: club.id,
@@ -69,34 +74,62 @@ export default async function ClubPage({ params }: { params: Promise<{ id: strin
             <p className="text-fore-muted">Capacity: <span className="font-mono text-foreground">{club.capacity.toLocaleString()}</span></p>
           </div>
 
-          {/* Current Manager */}
-          <div className="cyber-card">
-            <h2 className="text-lg font-bold mb-3 text-accent">Manager</h2>
-            <p className="text-2xl font-semibold">{club.manager}</p>
-          </div>
+          {club.manager !== "—" && (
+            <div className="cyber-card">
+              <h2 className="text-lg font-bold mb-3 text-accent">Manager</h2>
+              <p className="text-2xl font-semibold">{club.manager}</p>
+            </div>
+          )}
 
-          {/* Best Season */}
           <div className="cyber-card">
             <h2 className="text-lg font-bold mb-3 text-success">Best Season</h2>
             <p className="text-2xl font-semibold text-success">{club.bestSeason}</p>
+            <p className="text-fore-muted">Finished {club.bestPos}{ordinal(club.bestPos)}</p>
           </div>
 
-          {/* Worst Season */}
           <div className="cyber-card">
             <h2 className="text-lg font-bold mb-3 text-danger">Worst Season</h2>
             <p className="text-2xl font-semibold text-danger">{club.worstSeason}</p>
+            <p className="text-fore-muted">Finished {club.worstPos}{ordinal(club.worstPos)}</p>
           </div>
 
-          {/* Top Scorer */}
-          <div className="cyber-card">
-            <h2 className="text-lg font-bold mb-3 text-primary">All-Time Top Scorer</h2>
-            <p className="text-2xl font-semibold">{club.topScorer}</p>
-          </div>
+          {club.topScorer !== "—" && (
+            <div className="cyber-card">
+              <h2 className="text-lg font-bold mb-3 text-primary">All-Time Top Scorer</h2>
+              <p className="text-2xl font-semibold">{club.topScorer}</p>
+            </div>
+          )}
 
-          {/* Legend Player */}
-          <div className="cyber-card">
-            <h2 className="text-lg font-bold mb-3 text-accent">Club Legend</h2>
-            <p className="text-2xl font-semibold">{club.legendPlayer}</p>
+          {club.legendPlayer !== "—" && (
+            <div className="cyber-card">
+              <h2 className="text-lg font-bold mb-3 text-accent">Club Legend</h2>
+              <p className="text-2xl font-semibold">{club.legendPlayer}</p>
+            </div>
+          )}
+        </div>
+
+        {/* Premier League record */}
+        <div className="data-card p-6 mb-8">
+          <h2 className="text-xl font-bold mb-4 text-primary">Premier League Record</h2>
+          <p className="text-fore-muted text-sm mb-4">
+            {club.plSeasons} seasons ({club.firstSeason} – {club.lastSeason}), up to 2025-26
+          </p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              ["Played", club.played],
+              ["Won", club.wins],
+              ["Drawn", club.draws],
+              ["Lost", club.losses],
+              ["Goals For", club.goalsFor],
+              ["Goals Against", club.goalsAgainst],
+              ["Goal Diff", club.goalsFor - club.goalsAgainst],
+              ["Points", club.points],
+            ].map(([label, value]) => (
+              <div key={label as string}>
+                <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-fore-muted">{label}</p>
+                <p className="font-display text-2xl stat-number">{value}</p>
+              </div>
+            ))}
           </div>
         </div>
 
