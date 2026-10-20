@@ -3,6 +3,8 @@ import { NextRequest, NextResponse } from "next/server";
 const BASE = "https://sdp-prem-prod.premier-league-prod.pulselive.com/api";
 const SEASON_ID = 2026; // 2026/27
 
+type PlayerRow = { playerMetadata: { id: string }; stats: Record<string, number> };
+
 async function upstream(path: string) {
   const res = await fetch(`${BASE}${path}`, {
     headers: { Origin: "https://www.premierleague.com", Accept: "application/json" },
@@ -26,11 +28,40 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ error: "Invalid matchweek" }, { status: 400 });
       }
       data = await upstream(`/v1/competitions/8/seasons/${SEASON_ID}/matchweeks/${mw}/matches`);
-    } else if (type === "goals" || type === "assists") {
-      const stat = type === "goals" ? "goals" : "goalAssists";
+    } else if (type === "goals") {
       data = await upstream(
-        `/v2/competitions/8/seasons/${SEASON_ID}/players/stats/leaderboard?_sort=${stat}:desc&_limit=20`
+        `/v2/competitions/8/seasons/${SEASON_ID}/players/stats/leaderboard?_sort=goals:desc&_limit=20`
       );
+    } else if (type === "assists") {
+      // The API ignores sorting by assists, so page through every player and rank here
+      const base = `/v2/competitions/8/seasons/${SEASON_ID}/players/stats/leaderboard?_limit=100`;
+      const players = new Map<string, PlayerRow>();
+      let next: string | null = null;
+      for (let page = 0; page < 15; page++) {
+        const res = (await upstream(
+          next ? `${base}&_next=${encodeURIComponent(next)}` : base
+        )) as { data: PlayerRow[]; pagination?: { _next?: string | null } };
+        for (const row of res.data) {
+          const existing = players.get(row.playerMetadata.id);
+          if (existing) {
+            // Player moved clubs: combine stints
+            existing.stats.goalAssists = (existing.stats.goalAssists ?? 0) + (row.stats.goalAssists ?? 0);
+            existing.stats.goals = (existing.stats.goals ?? 0) + (row.stats.goals ?? 0);
+          } else {
+            players.set(row.playerMetadata.id, row);
+          }
+        }
+        next = res.pagination?._next ?? null;
+        if (!next) break;
+      }
+      const ranked = [...players.values()]
+        .filter((p) => (p.stats.goalAssists ?? 0) > 0)
+        .sort(
+          (a, b) =>
+            (b.stats.goalAssists ?? 0) - (a.stats.goalAssists ?? 0) || (b.stats.goals ?? 0) - (a.stats.goals ?? 0)
+        )
+        .slice(0, 20);
+      data = { data: ranked };
     } else {
       return NextResponse.json({ error: "Invalid type" }, { status: 400 });
     }
