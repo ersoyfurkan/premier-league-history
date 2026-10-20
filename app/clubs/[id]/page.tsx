@@ -35,8 +35,8 @@ export default async function ClubPage({ params }: { params: Promise<{ id: strin
           <p className="section-eyebrow text-primary mb-2">Club Signal</p>
           <div className="flex items-start gap-8">
           {clubLogo ? (
-            <div className="relative w-32 h-32 rounded-xl flex-shrink-0 border-4 border-white/60 bg-white/95 shadow-lg overflow-hidden">
-              <Image src={clubLogo} alt={`${club.name} logo`} fill className="object-contain p-3" />
+            <div className="relative w-44 h-44 flex-shrink-0">
+              <Image src={clubLogo} alt={`${club.name} logo`} fill unoptimized className="object-contain" />
             </div>
           ) : (
             <div

@@ -22,5 +22,5 @@ const CLUBS_WITH_LOGOS = new Set([
 ]);
 
 export function getClubLogo(clubId: string): string | null {
-  return CLUBS_WITH_LOGOS.has(clubId) ? `/club-logos/${clubId}.png` : null;
+  return CLUBS_WITH_LOGOS.has(clubId) ? `/club-logos/${clubId}.svg` : null;
 }

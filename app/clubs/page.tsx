@@ -43,8 +43,8 @@ export default function ClubsPage() {
                 <div className="mb-3 flex items-center justify-between gap-4">
                   <h2 className="text-xl font-bold mb-1">{club.name}</h2>
                   {logo && (
-                    <div className="relative h-10 w-10 overflow-hidden rounded-lg bg-white/90 shadow-glow-cyan">
-                      <Image src={logo} alt={`${club.name} logo`} fill className="object-contain p-1" />
+                    <div className="relative h-16 w-16 shrink-0">
+                      <Image src={logo} alt={`${club.name} logo`} fill unoptimized className="object-contain" />
                     </div>
                   )}
                 </div>
