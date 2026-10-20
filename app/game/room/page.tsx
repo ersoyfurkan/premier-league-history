@@ -34,12 +34,25 @@ function RoomClient() {
   const code = (useSearchParams().get("code") ?? "").toUpperCase();
   const storageKey = `plroom:${code}`;
 
-  const [view, setView] = useState<RoomView | null>(null);
+  const [view, setViewState] = useState<RoomView | null>(null);
+  const [receivedAt, setReceivedAt] = useState(0);
+  const [clock, setClock] = useState(0);
   const [token, setToken] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [fatal, setFatal] = useState<string | null>(code ? null : "No room code in this link.");
   const [copied, setCopied] = useState(false);
   const joining = useRef(false);
+
+  const setView = useCallback((next: RoomView | null) => {
+    setViewState(next);
+    setReceivedAt(Date.now());
+  }, []);
+
+  // Drives the on-screen countdown
+  useEffect(() => {
+    const timer = setInterval(() => setClock(Date.now()), 250);
+    return () => clearInterval(timer);
+  }, []);
 
   // Use the saved token if this browser is already in the room, otherwise join as the second player
   useEffect(() => {
@@ -80,7 +93,7 @@ function RoomClient() {
     } catch {
       // transient network error, next poll will retry
     }
-  }, [code, token]);
+  }, [code, token, setView]);
 
   useEffect(() => {
     if (!token) return;
@@ -141,12 +154,16 @@ function RoomClient() {
   const opp = you === "p1" ? "p2" : "p1";
   const myTurn = view.picker === you;
   const r = view.result;
+  const secondsLeft =
+    view.msLeft === null ? null : Math.max(0, Math.ceil((view.msLeft - Math.max(0, clock - receivedAt)) / 1000));
 
   let message = "";
   if (view.phase === "waiting") {
     message = "Waiting for your friend to open the link…";
   } else if (view.phase === "picking") {
-    message = myTurn ? "Your turn: choose a stat." : "Your opponent is choosing a stat…";
+    message = myTurn
+      ? `Your turn: choose a stat. A random one is picked in ${secondsLeft ?? 0}s.`
+      : `Your opponent is choosing a stat… (auto-pick in ${secondsLeft ?? 0}s)`;
   } else if (r) {
     const mine = you === "p1" ? r.p1Value : r.p2Value;
     const theirs = you === "p1" ? r.p2Value : r.p1Value;
@@ -192,9 +209,21 @@ function RoomClient() {
         <p className="text-base md:text-xl">{message}</p>
         {error && <p className="mt-2 text-warning">{error}</p>}
         {view.phase === "resolved" && (
-          <button className="btn-primary mt-4" onClick={() => act({ action: "next", round: view.round })}>
-            Next Round
-          </button>
+          <div className="mt-4">
+            <button
+              className="btn-primary disabled:opacity-60"
+              disabled={view.youReady}
+              onClick={() => act({ action: "next", round: view.round })}
+            >
+              {view.youReady ? "Waiting for friend…" : "Next Round"}
+            </button>
+            {view.opponentReady && !view.youReady && (
+              <p className="mt-2 text-accent">Your friend is ready. Next round starts in {secondsLeft ?? 0}s.</p>
+            )}
+            {view.youReady && (
+              <p className="mt-2 text-fore-muted">Next round starts when your friend is ready, or in {secondsLeft ?? 0}s.</p>
+            )}
+          </div>
         )}
         {view.phase === "finished" && (
           <button className="btn-primary mt-4" onClick={() => act({ action: "restart" })}>

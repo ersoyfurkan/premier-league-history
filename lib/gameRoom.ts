@@ -4,6 +4,8 @@ export type Side = "p1" | "p2";
 export type StatKey = "appearances" | "goals" | "assists";
 export const STAT_KEYS: StatKey[] = ["goals", "assists", "appearances"];
 export const WIN_SCORE = 10;
+export const PICK_TIMEOUT_MS = 20_000;
+export const NEXT_TIMEOUT_MS = 15_000;
 
 export type RoomState = {
   p1Token: string;
@@ -15,6 +17,8 @@ export type RoomState = {
   scores: { p1: number; p2: number };
   result: { stat: StatKey; p1Value: number; p2Value: number; pointSide: Side | null } | null;
   winner: Side | null;
+  ready: { p1: boolean; p2: boolean };
+  deadline: number | null; // when the current phase auto-advances (ms since epoch)
 };
 
 export type RoomView = {
@@ -27,6 +31,9 @@ export type RoomView = {
   opponentCard: PlayerCard | null; // only revealed once the round is resolved
   result: RoomState["result"];
   winner: Side | null;
+  youReady: boolean;
+  opponentReady: boolean;
+  msLeft: number | null;
 };
 
 export const other = (side: Side): Side => (side === "p1" ? "p2" : "p1");
@@ -53,10 +60,12 @@ export function newRoom(p1Token: string): RoomState {
     scores: { p1: 0, p2: 0 },
     result: null,
     winner: null,
+    ready: { p1: false, p2: false },
+    deadline: null,
   };
 }
 
-export function startMatch(state: RoomState) {
+export function startMatch(state: RoomState, now: number) {
   state.phase = "picking";
   state.round = 1;
   state.scores = { p1: 0, p2: 0 };
@@ -64,6 +73,8 @@ export function startMatch(state: RoomState) {
   state.result = null;
   state.picker = randomSide();
   state.cards = drawCards();
+  state.ready = { p1: false, p2: false };
+  state.deadline = now + PICK_TIMEOUT_MS;
 }
 
 export function sideOf(state: RoomState, token: string): Side | null {
@@ -87,25 +98,50 @@ export function applyPick(state: RoomState, side: Side, stat: StatKey): string |
   if (state.scores.p1 >= WIN_SCORE || state.scores.p2 >= WIN_SCORE) {
     state.phase = "finished";
     state.winner = state.scores.p1 >= WIN_SCORE ? "p1" : "p2";
+    state.deadline = null;
   } else {
     state.phase = "resolved";
+    state.ready = { p1: false, p2: false };
+    state.deadline = null; // the next-round countdown starts once one player is ready
   }
   return null;
 }
 
-// Pickers alternate every round
-export function applyNext(state: RoomState, round: number): string | null {
-  if (round !== state.round) return null; // the other player already advanced
-  if (state.phase !== "resolved") return "Round is not finished";
+function advance(state: RoomState, now: number) {
   state.round += 1;
   state.phase = "picking";
-  state.picker = other(state.picker);
+  state.picker = other(state.picker); // pickers alternate every round
   state.cards = drawCards();
   state.result = null;
+  state.ready = { p1: false, p2: false };
+  state.deadline = now + PICK_TIMEOUT_MS;
+}
+
+// Moves on when both players are ready; the first ready player starts a countdown for the other
+export function applyNext(state: RoomState, side: Side, round: number, now: number): string | null {
+  if (round !== state.round) return null; // already advanced
+  if (state.phase !== "resolved") return "Round is not finished";
+  state.ready[side] = true;
+  if (state.ready.p1 && state.ready.p2) advance(state, now);
+  else if (state.deadline === null) state.deadline = now + NEXT_TIMEOUT_MS;
   return null;
 }
 
-export function viewFor(state: RoomState, side: Side): RoomView {
+// Applies timeouts; returns true if the state changed
+export function tick(state: RoomState, now: number): boolean {
+  if (state.deadline === null || now < state.deadline) return false;
+
+  if (state.phase === "picking") {
+    const stat = STAT_KEYS[Math.floor(Math.random() * STAT_KEYS.length)];
+    return applyPick(state, state.picker, stat) === null;
+  }
+  if (state.phase === "resolved") {
+    advance(state, now);
+    return true;
+  }
+  return false;
+}
+export function viewFor(state: RoomState, side: Side, now: number): RoomView {
   const revealed = state.phase === "resolved" || state.phase === "finished";
   return {
     you: side,
@@ -117,5 +153,8 @@ export function viewFor(state: RoomState, side: Side): RoomView {
     opponentCard: state.cards && revealed ? state.cards[other(side)] : null,
     result: state.result,
     winner: state.winner,
+    youReady: state.ready[side],
+    opponentReady: state.ready[other(side)],
+    msLeft: state.deadline === null ? null : Math.max(0, state.deadline - now),
   };
 }

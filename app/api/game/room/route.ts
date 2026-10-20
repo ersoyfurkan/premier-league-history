@@ -6,6 +6,7 @@ import {
   newRoom,
   sideOf,
   startMatch,
+  tick,
   viewFor,
   type RoomState,
   type StatKey,
@@ -53,7 +54,13 @@ async function handleGet(request: NextRequest) {
   const side = sideOf(room.state, token);
   if (!side) return json({ error: "You are not in this room" }, 403);
 
-  return json({ view: viewFor(room.state, side) });
+  const now = Date.now();
+  if (tick(room.state, now)) {
+    // If another request saved first, it has already applied the timeout
+    await saveRoom(env.DB, code, room.state, room.version);
+  }
+
+  return json({ view: viewFor(room.state, side, now) });
 }
 
 async function handlePost(request: NextRequest) {
@@ -97,7 +104,7 @@ async function handlePost(request: NextRequest) {
     if (state.p2Token) return json({ error: "This room is already full" }, 409);
     const token = crypto.randomUUID();
     state.p2Token = token;
-    startMatch(state);
+    startMatch(state, Date.now());
     if (!(await saveRoom(db, code, state, version))) return json({ error: "Room is busy, try again" }, 409);
     return json({ code, token });
   }
@@ -106,21 +113,24 @@ async function handlePost(request: NextRequest) {
   const side = sideOf(state, token);
   if (!side) return json({ error: "You are not in this room" }, 403);
 
+  const now = Date.now();
+  tick(state, now);
+
   let error: string | null = null;
   if (action === "pick") {
     error = applyPick(state, side, body.stat as StatKey);
   } else if (action === "next") {
-    error = applyNext(state, Number(body.round));
+    error = applyNext(state, side, Number(body.round), now);
   } else if (action === "restart") {
     if (state.phase !== "finished") error = "Match is not finished";
-    else startMatch(state);
+    else startMatch(state, now);
   } else {
     error = "Unknown action";
   }
 
   if (error) return json({ error }, 400);
   if (!(await saveRoom(db, code, state, version))) return json({ error: "Room is busy, try again" }, 409);
-  return json({ view: viewFor(state, side) });
+  return json({ view: viewFor(state, side, now) });
 }
 
 async function safely(handler: () => Promise<NextResponse>) {
