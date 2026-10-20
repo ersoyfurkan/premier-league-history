@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import LiveSeasonBoard from "@/components/LiveSeasonBoard";
 import { seasons } from "@/data/seasons";
 
 type Decade = "all" | "1990s" | "2000s" | "2010s" | "2020s";
@@ -55,6 +56,8 @@ export default function SeasonsPage() {
             </button>
           ))}
         </div>
+
+        <LiveSeasonBoard />
 
         {/* Seasons Table */}
         <div className="overflow-x-auto data-card">
