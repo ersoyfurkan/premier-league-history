@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { uclLeaderboards, uclWinners, type UclStat } from "@/data/championsLeague";
-import { uclClubLogos, uclPlayerPhotos } from "@/data/championsLeagueMedia";
+import { uclWinners } from "@/data/championsLeague";
+import { uclClubLogos } from "@/data/championsLeagueMedia";
 import UclImage from "@/components/UclImage";
+import UclRecords from "@/components/UclRecords";
 
 type View = "current" | "records" | "winners";
 type Team = {
@@ -33,87 +34,12 @@ type Match = {
   score?: { total?: { home?: number; away?: number } };
 };
 
-const statOptions: { key: UclStat; label: string }[] = [
-  { key: "goals", label: "Goals" },
-  { key: "appearances", label: "Appearances" },
-  { key: "assists", label: "Assists" },
-];
-
 const buttonClass = (active: boolean) =>
   `rounded-lg border px-4 py-2 font-mono text-[11px] uppercase tracking-[0.12em] transition ${
     active
       ? "border-primary/40 bg-primary-dim text-primary shadow-glow-cyan"
       : "border-border-dim bg-surface text-fore-muted hover:border-accent/40 hover:text-accent"
   }`;
-
-function Records() {
-  const [stat, setStat] = useState<UclStat>("goals");
-  const source = statOptions.find((option) => option.key === stat)!;
-  const rows = uclLeaderboards[stat];
-  const rankedRows = rows.map((row, index) => ({
-    ...row,
-    rank: index > 0 && row.value === rows[index - 1].value ? index : index + 1,
-  }));
-
-  return (
-    <section className="space-y-5">
-      <div className="text-center">
-        <p className="section-eyebrow text-accent">UEFA career records</p>
-        <h2 className="mt-2 text-4xl">All-Time Player Stats</h2>
-        <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-fore-muted">
-          Official UEFA top-20 rankings. The player duel uses the same published leaderboard set.
-        </p>
-      </div>
-
-      <div className="flex flex-wrap justify-center gap-3">
-        {statOptions.map((option) => (
-          <button
-            key={option.key}
-            type="button"
-            onClick={() => setStat(option.key)}
-            className={buttonClass(stat === option.key)}
-          >
-            {option.label}
-          </button>
-        ))}
-      </div>
-
-      <div className="data-card overflow-x-auto p-4 md:p-6">
-        <table className="w-full min-w-[480px] text-left">
-          <thead>
-            <tr className="border-b border-border bg-surface2">
-              {["Rank", "Player", "Club", source.label].map((heading) => (
-                <th key={heading} className="px-3 py-3 font-mono text-[11px] uppercase tracking-[0.12em] text-primary">
-                  {heading}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {rankedRows.map((row) => (
-              <tr key={`${row.name}-${row.value}`} className="border-b border-border-dim text-sm">
-                <td className="px-3 py-3 font-mono text-primary">{row.rank}</td>
-                <td className="px-3 py-3 font-semibold">
-                  <span className="flex items-center gap-3">
-                    <UclImage src={uclPlayerPhotos[row.name]} alt={row.name} shape="circle" className="h-10 w-10" />
-                    {row.name}
-                  </span>
-                </td>
-                <td className="px-3 py-3 text-fore-muted">
-                  <span className="flex items-center gap-2">
-                    <UclImage src={uclClubLogos[row.club]} alt={row.club} className="h-6 w-6" />
-                    {row.club}
-                  </span>
-                </td>
-                <td className="px-3 py-3 font-semibold text-primary">{row.value}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </section>
-  );
-}
 
 function Winners() {
   return (
@@ -387,7 +313,7 @@ export default function ChampionsLeagueDashboard() {
         </nav>
 
         {view === "current" && <CurrentSeason />}
-        {view === "records" && <Records />}
+        {view === "records" && <UclRecords />}
         {view === "winners" && <Winners />}
       </section>
     </main>
