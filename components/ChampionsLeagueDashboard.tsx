@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { uclLeaderboards, uclWinners, type UclStat } from "@/data/championsLeague";
+import { uclClubLogos, uclPlayerPhotos } from "@/data/championsLeagueMedia";
+import UclImage from "@/components/UclImage";
 
 type View = "current" | "records" | "winners";
 type Team = {
@@ -91,8 +93,18 @@ function Records() {
             {rankedRows.map((row) => (
               <tr key={`${row.name}-${row.value}`} className="border-b border-border-dim text-sm">
                 <td className="px-3 py-3 font-mono text-primary">{row.rank}</td>
-                <td className="px-3 py-3 font-semibold">{row.name}</td>
-                <td className="px-3 py-3 text-fore-muted">{row.club}</td>
+                <td className="px-3 py-3 font-semibold">
+                  <span className="flex items-center gap-3">
+                    <UclImage src={uclPlayerPhotos[row.name]} alt={row.name} shape="circle" className="h-10 w-10" />
+                    {row.name}
+                  </span>
+                </td>
+                <td className="px-3 py-3 text-fore-muted">
+                  <span className="flex items-center gap-2">
+                    <UclImage src={uclClubLogos[row.club]} alt={row.club} className="h-6 w-6" />
+                    {row.club}
+                  </span>
+                </td>
                 <td className="px-3 py-3 font-semibold text-primary">{row.value}</td>
               </tr>
             ))}
@@ -125,7 +137,12 @@ function Winners() {
             {[...uclWinners].reverse().map((entry) => (
               <tr key={entry.season} className="border-b border-border-dim text-sm">
                 <td className="px-4 py-3 font-mono text-fore-muted">{entry.season}</td>
-                <td className="px-4 py-3 font-semibold text-success">{entry.winner}</td>
+                <td className="px-4 py-3 font-semibold text-success">
+                  <span className="flex items-center gap-3">
+                    <UclImage src={uclClubLogos[entry.winner]} alt={entry.winner} className="h-7 w-7" />
+                    {entry.winner}
+                  </span>
+                </td>
               </tr>
             ))}
           </tbody>
@@ -231,7 +248,12 @@ function CurrentSeason() {
               {table.map((entry) => (
                 <tr key={entry.team.internationalName} className="border-b border-border-dim text-sm">
                   <td className="px-2 py-3 font-mono text-primary">{entry.rank}</td>
-                  <td className="px-2 py-3 font-semibold">{entry.team.internationalName}</td>
+                  <td className="px-2 py-3 font-semibold">
+                    <span className="flex items-center gap-2">
+                      <UclImage src={entry.team.logoUrl} alt={entry.team.internationalName} className="h-7 w-7" />
+                      {entry.team.internationalName}
+                    </span>
+                  </td>
                   <td className="px-2 py-3 text-fore-muted">{entry.played}</td>
                   <td className="px-2 py-3 text-fore-muted">{entry.won}</td>
                   <td className="px-2 py-3 text-fore-muted">{entry.drawn}</td>
@@ -284,13 +306,19 @@ function CurrentSeason() {
                 const date = new Date(match.kickOffTime.dateTime ?? match.kickOffTime.date);
                 return (
                   <li key={match.id} className="grid grid-cols-[1fr_auto_1fr] items-center gap-3 rounded-xl border border-border-dim bg-surface/80 px-3 py-3 text-sm md:px-4">
-                    <span className="text-right font-semibold">{match.homeTeam.internationalName}</span>
+                    <span className="flex items-center justify-end gap-2 text-right font-semibold">
+                      {match.homeTeam.internationalName}
+                      <UclImage src={match.homeTeam.logoUrl} alt={match.homeTeam.internationalName} className="h-7 w-7" />
+                    </span>
                     <span className="min-w-24 text-center font-mono text-primary">
                       {played
                         ? `${match.score?.total?.home ?? 0} - ${match.score?.total?.away ?? 0}`
                         : date.toLocaleString("en-GB", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "UTC" })}
                     </span>
-                    <span className="font-semibold">{match.awayTeam.internationalName}</span>
+                    <span className="flex items-center gap-2 font-semibold">
+                      <UclImage src={match.awayTeam.logoUrl} alt={match.awayTeam.internationalName} className="h-7 w-7" />
+                      {match.awayTeam.internationalName}
+                    </span>
                   </li>
                 );
               })}

@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useState } from "react";
 import { uclLeaderboards, type UclLeaderboardEntry, type UclStat } from "@/data/championsLeague";
+import { uclClubLogos, uclPlayerPhotos } from "@/data/championsLeagueMedia";
+import UclImage from "@/components/UclImage";
 
 const statLabels: Record<UclStat, string> = {
   goals: "Goals",
@@ -110,8 +112,12 @@ export default function UclStatDuel() {
                 } disabled:cursor-default`}
               >
                 <p className="section-eyebrow text-primary">Player {index + 1}</p>
+                <UclImage src={uclPlayerPhotos[card.name]} alt={card.name} shape="circle" className="mt-4 h-28 w-28" />
                 <h2 className="mt-4 text-3xl md:text-4xl">{card.name}</h2>
-                <p className="mt-2 text-sm text-fore-muted">{card.club}</p>
+                <p className="mt-2 flex items-center gap-2 text-sm text-fore-muted">
+                  <UclImage src={uclClubLogos[card.club]} alt={card.club} className="h-6 w-6" />
+                  {card.club}
+                </p>
                 <p className="mt-8 font-mono text-sm uppercase tracking-widest text-accent">
                   {picked === null ? "Tap to pick" : `${card.value} ${statLabels[stat].toLowerCase()}`}
                 </p>
