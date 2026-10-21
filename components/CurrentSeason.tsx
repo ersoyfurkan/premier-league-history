@@ -3,12 +3,13 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import PlayerPhoto from "@/components/PlayerPhoto";
+import PlTeamBadge from "@/components/PlTeamBadge";
 
 type View = "table" | "stats";
 type StatKind = "goals" | "assists";
 
 type TableEntry = {
-  team: { name: string; shortName: string };
+  team: { id?: string; name: string; shortName: string };
   overall: {
     position: number;
     played: number;
@@ -27,12 +28,12 @@ type Match = {
   kickoff: string;
   period: string;
   ground?: string;
-  homeTeam: { shortName: string; score?: number };
-  awayTeam: { shortName: string; score?: number };
+  homeTeam: { id?: string; shortName: string; score?: number };
+  awayTeam: { id?: string; shortName: string; score?: number };
 };
 
 type PlayerRow = {
-  playerMetadata: { id: string; name: string; position?: string; currentTeam?: { shortName: string } };
+  playerMetadata: { id: string; name: string; position?: string; currentTeam?: { id?: string; shortName: string } };
   stats: Record<string, number>;
 };
 
@@ -88,7 +89,12 @@ function LeagueTable() {
                 return (
                   <tr key={e.team.name} className="border-b border-border-dim text-sm">
                     <td className="px-3 py-3 font-mono text-primary">{o.position}</td>
-                    <td className="px-3 py-3 font-semibold">{e.team.name}</td>
+                    <td className="px-3 py-2 font-semibold">
+                      <div className="flex items-center gap-3">
+                        <PlTeamBadge id={e.team.id} name={e.team.name} />
+                        {e.team.name}
+                      </div>
+                    </td>
                     <td className="px-3 py-3 text-fore-muted">{o.played}</td>
                     <td className="px-3 py-3 text-fore-muted">{o.won}</td>
                     <td className="px-3 py-3 text-fore-muted">{o.drawn}</td>
@@ -153,7 +159,14 @@ function PlayerStats() {
                       {p.playerMetadata.name}
                     </div>
                   </td>
-                  <td className="px-3 py-3 text-fore-muted">{p.playerMetadata.currentTeam?.shortName ?? "-"}</td>
+                  <td className="px-3 py-3 text-fore-muted">
+                    <div className="flex items-center gap-2">
+                      {p.playerMetadata.currentTeam && (
+                        <PlTeamBadge id={p.playerMetadata.currentTeam.id} name={p.playerMetadata.currentTeam.shortName} className="h-6 w-6" />
+                      )}
+                      {p.playerMetadata.currentTeam?.shortName ?? "-"}
+                    </div>
+                  </td>
                   <td className="px-3 py-3 font-semibold text-primary">{p.stats[key] ?? 0}</td>
                 </tr>
               ))}
@@ -233,7 +246,10 @@ function Fixtures({ initialWeek }: { initialWeek: number | null }) {
                   href={`/premier-league/match/${m.matchId}`}
                   className="flex items-center justify-between gap-3 rounded-xl border border-border-dim bg-surface/80 px-4 py-3 text-sm transition hover:border-primary/50"
                 >
-                  <span className="flex-1 text-right font-semibold">{m.homeTeam.shortName}</span>
+                  <span className="flex flex-1 items-center justify-end gap-2 text-right font-semibold">
+                    {m.homeTeam.shortName}
+                    <PlTeamBadge id={m.homeTeam.id} name={m.homeTeam.shortName} />
+                  </span>
                   <span className="min-w-[110px] text-center font-mono text-primary">
                     {played ? `${m.homeTeam.score ?? 0} - ${m.awayTeam.score ?? 0}` : m.kickoff.slice(5, 16).replace(" ", " · ")}
                     {live && (
@@ -243,7 +259,10 @@ function Fixtures({ initialWeek }: { initialWeek: number | null }) {
                       </span>
                     )}
                   </span>
-                  <span className="flex-1 font-semibold">{m.awayTeam.shortName}</span>
+                  <span className="flex flex-1 items-center gap-2 font-semibold">
+                    <PlTeamBadge id={m.awayTeam.id} name={m.awayTeam.shortName} />
+                    {m.awayTeam.shortName}
+                  </span>
                 </Link>
               </li>
             );
