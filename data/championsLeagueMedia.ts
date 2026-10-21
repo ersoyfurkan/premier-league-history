@@ -32,7 +32,7 @@ export const uclPlayerPhotos: Record<string, string> = {
   "Paul Scholes": "https://img.uefa.com/imgml/TP/players/1/2011/324x324/14681.jpg",
   "Sergio Busquets": "https://img.uefa.com/imgml/TP/players/1/2019/324x324/250002704.jpg",
   "Ángel Di María": "https://img.uefa.com/imgml/TP/players/1/2025/324x324/1905153.jpg",
-  "Neymar": "https://img.uefa.com/imgml/TP/players/1/2023/324x324/250039508.jpg",
+  "Neymar Júnior": "https://img.uefa.com/imgml/TP/players/1/2023/324x324/250039508.jpg",
   "Vinícius Júnior": "https://img.uefa.com/imgml/TP/players/1/2026/324x324/250121533.jpg",
   "Kevin De Bruyne": "https://img.uefa.com/imgml/TP/players/1/2026/324x324/250008901.jpg",
   "Cesc Fàbregas": "https://img.uefa.com/imgml/TP/players/1/2018/324x324/70072.jpg",
