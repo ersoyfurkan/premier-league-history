@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import {
   applyNext,
+  applyRematch,
   applyPick,
   newRoom,
   sideOf,
@@ -121,9 +122,8 @@ async function handlePost(request: NextRequest) {
     error = applyPick(state, side, body.stat as StatKey);
   } else if (action === "next") {
     error = applyNext(state, side, Number(body.round), now);
-  } else if (action === "restart") {
-    if (state.phase !== "finished") error = "Match is not finished";
-    else startMatch(state, now);
+  } else if (action === "rematch") {
+    error = applyRematch(state, side, now);
   } else {
     error = "Unknown action";
   }

@@ -18,6 +18,7 @@ export type RoomState = {
   result: { stat: StatKey; p1Value: number; p2Value: number; pointSide: Side | null } | null;
   winner: Side | null;
   ready: { p1: boolean; p2: boolean };
+  rematch?: { p1: boolean; p2: boolean }; // votes to play again after a finished match
   deadline: number | null; // when the current phase auto-advances (ms since epoch)
 };
 
@@ -33,6 +34,8 @@ export type RoomView = {
   winner: Side | null;
   youReady: boolean;
   opponentReady: boolean;
+  youWantRematch: boolean;
+  opponentWantsRematch: boolean;
   msLeft: number | null;
 };
 
@@ -74,7 +77,15 @@ export function startMatch(state: RoomState, now: number) {
   state.picker = randomSide();
   state.cards = drawCards();
   state.ready = { p1: false, p2: false };
+  state.rematch = { p1: false, p2: false };
   state.deadline = now + PICK_TIMEOUT_MS;
+}
+
+export function applyRematch(state: RoomState, side: Side, now: number): string | null {
+  if (state.phase !== "finished") return "Match is not finished";
+  state.rematch = { p1: false, p2: false, ...state.rematch, [side]: true };
+  if (state.rematch.p1 && state.rematch.p2) startMatch(state, now);
+  return null;
 }
 
 export function sideOf(state: RoomState, token: string): Side | null {
@@ -155,6 +166,8 @@ export function viewFor(state: RoomState, side: Side, now: number): RoomView {
     winner: state.winner,
     youReady: state.ready[side],
     opponentReady: state.ready[other(side)],
+    youWantRematch: Boolean(state.rematch?.[side]),
+    opponentWantsRematch: Boolean(state.rematch?.[other(side)]),
     msLeft: state.deadline === null ? null : Math.max(0, state.deadline - now),
   };
 }

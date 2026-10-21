@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import PlayerPhoto from "@/components/PlayerPhoto";
+import MatchResult from "@/components/MatchResult";
 import type { RoomView, StatKey } from "@/lib/gameRoom";
 
 const STATS: StatKey[] = ["goals", "assists", "appearances"];
@@ -227,12 +228,28 @@ function RoomClient() {
             )}
           </div>
         )}
-        {view.phase === "finished" && (
-          <button className="btn-primary mt-4" onClick={() => act({ action: "restart" })}>
-            Rematch
-          </button>
-        )}
       </div>
+
+      {view.phase === "finished" && view.winner && (
+        <MatchResult
+          won={view.winner === you}
+          subtitle={`Final score ${view.scores[you]} - ${view.scores[opp]}`}
+        >
+          <button
+            className="btn-primary disabled:opacity-60"
+            disabled={view.youWantRematch}
+            onClick={() => act({ action: "rematch" })}
+          >
+            {view.youWantRematch ? "Waiting for friend…" : view.opponentWantsRematch ? "Accept Rematch" : "Request Rematch"}
+          </button>
+          <Link href="/game" className="btn-ghost">
+            Leave
+          </Link>
+          {view.opponentWantsRematch && !view.youWantRematch && (
+            <p className="w-full text-accent">Your friend wants a rematch!</p>
+          )}
+        </MatchResult>
+      )}
 
       {view.phase !== "waiting" && (
         <div className="mt-6 grid gap-5 xl:grid-cols-2">

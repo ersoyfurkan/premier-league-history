@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import PlayerPhoto from "@/components/PlayerPhoto";
+import MatchResult from "@/components/MatchResult";
 import { Suspense, useEffect, useMemo, useState } from "react";
 import { PLAYERS, type PlayerCard } from "@/data/players";
 
@@ -235,6 +236,17 @@ function GamePlayClient() {
               )}
             </div>
           </div>
+        )}
+
+        {winner && (
+          <MatchResult won={winner === "p1"} subtitle={`Final score ${scores.p1} - ${scores.p2}`}>
+            <button className="btn-primary" onClick={startNewGame}>
+              Play Again
+            </button>
+            <Link href="/game" className="btn-ghost">
+              Change Mode
+            </Link>
+          </MatchResult>
         )}
 
         <div className="mt-6 rounded-2xl border border-border bg-surface/70 p-6 md:p-7">
