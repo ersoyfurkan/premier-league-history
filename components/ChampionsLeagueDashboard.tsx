@@ -31,22 +31,10 @@ type Match = {
   score?: { total?: { home?: number; away?: number } };
 };
 
-const statOptions: { key: UclStat; label: string; source: string }[] = [
-  {
-    key: "goals",
-    label: "Goals",
-    source: "https://www.uefa.com/uefachampionsleague/history/rankings/players/goals_scored/",
-  },
-  {
-    key: "appearances",
-    label: "Appearances",
-    source: "https://www.uefa.com/uefachampionsleague/history/rankings/players/matches_played/",
-  },
-  {
-    key: "assists",
-    label: "Assists",
-    source: "https://www.uefa.com/uefachampionsleague/history/rankings/players/assists/",
-  },
+const statOptions: { key: UclStat; label: string }[] = [
+  { key: "goals", label: "Goals" },
+  { key: "appearances", label: "Appearances" },
+  { key: "assists", label: "Assists" },
 ];
 
 const buttonClass = (active: boolean) =>
@@ -110,14 +98,6 @@ function Records() {
             ))}
           </tbody>
         </table>
-        <a
-          href={source.source}
-          target="_blank"
-          rel="noreferrer"
-          className="mt-5 inline-flex text-sm text-accent underline underline-offset-4 hover:text-primary"
-        >
-          View UEFA’s latest ranking
-        </a>
       </div>
     </section>
   );
@@ -150,14 +130,6 @@ function Winners() {
             ))}
           </tbody>
         </table>
-        <a
-          href="https://www.uefa.com/uefachampionsleague/history/winners/"
-          target="_blank"
-          rel="noreferrer"
-          className="mt-5 inline-flex text-sm text-accent underline underline-offset-4 hover:text-primary"
-        >
-          Verify title records on UEFA.com
-        </a>
       </div>
     </section>
   );
@@ -331,17 +303,7 @@ function CurrentSeason() {
         )}
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        <a
-          href="https://www.uefa.com/uefachampionsleague/statistics/"
-          target="_blank"
-          rel="noreferrer"
-          className="rounded-2xl border border-accent/25 bg-surface p-5 transition hover:border-accent/60"
-        >
-          <p className="section-eyebrow text-accent">Current player stats</p>
-          <h3 className="mt-2 text-2xl">Goals, assists & more ↗</h3>
-          <p className="mt-2 text-sm leading-6 text-fore-muted">Open UEFA’s live Champions League player statistics.</p>
-        </a>
+      <div className="grid gap-4">
         <Link
           href="/champions-league/game"
           className="rounded-2xl border border-primary/25 bg-primary-dim p-5 transition hover:border-primary/60"
@@ -365,20 +327,15 @@ export default function ChampionsLeagueDashboard() {
           <Link href="/" className="font-mono text-[11px] uppercase tracking-[0.14em] text-primary hover:text-accent">
             ← Competitions
           </Link>
-          <a
-            href="https://img.uefa.com/imgml/uefacom/elements/logos/competitions/color/full/1.svg"
-            target="_blank"
-            rel="noreferrer"
-            className="flex items-center gap-3"
-          >
+          <div className="flex items-center gap-3">
             <span
               role="img"
               aria-label="UEFA Champions League logo"
               className="h-12 w-12 bg-contain bg-center bg-no-repeat"
               style={{ backgroundImage: "url(https://img.uefa.com/imgml/uefacom/elements/logos/competitions/color/full/1.svg)" }}
             />
-            <span className="font-mono text-[10px] uppercase tracking-[0.13em] text-fore-muted">Official competition mark ↗</span>
-          </a>
+            <span className="font-mono text-[10px] uppercase tracking-[0.13em] text-fore-muted">            Official competition mark</span>
+                      </div>
         </div>
 
         <header className="mb-8 text-center">
