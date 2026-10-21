@@ -1,4 +1,8 @@
 import { PLAYERS, type PlayerCard } from "@/data/players";
+import { UCL_CARDS } from "@/data/uclCards";
+
+export type Competition = "pl" | "ucl";
+export const poolFor = (comp: Competition | undefined): PlayerCard[] => (comp === "ucl" ? UCL_CARDS : PLAYERS);
 
 export type Side = "p1" | "p2";
 export type StatKey = "appearances" | "goals" | "assists";
@@ -8,6 +12,7 @@ export const PICK_TIMEOUT_MS = 20_000;
 export const NEXT_TIMEOUT_MS = 15_000;
 
 export type RoomState = {
+  comp?: Competition; // missing on older rooms, which are Premier League
   p1Token: string;
   p2Token: string | null;
   phase: "waiting" | "picking" | "resolved" | "finished";
@@ -23,6 +28,7 @@ export type RoomState = {
 };
 
 export type RoomView = {
+  comp: Competition;
   you: Side;
   phase: RoomState["phase"];
   round: number;
@@ -45,15 +51,17 @@ function randomSide(): Side {
   return Math.random() < 0.5 ? "p1" : "p2";
 }
 
-function drawCards(): { p1: PlayerCard; p2: PlayerCard } {
-  const a = Math.floor(Math.random() * PLAYERS.length);
-  let b = Math.floor(Math.random() * PLAYERS.length);
-  while (b === a) b = Math.floor(Math.random() * PLAYERS.length);
-  return { p1: PLAYERS[a], p2: PLAYERS[b] };
+function drawCards(comp: Competition | undefined): { p1: PlayerCard; p2: PlayerCard } {
+  const pool = poolFor(comp);
+  const a = Math.floor(Math.random() * pool.length);
+  let b = Math.floor(Math.random() * pool.length);
+  while (b === a) b = Math.floor(Math.random() * pool.length);
+  return { p1: pool[a], p2: pool[b] };
 }
 
-export function newRoom(p1Token: string): RoomState {
+export function newRoom(p1Token: string, comp: Competition = "pl"): RoomState {
   return {
+    comp,
     p1Token,
     p2Token: null,
     phase: "waiting",
@@ -75,7 +83,7 @@ export function startMatch(state: RoomState, now: number) {
   state.winner = null;
   state.result = null;
   state.picker = randomSide();
-  state.cards = drawCards();
+  state.cards = drawCards(state.comp);
   state.ready = { p1: false, p2: false };
   state.rematch = { p1: false, p2: false };
   state.deadline = now + PICK_TIMEOUT_MS;
@@ -122,7 +130,7 @@ function advance(state: RoomState, now: number) {
   state.round += 1;
   state.phase = "picking";
   state.picker = other(state.picker); // pickers alternate every round
-  state.cards = drawCards();
+  state.cards = drawCards(state.comp);
   state.result = null;
   state.ready = { p1: false, p2: false };
   state.deadline = now + PICK_TIMEOUT_MS;
@@ -155,6 +163,7 @@ export function tick(state: RoomState, now: number): boolean {
 export function viewFor(state: RoomState, side: Side, now: number): RoomView {
   const revealed = state.phase === "resolved" || state.phase === "finished";
   return {
+    comp: state.comp ?? "pl",
     you: side,
     phase: state.phase,
     round: state.round,

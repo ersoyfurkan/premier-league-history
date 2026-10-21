@@ -4,6 +4,9 @@ export type PlayerCard = {
   appearances: number;
   goals: number;
   assists: number;
+  photo?: string; // full photo URL, set for Champions League cards
+  club?: string;
+  clubId?: string;
 };
 
 export const playerPhotoUrl = (id: string) =>

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useCallback, useEffect, useRef, useState } from "react";
-import PlayerPhoto from "@/components/PlayerPhoto";
+import CardFace from "@/components/CardFace";
 import MatchResult from "@/components/MatchResult";
 import type { RoomView, StatKey } from "@/lib/gameRoom";
 
@@ -12,7 +12,7 @@ const POLL_MS = 1500;
 
 type Api = { error?: string; token?: string; view?: RoomView };
 
-type Card = { id?: string; name: string; appearances: number; goals: number; assists: number };
+type Card = { id?: string; name: string; appearances: number; goals: number; assists: number; photo?: string; club?: string; clubId?: string };
 
 function CardPanel({ title, card, hiddenText }: { title: string; card: Card | null; hiddenText: string }) {
   return (
@@ -20,7 +20,7 @@ function CardPanel({ title, card, hiddenText }: { title: string; card: Card | nu
       <h2 className="text-3xl md:text-5xl">{title}</h2>
       {card ? (
         <div className="mt-6 space-y-4 font-mono text-lg md:text-2xl">
-          <PlayerPhoto id={card.id} name={card.name} size="lg" />
+          <CardFace card={card} />
           <p className="text-primary uppercase tracking-[0.08em]">{card.name}</p>
           <p>Appearances: {card.appearances}</p>
           <p>Goals: {card.goals}</p>
@@ -154,6 +154,7 @@ function RoomClient() {
   }
 
   const you = view.you;
+  const lobby = view.comp === "ucl" ? "/champions-league/game" : "/game";
   const opp = you === "p1" ? "p2" : "p1";
   const myTurn = view.picker === you;
   const r = view.result;
@@ -242,7 +243,7 @@ function RoomClient() {
           >
             {view.youWantRematch ? "Waiting for friend…" : view.opponentWantsRematch ? "Accept Rematch" : "Request Rematch"}
           </button>
-          <Link href="/game" className="btn-ghost">
+          <Link href={lobby} className="btn-ghost">
             Leave
           </Link>
           {view.opponentWantsRematch && !view.youWantRematch && (

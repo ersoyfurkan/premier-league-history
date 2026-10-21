@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import PlayerPhoto from "@/components/PlayerPhoto";
+import CardFace from "@/components/CardFace";
 import MatchResult from "@/components/MatchResult";
 import { Suspense, useEffect, useMemo, useState } from "react";
-import { PLAYERS, type PlayerCard } from "@/data/players";
+import { useSearchParams } from "next/navigation";
+import type { PlayerCard } from "@/data/players";
+import { poolFor } from "@/lib/gameRoom";
 
 type StatKey = "appearances" | "goals" | "assists";
 type Side = "p1" | "p2";
@@ -34,11 +36,11 @@ function otherSide(side: Side): Side {
   return side === "p1" ? "p2" : "p1";
 }
 
-function pickAiStat(card: PlayerCard) {
+function pickAiStat(card: PlayerCard, players: PlayerCard[]) {
   const maxValues = {
-    appearances: Math.max(...PLAYERS.map((p) => p.appearances)),
-    goals: Math.max(...PLAYERS.map((p) => p.goals)),
-    assists: Math.max(...PLAYERS.map((p) => p.assists)),
+    appearances: Math.max(...players.map((p) => p.appearances)),
+    goals: Math.max(...players.map((p) => p.goals)),
+    assists: Math.max(...players.map((p) => p.assists)),
   };
 
   const scored = STAT_KEYS.map((key) => ({
@@ -51,6 +53,9 @@ function pickAiStat(card: PlayerCard) {
 }
 
 function GamePlayClient() {
+  const isUcl = useSearchParams().get("comp") === "ucl";
+  const players = poolFor(isUcl ? "ucl" : "pl");
+  const lobby = isUcl ? "/champions-league/game" : "/game";
   const [p1Card, setP1Card] = useState<PlayerCard | null>(null);
   const [p2Card, setP2Card] = useState<PlayerCard | null>(null);
   const [currentPicker, setCurrentPicker] = useState<Side>("p1");
@@ -64,7 +69,7 @@ function GamePlayClient() {
   const roundReady = useMemo(() => Boolean(p1Card && p2Card), [p1Card, p2Card]);
 
   const setupRound = (picker: Side) => {
-    const [nextP1Card, nextP2Card] = drawDistinctPlayers(PLAYERS);
+    const [nextP1Card, nextP2Card] = drawDistinctPlayers(players);
     setP1Card(nextP1Card);
     setP2Card(nextP2Card);
     setCurrentPicker(picker);
@@ -143,7 +148,7 @@ function GamePlayClient() {
       if (!p2Card) {
         return;
       }
-      const aiChoice = pickAiStat(p2Card);
+      const aiChoice = pickAiStat(p2Card, players);
       resolvePick(aiChoice);
     }, 1000);
 
@@ -160,7 +165,7 @@ function GamePlayClient() {
       <section className="mx-auto w-full max-w-[110rem]">
         <div className="mb-6 flex items-center justify-between gap-4">
           <h1 className="section-title text-[clamp(48px,8vw,120px)] leading-[0.9]">Stat Duel Arena</h1>
-          <Link href="/game" className="btn-ghost">
+          <Link href={lobby} className="btn-ghost">
             Change Mode
           </Link>
         </div>
@@ -208,7 +213,7 @@ function GamePlayClient() {
               </div>
               {p1Card ? (
                 <div className="mt-6 space-y-4 font-mono text-lg md:text-2xl">
-                  <PlayerPhoto id={p1Card.id} name={p1Card.name} size="lg" />
+                  <CardFace card={p1Card} />
                   <p className="text-primary uppercase tracking-[0.08em]">{p1Card.name}</p>
                   <p>Appearances: {p1Card.appearances}</p>
                   <p>Goals: {p1Card.goals}</p>
@@ -225,7 +230,7 @@ function GamePlayClient() {
               </div>
               {roundResolved && p2Card ? (
                 <div className="mt-6 space-y-4 font-mono text-lg md:text-2xl">
-                  <PlayerPhoto id={p2Card.id} name={p2Card.name} size="lg" />
+                  <CardFace card={p2Card} />
                   <p className="text-primary uppercase tracking-[0.08em]">{p2Card.name}</p>
                   <p>Appearances: {p2Card.appearances}</p>
                   <p>Goals: {p2Card.goals}</p>
@@ -243,7 +248,7 @@ function GamePlayClient() {
             <button className="btn-primary" onClick={startNewGame}>
               Play Again
             </button>
-            <Link href="/game" className="btn-ghost">
+            <Link href={lobby} className="btn-ghost">
               Change Mode
             </Link>
           </MatchResult>

@@ -1,5 +1,5 @@
-import UclStatDuel from "@/components/UclStatDuel";
+import GameLobby from "@/components/GameLobby";
 
 export default function ChampionsLeagueGamePage() {
-  return <UclStatDuel />;
+  return <GameLobby comp="ucl" />;
 }

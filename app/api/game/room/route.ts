@@ -80,13 +80,14 @@ async function handlePost(request: NextRequest) {
   if (action === "create") {
     await db.prepare("DELETE FROM game_rooms WHERE updated_at < ?").bind(Date.now() - ROOM_TTL_MS).run();
 
+    const comp = body.comp === "ucl" ? "ucl" : "pl";
     const token = crypto.randomUUID();
     for (let attempt = 0; attempt < 5; attempt++) {
       const code = makeCode();
       try {
         await db
           .prepare("INSERT INTO game_rooms (code, state, version, updated_at) VALUES (?, ?, 0, ?)")
-          .bind(code, JSON.stringify(newRoom(token)), Date.now())
+          .bind(code, JSON.stringify(newRoom(token, comp)), Date.now())
           .run();
         return json({ code, token });
       } catch {

@@ -11,7 +11,7 @@ export default function Navbar() {
   const { user, logout } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
 
-  const links = [
+  const links = pathname === "/" ? [] : [
     { href: "/", label: "Home" },
     { href: "/clubs", label: "Clubs" },
     { href: "/seasons", label: "Seasons" },
