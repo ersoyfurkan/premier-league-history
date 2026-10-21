@@ -32,6 +32,7 @@ type Match = {
   homeTeam: Team;
   awayTeam: Team;
   score?: { total?: { home?: number; away?: number } };
+  minute?: { normal?: number };
 };
 
 const buttonClass = (active: boolean) =>
@@ -116,25 +117,34 @@ function CurrentSeason() {
   useEffect(() => {
     if (matchday === 0) return;
     let active = true;
-    fetch(`/api/champions-league?type=fixtures&matchday=${matchday}`)
-      .then(async (response) => {
-        const body = (await response.json()) as Match[] | { error?: string };
-        if (!response.ok) throw new Error("error" in body ? body.error : "Could not load fixtures.");
-        return body as Match[];
-      })
-      .then((body) => {
-        if (active) setFixtures({ matchday, matches: body });
-      })
-      .catch((error: unknown) => {
-        if (active) {
-          setFixtureFailure({
-            matchday,
-            message: error instanceof Error ? error.message : "Could not load fixtures.",
-          });
-        }
-      });
+    let timer: ReturnType<typeof setTimeout> | undefined;
+
+    const load = () =>
+      fetch(`/api/champions-league?type=fixtures&matchday=${matchday}`)
+        .then(async (response) => {
+          const body = (await response.json()) as Match[] | { error?: string };
+          if (!response.ok) throw new Error("error" in body ? body.error : "Could not load fixtures.");
+          return body as Match[];
+        })
+        .then((body) => {
+          if (!active) return;
+          setFixtures({ matchday, matches: body });
+          // Keep scores fresh while any game on this matchday is in play
+          if (body.some((match) => match.status === "LIVE")) timer = setTimeout(load, 20_000);
+        })
+        .catch((error: unknown) => {
+          if (active) {
+            setFixtureFailure({
+              matchday,
+              message: error instanceof Error ? error.message : "Could not load fixtures.",
+            });
+          }
+        });
+
+    load();
     return () => {
       active = false;
+      if (timer) clearTimeout(timer);
     };
   }, [matchday]);
 
@@ -229,22 +239,34 @@ function CurrentSeason() {
             <ul className="space-y-2">
               {matches.map((match) => {
                 const played = match.status === "FINISHED";
+                const live = match.status === "LIVE";
                 const date = new Date(match.kickOffTime.dateTime ?? match.kickOffTime.date);
                 return (
-                  <li key={match.id} className="grid grid-cols-[1fr_auto_1fr] items-center gap-3 rounded-xl border border-border-dim bg-surface/80 px-3 py-3 text-sm md:px-4">
-                    <span className="flex items-center justify-end gap-2 text-right font-semibold">
-                      {match.homeTeam.internationalName}
-                      <UclImage src={match.homeTeam.logoUrl} alt={match.homeTeam.internationalName} className="h-7 w-7" />
-                    </span>
-                    <span className="min-w-24 text-center font-mono text-primary">
-                      {played
-                        ? `${match.score?.total?.home ?? 0} - ${match.score?.total?.away ?? 0}`
-                        : date.toLocaleString("en-GB", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "UTC" })}
-                    </span>
-                    <span className="flex items-center gap-2 font-semibold">
-                      <UclImage src={match.awayTeam.logoUrl} alt={match.awayTeam.internationalName} className="h-7 w-7" />
-                      {match.awayTeam.internationalName}
-                    </span>
+                  <li key={match.id}>
+                    <Link
+                      href={`/champions-league/match/${match.id}`}
+                      className="grid grid-cols-[1fr_auto_1fr] items-center gap-3 rounded-xl border border-border-dim bg-surface/80 px-3 py-3 text-sm transition hover:border-primary/50 md:px-4"
+                    >
+                      <span className="flex items-center justify-end gap-2 text-right font-semibold">
+                        {match.homeTeam.internationalName}
+                        <UclImage src={match.homeTeam.logoUrl} alt={match.homeTeam.internationalName} className="h-7 w-7" />
+                      </span>
+                      <span className="min-w-24 text-center font-mono text-primary">
+                        {played || live
+                          ? `${match.score?.total?.home ?? 0} - ${match.score?.total?.away ?? 0}`
+                          : date.toLocaleString("en-GB", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "UTC" })}
+                        {live && (
+                          <span className="mt-1 flex items-center justify-center gap-1 text-[10px] uppercase tracking-widest text-danger">
+                            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-danger" />
+                            Live{match.minute?.normal ? ` ${match.minute.normal}'` : ""}
+                          </span>
+                        )}
+                      </span>
+                      <span className="flex items-center gap-2 font-semibold">
+                        <UclImage src={match.awayTeam.logoUrl} alt={match.awayTeam.internationalName} className="h-7 w-7" />
+                        {match.awayTeam.internationalName}
+                      </span>
+                    </Link>
                   </li>
                 );
               })}

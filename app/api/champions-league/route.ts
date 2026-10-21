@@ -6,7 +6,7 @@ const MATCHES_URL = "https://match.uefa.com/v5/matches";
 async function fetchUefa<T>(url: URL): Promise<T> {
   const response = await fetch(url, {
     headers: { Accept: "application/json" },
-    next: { revalidate: 60 },
+    next: { revalidate: 15 },
   });
   if (!response.ok) {
     throw new Error(`UEFA feed returned ${response.status}`);
@@ -58,7 +58,7 @@ export async function GET(request: NextRequest) {
           Number(match.matchday.sequenceNumber) === matchday
       );
       return NextResponse.json(matches, {
-        headers: { "Cache-Control": "public, max-age=30, s-maxage=60" },
+        headers: { "Cache-Control": "public, max-age=10, s-maxage=15" },
       });
     }
 

@@ -67,7 +67,7 @@ export async function GET(request: NextRequest) {
     }
 
     return NextResponse.json(data, {
-      headers: { "Cache-Control": "public, max-age=30, s-maxage=60" },
+      headers: { "Cache-Control": "public, max-age=10, s-maxage=15" },
     });
   } catch {
     return NextResponse.json({ error: "Failed to load data" }, { status: 502 });

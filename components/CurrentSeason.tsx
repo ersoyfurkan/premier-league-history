@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import PlayerPhoto from "@/components/PlayerPhoto";
 
@@ -172,11 +173,21 @@ function Fixtures({ initialWeek }: { initialWeek: number | null }) {
   useEffect(() => {
     if (week === null) return;
     let stale = false;
-    load<{ data: Match[] }>(`type=fixtures&matchweek=${week}`)
-      .then((res) => !stale && setMatches(res.data))
-      .catch(() => !stale && setError(true));
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const run = () =>
+      load<{ data: Match[] }>(`type=fixtures&matchweek=${week}`)
+        .then((res) => {
+          if (stale) return;
+          setMatches(res.data);
+          if (res.data.some((m) => ["FirstHalf", "SecondHalf", "HalfTime"].includes(m.period))) {
+            timer = setTimeout(run, 20_000);
+          }
+        })
+        .catch(() => !stale && setError(true));
+    run();
     return () => {
       stale = true;
+      if (timer) clearTimeout(timer);
     };
   }, [week]);
 
@@ -215,13 +226,25 @@ function Fixtures({ initialWeek }: { initialWeek: number | null }) {
         <ul className="space-y-2">
           {matches.map((m) => {
             const played = m.period !== "PreMatch";
+            const live = ["FirstHalf", "SecondHalf", "HalfTime"].includes(m.period);
             return (
-              <li key={m.matchId} className="flex items-center justify-between gap-3 rounded-xl border border-border-dim bg-surface/80 px-4 py-3 text-sm">
-                <span className="flex-1 text-right font-semibold">{m.homeTeam.shortName}</span>
-                <span className="min-w-[110px] text-center font-mono text-primary">
-                  {played ? `${m.homeTeam.score ?? 0} - ${m.awayTeam.score ?? 0}` : m.kickoff.slice(5, 16).replace(" ", " · ")}
-                </span>
-                <span className="flex-1 font-semibold">{m.awayTeam.shortName}</span>
+              <li key={m.matchId}>
+                <Link
+                  href={`/premier-league/match/${m.matchId}`}
+                  className="flex items-center justify-between gap-3 rounded-xl border border-border-dim bg-surface/80 px-4 py-3 text-sm transition hover:border-primary/50"
+                >
+                  <span className="flex-1 text-right font-semibold">{m.homeTeam.shortName}</span>
+                  <span className="min-w-[110px] text-center font-mono text-primary">
+                    {played ? `${m.homeTeam.score ?? 0} - ${m.awayTeam.score ?? 0}` : m.kickoff.slice(5, 16).replace(" ", " · ")}
+                    {live && (
+                      <span className="mt-1 flex items-center justify-center gap-1 text-[10px] uppercase tracking-widest text-danger">
+                        <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-danger" />
+                        {m.period === "HalfTime" ? "HT" : "Live"}
+                      </span>
+                    )}
+                  </span>
+                  <span className="flex-1 font-semibold">{m.awayTeam.shortName}</span>
+                </Link>
               </li>
             );
           })}
