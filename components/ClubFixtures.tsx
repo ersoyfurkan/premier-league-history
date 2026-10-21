@@ -7,7 +7,7 @@ import UclImage from "@/components/UclImage";
 import type { ClubFixture } from "@/app/api/club-fixtures/route";
 
 export type ClubTeam = { id: string; name: string; logo?: string };
-type Comp = "pl" | "ucl";
+type Comp = "pl" | "ucl" | "laliga";
 
 function Crest({ comp, side, className }: { comp: Comp; side: ClubFixture["home"]; className?: string }) {
   return comp === "pl" ? (
@@ -88,7 +88,7 @@ function ClubFixtures({ comp, team, onClose }: { comp: Comp; team: ClubTeam; onC
   }, [comp, team.id]);
 
   const ready = state?.team === team.id ? state : null;
-  const base = comp === "pl" ? "/premier-league/match" : "/champions-league/match";
+  const base = comp === "pl" ? "/premier-league/match" : comp === "laliga" ? "/la-liga/match" : "/champions-league/match";
 
   return (
     <div className="mt-4 rounded-xl border border-primary/30 bg-primary-dim/40 p-4">

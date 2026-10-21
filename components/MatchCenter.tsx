@@ -31,7 +31,7 @@ const minuteLabel = (event: Pick<MatchEvent, "minute" | "extra">) =>
   `${event.minute}${event.extra ? `+${event.extra}` : ""}'`;
 
 function Crest({ comp, team, className }: { comp: Comp; team: TeamDetail; className: string }) {
-  return comp === "ucl" ? (
+  return comp !== "pl" ? (
     <UclImage src={team.logo} alt={team.name} className={className} />
   ) : (
     // eslint-disable-next-line @next/next/no-img-element
@@ -40,7 +40,7 @@ function Crest({ comp, team, className }: { comp: Comp; team: TeamDetail; classN
 }
 
 function Avatar({ comp, player }: { comp: Comp; player: LineupPlayer }) {
-  return comp === "ucl" ? (
+  return comp !== "pl" ? (
     <UclImage src={player.photo} alt={player.name} shape="circle" className="h-10 w-10 border border-white/30" />
   ) : (
     <PlayerPhoto id={player.id} name={player.name} size="sm" />
@@ -309,13 +309,13 @@ export default function MatchCenter({ comp, id }: { comp: Comp; id: string }) {
   }, [comp, id]);
 
   const activeTab: Tab = tab ?? (match?.status === "upcoming" ? "lineups" : "timeline");
-  const back = comp === "ucl" ? "/champions-league" : "/premier-league";
+  const back = comp === "ucl" ? "/champions-league" : comp === "laliga" ? "/la-liga" : "/premier-league";
 
   return (
     <main className="min-h-screen bg-background px-5 pb-12 pt-24 text-foreground grid-bg md:px-8">
       <section className="mx-auto w-full max-w-5xl space-y-6">
         <Link href={back} className="font-mono text-[11px] uppercase tracking-[0.14em] text-primary hover:text-accent">
-          ← {comp === "ucl" ? "Champions League" : "Premier League"}
+          ← {comp === "ucl" ? "Champions League" : comp === "laliga" ? "La Liga" : "Premier League"}
         </Link>
 
         {!match ? (

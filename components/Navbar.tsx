@@ -13,10 +13,17 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
   const inUcl = pathname.startsWith("/champions-league") || searchParams.get("comp") === "ucl";
+  const inLaLiga = pathname.startsWith("/la-liga") || searchParams.get("comp") === "laliga";
   const links =
     pathname === "/"
       ? []
-      : inUcl
+      : inLaLiga
+        ? [
+            { href: "/", label: "Home" },
+            { href: "/la-liga", label: "La Liga" },
+            { href: "/la-liga/game", label: "Game" },
+          ]
+        : inUcl
         ? [
             { href: "/", label: "Home" },
             { href: "/champions-league", label: "Champions League" },
@@ -31,7 +38,7 @@ export default function Navbar() {
   ];
 
   const isActive = (href: string) =>
-    href === "/" || href === "/champions-league" ? pathname === href : pathname === href || pathname.startsWith(`${href}/`);
+    href === "/" || href === "/champions-league" || href === "/la-liga" ? pathname === href : pathname === href || pathname.startsWith(`${href}/`);
 
   return (
     <nav className="fixed inset-x-0 top-0 z-50 border-b border-[rgba(0,229,255,0.08)] bg-[rgba(3,4,10,0.85)] backdrop-blur-[20px]">

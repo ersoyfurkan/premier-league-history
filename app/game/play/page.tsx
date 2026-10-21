@@ -6,7 +6,7 @@ import MatchResult from "@/components/MatchResult";
 import { Suspense, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import type { PlayerCard } from "@/data/players";
-import { poolFor } from "@/lib/gameRoom";
+import { lobbyFor, parseComp, poolFor } from "@/lib/gameRoom";
 
 type StatKey = "appearances" | "goals" | "assists";
 type Side = "p1" | "p2";
@@ -53,9 +53,9 @@ function pickAiStat(card: PlayerCard, players: PlayerCard[]) {
 }
 
 function GamePlayClient() {
-  const isUcl = useSearchParams().get("comp") === "ucl";
-  const players = poolFor(isUcl ? "ucl" : "pl");
-  const lobby = isUcl ? "/champions-league/game" : "/game";
+  const comp = parseComp(useSearchParams().get("comp"));
+  const players = poolFor(comp);
+  const lobby = lobbyFor(comp);
   const [p1Card, setP1Card] = useState<PlayerCard | null>(null);
   const [p2Card, setP2Card] = useState<PlayerCard | null>(null);
   const [currentPicker, setCurrentPicker] = useState<Side>("p1");

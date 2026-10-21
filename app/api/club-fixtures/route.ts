@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { fmtPlKickoff, fmtUclKickoff } from "@/lib/dates";
+import { espnBadge, seasonFixtures, withLiveScores } from "@/lib/espn";
 
 const PL_BASE = "https://sdp-prem-prod.premier-league-prod.pulselive.com/api";
 const PL_SEASON = 2026;
@@ -57,14 +58,29 @@ async function uclFixtures(team: string): Promise<ClubFixture[]> {
     }));
 }
 
+async function laLigaFixtures(team: string): Promise<ClubFixture[]> {
+  const fixtures = await withLiveScores(await seasonFixtures());
+  return fixtures
+    .filter((f) => f.state !== "post" && (f.home.id === team || f.away.id === team))
+    .map((f) => ({
+      id: f.id,
+      when: fmtUclKickoff(f.date),
+      sort: f.date,
+      live: f.state === "in",
+      round: `Matchweek ${f.matchweek}`,
+      home: { ...f.home, logo: espnBadge(f.home.id) },
+      away: { ...f.away, logo: espnBadge(f.away.id) },
+    }));
+}
+
 export async function GET(request: NextRequest) {
   const comp = request.nextUrl.searchParams.get("comp");
   const team = request.nextUrl.searchParams.get("team") ?? "";
-  if ((comp !== "pl" && comp !== "ucl") || !/^\d{1,8}$/.test(team)) {
+  if ((comp !== "pl" && comp !== "ucl" && comp !== "laliga") || !/^\d{1,8}$/.test(team)) {
     return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   }
   try {
-    const list = comp === "pl" ? await plFixtures(team) : await uclFixtures(team);
+    const list = comp === "pl" ? await plFixtures(team) : comp === "laliga" ? await laLigaFixtures(team) : await uclFixtures(team);
     list.sort((a, b) => a.sort.localeCompare(b.sort));
     return NextResponse.json(list, { headers: { "Cache-Control": "public, max-age=10, s-maxage=15" } });
   } catch {

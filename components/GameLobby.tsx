@@ -10,6 +10,8 @@ export default function GameLobby({ comp }: { comp: Competition }) {
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const isUcl = comp === "ucl";
+  const label = isUcl ? "Champions League" : comp === "laliga" ? "La Liga" : "Premier League";
+  const home = isUcl ? "/champions-league" : comp === "laliga" ? "/la-liga" : "/premier-league";
 
   const createRoom = async () => {
     setCreating(true);
@@ -38,7 +40,7 @@ export default function GameLobby({ comp }: { comp: Competition }) {
           <div className="glow-orb glow-orb-purple h-96 w-96 -right-20 top-1/3" />
 
           <div className="relative z-10 text-center">
-            <p className="section-eyebrow text-primary">{isUcl ? "Champions League Game Lobby" : "Game Lobby"}</p>
+            <p className="section-eyebrow text-primary">{comp === "pl" ? "Game Lobby" : `${label} Game Lobby`}</p>
             <h1 className="section-title mt-3">Choose Mode</h1>
             <p className="mx-auto mt-5 max-w-3xl text-base md:text-lg text-fore-muted leading-8">
               Pick how you want to play, then you will be sent to a dedicated full-size battle screen.
@@ -72,10 +74,10 @@ export default function GameLobby({ comp }: { comp: Competition }) {
             </div>
 
             <Link
-              href={isUcl ? "/champions-league" : "/premier-league"}
+              href={home}
               className="mt-8 inline-block font-mono text-[11px] uppercase tracking-[0.14em] text-primary hover:text-accent"
             >
-              ← Back to {isUcl ? "Champions League" : "Premier League"}
+              ← Back to {label}
             </Link>
           </div>
         </div>

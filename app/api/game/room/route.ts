@@ -5,6 +5,7 @@ import {
   applyRematch,
   applyPick,
   newRoom,
+  parseComp,
   sideOf,
   startMatch,
   tick,
@@ -80,7 +81,7 @@ async function handlePost(request: NextRequest) {
   if (action === "create") {
     await db.prepare("DELETE FROM game_rooms WHERE updated_at < ?").bind(Date.now() - ROOM_TTL_MS).run();
 
-    const comp = body.comp === "ucl" ? "ucl" : "pl";
+    const comp = parseComp(body.comp);
     const token = crypto.randomUUID();
     for (let attempt = 0; attempt < 5; attempt++) {
       const code = makeCode();

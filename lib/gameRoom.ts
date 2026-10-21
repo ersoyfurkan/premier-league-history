@@ -1,8 +1,13 @@
 import { PLAYERS, type PlayerCard } from "@/data/players";
 import { UCL_CARDS } from "@/data/uclCards";
+import { LALIGA_CARDS } from "@/data/laLigaCards";
 
-export type Competition = "pl" | "ucl";
-export const poolFor = (comp: Competition | undefined): PlayerCard[] => (comp === "ucl" ? UCL_CARDS : PLAYERS);
+export type Competition = "pl" | "ucl" | "laliga";
+export const poolFor = (comp: Competition | undefined): PlayerCard[] =>
+  comp === "ucl" ? UCL_CARDS : comp === "laliga" ? LALIGA_CARDS : PLAYERS;
+export const lobbyFor = (comp: Competition | undefined) =>
+  comp === "ucl" ? "/champions-league/game" : comp === "laliga" ? "/la-liga/game" : "/game";
+export const parseComp = (value: unknown): Competition => (value === "ucl" || value === "laliga" ? value : "pl");
 
 export type Side = "p1" | "p2";
 export type StatKey = "appearances" | "goals" | "assists";

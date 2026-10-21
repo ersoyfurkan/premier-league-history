@@ -1,0 +1,64 @@
+Pos. | Club | Province | Seasons | Points | MP | MW | MD | ML | GF | GC | Dif. | POS 1� | POS 2� | POS 3� | Act
+1 | &nbsp;Real Madrid CF | Madrid | 94 | 5043 | 3066 | 1846 | 613 | 607 | 6561 | 3414 | 3147 | 36 | 26 | 10 | 1.�
+2 | &nbsp;FC Barcelona | Barcelona | 94 | 4937 | 3066 | 1787 | 617 | 662 | 6579 | 3396 | 3183 | 28 | 28 | 13 | 1.�
+3 | &nbsp;Atl�tico de Madrid | Madrid | 88 | 4053 | 2918 | 1420 | 672 | 826 | 5038 | 3561 | 1477 | 11 | 10 | 20 | 1.�
+4 | &nbsp;Athletic Club (Bilbao) | Vizcaya | 94 | 3805 | 3066 | 1322 | 731 | 1013 | 5005 | 4019 | 986 | 8 | 7 | 10 | 1.�
+5 | &nbsp;Valencia CF | Valencia | 90 | 3801 | 2968 | 1294 | 710 | 964 | 4784 | 3845 | 939 | 6 | 6 | 10 | 1.�
+6 | &nbsp;Sevilla FC | Sevilla | 81 | 3284 | 2712 | 1118 | 612 | 982 | 4088 | 3738 | 350 | 1 | 4 | 4 | 1.�
+7 | &nbsp;RCD Espanyol de Barcelona | Barcelona | 88 | 3040 | 2854 | 1008 | 676 | 1170 | 3834 | 4182 | -348 | - | - | 4 | 1.�
+8 | &nbsp;Real Sociedad (San Sebasti�n) | Guip�zcoa | 78 | 3029 | 2606 | 991 | 652 | 963 | 3631 | 3578 | 53 | 2 | 3 | 2 | 1.�
+9 | &nbsp;Real Betis Balompi� | Sevilla | 59 | 2339 | 2032 | 731 | 519 | 782 | 2577 | 2890 | -313 | 1 | - | 2 | 1.�
+10 | &nbsp;RC Celta de Vigo | Pontevedra | 59 | 2154 | 2002 | 679 | 475 | 848 | 2673 | 3063 | -390 | - | - | - | 1.�
+11 | &nbsp;Real Zaragoza | Zaragoza | 58 | 2109 | 1986 | 698 | 522 | 766 | 2683 | 2847 | -164 | - | 1 | 4 | 2.�
+12 | &nbsp;RC Deportivo de La Coru�a | A Coru�a | 46 | 1843 | 1568 | 569 | 403 | 596 | 2108 | 2294 | -186 | 1 | 5 | 4 | 2.�
+13 | &nbsp;Real Valladolid CF | Valladolid | 47 | 1641 | 1656 | 502 | 437 | 717 | 1922 | 2486 | -564 | - | - | - | 2.�
+14 | &nbsp;CA Osasuna (Pamplona) | Navarra | 43 | 1641 | 1544 | 500 | 394 | 650 | 1747 | 2136 | -389 | - | - | - | 1.�
+15 | &nbsp;Villarreal CF | Castell�n | 25 | 1439 | 950 | 396 | 251 | 303 | 1379 | 1177 | 202 | - | 1 | 1 | 1.�
+16 | &nbsp;Real Racing Club de Santander | Cantabria | 44 | 1415 | 1426 | 453 | 335 | 638 | 1845 | 2367 | -522 | - | 1 | 1 | 2.�
+17 | &nbsp;Real Sporting de Gij�n | Asturias | 42 | 1389 | 1458 | 471 | 358 | 629 | 1753 | 2152 | -399 | - | 1 | 1 | 2.�
+18 | &nbsp;Real CD Mallorca | Baleares | 32 | 1358 | 1178 | 387 | 304 | 487 | 1363 | 1630 | -267 | - | - | 2 | 1.�
+19 | &nbsp;Real Oviedo | Asturias | 38 | 1174 | 1192 | 408 | 292 | 492 | 1642 | 1951 | -309 | - | - | 3 | 1.�
+20 | &nbsp;UD Las Palmas | Las Palmas | 36 | 1114 | 1210 | 390 | 267 | 553 | 1444 | 1928 | -484 | - | 1 | 1 | 2.�
+21 | &nbsp;Getafe CF | Madrid | 20 | 925 | 760 | 239 | 208 | 313 | 824 | 960 | -136 | - | - | - | 1.�
+22 | &nbsp;Rayo Vallecano de Madrid | Madrid | 22 | 875 | 832 | 242 | 202 | 388 | 955 | 1354 | -399 | - | - | - | 1.�
+23 | &nbsp;Granada CF | Granada | 27 | 828 | 894 | 259 | 213 | 422 | 1000 | 1408 | -408 | - | - | - | 2.�
+24 | &nbsp;M�laga CF | M�laga | 17 | 791 | 646 | 209 | 164 | 273 | 779 | 898 | -119 | - | - | - | 2.�
+25 | &nbsp;Deportivo Alav�s (Vitoria) | �lava | 19 | 714 | 646 | 202 | 143 | 301 | 712 | 1003 | -291 | - | - | - | 1.�
+26 | &nbsp;Elche CF | Alicante | 24 | 709 | 792 | 227 | 211 | 354 | 854 | 1196 | -342 | - | - | - | 1.�
+27 | &nbsp;Levante UD (Valencia) | Valencia | 16 | 631 | 592 | 166 | 151 | 275 | 677 | 942 | -265 | - | - | - | 1.�
+28 | &nbsp;CD M�laga&#8201; | M�laga | 20 | 540 | 648 | 186 | 171 | 291 | 666 | 930 | -264 | - | - | - | Extinct
+29 | &nbsp;H�rcules de Alicante CF | Alicante | 20 | 538 | 628 | 184 | 149 | 295 | 716 | 1050 | -334 | - | - | - | 1.� RFEF
+30 | &nbsp;CD Tenerife | SC Tenerife | 13 | 510 | 494 | 155 | 128 | 211 | 619 | 744 | -125 | - | - | - | 1.� RFEF
+31 | &nbsp;C�diz CF | C�diz | 16 | 499 | 598 | 139 | 178 | 281 | 518 | 877 | -359 | - | - | - | 2.�
+32 | &nbsp;Real Murcia CF | Murcia | 18 | 445 | 586 | 145 | 143 | 298 | 607 | 992 | -385 | - | - | - | 1.� RFEF
+33 | &nbsp;UD Salamanca&#8201; | Salamanca | 12 | 377 | 424 | 124 | 102 | 198 | 425 | 581 | -156 | - | - | - | Extinct
+34 | &nbsp;CE Sabadell FC | Barcelona | 14 | 353 | 426 | 129 | 95 | 202 | 492 | 720 | -228 | - | - | - | 1.� RFEF
+35 | &nbsp;SD Eibar | Guip�zcoa | 7 | 302 | 266 | 77 | 71 | 118 | 297 | 375 | -78 | - | - | - | 2.�
+36 | &nbsp;UD Almer�a | Almer�a | 8 | 301 | 304 | 76 | 76 | 152 | 336 | 506 | -170 | - | - | - | 2.�
+37 | &nbsp;CD Logro��s&#8201;(Logro�o) | La Rioja | 9 | 293 | 346 | 96 | 92 | 158 | 291 | 489 | -198 | - | - | - | Extinct
+38 | &nbsp;CD Castell�n | Castell�n | 11 | 285 | 334 | 103 | 79 | 152 | 419 | 588 | -169 | - | - | - | 2.�
+39 | &nbsp;Girona FC | Girona | 5 | 259 | 190 | 72 | 43 | 75 | 274 | 273 | 1 | - | - | 1 | 1.�
+40 | &nbsp;Albacete Balompi� | Albacete | 7 | 257 | 270 | 76 | 76 | 118 | 320 | 410 | -90 | - | - | - | 2.�
+41 | &nbsp;C�rdoba CF | C�rdoba | 9 | 230 | 282 | 82 | 63 | 137 | 285 | 430 | -145 | - | - | - | 2.�
+42 | &nbsp;CD Legan�s (Madrid) | Madrid | 5 | 199 | 190 | 48 | 55 | 87 | 176 | 256 | -80 | - | - | - | 2.�
+43 | &nbsp;SD Compostela&#8201;(Santiago Compostela) | A Coru�a | 4 | 190 | 160 | 52 | 45 | 63 | 199 | 241 | -42 | - | - | - | Extinct
+44 | &nbsp;Recreativo de Huelva | Huelva | 5 | 188 | 186 | 50 | 46 | 90 | 202 | 296 | -94 | - | - | - | 2.� RFEF
+45 | &nbsp;Burgos CF&#8201; | Burgos | 6 | 168 | 204 | 59 | 50 | 95 | 216 | 310 | -94 | - | - | - | Extinct
+46 | &nbsp;Pontevedra CF | Pontevedra | 6 | 150 | 180 | 53 | 44 | 83 | 165 | 221 | -56 | - | - | - | 1.� RFEF
+47 | &nbsp;CD Numancia de Soria | Soria | 4 | 148 | 152 | 37 | 37 | 78 | 155 | 253 | -98 | - | - | - | 2.� RFEF
+48 | &nbsp;Arenas Club (Guecho) | Vizcaya | 7 | 107 | 130 | 43 | 21 | 66 | 227 | 308 | -81 | - | - | 1 | 1.� RFEF
+49 | &nbsp;Real Burgos CF&#8201; | Burgos | 3 | 96 | 114 | 26 | 44 | 44 | 101 | 139 | -38 | - | - | - | Extinct
+50 | &nbsp;Gimn�stic de Tarragona | Tarragona | 4 | 91 | 116 | 34 | 16 | 66 | 181 | 295 | -114 | - | - | - | 1.� RFEF
+51 | &nbsp;CF Extremadura (Almendralejo)&#8201; | Badajoz | 2 | 83 | 80 | 20 | 23 | 37 | 62 | 117 | -55 | - | - | - | Extinct
+52 | &nbsp;CP M�rida&#8201; | Badajoz | 2 | 81 | 80 | 19 | 24 | 37 | 70 | 115 | -45 | - | - | - | Extinct
+53 | &nbsp;CD Alcoyano (Alcoy) | Alicante | 4 | 76 | 108 | 30 | 16 | 62 | 145 | 252 | -107 | - | - | - | 2.� RFEF
+54 | &nbsp;Real Ja�n CF | Ja�n | 3 | 71 | 90 | 29 | 13 | 48 | 121 | 183 | -62 | - | - | - | 2.� RFEF
+55 | &nbsp;SD Huesca | Huesca | 2 | 67 | 76 | 14 | 25 | 37 | 77 | 118 | -41 | - | - | - | 2.�
+56 | &nbsp;Real Uni�n Club (Ir�n) | Guip�zcoa | 4 | 56 | 72 | 21 | 14 | 37 | 153 | 184 | -31 | - | - | - | 2.� RFEF
+57 | &nbsp;AD Almer�a&#8201; | Almer�a | 2 | 52 | 68 | 17 | 18 | 33 | 72 | 116 | -44 | - | - | - | Extinct
+58 | &nbsp;CE Europa (Barcelona) | Barcelona | 3 | 42 | 54 | 18 | 6 | 30 | 97 | 131 | -34 | - | - | - | 1.� RFEF
+59 | &nbsp;UE Lleida&#8201; | Lleida | 2 | 40 | 68 | 13 | 14 | 41 | 70 | 182 | -112 | - | - | - | Extinct
+60 | &nbsp;Xerez CD | C�diz | 1 | 34 | 38 | 8 | 10 | 20 | 38 | 66 | -28 | - | - | - | 2.� RFEF
+61 | &nbsp;CD Condal&#8201; | Barcelona | 1 | 22 | 30 | 7 | 8 | 15 | 37 | 57 | -20 | - | - | - | Extinct
+62 | &nbsp;CA de Tetu�n&#8201; | Marruecos | 1 | 19 | 30 | 7 | 5 | 18 | 51 | 85 | -34 | - | - | - | Extinct
+63 | &nbsp;Cultural y Deportiva Leonesa | Le�n | 1 | 14 | 30 | 5 | 4 | 21 | 34 | 65 | -31 | - | - | - | 2.�

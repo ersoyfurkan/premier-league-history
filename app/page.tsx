@@ -36,6 +36,24 @@ const competitions = [
       />
     ),
   },
+  {
+    name: "La Liga",
+    eyebrow: "Spain · since 1929",
+    description:
+      "Follow live matches, the current table and fixtures, club and player stats, derbies, all-time records, and the La Liga Stat Duel.",
+    href: "/la-liga",
+    accent: "text-warning",
+    border: "border-warning/25 hover:border-warning/60",
+    glow: "glow-orb-violet",
+    mark: (
+      <span
+        role="img"
+        aria-label="La Liga logo"
+        className="h-20 w-20 bg-contain bg-center bg-no-repeat"
+        style={{ backgroundImage: "url(https://a.espncdn.com/i/leaguelogos/soccer/500/15.png)" }}
+      />
+    ),
+  },
 ];
 
 export default function Home() {
@@ -52,7 +70,7 @@ export default function Home() {
             Pick a competition to explore its seasons, stats, records, and player games.
           </p>
 
-          <div className="mt-12 grid gap-5 text-left md:grid-cols-2">
+          <div className="mt-12 grid gap-5 text-left md:grid-cols-3">
             {competitions.map((competition) => (
               <Link
                 key={competition.name}

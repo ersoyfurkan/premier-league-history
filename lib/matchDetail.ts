@@ -1,6 +1,6 @@
 // Normalises the Premier League and UEFA match feeds into one shape so a single UI can show either.
 
-export type Comp = "pl" | "ucl";
+export type Comp = "pl" | "ucl" | "laliga";
 export type MatchStatus = "upcoming" | "live" | "finished";
 export type Side = "home" | "away";
 

@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import CardFace from "@/components/CardFace";
 import MatchResult from "@/components/MatchResult";
+import { lobbyFor } from "@/lib/gameRoom";
 import type { RoomView, StatKey } from "@/lib/gameRoom";
 
 const STATS: StatKey[] = ["goals", "assists", "appearances"];
@@ -127,7 +128,7 @@ function RoomClient() {
 
   const shareUrl =
     typeof window !== "undefined"
-      ? `${window.location.origin}/game/room?code=${code}${compParam === "ucl" ? "&comp=ucl" : ""}`
+      ? `${window.location.origin}/game/room?code=${code}${compParam === "ucl" || compParam === "laliga" ? `&comp=${compParam}` : ""}`
       : "";
 
   const copyLink = async () => {
@@ -158,7 +159,7 @@ function RoomClient() {
   }
 
   const you = view.you;
-  const lobby = view.comp === "ucl" ? "/champions-league/game" : "/game";
+  const lobby = lobbyFor(view.comp);
   const opp = you === "p1" ? "p2" : "p1";
   const myTurn = view.picker === you;
   const r = view.result;
