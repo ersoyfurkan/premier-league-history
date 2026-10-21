@@ -23,7 +23,7 @@ export default function GameLobby({ comp }: { comp: Competition }) {
       const data = (await res.json()) as { error?: string; code?: string; token?: string };
       if (!res.ok) throw new Error(data.error ?? "Could not create room");
       localStorage.setItem(`plroom:${data.code}`, data.token ?? "");
-      router.push(`/game/room?code=${data.code}`);
+      router.push(`/game/room?code=${data.code}&comp=${comp}`);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Could not create room");
       setCreating(false);

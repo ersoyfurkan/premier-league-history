@@ -2,16 +2,27 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 
 export default function Navbar() {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const router = useRouter();
   const { user, logout } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
 
-  const links = pathname === "/" ? [] : [
+  const inUcl = pathname.startsWith("/champions-league") || searchParams.get("comp") === "ucl";
+  const links =
+    pathname === "/"
+      ? []
+      : inUcl
+        ? [
+            { href: "/", label: "Home" },
+            { href: "/champions-league", label: "Champions League" },
+            { href: "/champions-league/game", label: "Game" },
+          ]
+        : [
     { href: "/", label: "Home" },
     { href: "/clubs", label: "Clubs" },
     { href: "/seasons", label: "Seasons" },
@@ -20,7 +31,7 @@ export default function Navbar() {
   ];
 
   const isActive = (href: string) =>
-    href === "/" ? pathname === href : pathname === href || pathname.startsWith(`${href}/`);
+    href === "/" || href === "/champions-league" ? pathname === href : pathname === href || pathname.startsWith(`${href}/`);
 
   return (
     <nav className="fixed inset-x-0 top-0 z-50 border-b border-[rgba(0,229,255,0.08)] bg-[rgba(3,4,10,0.85)] backdrop-blur-[20px]">

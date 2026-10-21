@@ -35,6 +35,7 @@ function CardPanel({ title, card, hiddenText }: { title: string; card: Card | nu
 
 function RoomClient() {
   const code = (useSearchParams().get("code") ?? "").toUpperCase();
+  const compParam = useSearchParams().get("comp");
   const storageKey = `plroom:${code}`;
 
   const [view, setViewState] = useState<RoomView | null>(null);
@@ -124,7 +125,10 @@ function RoomClient() {
     setView(data.view ?? null);
   };
 
-  const shareUrl = typeof window !== "undefined" ? `${window.location.origin}/game/room?code=${code}` : "";
+  const shareUrl =
+    typeof window !== "undefined"
+      ? `${window.location.origin}/game/room?code=${code}${compParam === "ucl" ? "&comp=ucl" : ""}`
+      : "";
 
   const copyLink = async () => {
     await navigator.clipboard.writeText(shareUrl);
