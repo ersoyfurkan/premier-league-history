@@ -9,7 +9,7 @@ type Decade = "all" | "1990s" | "2000s" | "2010s" | "2020s";
 
 export default function SeasonsPage() {
   const [decade, setDecade] = useState<Decade>("all");
-  const [tab, setTab] = useState<"history" | "current">("history");
+  const [tab, setTab] = useState<"history" | "current">("current");
 
   const filteredSeasons = seasons.filter((season) => {
     const year = parseInt(season.year.split("-")[0]);

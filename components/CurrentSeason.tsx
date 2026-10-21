@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import PlayerPhoto from "@/components/PlayerPhoto";
 import PlTeamBadge from "@/components/PlTeamBadge";
+import { ClubSearch, type ClubTeam } from "@/components/ClubFixtures";
+import { fmtPlKickoff } from "@/lib/dates";
 
 type View = "table" | "stats";
 type StatKind = "goals" | "assists";
@@ -62,16 +64,19 @@ function Status({ error, loading }: { error: boolean; loading: boolean }) {
 function LeagueTable() {
   const [data, setData] = useState<TableData | null>(null);
   const [error, setError] = useState(false);
+  const [selected, setSelected] = useState<ClubTeam | null>(null);
 
   useEffect(() => {
     load<TableData>("type=table").then(setData).catch(() => setError(true));
   }, []);
 
   const entries = data?.tables?.[0]?.entries ?? [];
+  const teams = entries.flatMap((e) => (e.team.id ? [{ id: e.team.id, name: e.team.name }] : []));
 
   return (
     <div className="data-card p-6">
       <Status error={error} loading={!data} />
+      {data && <ClubSearch comp="pl" teams={teams} selected={selected} onSelect={setSelected} />}
       {data && (
         <div className="overflow-x-auto">
           <table className="w-full min-w-[640px] text-left">
@@ -87,7 +92,13 @@ function LeagueTable() {
                 const o = e.overall;
                 const gd = o.goalsFor - o.goalsAgainst;
                 return (
-                  <tr key={e.team.name} className="border-b border-border-dim text-sm">
+                  <tr
+                    key={e.team.name}
+                    onClick={() => e.team.id && setSelected({ id: e.team.id, name: e.team.name })}
+                    className={`cursor-pointer border-b border-border-dim text-sm transition hover:bg-primary/5 ${
+                      selected?.id === e.team.id ? "bg-primary/10" : ""
+                    }`}
+                  >
                     <td className="px-3 py-3 font-mono text-primary">{o.position}</td>
                     <td className="px-3 py-2 font-semibold">
                       <div className="flex items-center gap-3">
@@ -251,7 +262,7 @@ function Fixtures({ initialWeek }: { initialWeek: number | null }) {
                     <PlTeamBadge id={m.homeTeam.id} name={m.homeTeam.shortName} />
                   </span>
                   <span className="min-w-[110px] text-center font-mono text-primary">
-                    {played ? `${m.homeTeam.score ?? 0} - ${m.awayTeam.score ?? 0}` : m.kickoff.slice(5, 16).replace(" ", " · ")}
+                    {played ? `${m.homeTeam.score ?? 0} - ${m.awayTeam.score ?? 0}` : fmtPlKickoff(m.kickoff)}
                     {live && (
                       <span className="mt-1 flex items-center justify-center gap-1 text-[10px] uppercase tracking-widest text-danger">
                         <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-danger" />
@@ -277,11 +288,23 @@ export default function CurrentSeason() {
   const [view, setView] = useState<View>("table");
   const [week, setWeek] = useState<number | null>(null);
 
-  // Start fixtures on the next matchweek after the last completed one
+  // Open on the latest matchweek that has been played or has started
   useEffect(() => {
+    let active = true;
     load<TableData>("type=table")
-      .then((t) => setWeek(Math.min(38, (t.matchweek ?? 0) + 1)))
-      .catch(() => setWeek(1));
+      .then(async (t) => {
+        const played = Math.max(1, t.matchweek ?? 1);
+        let target = played;
+        if (played < 38) {
+          const next = await load<{ data: Match[] }>(`type=fixtures&matchweek=${played + 1}`).catch(() => null);
+          if (next?.data.some((m) => m.period !== "PreMatch")) target = played + 1;
+        }
+        if (active) setWeek(target);
+      })
+      .catch(() => active && setWeek(1));
+    return () => {
+      active = false;
+    };
   }, []);
 
   return (

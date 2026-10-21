@@ -27,24 +27,6 @@ export default function PremierLeagueHome() {
               Play Stat Duel
             </Link>
           </div>
-
-          <div className="mt-14 grid grid-cols-2 lg:grid-cols-4 gap-4">
-            {[
-              { label: "Seasons Logged", value: "34" },
-              { label: "Legend Clubs", value: "20+" },
-              { label: "Rivalries", value: "20" },
-              { label: "Top Managers", value: "200+" },
-            ].map((stat) => (
-              <div key={stat.label} className="rounded-2xl border border-primary/15 bg-primary-dim p-5 text-center shadow-glow-card">
-                <p className="font-display stat-number text-primary text-[clamp(36px,5vw,48px)] leading-none">
-                  {stat.value}
-                </p>
-                <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.18em] text-fore-muted">
-                  {stat.label}
-                </p>
-              </div>
-            ))}
-          </div>
         </div>
       </section>
     </main>

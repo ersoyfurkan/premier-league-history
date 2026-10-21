@@ -6,9 +6,12 @@ import { uclWinners } from "@/data/championsLeague";
 import { uclClubLogos } from "@/data/championsLeagueMedia";
 import UclImage from "@/components/UclImage";
 import UclRecords from "@/components/UclRecords";
+import { ClubSearch, type ClubTeam } from "@/components/ClubFixtures";
+import { fmtUclKickoff } from "@/lib/dates";
 
 type View = "current" | "records" | "winners";
 type Team = {
+  id?: string;
   internationalName: string;
   logoUrl?: string;
 };
@@ -86,6 +89,7 @@ function CurrentSeason() {
   const [matchday, setMatchday] = useState(0);
   const [fixtures, setFixtures] = useState<{ matchday: number; matches: Match[] } | null>(null);
   const [fixtureFailure, setFixtureFailure] = useState<{ matchday: number; message: string } | null>(null);
+  const [selected, setSelected] = useState<ClubTeam | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -101,7 +105,17 @@ function CurrentSeason() {
         setTable(entries);
         setSeasonYear(body.seasonYear);
         const mostPlayed = Math.max(0, ...entries.map((entry) => entry.played));
-        setMatchday(Math.min(8, Math.max(1, mostPlayed + 1)));
+        const played = Math.min(8, Math.max(1, mostPlayed));
+        setMatchday(played);
+        // Jump forward if the next matchday has already kicked off
+        if (played < 8) {
+          fetch(`/api/champions-league?type=fixtures&matchday=${played + 1}`)
+            .then((r) => (r.ok ? (r.json() as Promise<Match[]>) : []))
+            .then((next) => {
+              if (active && next.some((m) => m.status !== "UPCOMING")) setMatchday(played + 1);
+            })
+            .catch(() => undefined);
+        }
       })
       .catch((error: unknown) => {
         if (active) {
@@ -170,6 +184,13 @@ function CurrentSeason() {
         {tableError ? (
           <p role="alert" className="py-8 text-center text-warning">{tableError}</p>
         ) : table ? (
+          <>
+          <ClubSearch
+            comp="ucl"
+            teams={table.flatMap((e) => (e.team.id ? [{ id: e.team.id, name: e.team.internationalName, logo: e.team.logoUrl }] : []))}
+            selected={selected}
+            onSelect={setSelected}
+          />
           <table className="w-full min-w-[650px] text-left">
             <thead>
               <tr className="border-b border-border bg-surface2">
@@ -182,7 +203,16 @@ function CurrentSeason() {
             </thead>
             <tbody>
               {table.map((entry) => (
-                <tr key={entry.team.internationalName} className="border-b border-border-dim text-sm">
+                <tr
+                  key={entry.team.internationalName}
+                  onClick={() =>
+                    entry.team.id &&
+                    setSelected({ id: entry.team.id, name: entry.team.internationalName, logo: entry.team.logoUrl })
+                  }
+                  className={`cursor-pointer border-b border-border-dim text-sm transition hover:bg-primary/5 ${
+                    selected?.id === entry.team.id ? "bg-primary/10" : ""
+                  }`}
+                >
                   <td className="px-2 py-3 font-mono text-primary">{entry.rank}</td>
                   <td className="px-2 py-3 font-semibold">
                     <span className="flex items-center gap-2">
@@ -202,6 +232,7 @@ function CurrentSeason() {
               ))}
             </tbody>
           </table>
+          </>
         ) : (
           <p className="py-8 text-center text-fore-muted">Loading standings…</p>
         )}
@@ -240,7 +271,6 @@ function CurrentSeason() {
               {matches.map((match) => {
                 const played = match.status === "FINISHED";
                 const live = match.status === "LIVE";
-                const date = new Date(match.kickOffTime.dateTime ?? match.kickOffTime.date);
                 return (
                   <li key={match.id}>
                     <Link
@@ -254,7 +284,7 @@ function CurrentSeason() {
                       <span className="min-w-24 text-center font-mono text-primary">
                         {played || live
                           ? `${match.score?.total?.home ?? 0} - ${match.score?.total?.away ?? 0}`
-                          : date.toLocaleString("en-GB", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "UTC" })}
+                          : fmtUclKickoff(match.kickOffTime.dateTime ?? match.kickOffTime.date)}
                         {live && (
                           <span className="mt-1 flex items-center justify-center gap-1 text-[10px] uppercase tracking-widest text-danger">
                             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-danger" />
