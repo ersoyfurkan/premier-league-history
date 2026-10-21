@@ -19,7 +19,8 @@ export default function Navbar() {
     { href: "/game", label: "Game" },
   ];
 
-  const isActive = (href: string) => pathname === href;
+  const isActive = (href: string) =>
+    href === "/" ? pathname === href : pathname === href || pathname.startsWith(`${href}/`);
 
   return (
     <nav className="fixed inset-x-0 top-0 z-50 border-b border-[rgba(0,229,255,0.08)] bg-[rgba(3,4,10,0.85)] backdrop-blur-[20px]">
@@ -27,7 +28,7 @@ export default function Navbar() {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="font-display text-xl tracking-[0.14em] uppercase text-primary drop-shadow-[0_0_14px_rgba(0,229,255,0.45)]">
-            PL <span className="text-accent">History</span>
+            Football <span className="text-accent">History</span>
           </Link>
 
           {/* Desktop Menu */}

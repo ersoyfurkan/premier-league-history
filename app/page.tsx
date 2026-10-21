@@ -1,48 +1,79 @@
 import Link from "next/link";
 
+const competitions = [
+  {
+    name: "Premier League",
+    eyebrow: "England · 1992–present",
+    description:
+      "Explore the current season, clubs, rivalries, historical tables, and the Premier League Stat Duel.",
+    href: "/premier-league",
+    accent: "text-primary",
+    border: "border-primary/25 hover:border-primary/60",
+    glow: "glow-orb-cyan",
+    mark: (
+      <span
+        role="img"
+        aria-label="Premier League logo"
+        className="h-20 w-20 bg-contain bg-center bg-no-repeat"
+        style={{ backgroundImage: "url(https://upload.wikimedia.org/wikipedia/en/f/f2/Premier_League_Logo.svg)" }}
+      />
+    ),
+  },
+  {
+    name: "Champions League",
+    eyebrow: "Europe · since 1955",
+    description:
+      "Follow the league phase and fixtures, browse all-time records and winners, and play the UCL Stat Duel.",
+    href: "/champions-league",
+    accent: "text-accent",
+    border: "border-accent/25 hover:border-accent/60",
+    glow: "glow-orb-purple",
+    mark: (
+      <span
+        aria-hidden="true"
+        className="h-20 w-20 bg-contain bg-center bg-no-repeat"
+        style={{ backgroundImage: "url(https://img.uefa.com/imgml/uefacom/elements/logos/competitions/color/full/1.svg)" }}
+      />
+    ),
+  },
+];
+
 export default function Home() {
   return (
-    <main className="min-h-screen bg-background text-foreground grid-bg overflow-hidden">
-      <section className="relative min-h-[calc(100vh-80px)] flex items-center justify-center px-6 py-16">
-        <div className="glow-orb glow-orb-cyan w-[520px] h-[520px] -top-28 -left-24" />
-        <div className="glow-orb glow-orb-purple w-[620px] h-[620px] top-1/4 -right-36" />
-        <div className="glow-orb glow-orb-violet w-[460px] h-[460px] -bottom-24 left-1/2 -translate-x-1/2" />
+    <main className="min-h-screen bg-background text-foreground grid-bg px-6 py-14 md:py-20">
+      <section className="relative mx-auto flex min-h-[calc(100vh-12rem)] w-full max-w-6xl flex-col justify-center">
+        <div className="glow-orb glow-orb-cyan -left-24 top-0 h-[420px] w-[420px]" />
+        <div className="glow-orb glow-orb-purple -right-24 bottom-0 h-[500px] w-[500px]" />
 
-        <div className="relative z-10 max-w-6xl w-full text-center">
-          <div className="mb-4 section-eyebrow text-primary">Live Historical Archive</div>
-          <h1 className="hero-title">Premier League Broadcast 2050</h1>
-          <p className="mx-auto mt-6 max-w-2xl text-[16px] leading-7 text-fore-muted">
-            Dark, dense, data-forward coverage of every season, every rivalry, and every club.
-            Explore the league history through a futuristic command-center experience.
+        <div className="relative z-10 text-center">
+          <p className="section-eyebrow text-primary">Football History Archive</p>
+          <h1 className="hero-title mt-4">Choose Your Competition</h1>
+          <p className="mx-auto mt-6 max-w-2xl text-base leading-7 text-fore-muted md:text-lg">
+            Pick a competition to explore its seasons, stats, records, and player games.
           </p>
 
-          <div className="mt-8 flex items-center justify-center gap-4">
-            <Link href="/clubs" className="btn-primary">
-              Explore Clubs
-            </Link>
-            <Link href="/seasons" className="btn-ghost">
-              Season Matrix
-            </Link>
-            <Link href="/game" className="btn-ghost">
-              Play Stat Duel
-            </Link>
-          </div>
-
-          <div className="mt-14 grid grid-cols-2 lg:grid-cols-4 gap-4">
-            {[
-              { label: "Seasons Logged", value: "34" },
-              { label: "Legend Clubs", value: "20+" },
-              { label: "Rivalries", value: "20" },
-              { label: "Top Managers", value: "200+" },
-            ].map((stat) => (
-              <div key={stat.label} className="rounded-2xl border border-primary/15 bg-primary-dim p-5 text-center shadow-glow-card">
-                <p className="font-display stat-number text-primary text-[clamp(36px,5vw,48px)] leading-none">
-                  {stat.value}
-                </p>
-                <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.18em] text-fore-muted">
-                  {stat.label}
-                </p>
-              </div>
+          <div className="mt-12 grid gap-5 text-left md:grid-cols-2">
+            {competitions.map((competition) => (
+              <Link
+                key={competition.name}
+                href={competition.href}
+                className={`group relative overflow-hidden rounded-3xl border bg-surface/80 p-7 shadow-glow-card transition hover:-translate-y-1 md:p-9 ${competition.border}`}
+              >
+                <div className={`glow-orb ${competition.glow} -right-16 -top-24 h-64 w-64`} />
+                <div className="relative z-10 flex h-full flex-col">
+                  <div className={`mb-7 flex h-24 w-24 items-center justify-center rounded-2xl border border-white/10 bg-black/25 ${competition.accent}`}>
+                    {competition.mark}
+                  </div>
+                  <p className={`section-eyebrow ${competition.accent}`}>{competition.eyebrow}</p>
+                  <h2 className="mt-3 text-4xl md:text-5xl">{competition.name}</h2>
+                  <p className="mt-4 max-w-lg flex-1 leading-7 text-fore-muted">
+                    {competition.description}
+                  </p>
+                  <span className={`mt-8 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.16em] ${competition.accent}`}>
+                    Enter competition <span aria-hidden="true" className="transition group-hover:translate-x-1">→</span>
+                  </span>
+                </div>
+              </Link>
             ))}
           </div>
         </div>

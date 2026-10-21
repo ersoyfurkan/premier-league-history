@@ -4,8 +4,8 @@ import Navbar from "@/components/Navbar";
 import { AuthProvider } from "@/context/AuthContext";
 
 export const metadata: Metadata = {
-  title: "Premier League History",
-  description: "Broadcast from 2050: Premier League data archive",
+  title: "Football History Archive",
+  description: "Explore Premier League and UEFA Champions League stats, seasons, and history.",
 };
 
 export default function RootLayout({
