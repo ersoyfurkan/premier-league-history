@@ -11,6 +11,8 @@ export default function GameLobby({ comp }: { comp: Competition }) {
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [miniGame, setMiniGame] = useState<MiniGameMode | null>(null);
+  const [creatingGrid, setCreatingGrid] = useState(false);
+  const [gridError, setGridError] = useState<string | null>(null);
   const isUcl = comp === "ucl";
   const label = isUcl ? "Champions League" : comp === "laliga" ? "La Liga" : "Premier League";
   const home = isUcl ? "/champions-league" : comp === "laliga" ? "/la-liga" : "/premier-league";
@@ -31,6 +33,25 @@ export default function GameLobby({ comp }: { comp: Competition }) {
     } catch (e) {
       setError(e instanceof Error ? e.message : "Could not create room");
       setCreating(false);
+    }
+  };
+
+  const createFootballTicTacToe = async () => {
+    setCreatingGrid(true);
+    setGridError(null);
+    try {
+      const res = await fetch("/api/game/football-tic-tac-toe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "create", comp }),
+      });
+      const data = (await res.json()) as { error?: string; code?: string; token?: string };
+      if (!res.ok || !data.code || !data.token) throw new Error(data.error ?? "Could not create game");
+      localStorage.setItem(`plttt:${data.code}`, data.token);
+      router.push(`/game/football-tic-tac-toe?code=${data.code}&comp=${comp}`);
+    } catch (e) {
+      setGridError(e instanceof Error ? e.message : "Could not create game");
+      setCreatingGrid(false);
     }
   };
 
@@ -87,9 +108,8 @@ export default function GameLobby({ comp }: { comp: Competition }) {
               ) : (
                 <div className="mt-5 grid gap-3 text-left md:grid-cols-3">
                   {([
-                    ["higher-lower", "Higher or Lower", "Guess the next player’s goals, appearances, or assists."],
-                    ["tic-tac-toe", "Tic-Tac-Toe", "A quick X-and-O challenge against the AI."],
-                    ["transfer-draft", "Transfer Market Draft", "Build a five-player squad on a game-credit budget."],
+                    ["higher-lower", "Player Stats: Higher or Lower", "Guess the next player’s goals, appearances, or assists."],
+                    ["transfer-market", "Transfer Market: Higher or Lower", "Compare real historical peak market values in euros."],
                   ] as const).map(([mode, title, description]) => (
                     <button
                       key={mode}
@@ -104,6 +124,22 @@ export default function GameLobby({ comp }: { comp: Competition }) {
                       </span>
                     </button>
                   ))}
+                  <button
+                    type="button"
+                    onClick={createFootballTicTacToe}
+                    disabled={creatingGrid}
+                    className="rounded-2xl border border-warning/25 bg-background/60 p-5 text-left transition hover:border-warning/60 hover:bg-warning/5 disabled:opacity-60"
+                  >
+                    <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-warning">Online · Invite a friend</p>
+                    <h3 className="mt-2 text-xl font-bold">{creatingGrid ? "Creating…" : "Football Tic-Tac-Toe"}</h3>
+                    <p className="mt-2 text-sm leading-6 text-fore-muted">
+                      Take turns naming players who match each row and column clue. The grid changes by competition.
+                    </p>
+                    {gridError && <p className="mt-3 text-sm text-warning">{gridError}</p>}
+                    <span className="mt-4 inline-block font-mono text-[10px] uppercase tracking-[0.12em] text-warning">
+                      Create invite →
+                    </span>
+                  </button>
                 </div>
               )}
             </div>
