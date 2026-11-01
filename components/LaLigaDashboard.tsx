@@ -6,14 +6,16 @@ import {
   laLigaAllTime,
   laLigaClubs,
   laLigaRivalries,
+  laLigaSeasons,
   laLigaWinners,
 } from "@/data/laLiga";
 import UclImage from "@/components/UclImage";
 import { ClubSearch, type ClubTeam } from "@/components/ClubFixtures";
 import { espnBadge } from "@/lib/clubArt";
 import { fmtUclKickoff } from "@/lib/dates";
+import { ESPN_SEASON } from "@/lib/espn";
 
-type View = "current" | "players" | "clubs" | "rivalries" | "alltime" | "winners";
+type View = "current" | "seasons" | "players" | "clubs" | "rivalries" | "alltime" | "winners";
 type TableEntry = {
   team: { id: string; name: string; logo?: string };
   rank: number;
@@ -45,10 +47,15 @@ const buttonClass = (active: boolean) =>
 
 const th = "px-3 py-3 font-mono text-[10px] uppercase tracking-[0.1em] text-primary";
 
+const apiError = (body: unknown, fallback: string) =>
+  typeof body === "object" && body !== null && "error" in body && typeof body.error === "string"
+    ? body.error
+    : fallback;
+
 // Club names in the static history data may differ slightly from ESPN's names
 const logoByName = (name: string) => {
-  const club = laLigaClubs.find((c) => c.name === name || c.short === name);
-  return club ? espnBadge(club.espnId) : undefined;
+  const club = laLigaClubs.find((c) => c.name === name || c.short === name || c.aliases.includes(name));
+  return club?.espnId ? espnBadge(club.espnId) : undefined;
 };
 
 function CurrentSeason() {
@@ -64,7 +71,7 @@ function CurrentSeason() {
     fetch("/api/la-liga?type=table")
       .then(async (r) => {
         const body = await r.json();
-        if (!r.ok) throw new Error(body.error ?? "Could not load the table.");
+        if (!r.ok) throw new Error(apiError(body, "Could not load the table."));
         return body as TableEntry[];
       })
       .then((body) => active && setTable(body))
@@ -81,7 +88,7 @@ function CurrentSeason() {
       fetch(`/api/la-liga?type=fixtures${week ? `&matchweek=${week}` : ""}`)
         .then(async (r) => {
           const body = await r.json();
-          if (!r.ok) throw new Error(body.error ?? "Could not load fixtures.");
+            if (!r.ok) throw new Error(apiError(body, "Could not load fixtures."));
           return body as { matchweek: number; matches: Match[] };
         })
         .then((body) => {
@@ -106,7 +113,7 @@ function CurrentSeason() {
     <section className="space-y-8">
       <div className="text-center">
         <p className="section-eyebrow text-primary">Live data</p>
-        <h2 className="mt-2 text-4xl">La Liga 2026/27</h2>
+        <h2 className="mt-2 text-4xl">La Liga {ESPN_SEASON}/{String(ESPN_SEASON + 1).slice(-2)}</h2>
         <p className="mt-3 text-sm text-fore-muted">Current table and matchweek fixtures.</p>
       </div>
 
@@ -254,7 +261,7 @@ function Leaders({ type, title }: { type: "goals" | "assists"; title: string }) 
     fetch(`/api/la-liga?type=${type}`)
       .then(async (r) => {
         const body = await r.json();
-        if (!r.ok) throw new Error(body.error ?? "Could not load leaders.");
+        if (!r.ok) throw new Error(apiError(body, "Could not load leaders."));
         return body as Leader[];
       })
       .then((b) => active && setRows(b))
@@ -303,7 +310,7 @@ function PlayerStats() {
   return (
     <section className="space-y-6">
       <div className="text-center">
-        <p className="section-eyebrow text-primary">2026/27</p>
+        <p className="section-eyebrow text-primary">{ESPN_SEASON}/{String(ESPN_SEASON + 1).slice(-2)}</p>
         <h2 className="mt-2 text-4xl">Player Stats</h2>
       </div>
       <div className="grid gap-6 lg:grid-cols-2">
@@ -315,47 +322,67 @@ function PlayerStats() {
 }
 
 function Clubs() {
+  const [clubs, setClubs] = useState<TableEntry[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    fetch("/api/la-liga?type=table")
+      .then(async (response) => {
+        const body = await response.json();
+        if (!response.ok) throw new Error(apiError(body, "Could not load La Liga clubs."));
+        return body as TableEntry[];
+      })
+      .then((body) => active && setClubs(body))
+      .catch((cause: unknown) => active && setError(cause instanceof Error ? cause.message : "Could not load La Liga clubs."));
+    return () => {
+      active = false;
+    };
+  }, []);
+
   return (
     <section className="space-y-6">
       <div className="text-center">
-        <p className="section-eyebrow text-primary">Club profiles</p>
+        <p className="section-eyebrow text-primary">Current season</p>
         <h2 className="mt-2 text-4xl">La Liga Clubs</h2>
       </div>
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        {laLigaClubs.map((club) => (
-          <article key={club.id} className="data-card p-5">
-            <div className="flex items-center gap-3">
-              <UclImage src={espnBadge(club.espnId)} alt={club.name} className="h-12 w-12" />
-              <div>
-                <h3 className="text-xl font-semibold">{club.name}</h3>
-                <p className="text-xs text-fore-muted">
-                  {club.city} · founded {club.founded}
-                </p>
+      {error ? (
+        <p role="alert" className="py-8 text-center text-warning">{error}</p>
+      ) : clubs ? (
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {clubs.map((entry) => (
+            <article key={entry.team.id} className="data-card p-5">
+              <div className="flex items-center gap-3">
+                <UclImage src={entry.team.logo} alt={entry.team.name} className="h-12 w-12" />
+                <div>
+                  <p className="font-mono text-xs text-primary">#{entry.rank}</p>
+                  <h3 className="text-xl font-semibold">{entry.team.name}</h3>
+                </div>
               </div>
-            </div>
-            <dl className="mt-4 grid grid-cols-2 gap-3 text-sm">
-              <div>
-                <dt className="font-mono text-[10px] uppercase tracking-widest text-fore-muted">Titles</dt>
-                <dd className="font-semibold text-primary">{club.titles}</dd>
-              </div>
-              <div>
-                <dt className="font-mono text-[10px] uppercase tracking-widest text-fore-muted">Best finish</dt>
-                <dd className="font-semibold">{club.bestFinish}</dd>
-              </div>
-              <div className="col-span-2">
-                <dt className="font-mono text-[10px] uppercase tracking-widest text-fore-muted">Stadium</dt>
-                <dd>
-                  {club.stadium} ({club.capacity.toLocaleString("en-GB")})
-                </dd>
-              </div>
-              <div className="col-span-2">
-                <dt className="font-mono text-[10px] uppercase tracking-widest text-fore-muted">Legend</dt>
-                <dd>{club.legend}</dd>
-              </div>
-            </dl>
-          </article>
-        ))}
-      </div>
+              <dl className="mt-4 grid grid-cols-2 gap-3 text-sm">
+                <div>
+                  <dt className="font-mono text-[10px] uppercase tracking-widest text-fore-muted">Played</dt>
+                  <dd className="font-semibold">{entry.played}</dd>
+                </div>
+                <div>
+                  <dt className="font-mono text-[10px] uppercase tracking-widest text-fore-muted">Points</dt>
+                  <dd className="font-semibold text-primary">{entry.points}</dd>
+                </div>
+                <div>
+                  <dt className="font-mono text-[10px] uppercase tracking-widest text-fore-muted">Record</dt>
+                  <dd>{entry.won}W · {entry.drawn}D · {entry.lost}L</dd>
+                </div>
+                <div>
+                  <dt className="font-mono text-[10px] uppercase tracking-widest text-fore-muted">Goal difference</dt>
+                  <dd>{entry.goalsFor - entry.goalsAgainst}</dd>
+                </div>
+              </dl>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <p className="py-8 text-center text-fore-muted">Loading clubs…</p>
+      )}
     </section>
   );
 }
@@ -373,26 +400,67 @@ function Rivalries() {
             <h3 className="text-2xl">{r.name}</h3>
             <div className="mt-3 flex items-center justify-center gap-4">
               <UclImage src={logoByName(r.club1)} alt={r.club1} className="h-12 w-12" />
-              <span className="font-mono text-primary">
-                {r.club1Wins} – {r.draws} – {r.club2Wins}
-              </span>
+              <span aria-hidden="true" className="font-mono text-primary">vs</span>
               <UclImage src={logoByName(r.club2)} alt={r.club2} className="h-12 w-12" />
             </div>
-            <p className="mt-1 text-center text-xs text-fore-muted">
-              {r.club1} wins · draws · {r.club2} wins ({r.meetings} meetings)
-            </p>
+            <p className="mt-1 text-center text-xs text-fore-muted">{r.club1} · {r.club2}</p>
             <p className="mt-3 text-sm leading-6 text-fore-muted">{r.description}</p>
-            <p className="mt-2 text-sm">
-              <span className="text-fore-muted">Biggest win: </span>
-              {r.biggestWin}
-            </p>
-            <p className="text-sm">
-              <span className="text-fore-muted">Top scorer: </span>
-              {r.topScorer}
-            </p>
           </article>
         ))}
       </div>
+    </section>
+  );
+}
+
+function SeasonArchive() {
+  const [decade, setDecade] = useState("all");
+  const decades = ["all", "1920s", "1930s", "1940s", "1950s", "1960s", "1970s", "1980s", "1990s", "2000s", "2010s", "2020s"];
+  const rows = laLigaSeasons.filter((season) => {
+    if (decade === "all") return true;
+    const start = Number(decade.slice(0, 3)) * 10;
+    const year = Number(season.season.slice(0, 4));
+    return year >= start && year < start + 10;
+  });
+
+  return (
+    <section className="space-y-5">
+      <div className="text-center">
+        <p className="section-eyebrow text-primary">1929–present</p>
+        <h2 className="mt-2 text-4xl">La Liga Season Archive</h2>
+        <p className="mt-3 text-sm text-fore-muted">Champions, top-three finishes, and leading scorers for every completed season.</p>
+      </div>
+      <div className="flex flex-wrap justify-center gap-2">
+        {decades.map((option) => (
+          <button key={option} type="button" onClick={() => setDecade(option)} className={buttonClass(decade === option)}>
+            {option === "all" ? "All seasons" : option}
+          </button>
+        ))}
+      </div>
+      <div className="data-card overflow-x-auto p-4 md:p-6">
+        <table className="w-full min-w-[760px] text-left">
+          <thead>
+            <tr className="border-b border-border bg-surface2">
+              {["Season", "Champion", "Runner-up", "Third place", "Top scorer"].map((heading) => (
+                <th key={heading} className={th}>{heading}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((season) => (
+              <tr key={season.season} className="border-b border-border-dim text-sm transition hover:bg-primary/5">
+                <td className="px-3 py-3 whitespace-nowrap font-mono text-fore-muted">{season.season}</td>
+                <td className="px-3 py-3 font-semibold text-success">{season.champion}</td>
+                <td className="px-3 py-3 text-fore-muted">{season.runnerUp}</td>
+                <td className="px-3 py-3 text-fore-muted">{season.thirdPlace}</td>
+                <td className="px-3 py-3">
+                  {season.topScorer} <span className="font-mono text-primary">({season.goals})</span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p className="text-center text-xs text-fore-muted">{rows.length} completed seasons shown</p>
     </section>
   );
 }
@@ -511,6 +579,7 @@ export default function LaLigaDashboard() {
         <nav aria-label="La Liga sections" className="mb-8 flex flex-wrap justify-center gap-3">
           {([
             ["current", "Current season"],
+            ["seasons", "Past seasons"],
             ["players", "Player stats"],
             ["clubs", "Clubs"],
             ["rivalries", "Rivalries"],
@@ -524,6 +593,7 @@ export default function LaLigaDashboard() {
         </nav>
 
         {view === "current" && <CurrentSeason />}
+        {view === "seasons" && <SeasonArchive />}
         {view === "players" && <PlayerStats />}
         {view === "clubs" && <Clubs />}
         {view === "rivalries" && <Rivalries />}
