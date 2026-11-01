@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -10,6 +10,7 @@ import {
 } from "@/data/footballTicTacToe";
 import PlayerPhoto from "@/components/PlayerPhoto";
 import UclImage from "@/components/UclImage";
+import { playerFaceUrl } from "@/data/playerFaces";
 import { poolFor, lobbyFor, parseComp, type Competition } from "@/lib/gameRoom";
 import {
   applyFootballTicTacToeMove,
@@ -29,6 +30,10 @@ type Api = {
 
 const POLL_MS = 1500;
 const TURN_MS = 60_000;
+
+const faceSrc = (name: string, comp: Competition) =>
+  poolFor(comp).find((card) => normalizeFootballPlayerName(card.name) === normalizeFootballPlayerName(name))?.photo ??
+  playerFaceUrl(name);
 
 function FootballTicTacToeClient() {
   const search = useSearchParams();
@@ -403,7 +408,17 @@ function FootballTicTacToeClient() {
                     >
                       {cell ? (
                         <>
-                          <JerseyIcon className="pointer-events-none absolute inset-x-0 top-1 mx-auto h-[55%] w-[55%] text-white/25" />
+                          {faceSrc(cell.player, activeComp) ? (
+                            <UclImage
+                              src={faceSrc(cell.player, activeComp)}
+                              fallback={playerFaceUrl(cell.player)}
+                              alt={cell.player}
+                              shape="circle"
+                              className="pointer-events-none relative h-[38%] max-h-14 w-auto aspect-square border border-white/40"
+                            />
+                          ) : (
+                            <JerseyIcon className="pointer-events-none absolute inset-x-0 top-1 mx-auto h-[55%] w-[55%] text-white/25" />
+                          )}
                           <span className={`absolute left-1 top-1 text-[9px] font-black sm:text-xs ${cell.side === "p1" ? "text-lime-200" : "text-cyan-100"}`}>
                             {cell.side === "p1" ? "X" : "O"}
                           </span>
@@ -470,8 +485,8 @@ function FootballTicTacToeClient() {
                       onClick={() => void playAnswer(name)}
                       className="flex w-full items-center gap-3 border-b border-border/50 px-3 py-2 text-left text-sm last:border-b-0 hover:bg-primary/10 disabled:opacity-60"
                     >
-                      {card?.photo ? (
-                        <UclImage src={card.photo} alt="" className="h-9 w-9" shape="circle" />
+                      {card?.photo || playerFaceUrl(name) ? (
+                        <UclImage src={card?.photo} fallback={playerFaceUrl(name)} alt={name} className="h-9 w-9" shape="circle" />
                       ) : activeComp === "pl" && card ? (
                         <PlayerPhoto id={card.id} name={name} />
                       ) : (

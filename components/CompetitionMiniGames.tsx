@@ -3,6 +3,7 @@
 import { useState } from "react";
 import CardFace from "@/components/CardFace";
 import PlayerPhoto from "@/components/PlayerPhoto";
+import { playerFaceUrl } from "@/data/playerFaces";
 import UclImage from "@/components/UclImage";
 import { UCL_CARDS } from "@/data/uclCards";
 import { MARKET_VALUE_PLAYERS, type MarketValuePlayer, type MarketValueSnapshot } from "@/data/marketValues";
@@ -201,13 +202,13 @@ function MarketPlayerPhoto({ comp, name }: { comp: Competition; name: string }) 
     return <PlayerPhoto id={card.id} name={name} size="lg" />;
   }
   if (card?.photo) {
-    return <UclImage src={card.photo} alt={name} shape="circle" className="h-20 w-20 border border-border md:h-24 md:w-24" />;
+    return <UclImage src={card.photo} fallback={playerFaceUrl(name)} alt={name} shape="circle" className="h-20 w-20 border border-border md:h-24 md:w-24" />;
   }
   const photoFallback = UCL_CARDS.find(
     (candidate) => normalizeFootballPlayerName(candidate.name) === normalizeFootballPlayerName(name),
   )?.photo;
   const photo = photoFallback ?? FALLBACK_PLAYER_PHOTOS[name];
-  return <UclImage src={photo} alt={name} shape="circle" className="h-20 w-20 border border-border md:h-24 md:w-24" />;
+  return <UclImage src={photo} fallback={playerFaceUrl(name)} alt={name} shape="circle" className="h-20 w-20 border border-border md:h-24 md:w-24" />;
 }
 
 function TransferMarketHigherLower({ comp, onBack }: { comp: Competition; onBack: () => void }) {

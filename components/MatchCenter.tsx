@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import PlayerPhoto from "@/components/PlayerPhoto";
 import UclImage from "@/components/UclImage";
+import { playerFaceUrl } from "@/data/playerFaces";
 import type { Comp, EventKind, LineupPlayer, MatchDetail, MatchEvent, Side, TeamDetail } from "@/lib/matchDetail";
 
 type Tab = "timeline" | "lineups" | "stats";
@@ -41,7 +42,7 @@ function Crest({ comp, team, className }: { comp: Comp; team: TeamDetail; classN
 
 function Avatar({ comp, player }: { comp: Comp; player: LineupPlayer }) {
   return comp !== "pl" ? (
-    <UclImage src={player.photo} alt={player.name} shape="circle" className="h-10 w-10 border border-white/30" />
+    <UclImage src={player.photo} fallback={playerFaceUrl(player.name)} alt={player.name} shape="circle" className="h-10 w-10 border border-white/30" />
   ) : (
     <PlayerPhoto id={player.id} name={player.name} size="sm" />
   );

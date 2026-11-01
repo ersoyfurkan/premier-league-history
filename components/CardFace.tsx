@@ -1,6 +1,7 @@
 "use client";
 
 import PlayerPhoto from "@/components/PlayerPhoto";
+import { playerFaceUrl } from "@/data/playerFaces";
 import UclImage from "@/components/UclImage";
 import { clubLogoUrl } from "@/lib/uclPlayers";
 import { espnBadge } from "@/lib/clubArt";
@@ -14,7 +15,7 @@ export default function CardFace({ card }: { card: Face }) {
 
   return (
     <div className="flex items-center gap-4">
-      <UclImage src={card.photo} alt={card.name} shape="circle" className="h-28 w-28 md:h-36 md:w-36" />
+      <UclImage src={card.photo} fallback={playerFaceUrl(card.name)} alt={card.name} shape="circle" className="h-28 w-28 md:h-36 md:w-36" />
       {card.club && (
         <span className="flex items-center gap-2 text-sm text-fore-muted md:text-base">
           <UclImage src={laLiga ? espnBadge(card.clubId ?? "") : clubLogoUrl(card.clubId ?? "")} alt={card.club} className="h-8 w-8" />

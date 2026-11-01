@@ -10,6 +10,7 @@ import {
   serieAWinners,
 } from "@/data/serieA";
 import UclImage from "@/components/UclImage";
+import { playerFaceUrl } from "@/data/playerFaces";
 import { ClubSearch, type ClubTeam } from "@/components/ClubFixtures";
 import { espnBadge } from "@/lib/clubArt";
 import { fmtUclKickoff } from "@/lib/dates";
@@ -284,7 +285,7 @@ function Leaders({ type, title }: { type: "goals" | "assists"; title: string }) 
                 <td className="px-2 py-2 font-mono text-primary">{i + 1}</td>
                 <td className="px-2 py-2">
                   <span className="flex items-center gap-3">
-                    <UclImage src={r.photo} alt={r.name} shape="circle" className="h-9 w-9" />
+                    <UclImage src={r.photo} fallback={playerFaceUrl(r.name)} alt={r.name} shape="circle" className="h-9 w-9" />
                     <span>
                       <span className="block font-semibold">{r.name}</span>
                       <span className="flex items-center gap-1 text-xs text-fore-muted">
