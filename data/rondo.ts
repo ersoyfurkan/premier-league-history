@@ -1,5 +1,6 @@
 import type { Competition } from "@/lib/gameRoom";
 import { RONDO_MORE } from "@/data/rondoMore";
+import { RONDO_EXTRA } from "@/data/rondoExtra";
 
 export type RondoClue = {
   letter: string;
@@ -18,7 +19,7 @@ const r = (letter: string, clue: string, answers: string, contains = false): Ron
 // Several clues per letter; every game picks one at random for each letter.
 const PL: RondoClue[] = [
   r("A", "Only club to complete a Premier League season unbeaten (2003-04)", "Arsenal"),
-  r("A", "Birmingham club that plays at Villa Park and won the European Cup in 1982", "Aston Villa|Villa"),
+  r("A", "Birmingham club that won the European Cup in 1982 with a Peter Withe goal", "Aston Villa|Villa"),
   r("B", "Lancashire club that won the 1994-95 title with Kenny Dalglish as manager", "Blackburn Rovers|Blackburn"),
   r("B", "South-coast club nicknamed the Seagulls", "Brighton|Brighton and Hove Albion|Brighton & Hove Albion"),
   r("C", "London club that won its first Premier League title in 2004-05 under José Mourinho", "Chelsea"),
@@ -69,26 +70,26 @@ const PL: RondoClue[] = [
 ];
 
 const LL: RondoClue[] = [
-  r("A", "Madrid club that plays at the Metropolitano", "Atlético Madrid|Atletico Madrid|Atletico|Atlético"),
+  r("A", "Red-and-white striped club that plays at the Metropolitano", "Atlético Madrid|Atletico Madrid|Atletico|Atlético"),
   r("A", "Basque club that only fields Basque players, playing at San Mamés", "Athletic Club|Athletic Bilbao|Athletic"),
   r("B", "Catalan club whose stadium is the Camp Nou", "Barcelona|FC Barcelona|Barça|Barca"),
   r("B", "French striker who won the 2022 Ballon d'Or with Real Madrid", "Benzema|Karim Benzema"),
   r("C", "Portuguese forward who scored 450 goals for Real Madrid in all competitions", "Cristiano Ronaldo|Ronaldo|Cristiano"),
-  r("C", "Spanish goalkeeper and Real Madrid captain nicknamed 'San Iker'", "Casillas|Iker Casillas"),
+  r("C", "Spanish goalkeeper and Real Madrid captain nicknamed 'The Saint'", "Casillas|Iker Casillas"),
   r("D", "Galician club that won La Liga in 1999-2000", "Deportivo La Coruña|Deportivo|Deportivo La Coruna|Depor"),
   r("D", "Argentine manager of Atlético Madrid since 2011", "Diego Simeone|Simeone"),
   r("E", "Barcelona's neighbouring club that plays in Cornellà", "Espanyol|RCD Espanyol"),
   r("E", "Cameroonian striker who won the treble with Barcelona in 2009", "Eto'o|Samuel Eto'o|Etoo"),
   r("F", "Portuguese winger who crossed from Barcelona to Real Madrid in 2000", "Figo|Luis Figo"),
-  r("F", "Colombian forward Radamel ____ who played for Atlético Madrid", "Falcao|Radamel Falcao"),
+  r("F", "Colombian who played for Atlético Madrid", "Falcao|Radamel Falcao"),
   r("G", "Club from a suburb of Madrid that plays at the Coliseum", "Getafe"),
   r("G", "Catalan club that finished third in La Liga in 2023-24", "Girona"),
   r("H", "Mexican striker who won five Pichichis in Spain", "Hugo Sánchez|Hugo Sanchez"),
-  r("H", "Spanish defender and Real Madrid captain, Fernando ____", "Hierro|Fernando Hierro"),
+  r("H", "Spanish defender and Real Madrid captain", "Hierro|Fernando Hierro"),
   r("I", "Barcelona midfielder who scored the 2010 World Cup final winner", "Iniesta|Andrés Iniesta|Andres Iniesta"),
-  r("I", "Croatian midfielder who played for Sevilla and Barcelona, Ivan ____", "Ivan Rakitić|Rakitic|Rakitić"),
+  r("I", "Croatian midfielder who played for Sevilla and Barcelona", "Ivan Rakitić|Rakitic|Rakitić"),
   r("J", "Spanish left-back who joined Barcelona from Valencia in 2012", "Jordi Alba|Alba"),
-  r("J", "Slovenian goalkeeper at Atlético Madrid, Jan ____", "Oblak|Jan Oblak"),
+  r("J", "Slovenian goalkeeper at Atlético Madrid", "Oblak|Jan Oblak"),
   r("K", "German midfielder who won four Champions Leagues with Real Madrid", "Toni Kroos|Kroos"),
   r("K", "Japanese winger at Real Sociedad", "Takefusa Kubo|Kubo"),
   r("L", "Argentine with the most La Liga goals of all time (474)", "Lionel Messi|Messi"),
@@ -100,7 +101,7 @@ const LL: RondoClue[] = [
   r("O", "Navarre club that plays in Pamplona", "Osasuna|CA Osasuna"),
   r("O", "Slovenian goalkeeper who has won several Zamora trophies at Atlético", "Oblak|Jan Oblak"),
   r("P", "Hungarian who scored four goals in the 1960 European Cup final for Real Madrid", "Puskás|Ferenc Puskás|Puskas|Ferenc Puskas"),
-  r("P", "Long-haired Barcelona captain and centre-back, ____ Carles", "Puyol|Carles Puyol"),
+  r("P", "Long-haired Barcelona captain and centre-back", "Puyol|Carles Puyol"),
   r("Q", "Spanish manager who took charge of Barcelona in January 2020", "Quique Setién|Quique Setien|Setién|Setien|Quique"),
   r("R", "Club with 15 European Cups", "Real Madrid"),
   r("R", "Madrid legend nicknamed 'El Ángel de Madrid'", "Raúl|Raul|Raúl González"),
@@ -110,13 +111,13 @@ const LL: RondoClue[] = [
   r("T", "German goalkeeper who has played for Barcelona since 2014", "Marc-André ter Stegen|ter Stegen|Ter Stegen"),
   r("U", "Spanish manager who won three straight Europa Leagues with Sevilla", "Unai Emery|Emery"),
   r("U", "Uruguayan striker who joined Barcelona from Liverpool in 2014", "Luis Suárez|Luis Suarez|Suárez|Suarez", true),
-  r("V", "Valencia-based club nicknamed Los Che", "Valencia"),
+  r("V", "Club from Mestalla nicknamed Los Che", "Valencia"),
   r("V", "Brazilian winger who scored in the 2022 Champions League final for Real Madrid", "Vinícius Júnior|Vinicius Junior|Vinicius|Vini Jr"),
   r("W", "Polish striker who joined Barcelona in 2022 and won the Pichichi", "Robert Lewandowski|Lewandowski", true),
   r("X", "Barcelona midfield maestro who later managed the club (2021-2024)", "Xavi|Xavi Hernández|Xavi Hernandez"),
   r("X", "Spanish midfielder who played for Real Madrid and later managed Bayer Leverkusen", "Xabi Alonso|Alonso"),
   r("Y", "Barcelona teenager who starred at Euro 2024", "Yamal|Lamine Yamal"),
-  r("Y", "Sevilla's Moroccan goalkeeper, known as Bono", "Yassine Bounou|Bounou|Bono"),
+  r("Y", "Moroccan goalkeeper who starred for Sevilla and at the 2022 World Cup", "Yassine Bounou|Bounou|Bono"),
   r("Z", "French manager who won three straight Champions Leagues with Real Madrid", "Zinedine Zidane|Zidane"),
   r("Z", "Goalkeeper after whom the trophy for fewest goals conceded in La Liga is named", "Ricardo Zamora|Zamora"),
 ];
@@ -135,10 +136,10 @@ const SA: RondoClue[] = [
   r("F", "Tuscan club that won Serie A in 1955-56 and 1968-69, 'La Viola'", "Fiorentina|ACF Fiorentina"),
   r("F", "Roma's one-club captain with 250 Serie A goals", "Francesco Totti|Totti"),
   r("G", "Italy's oldest football club, nine times champions before 1925", "Genoa"),
-  r("G", "Italian midfielder nicknamed 'Ringhio' who won two Champions Leagues with AC Milan, Gennaro ____", "Gattuso|Gennaro Gattuso"),
-  r("H", "Verona club that won Serie A in 1984-85", "Hellas Verona|Verona"),
+  r("G", "Italian midfielder nicknamed 'Ringhio' who won two Champions Leagues with AC Milan", "Gattuso|Gennaro Gattuso"),
+  r("H", "Veneto club that won its only Serie A title in 1984-85", "Hellas Verona|Verona"),
   r("H", "Argentine striker who scored a record 36 league goals in Serie A 2015-16", "Higuaín|Higuain|Gonzalo Higuaín|Gonzalo Higuain"),
-  r("I", "Milan club that won the treble in 2010", "Inter|Inter Milan|Internazionale"),
+  r("I", "Nerazzurri club that won the treble in 2010", "Inter|Inter Milan|Internazionale"),
   r("I", "Swedish striker who played for Juventus, Inter and AC Milan", "Zlatan Ibrahimović|Ibrahimovic|Zlatan|Ibrahimović"),
   r("J", "Turin club that won nine straight Scudetti from 2011-12 to 2019-20", "Juventus|Juve"),
   r("J", "Portuguese manager who won the 2010 treble with Inter and the 2022 Conference League with Roma", "José Mourinho|Jose Mourinho|Mourinho"),
@@ -146,7 +147,7 @@ const SA: RondoClue[] = [
   r("K", "Georgian winger who helped Napoli win the Scudetto in 2022-23", "Kvaratskhelia|Khvicha Kvaratskhelia|Kvara"),
   r("L", "Rome club that won the Scudetto in 1999-2000", "Lazio|SS Lazio"),
   r("L", "Argentine captain of Inter who was Serie A top scorer in 2023-24", "Lautaro Martínez|Lautaro Martinez|Lautaro"),
-  r("M", "Milan club with seven European Cups", "AC Milan|Milan"),
+  r("M", "Rossoneri club with seven European Cups", "AC Milan|Milan"),
   r("M", "One-club AC Milan defender with 902 appearances", "Paolo Maldini|Maldini"),
   r("N", "Naples club that won the 2022-23 title", "Napoli|SSC Napoli"),
   r("N", "Czech midfielder who won the 2003 Ballon d'Or at Juventus", "Pavel Nedvěd|Nedved|Nedvěd|Pavel Nedved"),
@@ -158,13 +159,13 @@ const SA: RondoClue[] = [
   r("R", "Brazilian 'R9' who scored 25 league goals for Inter in 1997-98", "Ronaldo|Ronaldo Nazário|Ronaldo Nazario"),
   r("S", "Genoa club that won the 1990-91 Scudetto with Vialli and Mancini", "Sampdoria"),
   r("S", "Emilia club that plays in green and black at the Mapei Stadium", "Sassuolo"),
-  r("T", "Turin club known for the 'Grande Torino' of the 1940s", "Torino"),
+  r("T", "Granata club of the 1940s side lost in the 1949 Superga air disaster", "Torino"),
   r("T", "Argentine forward who won Serie A with Juventus in 2013-14 and 2014-15", "Tevez|Carlos Tevez"),
   r("U", "Friuli club that plays at the Bluenergy Stadium", "Udinese"),
-  r("V", "Sampdoria striker and Mancini's partner who won the 1991 Scudetto, later Chelsea manager, Gianluca ____", "Vialli|Gianluca Vialli"),
+  r("V", "Sampdoria striker and Mancini's partner who won the 1991 Scudetto, later Chelsea manager", "Vialli|Gianluca Vialli"),
   r("W", "Liberian who won the 1995 Ballon d'Or with AC Milan", "George Weah|Weah", true),
   r("X", "Chilean forward who played for Udinese and later Inter", "Alexis Sánchez|Alexis Sanchez|Alexis", true),
-  r("Y", "Turkish teenager who wears Juventus' number 10, Kenan ____", "Yıldız|Yildiz|Kenan Yıldız|Kenan Yildiz"),
+  r("Y", "Turkish teenager who wears Juventus' number 10", "Yıldız|Yildiz|Kenan Yıldız|Kenan Yildiz"),
   r("Y", "Argentine forward nicknamed 'La Joya' who joined Roma from Juventus", "Paulo Dybala|Dybala", true),
   r("Z", "Argentine captain of Inter with 858 appearances", "Javier Zanetti|Zanetti"),
   r("Z", "Italy's 1982 World Cup-winning goalkeeper and captain", "Dino Zoff|Zoff"),
@@ -186,8 +187,8 @@ const UCL: RondoClue[] = [
   r("G", "Welsh winger who scored a bicycle kick in the 2018 final", "Gareth Bale|Bale"),
   r("G", "Manager who won the trophy with Barcelona in 2009 and 2011 and with Manchester City in 2023", "Pep Guardiola|Guardiola"),
   r("H", "French forward who lost the 2006 final with Arsenal and won the 2009 final with Barcelona", "Thierry Henry|Henry"),
-  r("H", "German manager who won the trophy with Real Madrid in 1998 and Bayern in 2013, Jupp ____", "Heynckes|Jupp Heynckes"),
-  r("I", "Milan club that won the treble under José Mourinho in 2010", "Inter|Inter Milan|Internazionale"),
+  r("H", "German manager who won the trophy with Real Madrid in 1998 and Bayern in 2013", "Heynckes|Jupp Heynckes"),
+  r("I", "Nerazzurri club that won the treble under José Mourinho in 2010", "Inter|Inter Milan|Internazionale"),
   r("I", "Barcelona midfielder who scored a stoppage-time equaliser at Stamford Bridge in 2009", "Iniesta|Andrés Iniesta|Andres Iniesta"),
   r("J", "Turin club that has lost seven European Cup finals", "Juventus|Juve"),
   r("J", "German manager who won the 2019 final with Liverpool", "Jürgen Klopp|Jurgen Klopp|Klopp"),
@@ -224,10 +225,10 @@ const UCL: RondoClue[] = [
 ];
 
 export const RONDO_CLUES: Record<Competition, RondoClue[]> = {
-  pl: [...PL, ...RONDO_MORE.pl],
-  laliga: [...LL, ...RONDO_MORE.laliga],
-  seriea: [...SA, ...RONDO_MORE.seriea],
-  ucl: [...UCL, ...RONDO_MORE.ucl],
+  pl: [...PL, ...RONDO_MORE.pl, ...RONDO_EXTRA.pl],
+  laliga: [...LL, ...RONDO_MORE.laliga, ...RONDO_EXTRA.laliga],
+  seriea: [...SA, ...RONDO_MORE.seriea, ...RONDO_EXTRA.seriea],
+  ucl: [...UCL, ...RONDO_MORE.ucl, ...RONDO_EXTRA.ucl],
 };
 export const RONDO_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 export const RONDO_SECONDS = 180;

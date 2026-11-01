@@ -804,6 +804,10 @@ export function footballTicTacToePlayerNames(comp: Competition) {
   return FACTS[comp].map((fact) => fact.name);
 }
 
+export function footballPlayersForClub(comp: Competition, key: string) {
+  return FACTS[comp].filter((fact) => fact.clubs.includes(key)).map((fact) => fact.name);
+}
+
 const club = (label: string, badge: string, key: string, short = label): Def => ({
   clue: { label, badge, badgeAlt: `${short} crest` },
   test: (fact) => fact.clubs.includes(key),

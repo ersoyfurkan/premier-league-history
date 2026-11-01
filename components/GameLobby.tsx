@@ -160,6 +160,18 @@ export default function GameLobby({ comp }: { comp: Competition }) {
                       Play now →
                     </span>
                   </Link>
+                  <Link
+                    href={`/game/club-duel?comp=${comp}`}
+                    className="rounded-2xl border border-accent/25 bg-background/60 p-5 text-left transition hover:border-accent/60 hover:bg-accent/5"
+                  >
+                    <h3 className="text-xl font-bold">Club Duel</h3>
+                    <p className="mt-2 text-sm leading-6 text-fore-muted">
+                      1v1 by invite link. Pick a club in 20 seconds, then race to name a player who played for it.
+                    </p>
+                    <span className="mt-4 inline-block font-mono text-[10px] uppercase tracking-[0.12em] text-accent">
+                      Invite a friend →
+                    </span>
+                  </Link>
                 </div>
               )}
             </div>
