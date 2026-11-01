@@ -393,18 +393,92 @@ function Rivalries() {
       <div className="text-center">
         <p className="section-eyebrow text-primary">Derbies</p>
         <h2 className="mt-2 text-4xl">Team Rivalries</h2>
+        <p className="mt-3 text-sm text-fore-muted">
+          La Liga head-to-head records through the 2025/26 season. Rivalry top scorers include all competitions.
+        </p>
       </div>
       <div className="grid gap-4 md:grid-cols-2">
         {laLigaRivalries.map((r) => (
-          <article key={r.id} className="data-card p-5">
-            <h3 className="text-2xl">{r.name}</h3>
-            <div className="mt-3 flex items-center justify-center gap-4">
-              <UclImage src={logoByName(r.club1)} alt={r.club1} className="h-12 w-12" />
-              <span aria-hidden="true" className="font-mono text-primary">vs</span>
-              <UclImage src={logoByName(r.club2)} alt={r.club2} className="h-12 w-12" />
+          <article key={r.id} className="data-card space-y-4 p-5">
+            <div>
+              <h3 className="text-2xl">{r.name}</h3>
+              <div className="mt-3 grid grid-cols-[1fr_auto_1fr] items-center gap-3 text-sm">
+                {[r.club1, r.club2].map((club, index) => (
+                  <div
+                    key={club}
+                    className={`flex min-w-0 items-center gap-3 ${index === 1 ? "flex-row-reverse text-right" : ""}`}
+                  >
+                    <UclImage src={logoByName(club)} alt={`${club} logo`} className="h-12 w-12" />
+                    <span className="font-semibold">{club}</span>
+                  </div>
+                ))}
+                <span aria-hidden="true" className="font-mono text-primary">vs</span>
+              </div>
             </div>
-            <p className="mt-1 text-center text-xs text-fore-muted">{r.club1} · {r.club2}</p>
-            <p className="mt-3 text-sm leading-6 text-fore-muted">{r.description}</p>
+
+            <p className="text-sm leading-6 text-fore-muted">{r.description}</p>
+
+            <div>
+              <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.12em] text-primary">
+                La Liga record · {r.leagueMeetings} meetings
+              </p>
+              <div className="flex h-2 overflow-hidden rounded-sm bg-white/5">
+                <div
+                  className="bg-gradient-to-r from-primary to-primary/80"
+                  style={{ width: `${(r.club1Wins / r.leagueMeetings) * 100}%` }}
+                />
+                <div
+                  className="bg-gradient-to-r from-accent to-accent/80"
+                  style={{ width: `${(r.draws / r.leagueMeetings) * 100}%` }}
+                />
+                <div
+                  className="bg-gradient-to-r from-danger to-danger/80"
+                  style={{ width: `${(r.club2Wins / r.leagueMeetings) * 100}%` }}
+                />
+              </div>
+              <div className="mt-3 grid grid-cols-3 gap-2">
+                <span className="pill-badge justify-center border border-primary/35 bg-primary/15 text-primary">
+                  {r.club1}: {r.club1Wins}W
+                </span>
+                <span className="pill-badge justify-center border border-accent/35 bg-accent/15 text-accent">
+                  {r.draws}D
+                </span>
+                <span className="pill-badge justify-center border border-danger/35 bg-danger/15 text-danger">
+                  {r.club2}: {r.club2Wins}W
+                </span>
+              </div>
+              {r.club1Goals !== undefined && r.club2Goals !== undefined && (
+                <p className="mt-3 text-xs text-fore-muted">
+                  Goals: {r.club1} {r.club1Goals} · {r.club2} {r.club2Goals}
+                </p>
+              )}
+            </div>
+
+            <div className="border-t border-border pt-4">
+              <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.12em] text-success">
+                Biggest La Liga wins
+              </p>
+              <div className="space-y-2">
+                {r.biggestWins.map((win) => (
+                  <p key={win.club} className="flex items-center gap-2 text-sm font-semibold text-success">
+                    <UclImage src={logoByName(win.club)} alt="" className="h-6 w-6" />
+                    <span>{win.score} <span className="font-normal text-fore-muted">· {win.date}</span></span>
+                  </p>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <p className="mb-1 font-mono text-[11px] uppercase tracking-[0.12em] text-warning">
+                Rivalry top scorer · all competitions
+              </p>
+              {r.topScorers.map((scorer) => (
+                <p key={scorer.player} className="flex items-center gap-2 text-sm font-semibold">
+                  <UclImage src={logoByName(scorer.club)} alt="" className="h-5 w-5" />
+                  {scorer.player} <span className="font-mono text-warning">{scorer.goals} goals</span>
+                </p>
+              ))}
+            </div>
           </article>
         ))}
       </div>
