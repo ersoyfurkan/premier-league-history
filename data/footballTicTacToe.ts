@@ -1,5 +1,6 @@
 ﻿import type { Competition } from "@/lib/gameRoom";
 import { CAREERS } from "@/data/clubDuelCareers";
+import { NATIONS } from "@/data/playerNations";
 
 export type FootballTicTacToeCell = {
   player: string;
@@ -794,26 +795,60 @@ function enrich(facts: Fact[]): Fact[] {
   return facts;
 }
 
-// Applies the up-to-date career list (Club Duel data) to players already in a game's pool.
-function applyCareers(facts: Fact[]): Fact[] {
-  const byName = new Map<string, Fact>();
-  for (const fact of facts) byName.set(normalizeFootballPlayerName(fact.name), fact);
+// Makes every competition's pool cover the whole career dataset. Players are shared across leagues, but
+// league-specific stat tags (title winner, goal counts) stay with the league they came from.
+function withUniverse(own: Fact[], others: Fact[][]): Fact[] {
+  const map = new Map<string, Fact>();
+  const get = (name: string, nat: string[]) => {
+    const id = normalizeFootballPlayerName(name);
+    let fact = map.get(id);
+    if (!fact) {
+      fact = { name, nat: [...nat], clubs: [], tags: [] };
+      map.set(id, fact);
+    }
+    return fact;
+  };
+  for (const fact of own) {
+    const copy = get(fact.name, fact.nat);
+    copy.clubs = [...fact.clubs];
+    copy.tags = [...fact.tags];
+  }
+  for (const list of others) {
+    for (const fact of list) {
+      const copy = get(fact.name, fact.nat);
+      for (const nat of fact.nat) if (!copy.nat.includes(nat)) copy.nat.push(nat);
+      for (const club of fact.clubs) if (!copy.clubs.includes(club)) copy.clubs.push(club);
+    }
+  }
   for (const line of CAREERS.split("\n")) {
     const [name, keys] = line.split(":");
-    if (!name || !keys) continue;
-    const fact = byName.get(normalizeFootballPlayerName(name.trim()));
-    if (!fact) continue;
+    if (!name || !keys || name.startsWith("//")) continue;
+    const trimmed = name.trim();
+    const nation = NATIONS.get(trimmed);
+    const fact = get(trimmed, nation ? [nation] : []);
+    if (nation && !fact.nat.includes(nation)) fact.nat.push(nation);
     for (const club of keys.trim().split(/\s+/)) if (!fact.clubs.includes(club)) fact.clubs.push(club);
   }
-  return facts;
+  return [...map.values()];
 }
 
-const FACTS: Record<Competition, Fact[]> = {
-  pl: applyCareers(enrich(merge(PL_FACTS, PL_ALSO, PL_EXTRA))),
-  laliga: applyCareers(enrich(merge(LALIGA_FACTS, LL_ALSO, LL_EXTRA))),
-  ucl: applyCareers(enrich(merge(UCL_FACTS, UCL_ALSO, UCL_EXTRA))),
-  seriea: applyCareers(enrich(merge(SA_FACTS, SA_ALSO, []))),
+const RAW_FACTS: Record<Competition, Fact[]> = {
+  pl: merge(PL_FACTS, PL_ALSO, PL_EXTRA),
+  laliga: merge(LALIGA_FACTS, LL_ALSO, LL_EXTRA),
+  ucl: merge(UCL_FACTS, UCL_ALSO, UCL_EXTRA),
+  seriea: merge(SA_FACTS, SA_ALSO, []),
 };
+const FACTS = Object.fromEntries(
+  (Object.keys(RAW_FACTS) as Competition[]).map((comp) => [
+    comp,
+    enrich(
+      withUniverse(
+        RAW_FACTS[comp],
+        (Object.keys(RAW_FACTS) as Competition[]).filter((other) => other !== comp).map((other) => RAW_FACTS[other]),
+      ),
+    ),
+  ]),
+) as Record<Competition, Fact[]>;
 
 export function footballTicTacToePlayerNames(comp: Competition) {
   return FACTS[comp].map((fact) => fact.name);

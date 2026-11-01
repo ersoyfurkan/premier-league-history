@@ -1,6 +1,6 @@
 import type { Competition } from "@/lib/gameRoom";
 import { normalizeFootballPlayerName } from "@/data/footballTicTacToe";
-import { DUEL_CLUBS, playersForBoth, playersForClub } from "@/data/clubDuel";
+import { DUEL_CLUBS, playersForBoth, playersForClub, searchDuelPlayers } from "@/data/clubDuel";
 
 export type TriviaEntry = { name: string; aliases: string[] };
 export type TriviaQuestion = { id: string; text: string; count: number; entries: TriviaEntry[] };
@@ -104,6 +104,53 @@ const playerEntries = (names: string[]) => names.map((name) => e(name));
 
 export function rollDice() {
   return 1 + Math.floor(Math.random() * 6);
+}
+
+export const BOARD_SIZE = 16;
+
+export type BoardTile = TriviaQuestion & { short: string };
+
+const SHORT: Record<string, string> = {
+  "s-ballon": "Ballon d'Or",
+  "s-wc": "World Cup nations",
+  "s-plmgr": "PL managers",
+  "s-plstad": "Stadiums",
+  "s-llstad": "Stadiums",
+  "s-sastad": "Stadiums",
+  "s-uclstad": "Stadiums",
+  "s-scotstad": "Scottish stadiums",
+  "s-clwin": "UCL winners",
+  "s-clubs": "League clubs",
+};
+
+// Builds a random path of questions. Early tiles ask for fewer answers, later ones for more.
+export function generateBoard(comp: Competition): BoardTile[] {
+  const used = new Set<string>();
+  const clubLabel = (key: string) => DUEL_CLUBS[comp].find((club) => club.key === key)?.label ?? key;
+  return Array.from({ length: BOARD_SIZE }, (_, i) => {
+    const max = i < 4 ? 2 : i < 10 ? 3 : 4;
+    const count = 1 + Math.floor(Math.random() * max);
+    const q = pickTriviaQuestion(comp, count, used);
+    used.add(q.id);
+    let short = SHORT[q.id] ?? "Trivia";
+    if (q.id.startsWith("c-")) short = clubLabel(q.id.slice(2));
+    else if (q.id.startsWith("p-")) short = q.id.slice(2).split("-").map(clubLabel).join(" + ");
+    return { ...q, short };
+  });
+}
+
+// Search over every possible answer type so suggestions never reveal which ones are correct.
+export function suggestTrivia(comp: Competition, query: string, limit = 8): string[] {
+  const q = normalizeFootballPlayerName(query);
+  if (q.length < 2) return [];
+  const names = new Set(searchDuelPlayers(comp, query, limit));
+  for (const category of [...STATIC[comp], leagueClubCategory(comp)]) {
+    for (const entry of category.entries) {
+      if (names.size >= limit * 2) break;
+      if ([entry.name, ...entry.aliases].some((n) => normalizeFootballPlayerName(n).includes(q))) names.add(entry.name);
+    }
+  }
+  return [...names].slice(0, limit);
 }
 
 export function triviaSeconds(count: number) {

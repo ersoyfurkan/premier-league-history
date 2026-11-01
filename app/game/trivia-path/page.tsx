@@ -1,40 +1,41 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, Suspense, useEffect, useRef, useState } from "react";
+import { FormEvent, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import UclImage from "@/components/UclImage";
+import { playerFaceUrl } from "@/data/playerFaces";
 import { lobbyFor, parseComp } from "@/lib/gameRoom";
 import {
+  BOARD_SIZE,
+  generateBoard,
   matchTriviaAnswer,
-  pickTriviaQuestion,
-  rollDice,
+  suggestTrivia,
   triviaSeconds,
+  type BoardTile,
   type TriviaEntry,
-  type TriviaQuestion,
 } from "@/data/triviaPath";
 
 const LABELS = { pl: "Premier League", laliga: "La Liga", seriea: "Serie A", ucl: "Champions League" } as const;
+const DOTS = ["bg-accent", "bg-warning"];
 
-type Phase = "setup" | "roll" | "play" | "result" | "over";
-type Player = { name: string; cleared: number; out: boolean };
+type Phase = "setup" | "play" | "result" | "over";
+type Player = { name: string; pos: number; turns: number };
 
 function TriviaClient() {
   const comp = parseComp(useSearchParams().get("comp"));
   const [phase, setPhase] = useState<Phase>("setup");
-  const [versus, setVersus] = useState(false);
+  const [versus, setVersus] = useState(true);
   const [names, setNames] = useState(["Player 1", "Player 2"]);
   const [players, setPlayers] = useState<Player[]>([]);
+  const [board, setBoard] = useState<BoardTile[]>([]);
   const [turn, setTurn] = useState(0);
-  const [dice, setDice] = useState<number | null>(null);
-  const [rolling, setRolling] = useState(false);
-  const [question, setQuestion] = useState<TriviaQuestion | null>(null);
   const [found, setFound] = useState<TriviaEntry[]>([]);
   const [deadline, setDeadline] = useState(0);
   const [now, setNow] = useState(() => Date.now());
   const [guess, setGuess] = useState("");
   const [feedback, setFeedback] = useState<string | null>(null);
   const [passed, setPassed] = useState(false);
-  const used = useRef(new Set<string>());
   const finished = useRef(false);
 
   useEffect(() => {
@@ -44,42 +45,32 @@ function TriviaClient() {
   }, [phase]);
 
   const secondsLeft = Math.max(0, Math.ceil((deadline - now) / 1000));
+  const current = players[turn];
+  const tile = current ? board[current.pos] : undefined;
 
-  const start = () => {
-    used.current = new Set();
-    setPlayers(
-      (versus ? names : [names[0]]).map((name, i) => ({ name: name.trim() || `Player ${i + 1}`, cleared: 0, out: false })),
-    );
-    setTurn(0);
-    setDice(null);
-    setPhase("roll");
+  const beginTurn = (nextTurn: number, nextPlayers: Player[], nextBoard: BoardTile[]) => {
+    const t = nextBoard[nextPlayers[nextTurn].pos];
+    const stamp = Date.now();
+    setTurn(nextTurn);
+    setFound([]);
+    setGuess("");
+    setFeedback(null);
+    setNow(stamp);
+    setDeadline(stamp + triviaSeconds(t.count) * 1000);
+    finished.current = false;
+    setPhase("play");
   };
 
-  const roll = () => {
-    if (rolling) return;
-    setRolling(true);
-    let ticks = 0;
-    const timer = window.setInterval(() => {
-      ticks += 1;
-      setDice(rollDice());
-      if (ticks >= 8) {
-        window.clearInterval(timer);
-        const final = rollDice();
-        const q = pickTriviaQuestion(comp, final, used.current);
-        used.current.add(q.id);
-        setDice(final);
-        setQuestion(q);
-        setFound([]);
-        setGuess("");
-        setFeedback(null);
-        const t = Date.now();
-        setNow(t);
-        setDeadline(t + triviaSeconds(final) * 1000);
-        finished.current = false;
-        setRolling(false);
-        setPhase("play");
-      }
-    }, 80);
+  const start = () => {
+    const nextBoard = generateBoard(comp);
+    const nextPlayers = (versus ? names : [names[0]]).map((name, i) => ({
+      name: name.trim() || `Player ${i + 1}`,
+      pos: 0,
+      turns: 0,
+    }));
+    setBoard(nextBoard);
+    setPlayers(nextPlayers);
+    beginTurn(0, nextPlayers, nextBoard);
   };
 
   const finishTurn = (success: boolean) => {
@@ -87,7 +78,7 @@ function TriviaClient() {
     finished.current = true;
     setPassed(success);
     setPlayers((prev) =>
-      prev.map((p, i) => (i === turn ? { ...p, cleared: p.cleared + (success ? 1 : 0), out: !success } : p)),
+      prev.map((p, i) => (i === turn ? { ...p, pos: p.pos + (success ? 1 : 0), turns: p.turns + 1 } : p)),
     );
     setPhase("result");
   };
@@ -97,10 +88,9 @@ function TriviaClient() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase, secondsLeft, deadline]);
 
-  const submit = (event: FormEvent) => {
-    event.preventDefault();
-    if (!question || phase !== "play") return;
-    const entry = matchTriviaAnswer(question.entries, guess);
+  const submitAnswer = (value: string) => {
+    if (!tile || phase !== "play") return;
+    const entry = matchTriviaAnswer(tile.entries, value);
     setGuess("");
     if (!entry) {
       setFeedback("Not a valid answer");
@@ -113,29 +103,32 @@ function TriviaClient() {
     const next = [...found, entry];
     setFound(next);
     setFeedback(null);
-    if (next.length >= question.count) finishTurn(true);
+    if (next.length >= tile.count) finishTurn(true);
+  };
+
+  const submit = (event: FormEvent) => {
+    event.preventDefault();
+    submitAnswer(guess);
   };
 
   const next = () => {
-    const alive = players.filter((p) => !p.out);
-    if (versus ? alive.length <= 1 : alive.length === 0) {
+    if (players.some((p) => p.pos >= BOARD_SIZE)) {
       setPhase("over");
       return;
     }
-    let i = turn;
-    do i = (i + 1) % players.length;
-    while (players[i].out);
-    setTurn(i);
-    setDice(null);
-    setPhase("roll");
+    beginTurn((turn + 1) % players.length, players, board);
   };
 
-  const current = players[turn];
+  const suggestions = useMemo(
+    () => (phase === "play" ? suggestTrivia(comp, guess).filter((n) => !found.some((f) => f.name === n)) : []),
+    [comp, guess, phase, found],
+  );
+
+  const winner = players.find((p) => p.pos >= BOARD_SIZE);
   const missed =
-    question && phase === "result" && !passed
-      ? question.entries.filter((entry) => !found.includes(entry)).slice(0, 5)
+    tile && phase === "result" && !passed && !versus
+      ? tile.entries.filter((entry) => !found.includes(entry)).slice(0, 5)
       : [];
-  const winner = versus ? players.find((p) => !p.out) : null;
 
   return (
     <main className="min-h-[calc(100svh-5rem)] bg-background text-foreground grid-bg px-4 py-4 md:px-8 md:py-6">
@@ -148,10 +141,10 @@ function TriviaClient() {
 
         {phase === "setup" && (
           <div className="mt-6 rounded-2xl border border-line bg-background/60 p-6">
-            <h1 className="text-2xl font-bold">Roll the dice. Name that many.</h1>
+            <h1 className="text-2xl font-bold">Race along the board</h1>
             <p className="mt-2 text-sm leading-6 text-fore-muted">
-              Each turn you roll a dice (1-6) and get a football category. Name that many correct answers before the
-              clock runs out. Miss and you are eliminated. Last player standing wins, or see how long you survive solo.
+              A random path of {BOARD_SIZE} tiles. On your turn, answer the question on your next tile before the clock
+              runs out. Get it right and you move forward. Get it wrong and you stay put. First to the last tile wins.
             </p>
             <div className="mt-5 flex gap-2">
               <button type="button" onClick={() => setVersus(false)} className={versus ? "btn-ghost" : "btn-primary"}>
@@ -178,46 +171,61 @@ function TriviaClient() {
         )}
 
         {phase !== "setup" && (
-          <div className="mt-4 flex flex-wrap gap-2">
-            {players.map((p, i) => (
-              <div
-                key={i}
-                className={`rounded-xl border px-4 py-2 text-sm ${
-                  p.out ? "border-line opacity-50 line-through" : i === turn ? "border-accent text-accent" : "border-line"
-                }`}
-              >
-                {p.name} · {p.cleared} cleared
-              </div>
-            ))}
-          </div>
-        )}
-
-        {phase === "roll" && current && (
-          <div className="mt-6 rounded-2xl border border-line bg-background/60 p-8 text-center">
-            <p className="text-lg font-bold">{current.name}, roll the dice</p>
-            <div className="mx-auto mt-5 flex h-24 w-24 items-center justify-center rounded-2xl border-2 border-accent text-5xl font-black">
-              {dice ?? "?"}
+          <>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {players.map((p, i) => (
+                <div
+                  key={i}
+                  className={`rounded-xl border px-4 py-2 text-sm ${
+                    i === turn && phase !== "over" ? "border-accent text-accent" : "border-line"
+                  }`}
+                >
+                  <span className={`mr-2 inline-block h-3 w-3 rounded-full align-middle ${DOTS[i]}`} />
+                  {p.name} · tile {Math.min(p.pos, BOARD_SIZE)}/{BOARD_SIZE}
+                </div>
+              ))}
             </div>
-            <button type="button" onClick={roll} disabled={rolling} className="btn-primary mt-6">
-              {rolling ? "Rolling…" : "Roll"}
-            </button>
-          </div>
+
+            <div className="mt-4 grid grid-cols-4 gap-2">
+              {board.map((t, i) => (
+                <div
+                  key={i}
+                  className={`relative flex min-h-20 flex-col justify-between rounded-xl border p-2 text-xs ${
+                    current && i === current.pos && phase !== "over" ? "border-accent bg-accent/10" : "border-line bg-background/60"
+                  } ${players.every((p) => p.pos > i) ? "opacity-50" : ""}`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="font-mono text-fore-muted">{i + 1}</span>
+                    <span className="rounded-md border border-line px-1.5 font-bold">{t.count}</span>
+                  </div>
+                  <span className="line-clamp-2 leading-tight">{t.short}</span>
+                  <div className="absolute -top-2 right-1 flex gap-1">
+                    {players.map((p, pi) =>
+                      p.pos === i ? (
+                        <span key={pi} className={`h-4 w-4 rounded-full border border-background ${DOTS[pi]}`} />
+                      ) : null,
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
         )}
 
-        {(phase === "play" || phase === "result") && question && current && (
+        {(phase === "play" || phase === "result") && tile && current && (
           <div className="mt-6 rounded-2xl border border-line bg-background/60 p-6">
             <div className="flex items-start justify-between gap-4">
               <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border-2 border-accent text-3xl font-black">
-                {question.count}
+                {tile.count}
               </div>
-              <p className="flex-1 text-xl font-bold leading-snug">{question.text}</p>
+              <p className="flex-1 text-xl font-bold leading-snug">{tile.text}</p>
               {phase === "play" && (
                 <div className={`font-mono text-3xl font-black ${secondsLeft <= 5 ? "text-red-400" : "text-warning"}`}>
                   {secondsLeft}
                 </div>
               )}
             </div>
-            <p className="mt-3 text-sm text-fore-muted">{current.name}: {found.length}/{question.count}</p>
+            <p className="mt-3 text-sm text-fore-muted">{current.name}: {found.length}/{tile.count}</p>
             <ul className="mt-3 flex flex-wrap gap-2">
               {found.map((entry) => (
                 <li key={entry.name} className="rounded-full border border-accent/50 bg-accent/10 px-3 py-1 text-sm">
@@ -227,13 +235,33 @@ function TriviaClient() {
             </ul>
             {phase === "play" && (
               <form onSubmit={submit} className="mt-4 flex gap-2">
-                <input
-                  autoFocus
-                  value={guess}
-                  onChange={(event) => setGuess(event.target.value)}
-                  placeholder="Type an answer"
-                  className="flex-1 rounded-xl border border-line bg-background px-4 py-3 outline-none focus:border-accent"
-                />
+                <div className="relative flex-1">
+                  <input
+                    autoFocus
+                    autoComplete="off"
+                    value={guess}
+                    onChange={(event) => setGuess(event.target.value)}
+                    placeholder="Search a player, club, stadium…"
+                    className="w-full rounded-xl border-2 border-lime-400/80 bg-background px-4 py-3 outline-none focus:border-lime-300"
+                  />
+                  {suggestions.length > 0 && (
+                    <div role="listbox" className="absolute left-0 right-0 top-full z-20 mt-1 max-h-64 overflow-y-auto rounded-xl border border-border bg-surface shadow-xl">
+                      {suggestions.map((name) => (
+                        <button
+                          key={name}
+                          type="button"
+                          role="option"
+                          aria-selected={false}
+                          onClick={() => submitAnswer(name)}
+                          className="flex w-full items-center gap-3 border-b border-border/50 px-3 py-2 text-left text-sm last:border-b-0 hover:bg-primary/10"
+                        >
+                          <UclImage fallback={playerFaceUrl(name)} alt={name} className="h-9 w-9" shape="circle" />
+                          <span className="min-w-0 flex-1 truncate">{name}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
                 <button type="submit" className="btn-primary">Submit</button>
               </form>
             )}
@@ -241,23 +269,23 @@ function TriviaClient() {
             {phase === "result" && (
               <div className="mt-5">
                 <p className={`text-lg font-bold ${passed ? "text-accent" : "text-red-400"}`}>
-                  {passed ? "Cleared!" : `${current.name} is out!`}
+                  {passed ? "Correct! Move forward." : "Wrong. You stay where you are."}
                 </p>
-                {!passed && missed.length > 0 && (
+                {missed.length > 0 && (
                   <p className="mt-1 text-sm text-fore-muted">Could have said: {missed.map((m) => m.name).join(", ")}</p>
                 )}
                 <button type="button" onClick={next} className="btn-primary mt-4">
-                  {passed ? "Next turn" : "Continue"}
+                  {players.some((p) => p.pos >= BOARD_SIZE) ? "Finish" : "Next turn"}
                 </button>
               </div>
             )}
           </div>
         )}
 
-        {phase === "over" && (
+        {phase === "over" && winner && (
           <div className="mt-6 rounded-2xl border border-line bg-background/60 p-8 text-center">
             <h2 className="text-2xl font-bold">
-              {versus ? `${winner?.name ?? "Nobody"} wins!` : `You cleared ${players[0]?.cleared ?? 0} in a row`}
+              {versus ? `${winner.name} wins!` : `Finished in ${winner.turns} turns`}
             </h2>
             <button type="button" onClick={start} className="btn-primary mt-5">Play again</button>
           </div>
