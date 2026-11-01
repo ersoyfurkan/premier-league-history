@@ -5,16 +5,32 @@ export type FootballTicTacToeCell = {
   side: "p1" | "p2";
 };
 
+export type FootballClue = {
+  label: string;
+  badge?: string;
+  badgeAlt?: string;
+};
+
 export type FootballTicTacToePuzzle = {
-  rows: [string, string, string];
-  columns: [string, string, string];
+  rows: [FootballClue, FootballClue, FootballClue];
+  columns: [FootballClue, FootballClue, FootballClue];
   answers: string[][][];
 };
 
+const flag = (country: string) => `https://flagcdn.com/w40/${country}.png`;
+
 export const FOOTBALL_TIC_TAC_TOE: Record<Competition, FootballTicTacToePuzzle> = {
   pl: {
-    rows: ["England international", "Premier League winner", "100+ Premier League goals"],
-    columns: ["Played for Manchester United", "Played for Liverpool", "Played for Arsenal"],
+    rows: [
+      { label: "England international", badge: flag("gb-eng"), badgeAlt: "England flag" },
+      { label: "Premier League winner" },
+      { label: "100+ Premier League goals" },
+    ],
+    columns: [
+      { label: "Played for Manchester United", badge: "/club-logos/man-utd.svg", badgeAlt: "Manchester United crest" },
+      { label: "Played for Liverpool", badge: "/club-logos/liverpool.svg", badgeAlt: "Liverpool crest" },
+      { label: "Played for Arsenal", badge: "/club-logos/arsenal.svg", badgeAlt: "Arsenal crest" },
+    ],
     answers: [
       [["David Beckham"], ["Steven Gerrard"], ["Ian Wright"]],
       [["Eric Cantona"], ["Sadio Mané", "Sadio Mane"], ["Dennis Bergkamp"]],
@@ -22,8 +38,16 @@ export const FOOTBALL_TIC_TAC_TOE: Record<Competition, FootballTicTacToePuzzle> 
     ],
   },
   laliga: {
-    rows: ["Spanish international", "La Liga winner", "100+ La Liga goals"],
-    columns: ["Played for Real Madrid", "Played for Barcelona", "Played for Atlético Madrid"],
+    rows: [
+      { label: "Spanish international", badge: flag("es"), badgeAlt: "Spain flag" },
+      { label: "La Liga winner" },
+      { label: "100+ La Liga goals" },
+    ],
+    columns: [
+      { label: "Played for Real Madrid", badge: "https://a.espncdn.com/i/teamlogos/soccer/500/86.png", badgeAlt: "Real Madrid crest" },
+      { label: "Played for Barcelona", badge: "https://a.espncdn.com/i/teamlogos/soccer/500/83.png", badgeAlt: "Barcelona crest" },
+      { label: "Played for Atlético Madrid", badge: "https://a.espncdn.com/i/teamlogos/soccer/500/1068.png", badgeAlt: "Atlético Madrid crest" },
+    ],
     answers: [
       [["Raúl", "Raul"], ["Xavi"], ["Fernando Torres"]],
       [["Cristiano Ronaldo"], ["Ronaldinho"], ["Diego Costa"]],
@@ -31,10 +55,18 @@ export const FOOTBALL_TIC_TAC_TOE: Record<Competition, FootballTicTacToePuzzle> 
     ],
   },
   ucl: {
-    rows: ["Won the Champions League", "Scored in a Champions League final", "100+ Champions League appearances"],
-    columns: ["Played for Real Madrid", "Played for Barcelona", "Played for Bayern Munich"],
+    rows: [
+      { label: "France international", badge: flag("fr"), badgeAlt: "France flag" },
+      { label: "Scored in a Champions League final" },
+      { label: "100+ Champions League appearances" },
+    ],
+    columns: [
+      { label: "Played for Real Madrid", badge: "https://img.uefa.com/imgml/TP/teams/logos/70x70/50051.png", badgeAlt: "Real Madrid crest" },
+      { label: "Played for Barcelona", badge: "https://img.uefa.com/imgml/TP/teams/logos/70x70/50080.png", badgeAlt: "Barcelona crest" },
+      { label: "Played for Bayern Munich", badge: "https://img.uefa.com/imgml/TP/teams/logos/70x70/50037.png", badgeAlt: "Bayern Munich crest" },
+    ],
     answers: [
-      [["Cristiano Ronaldo"], ["Lionel Messi"], ["Thomas Müller", "Thomas Muller"]],
+      [["Karim Benzema", "Raphaël Varane", "Raphael Varane"], ["Ousmane Dembélé", "Ousmane Dembele"], ["Kingsley Coman", "Franck Ribéry", "Franck Ribery"]],
       [["Gareth Bale"], ["Samuel Eto'o", "Samuel Eto’o"], ["Arjen Robben"]],
       [["Luka Modrić", "Luka Modric"], ["Gerard Piqué", "Gerard Pique"], ["Manuel Neuer"]],
     ],

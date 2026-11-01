@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FOOTBALL_TIC_TAC_TOE } from "@/data/footballTicTacToe";
+import UclImage from "@/components/UclImage";
 import { lobbyFor, parseComp, type Competition } from "@/lib/gameRoom";
 import type { FootballTicTacToeRoomView } from "@/lib/footballTicTacToe";
 
@@ -209,15 +210,21 @@ function FootballTicTacToeClient() {
           <div className="grid grid-cols-[150px_repeat(3,minmax(130px,1fr))] gap-2">
             <div />
             {puzzle.columns.map((column) => (
-              <div key={column} className="flex min-h-20 items-center justify-center rounded-xl border border-accent/30 bg-accent/5 p-3 text-center text-sm font-semibold">
-                {column}
+              <div key={column.label} className="flex min-h-20 items-center justify-center gap-2 rounded-xl border border-accent/30 bg-accent/5 p-3 text-center text-sm font-semibold">
+                {column.badge && (
+                  <UclImage src={column.badge} alt={column.badgeAlt ?? column.label} className="h-8 w-8" />
+                )}
+                <span>{column.label}</span>
               </div>
             ))}
 
             {puzzle.rows.map((row, rowIndex) => (
-              <div key={row} className="contents">
-                <div className="flex min-h-32 items-center rounded-xl border border-primary/30 bg-primary/5 p-3 text-sm font-semibold">
-                  {row}
+              <div key={row.label} className="contents">
+                <div className="flex min-h-32 items-center gap-2 rounded-xl border border-primary/30 bg-primary/5 p-3 text-sm font-semibold">
+                  {row.badge && (
+                    <UclImage src={row.badge} alt={row.badgeAlt ?? row.label} className="h-8 w-8" />
+                  )}
+                  <span>{row.label}</span>
                 </div>
                 {puzzle.columns.map((column, columnIndex) => {
                   const index = rowIndex * 3 + columnIndex;
@@ -241,7 +248,7 @@ function FootballTicTacToeClient() {
                               ? "border-accent/40 bg-accent/10"
                               : "border-border bg-background/70 hover:border-primary/50"
                       } disabled:cursor-default disabled:hover:border-border`}
-                      aria-label={`${row} and ${column}${cell ? `: ${cell.player}` : ""}`}
+                      aria-label={`${row.label} and ${column.label}${cell ? `: ${cell.player}` : ""}`}
                     >
                       {cell ? (
                         <>

@@ -109,7 +109,7 @@ export default function GameLobby({ comp }: { comp: Competition }) {
                 <div className="mt-5 grid gap-3 text-left md:grid-cols-3">
                   {([
                     ["higher-lower", "Player Stats: Higher or Lower", "Guess the next player’s goals, appearances, or assists."],
-                    ["transfer-market", "Transfer Market: Higher or Lower", "Compare real historical peak market values in euros."],
+                    ["transfer-market", "Transfer Market: Higher or Lower", "Guess random historical market-value snapshots, with no repeat players in a game."],
                   ] as const).map(([mode, title, description]) => (
                     <button
                       key={mode}
