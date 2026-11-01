@@ -300,7 +300,8 @@ function FootballTicTacToeClient() {
   }
 
   const isMyTurn = view.turn === view.you;
-  const competitionLabel = activeComp === "pl" ? "Premier League" : activeComp === "laliga" ? "La Liga" : "Champions League";
+  const competitionLabel =
+    activeComp === "pl" ? "Premier League" : activeComp === "laliga" ? "La Liga" : activeComp === "seriea" ? "Serie A" : "Champions League";
   const secondsLeft = view.status === "playing" && view.turnDeadline
     ? Math.min(60, Math.max(0, Math.ceil((view.turnDeadline - clockNow) / 1000)))
     : null;

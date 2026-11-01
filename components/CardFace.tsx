@@ -9,7 +9,7 @@ type Face = { id?: string; name: string; photo?: string; club?: string; clubId?:
 
 // Premier League cards use the bundled cut-outs; Champions League cards carry their own UEFA photo and club
 export default function CardFace({ card }: { card: Face }) {
-  const laLiga = card.id?.startsWith("ll") ?? false;
+  const laLiga = (card.id?.startsWith("ll") || card.id?.startsWith("sa")) ?? false;
   if (card.photo === undefined && !laLiga) return <PlayerPhoto id={card.id} name={card.name} size="lg" />;
 
   return (

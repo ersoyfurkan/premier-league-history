@@ -4,8 +4,12 @@ import type { LineupPlayer, MatchDetail, MatchEvent, MatchStatus, Side, StatRow,
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type Json = any;
 
-const SITE = "https://site.api.espn.com/apis/site/v2/sports/soccer/esp.1";
-export const ESPN_STANDINGS = "https://site.api.espn.com/apis/v2/sports/soccer/esp.1/standings";
+export type EspnLeague = "esp.1" | "ita.1";
+const site = (league: EspnLeague) => `https://site.api.espn.com/apis/site/v2/sports/soccer/${league}`;
+export const espnStandings = (league: EspnLeague = "esp.1") =>
+  `https://site.api.espn.com/apis/v2/sports/soccer/${league}/standings`;
+export const ESPN_STANDINGS = espnStandings("esp.1");
+export const espnStatistics = (league: EspnLeague) => `${site(league)}/statistics`;
 export const ESPN_SEASON = 2026;
 export const espnBadge = (teamId: string) => `https://a.espncdn.com/i/teamlogos/soccer/500/${teamId}.png`;
 export const espnHeadshot = (athleteId: string) => `https://a.espncdn.com/i/headshots/soccer/players/full/${athleteId}.png`;
@@ -60,33 +64,33 @@ function toFixture(event: Json): LlFixture | null {
 const dayKey = (iso: string) => iso.slice(0, 10).replace(/-/g, "");
 
 // A scoreboard day gives live scores; the schedules give the whole season
-async function scoreboardDay(day: string): Promise<LlFixture[]> {
+async function scoreboardDay(day: string, league: EspnLeague): Promise<LlFixture[]> {
   try {
-    const board = await espnJson(`${SITE}/scoreboard?dates=${day}`);
+    const board = await espnJson(`${site(league)}/scoreboard?dates=${day}`);
     return (board.events ?? []).map(toFixture).filter(Boolean) as LlFixture[];
   } catch {
     return [];
   }
 }
 
-export async function teamIds(): Promise<string[]> {
-  const standings = await espnJson(ESPN_STANDINGS, 3600);
+export async function teamIds(league: EspnLeague = "esp.1"): Promise<string[]> {
+  const standings = await espnJson(espnStandings(league), 3600);
   return (standings.children?.[0]?.standings?.entries ?? []).map((entry: Json) => String(entry.team.id));
 }
 
-async function teamSchedule(team: string): Promise<LlFixture[]> {
+async function teamSchedule(team: string, league: EspnLeague): Promise<LlFixture[]> {
   const [played, upcoming] = await Promise.all([
-    espnJson(`${SITE}/teams/${team}/schedule?season=${ESPN_SEASON}`, 600).catch(() => ({ events: [] })),
-    espnJson(`${SITE}/teams/${team}/schedule?season=${ESPN_SEASON}&fixture=true`, 600).catch(() => ({ events: [] })),
+    espnJson(`${site(league)}/teams/${team}/schedule?season=${ESPN_SEASON}`, 600).catch(() => ({ events: [] })),
+    espnJson(`${site(league)}/teams/${team}/schedule?season=${ESPN_SEASON}&fixture=true`, 600).catch(() => ({ events: [] })),
   ]);
   return [...(played.events ?? []), ...(upcoming.events ?? [])].map(toFixture).filter(Boolean) as LlFixture[];
 }
 
 // Matchweek N is each club's Nth league game, which stays right through postponements well enough
-export async function seasonFixtures(): Promise<LlFixture[]> {
-  const ids = await teamIds();
+export async function seasonFixtures(league: EspnLeague = "esp.1"): Promise<LlFixture[]> {
+  const ids = await teamIds(league);
   const all = new Map<string, LlFixture>();
-  for (const list of await Promise.all(ids.map(teamSchedule))) for (const f of list) all.set(f.id, f);
+  for (const list of await Promise.all(ids.map((id) => teamSchedule(id, league)))) for (const f of list) all.set(f.id, f);
   const fixtures = [...all.values()].sort((a, b) => a.date.localeCompare(b.date));
   const count = new Map<string, number>();
   for (const f of fixtures) {
@@ -99,7 +103,7 @@ export async function seasonFixtures(): Promise<LlFixture[]> {
 }
 
 // Overlay live scores from the scoreboard for the days in play
-export async function withLiveScores(fixtures: LlFixture[]): Promise<LlFixture[]> {
+export async function withLiveScores(fixtures: LlFixture[], league: EspnLeague = "esp.1"): Promise<LlFixture[]> {
   const now = Date.now();
   const days = new Set(
     fixtures
@@ -107,7 +111,7 @@ export async function withLiveScores(fixtures: LlFixture[]): Promise<LlFixture[]
       .map((f) => dayKey(f.date))
   );
   const fresh = new Map<string, LlFixture>();
-  for (const list of await Promise.all([...days].map(scoreboardDay))) for (const f of list) fresh.set(f.id, f);
+  for (const list of await Promise.all([...days].map((day) => scoreboardDay(day, league)))) for (const f of list) fresh.set(f.id, f);
   return fixtures.map((f) => {
     const live = fresh.get(f.id);
     return live ? { ...live, matchweek: f.matchweek } : f;
@@ -178,8 +182,11 @@ function parseMinute(display: string): { minute: number; extra?: number } {
   return { minute: match ? Number(match[1]) : 0, extra: match?.[2] ? Number(match[2]) : undefined };
 }
 
-export async function fetchLaLigaMatch(id: string): Promise<MatchDetail> {
-  const data = await espnJson(`${SITE}/summary?event=${id}`);
+export const fetchLaLigaMatch = (id: string) => fetchEspnMatch(id, "laliga");
+export const fetchSerieAMatch = (id: string) => fetchEspnMatch(id, "seriea");
+
+async function fetchEspnMatch(id: string, comp: "laliga" | "seriea"): Promise<MatchDetail> {
+  const data = await espnJson(`${site(comp === "seriea" ? "ita.1" : "esp.1")}/summary?event=${id}`);
   const header = data.header?.competitions?.[0];
   if (!header) throw new Error("Match not found");
   const homeC = header.competitors.find((c: Json) => c.homeAway === "home");
@@ -286,7 +293,7 @@ export async function fetchLaLigaMatch(id: string): Promise<MatchDetail> {
       : { home: firstHalf.filter((e) => e.side === "home").length, away: firstHalf.filter((e) => e.side === "away").length };
 
   return {
-    comp: "laliga",
+    comp,
     id,
     status,
     statusText,

@@ -271,6 +271,96 @@ export const MARKET_VALUE_PLAYERS: Record<Competition, MarketValuePlayer[]> = {
       { value: 80, year: 2025, club: "Barcelona" },
     ]),
   ],
+  seriea: [
+    player("Lautaro Martínez", "Argentina", "ar", "406625", [
+      { value: 20, year: 2018, club: "Inter" },
+      { value: 70, year: 2020, club: "Inter" },
+      { value: 110, year: 2023, club: "Inter" },
+      { value: 120, year: 2025, club: "Inter" },
+    ]),
+    player("Victor Osimhen", "Nigeria", "ng", "401923", [
+      { value: 12, year: 2019, club: "Lille" },
+      { value: 50, year: 2021, club: "Napoli" },
+      { value: 110, year: 2023, club: "Napoli" },
+      { value: 75, year: 2025, club: "Galatasaray" },
+    ]),
+    player("Paulo Dybala", "Argentina", "ar", "206050", [
+      { value: 12, year: 2015, club: "Palermo" },
+      { value: 100, year: 2018, club: "Juventus" },
+      { value: 60, year: 2021, club: "Juventus" },
+      { value: 30, year: 2024, club: "Roma" },
+    ]),
+    player("Rafael Leão", "Portugal", "pt", "357164", [
+      { value: 8, year: 2018, club: "Lille" },
+      { value: 25, year: 2020, club: "Milan" },
+      { value: 90, year: 2023, club: "Milan" },
+      { value: 80, year: 2025, club: "Milan" },
+    ]),
+    player("Nicolò Barella", "Italy", "it", "269370", [
+      { value: 12, year: 2018, club: "Cagliari" },
+      { value: 50, year: 2020, club: "Inter" },
+      { value: 80, year: 2023, club: "Inter" },
+      { value: 70, year: 2025, club: "Inter" },
+    ]),
+    player("Khvicha Kvaratskhelia", "Georgia", "ge", "495666", [
+      { value: 2, year: 2020, club: "Rubin Kazan" },
+      { value: 15, year: 2022, club: "Napoli" },
+      { value: 85, year: 2023, club: "Napoli" },
+      { value: 80, year: 2025, club: "Paris Saint-Germain" },
+    ]),
+    player("Dušan Vlahović", "Serbia", "rs", "357498", [
+      { value: 8, year: 2019, club: "Fiorentina" },
+      { value: 60, year: 2021, club: "Fiorentina" },
+      { value: 80, year: 2022, club: "Juventus" },
+      { value: 50, year: 2025, club: "Juventus" },
+    ]),
+    player("Ciro Immobile", "Italy", "it", "105521", [
+      { value: 6, year: 2013, club: "Torino" },
+      { value: 38, year: 2018, club: "Lazio" },
+      { value: 30, year: 2021, club: "Lazio" },
+      { value: 6, year: 2024, club: "Beşiktaş" },
+    ]),
+    player("Mike Maignan", "France", "fr", "182906", [
+      { value: 8, year: 2019, club: "Lille" },
+      { value: 25, year: 2021, club: "Milan" },
+      { value: 40, year: 2023, club: "Milan" },
+      { value: 35, year: 2025, club: "Milan" },
+    ]),
+    player("Federico Chiesa", "Italy", "it", "341092", [
+      { value: 10, year: 2018, club: "Fiorentina" },
+      { value: 60, year: 2020, club: "Juventus" },
+      { value: 40, year: 2023, club: "Juventus" },
+      { value: 25, year: 2025, club: "Liverpool" },
+    ]),
+    player("Edin Džeko", "Bosnia and Herzegovina", "ba", "42092", [
+      { value: 30, year: 2016, club: "Roma" },
+      { value: 25, year: 2019, club: "Roma" },
+      { value: 7, year: 2022, club: "Inter" },
+      { value: 3, year: 2025, club: "Fiorentina" },
+    ]),
+    player("Giovanni Di Lorenzo", "Italy", "it", "212763", [
+      { value: 2, year: 2018, club: "Empoli" },
+      { value: 22, year: 2020, club: "Napoli" },
+      { value: 30, year: 2023, club: "Napoli" },
+      { value: 20, year: 2025, club: "Napoli" },
+    ]),
+    player("Ademola Lookman", "Nigeria", "ng", "475483", [
+      { value: 10, year: 2018, club: "Everton" },
+      { value: 15, year: 2021, club: "RB Leipzig" },
+      { value: 45, year: 2024, club: "Atalanta" },
+      { value: 50, year: 2025, club: "Atalanta" },
+    ]),
+    player("Riccardo Calafiori", "Italy", "it", "431060", [
+      { value: 2, year: 2021, club: "Basel" },
+      { value: 10, year: 2023, club: "Bologna" },
+      { value: 50, year: 2024, club: "Arsenal" },
+    ]),
+    player("Matteo Politano", "Italy", "it", "180957", [
+      { value: 14, year: 2018, club: "Sassuolo" },
+      { value: 20, year: 2020, club: "Napoli" },
+      { value: 15, year: 2023, club: "Napoli" },
+    ]),
+  ],
   ucl: [
     player("Erling Haaland", "Norway", "no", "418560", [
       { value: 8, year: 2020, club: "Red Bull Salzburg" },

@@ -128,7 +128,7 @@ function RoomClient() {
 
   const shareUrl =
     typeof window !== "undefined"
-      ? `${window.location.origin}/game/room?code=${code}${compParam === "ucl" || compParam === "laliga" ? `&comp=${compParam}` : ""}`
+      ? `${window.location.origin}/game/room?code=${code}${compParam === "ucl" || compParam === "laliga" || compParam === "seriea" ? `&comp=${compParam}` : ""}`
       : "";
 
   const copyLink = async () => {

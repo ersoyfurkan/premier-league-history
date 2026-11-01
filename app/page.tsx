@@ -54,6 +54,24 @@ const competitions = [
       />
     ),
   },
+  {
+    name: "Serie A",
+    eyebrow: "Italy · since 1929",
+    description:
+      "Follow live matches, the current table and fixtures, club and player stats, derbies, all-time records, and the Serie A Stat Duel.",
+    href: "/serie-a",
+    accent: "text-success",
+    border: "border-success/25 hover:border-success/60",
+    glow: "glow-orb-cyan",
+    mark: (
+      <span
+        role="img"
+        aria-label="Serie A logo"
+        className="h-20 w-20 bg-contain bg-center bg-no-repeat"
+        style={{ backgroundImage: "url(https://a.espncdn.com/i/leaguelogos/soccer/500/12.png)" }}
+      />
+    ),
+  },
 ];
 
 export default function Home() {
@@ -70,7 +88,7 @@ export default function Home() {
             Pick a competition to explore its seasons, stats, records, and player games.
           </p>
 
-          <div className="mt-12 grid gap-5 text-left md:grid-cols-3">
+          <div className="mt-12 grid gap-5 text-left md:grid-cols-2">
             {competitions.map((competition) => (
               <Link
                 key={competition.name}

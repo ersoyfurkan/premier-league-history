@@ -197,7 +197,7 @@ function marketPlayerCard(comp: Competition, name: string) {
 
 function MarketPlayerPhoto({ comp, name }: { comp: Competition; name: string }) {
   const card = marketPlayerCard(comp, name);
-  if (card?.id && !card.id.startsWith("ll") && !card.id.startsWith("ucl")) {
+  if (card?.id && !card.id.startsWith("ll") && !card.id.startsWith("sa") && !card.id.startsWith("ucl")) {
     return <PlayerPhoto id={card.id} name={name} size="lg" />;
   }
   if (card?.photo) {
@@ -325,7 +325,7 @@ function TransferMarketHigherLower({ comp, onBack }: { comp: Competition; onBack
         </div>
       ) : (
         <div className="mt-6 rounded-xl border border-border bg-background/50 p-8 text-center">
-          <p className="text-fore-muted">Can you beat your best streak using {comp === "pl" ? "Premier League" : comp === "laliga" ? "La Liga" : "Champions League"} stars?</p>
+          <p className="text-fore-muted">Can you beat your best streak using {comp === "pl" ? "Premier League" : comp === "laliga" ? "La Liga" : comp === "seriea" ? "Serie A" : "Champions League"} stars?</p>
           <button type="button" onClick={start} className="btn-primary mt-5">Open the market</button>
         </div>
       )}

@@ -309,13 +309,14 @@ export default function MatchCenter({ comp, id }: { comp: Comp; id: string }) {
   }, [comp, id]);
 
   const activeTab: Tab = tab ?? (match?.status === "upcoming" ? "lineups" : "timeline");
-  const back = comp === "ucl" ? "/champions-league" : comp === "laliga" ? "/la-liga" : "/premier-league";
+  const back =
+    comp === "ucl" ? "/champions-league" : comp === "laliga" ? "/la-liga" : comp === "seriea" ? "/serie-a" : "/premier-league";
 
   return (
     <main className="min-h-screen bg-background px-5 pb-12 pt-24 text-foreground grid-bg md:px-8">
       <section className="mx-auto w-full max-w-5xl space-y-6">
         <Link href={back} className="font-mono text-[11px] uppercase tracking-[0.14em] text-primary hover:text-accent">
-          ← {comp === "ucl" ? "Champions League" : comp === "laliga" ? "La Liga" : "Premier League"}
+          ← {comp === "ucl" ? "Champions League" : comp === "laliga" ? "La Liga" : comp === "seriea" ? "Serie A" : "Premier League"}
         </Link>
 
         {!match ? (
