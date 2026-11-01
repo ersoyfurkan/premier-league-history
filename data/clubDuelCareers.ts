@@ -1373,4 +1373,23 @@ Yeremi Pino:vil cry
 Mohamed Salah:liv
 Xabi Alonso:soc liv rma bay
 Alexander Isak:dor soc new liv
+Bernardo Silva:mon mci ben rma
+Yan Diomande:rbl rma
+Morgan Rogers:avl che
+Elliot Anderson:new nfo mci
+Enzo Fernández:ben che mci
+Sandro Tonali:mil bre new tot
+Mateus Fernandes:wham tot
+Marc Cucurella:bar get bha che rma
+Anthony Gordon:eve new bar
+Bruno Guimarães:lyon new ars
+Gonçalo Ramos:ben psg mil
+Marco Palestra:ata che
+Maxence Lacroix:wol cry che
+Karim Adeyemi:sal dor bar
+Ibrahima Konaté:rbl liv rma
+Denzel Dumfries:psv inter rma
+Gabriel Jesus:mci ars bar
+Nick Woltemade:stu new juv
+Pape Matar Sarr:tot juv
 `;

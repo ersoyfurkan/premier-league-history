@@ -107,7 +107,10 @@ function TriviaClient() {
 
   const submitAnswer = (value: string) => {
     if (!tile || phase !== "play") return;
-    const entry = matchTriviaAnswer(tile.entries, value);
+    // Match against unanswered entries first so a shared name (e.g. "Ronaldo") can still reach the other player.
+    const entry =
+      matchTriviaAnswer(tile.entries.filter((e) => !found.includes(e)), value) ??
+      matchTriviaAnswer(tile.entries, value);
     setGuess("");
     if (!entry) {
       setFeedback("Not a valid answer");
