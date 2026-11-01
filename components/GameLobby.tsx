@@ -4,11 +4,13 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { Competition } from "@/lib/gameRoom";
+import CompetitionMiniGames, { type MiniGameMode } from "@/components/CompetitionMiniGames";
 
 export default function GameLobby({ comp }: { comp: Competition }) {
   const router = useRouter();
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [miniGame, setMiniGame] = useState<MiniGameMode | null>(null);
   const isUcl = comp === "ucl";
   const label = isUcl ? "Champions League" : comp === "laliga" ? "La Liga" : "Premier League";
   const home = isUcl ? "/champions-league" : comp === "laliga" ? "/la-liga" : "/premier-league";
@@ -43,7 +45,7 @@ export default function GameLobby({ comp }: { comp: Competition }) {
             <p className="section-eyebrow text-primary">{comp === "pl" ? "Game Lobby" : `${label} Game Lobby`}</p>
             <h1 className="section-title mt-3">Choose Mode</h1>
             <p className="mx-auto mt-5 max-w-3xl text-base md:text-lg text-fore-muted leading-8">
-              Pick how you want to play, then you will be sent to a dedicated full-size battle screen.
+              Challenge a friend, take on the AI, or try a quick football mini-game.
             </p>
 
             <div className="mt-10 grid gap-4 md:grid-cols-2">
@@ -71,6 +73,39 @@ export default function GameLobby({ comp }: { comp: Competition }) {
                   You are Player 1. The AI takes Player 2 and picks automatically on its turns.
                 </p>
               </Link>
+            </div>
+
+            <div className="mt-10 border-t border-border/70 pt-8">
+              <p className="section-eyebrow text-warning">Quick games</p>
+              <h2 className="mt-2 text-3xl">Play a Mini-Game</h2>
+              <p className="mx-auto mt-3 max-w-2xl text-sm text-fore-muted">
+                Each game uses {label} players and stats where relevant.
+              </p>
+
+              {miniGame ? (
+                <CompetitionMiniGames comp={comp} mode={miniGame} onBack={() => setMiniGame(null)} />
+              ) : (
+                <div className="mt-5 grid gap-3 text-left md:grid-cols-3">
+                  {([
+                    ["higher-lower", "Higher or Lower", "Guess the next player’s goals, appearances, or assists."],
+                    ["tic-tac-toe", "Tic-Tac-Toe", "A quick X-and-O challenge against the AI."],
+                    ["transfer-draft", "Transfer Market Draft", "Build a five-player squad on a game-credit budget."],
+                  ] as const).map(([mode, title, description]) => (
+                    <button
+                      key={mode}
+                      type="button"
+                      onClick={() => setMiniGame(mode)}
+                      className="rounded-2xl border border-warning/25 bg-background/60 p-5 text-left transition hover:border-warning/60 hover:bg-warning/5"
+                    >
+                      <h3 className="text-xl font-bold">{title}</h3>
+                      <p className="mt-2 text-sm leading-6 text-fore-muted">{description}</p>
+                      <span className="mt-4 inline-block font-mono text-[10px] uppercase tracking-[0.12em] text-warning">
+                        Play now →
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             <Link
