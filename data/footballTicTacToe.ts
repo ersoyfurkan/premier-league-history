@@ -706,11 +706,98 @@ const SA_FACTS: Fact[] = [
   f("Dario Hübner", "ita", "bre pia ces par", "g100"),
 ];
 
+// Extra clubs for Serie A players already listed above.
+const SA_ALSO: Record<string, string> = {
+  "Cristiano Ronaldo": "rma mun",
+  "Zlatan Ibrahimović": "bar psg mun ajax",
+  "Gonzalo Higuaín": "rma che",
+  "Kaká": "rma",
+  "Ronaldo": "bar rma",
+  "Ronaldinho": "bar psg",
+  "Andriy Shevchenko": "che",
+  "Hernán Crespo": "che",
+  "Patrick Vieira": "ars mci",
+  "Zinedine Zidane": "rma",
+  "Clarence Seedorf": "ajax rma",
+  "Edgar Davids": "ajax bar tot",
+  "Thiago Silva": "psg che",
+  "Romelu Lukaku": "che mun",
+  "Edinson Cavani": "psg mun",
+  "Carlos Tevez": "mun mci",
+  "Adrian Mutu": "che",
+  "Cafu": "bar",
+  "Samuel Eto'o": "bar che",
+  "Diego Simeone": "atm",
+  "Christian Vieri": "atm",
+  "Fabio Cannavaro": "rma",
+  "Gianluigi Buffon": "psg",
+  "Marco van Basten": "ajax",
+  "Ruud Gullit": "ajax che",
+  "Alexis Sánchez": "bar ars mun",
+  "Arturo Vidal": "bay bar",
+  "Dušan Vlahović": "ars",
+  "Wesley Sneijder": "rma ajax",
+};
+
+// Managers and the players they coached (any club). Applied as "m_<key>" tags to every league's players.
+const MANAGERS: Record<string, { label: string; players: string }> = {
+  ferguson: { label: "Alex Ferguson", players: "Wayne Rooney|Cristiano Ronaldo|Ryan Giggs|Paul Scholes|Eric Cantona|Andy Cole|Andrew Cole|Ruud van Nistelrooy|Robin van Persie|David Beckham|Gary Neville|Roy Keane|Rio Ferdinand|Michael Carrick|Dwight Yorke|Teddy Sheringham|Ole Gunnar Solskjær|Dimitar Berbatov|Carlos Tevez|Paul Pogba" },
+  wenger: { label: "Arsène Wenger", players: "Thierry Henry|Dennis Bergkamp|Patrick Vieira|Cesc Fàbregas|Tony Adams|Theo Walcott|Jack Wilshere|Olivier Giroud|David Seaman|Ray Parlour|Mesut Özil|Nicolas Anelka|Samir Nasri|Gaël Clichy|Bacary Sagna|Gilberto Silva|Robin van Persie|Ashley Cole|Pierre-Emerick Aubameyang|Ian Wright|Bukayo Saka|Marc Overmars|Emmanuel Adebayor" },
+  mourinho: { label: "José Mourinho", players: "Frank Lampard|John Terry|Didier Drogba|Petr Čech|Ashley Cole|Joe Cole|Claude Makélélé|Eden Hazard|Diego Costa|Cesc Fàbregas|Juan Mata|Paul Pogba|Marcus Rashford|Romelu Lukaku|Anthony Martial|Harry Kane|Son Heung-min|Michael Carrick|Luke Shaw|Ashley Young|Ricardo Carvalho|Cristiano Ronaldo|Karim Benzema|Sergio Ramos|Iker Casillas|Xabi Alonso|Marcelo|Ángel Di María|Gonzalo Higuaín|Pepe|Mesut Özil|Zlatan Ibrahimović|Wesley Sneijder|Samuel Eto'o|Diego Milito|Javier Zanetti|Esteban Cambiasso|Maicon|Lúcio|Marco Materazzi|Casemiro|Raphaël Varane|Fábio Coentrão|Kaká|Edin Džeko|Paulo Dybala|Gareth Bale|Emerson Royal|Hugo Lloris|Dele Alli" },
+  guardiola: { label: "Pep Guardiola", players: "Kevin De Bruyne|David Silva|Raheem Sterling|Kyle Walker|Sergio Agüero|Rodri|Ederson|Fernandinho|Aymeric Laporte|Gabriel Jesus|Erling Haaland|Riyad Mahrez|Benjamin Mendy|Ferran Torres|Yaya Touré|Vincent Kompany|Lionel Messi|Xavi|Andrés Iniesta|Gerard Piqué|Sergio Busquets|Pedro|Dani Alves|David Villa|Samuel Eto'o|Éric Abidal|Zlatan Ibrahimović|Thiago Alcântara|Jordi Alba|Cesc Fàbregas|Javier Mascherano|Neymar|Luis Suárez|Carles Puyol|Robert Lewandowski|Thomas Müller|Manuel Neuer|Franck Ribéry|Arjen Robben|Joshua Kimmich|David Alaba|Mario Götze|Xabi Alonso|Douglas Costa|Kingsley Coman|Julián Álvarez|Jules Koundé|Philippe Coutinho" },
+  klopp: { label: "Jürgen Klopp", players: "Mohamed Salah|Sadio Mané|Roberto Firmino|Jordan Henderson|Virgil van Dijk|James Milner|Trent Alexander-Arnold|Thiago Alcântara|Philippe Coutinho|Adam Lallana|Nathaniel Clyne|Danny Ings|Marco Reus|Mats Hummels|Mario Götze|Robert Lewandowski|Luis Suárez|Steven Gerrard|Daniel Sturridge|Divock Origi|Georginio Wijnaldum|Fabinho|Alisson|Joel Matip|Andy Robertson|Dominik Szoboszlai" },
+  ancelotti: { label: "Carlo Ancelotti", players: "Cristiano Ronaldo|Karim Benzema|Gareth Bale|Sergio Ramos|Luka Modrić|Toni Kroos|Marcelo|Casemiro|Xabi Alonso|Ángel Di María|Raphaël Varane|Pepe|Iker Casillas|Isco|Dani Carvajal|Vinícius Júnior|Rodrygo|Éder Militão|Thibaut Courtois|Fábio Coentrão|Frank Lampard|John Terry|Didier Drogba|Petr Čech|Ashley Cole|Michael Essien|Nicolas Anelka|Joe Cole|Andrea Pirlo|Paolo Maldini|Kaká|Clarence Seedorf|Gennaro Gattuso|Filippo Inzaghi|Andriy Shevchenko|Alessandro Nesta|Ronaldinho|Massimo Ambrosini|Thiago Silva|Zlatan Ibrahimović|Robinho|Marco Verratti|Edinson Cavani|Zinedine Zidane|Alessandro Del Piero|Gianluigi Buffon|Edgar Davids|Pavel Nedvěd|David Trezeguet|Lilian Thuram|Lorenzo Insigne|Dries Mertens|Piotr Zieliński|José Callejón|Marek Hamšík|Fabián Ruiz|Richarlison|Dominic Calvert-Lewin|Jordan Pickford|Lucas Digne|Seamus Coleman|Gylfi Sigurdsson|Theo Walcott|Jamie Vardy" },
+  zidane: { label: "Zinedine Zidane", players: "Cristiano Ronaldo|Karim Benzema|Gareth Bale|Sergio Ramos|Luka Modrić|Toni Kroos|Marcelo|Casemiro|Isco|Dani Carvajal|Raphaël Varane|Pepe|Marcos Llorente|Álvaro Morata|Fábio Coentrão|Vinícius Júnior|Rodrygo|Éder Militão|Thibaut Courtois|Álvaro Odriozola|Martin Ødegaard|Marco Asensio" },
+  luisenrique: { label: "Luis Enrique", players: "Lionel Messi|Neymar|Luis Suárez|Andrés Iniesta|Gerard Piqué|Sergio Busquets|Ivan Rakitić|Dani Alves|Jordi Alba|Javier Mascherano|Marc-André ter Stegen|Pedro|Xavi|Marc Bartra|Philippe Coutinho|Ousmane Dembélé|Antoine Griezmann|Kylian Mbappé|Marquinhos|Achraf Hakimi|Marco Verratti|Francesco Totti|Daniele De Rossi|Edin Džeko" },
+  simeone: { label: "Diego Simeone", players: "Antoine Griezmann|Diego Godín|Jan Oblak|Koke|Gabi|Saúl Ñíguez|Diego Costa|Fernando Torres|David Villa|Thibaut Courtois|Raúl García|Filipe Luís|Marcos Llorente|Ángel Correa|Julián Álvarez|Rodrigo De Paul|Luis Suárez|Edinson Cavani|Raúl Albiol|Jose Maria Giménez|Arda Turan|Adrián" },
+  benitez: { label: "Rafa Benítez", players: "Steven Gerrard|Jamie Carragher|Fernando Torres|Xabi Alonso|Sami Hyypiä|Peter Crouch|Javier Mascherano|Pepe Reina|Dirk Kuyt|Rubén Baraja|David Albelda|Carlos Marchena|Roberto Ayala|Pablo Aimar|Frank Lampard|Eden Hazard|Juan Mata|David Luiz|Zinedine Zidane|Cristiano Ronaldo|Dimitri Payet|Nacho|Marek Hamšík|Lorenzo Insigne|Gonzalo Higuaín|José Callejón|Dries Mertens|Jordan Henderson|Maxi Rodríguez|Joe Cole|Robbie Keane|Dani Parejo" },
+  conte: { label: "Antonio Conte", players: "Eden Hazard|Diego Costa|N'Golo Kanté|César Azpilicueta|Willian|Pedro|Marcos Alonso|David Luiz|Thibaut Courtois|Cesc Fàbregas|Gianluigi Buffon|Andrea Pirlo|Arturo Vidal|Carlos Tevez|Leonardo Bonucci|Giorgio Chiellini|Andrea Barzagli|Claudio Marchisio|Paul Pogba|Fabio Quagliarella|Romelu Lukaku|Lautaro Martínez|Nicolò Barella|Marcelo Brozović|Samir Handanović|Milan Škriniar|Alexis Sánchez|Achraf Hakimi|Alessandro Bastoni|Diego Godín|Harry Kane|Son Heung-min|Hugo Lloris|Pierre-Emile Højbjerg|Giovanni Di Lorenzo|Stanislav Lobotka|Kevin De Bruyne|Hakan Çalhanoğlu" },
+  ranieri: { label: "Claudio Ranieri", players: "Jamie Vardy|Riyad Mahrez|Wes Morgan|Kasper Schmeichel|Danny Drinkwater|N'Golo Kanté|Marc Albrighton|Frank Lampard|John Terry|Petr Čech|Claude Makélélé|Ashley Cole|Joe Cole|William Gallas|Francesco Totti|Daniele De Rossi|Julio Baptista|Gabriel Batistuta|Gianfranco Zola|Radamel Falcao|Fernando Torres|Gaizka Mendieta|Rubén Baraja|Roberto Ayala|Pablo Aimar|David Albelda|Carlos Marchena|Marcos Senna|Wayne Bridge|Mikel Arteta|Mauro Icardi|Philippe Coutinho" },
+  pochettino: { label: "Mauricio Pochettino", players: "Harry Kane|Son Heung-min|Hugo Lloris|Tanguy Ndombele|Pierre-Emile Højbjerg|Dele Alli|Christian Eriksen|Jan Vertonghen|Morgan Schneiderlin|Nathaniel Clyne|Adam Lallana|Rickie Lambert|Dušan Tadić|Ryan Bertrand|Luke Shaw|Neymar|Kylian Mbappé|Marco Verratti|Marquinhos|Achraf Hakimi|Lionel Messi|Sergio Ramos|Ángel Di María|Cole Palmer|Raheem Sterling|Thiago Silva|Nicolas Jackson|Joan Capdevila" },
+  emery: { label: "Unai Emery", players: "Pierre-Emerick Aubameyang|Mesut Özil|Bukayo Saka|Héctor Bellerín|Gerard Moreno|Bruno Soriano|Pepe Reina|Ivan Rakitić|Jesús Navas|Éver Banega|Kevin Gameiro|David Villa|David Silva|Juan Mata|Jordi Alba|Roberto Soldado|Daniel Parejo|Joaquín|Neymar|Kylian Mbappé|Edinson Cavani|Marco Verratti|Thiago Silva|Marquinhos|Gianluigi Buffon|Ángel Di María|Dani Alves|Emiliano Martínez|Ollie Watkins|Philippe Coutinho|Jack Grealish|Aaron Ramsey|Granit Xhaka|Alexandre Lacazette|Nacho Monreal|Joel Campbell" },
+  pellegrini: { label: "Manuel Pellegrini", players: "Sergio Agüero|Yaya Touré|Vincent Kompany|David Silva|Fernandinho|Samir Nasri|Edin Džeko|Pablo Zabaleta|Jesús Navas|Michail Antonio|Declan Rice|Mark Noble|Cristiano Ronaldo|Karim Benzema|Xabi Alonso|Iker Casillas|Sergio Ramos|Raúl|Guti|Marcelo|Rafael van der Vaart|Gonzalo Higuaín|Kaká|Juan Román Riquelme|Diego Forlán|Marcos Senna|Giuseppe Rossi|Santi Cazorla|Joan Capdevila|Nabil Fekir|Joaquín|Sergio Canales|Borja Iglesias|Héctor Bellerín|William Carvalho|Giovani Lo Celso|Claudio Bravo|Marc Bartra|Emerson Royal|Willian José|Andrés Guardado|Pepe Reina|Jarrod Bowen|Lucas Paquetá|Raúl Albiol|Mesut Özil|Lucas Silva" },
+  mancini: { label: "Roberto Mancini", players: "Sergio Agüero|Carlos Tevez|Yaya Touré|Vincent Kompany|David Silva|Pablo Zabaleta|Samir Nasri|Edin Džeko|Gareth Barry|Emmanuel Adebayor|Zlatan Ibrahimović|Javier Zanetti|Esteban Cambiasso|Marco Materazzi|Adriano|Álvaro Recoba|Iván Córdoba|Maicon|Dejan Stanković|Juan Sebastián Verón|Walter Samuel|Pavel Nedvěd|Diego Simeone|Sinisa Mihajlović|Alessandro Nesta|Hernán Crespo|Julio Cesar|Wesley Sneijder|Mauro Icardi|Radja Nainggolan|Gianluca Pagliuca|Roberto Mancini|Ivan Perišić|Rui Costa|Luca Toni|Adrian Mutu|Alberto Gilardino|Francesco Toldo" },
+  allegri: { label: "Massimiliano Allegri", players: "Gianluigi Buffon|Giorgio Chiellini|Leonardo Bonucci|Andrea Barzagli|Claudio Marchisio|Paul Pogba|Paulo Dybala|Gonzalo Higuaín|Carlos Tevez|Andrea Pirlo|Arturo Vidal|Cristiano Ronaldo|Federico Chiesa|Dušan Vlahović|Fabio Quagliarella|Zlatan Ibrahimović|Thiago Silva|Robinho|Kaká|Clarence Seedorf|Gennaro Gattuso|Alessandro Nesta|Filippo Inzaghi|Massimo Ambrosini|Alexis Sánchez|Antonio Cassano|Ronaldinho|Mario Mandžukić|Juan Cuadrado|Sami Khedira|Douglas Costa" },
+  spalletti: { label: "Luciano Spalletti", players: "Francesco Totti|Daniele De Rossi|Edin Džeko|Radja Nainggolan|Mohamed Salah|Antonio Rüdiger|Mauro Icardi|Milan Škriniar|Marcelo Brozović|Samir Handanović|João Cancelo|Matteo Politano|Lautaro Martínez|Victor Osimhen|Khvicha Kvaratskhelia|Stanislav Lobotka|Piotr Zieliński|Giovanni Di Lorenzo|Alessandro Florenzi|Philippe Mexès|Vincent Candela|Ciro Immobile|Daniele Padelli|Marco Cassetti|Wesley Sneijder|Nicolò Barella|Gabriel Jesus" },
+  sarri: { label: "Maurizio Sarri", players: "Marek Hamšík|Lorenzo Insigne|Dries Mertens|José Callejón|Gonzalo Higuaín|Eden Hazard|N'Golo Kanté|Álvaro Morata|Pedro|Willian|César Azpilicueta|David Luiz|Marcos Alonso|Cesc Fàbregas|Olivier Giroud|Kepa Arrizabalaga|Cristiano Ronaldo|Paulo Dybala|Gianluigi Buffon|Giorgio Chiellini|Leonardo Bonucci|Douglas Costa|Ciro Immobile|Sergej Milinković-Savić|Luis Alberto|Felipe Anderson|Mateo Kovačić|Gabriel Jesus|Daniele Rugani|Emerson" },
+  pioli: { label: "Stefano Pioli", players: "Zlatan Ibrahimović|Rafael Leão|Mike Maignan|Theo Hernández|Olivier Giroud|Sandro Tonali|Hakan Çalhanoğlu|Mauro Icardi|Marcelo Brozović|Samir Handanović|Felipe Anderson|Miroslav Klose|Federico Chiesa|Cristian Zapata|Antonio Candreva|Duván Zapata|Alessandro Bastoni|Kalidou Koulibaly|Alexis Sánchez|Marcos Alonso|Fikayo Tomori|Christian Pulisic" },
+  inzaghi: { label: "Simone Inzaghi", players: "Lautaro Martínez|Nicolò Barella|Marcelo Brozović|Samir Handanović|Milan Škriniar|Alessandro Bastoni|Hakan Çalhanoğlu|Edin Džeko|Romelu Lukaku|Alexis Sánchez|Ciro Immobile|Sergej Milinković-Savić|Luis Alberto|Felipe Anderson|Mehdi Taremi|Benjamin Pavard|Francesco Acerbi|Henrikh Mkhitaryan|Achraf Hakimi|Marcus Thuram|Federico Dimarco|Matteo Darmian|Piotr Zieliński|Joaquín Correa|Danilo D'Ambrosio" },
+  lippi: { label: "Marcello Lippi", players: "Alessandro Del Piero|Zinedine Zidane|Gianluca Vialli|Edgar Davids|Filippo Inzaghi|Lilian Thuram|Pavel Nedvěd|David Trezeguet|Gianluigi Buffon|Fabio Cannavaro|Christian Vieri|Roberto Baggio|Ronaldo|Álvaro Recoba|Javier Zanetti|Alessandro Nesta|Gianfranco Zola|Andrea Pirlo|Gennaro Gattuso|Francesco Totti|Luca Toni|Alberto Gilardino|Marco Materazzi|Simone Pepe|Mauro Camoranesi|Gianluca Zambrotta|Daniele De Rossi|Andrea Barzagli|Vincenzo Montella|Ciro Ferrara|Angelo Peruzzi|Paulo Sousa|Didier Deschamps|Antonio Conte" },
+  capello: { label: "Fabio Capello", players: "Paolo Maldini|Franco Baresi|Alessandro Costacurta|Marco van Basten|Ruud Gullit|Frank Rijkaard|Zvonimir Boban|George Weah|Francesco Totti|Gabriel Batistuta|Vincenzo Montella|Marco Delvecchio|Vincent Candela|Cafu|Aldair|Emerson|Walter Samuel|Daniele De Rossi|Zlatan Ibrahimović|Fabio Cannavaro|Gianluigi Buffon|Patrick Vieira|Pavel Nedvěd|Alessandro Del Piero|David Trezeguet|Lilian Thuram|Raúl|Iker Casillas|Fernando Hierro|Roberto Carlos|Guti|Sergio Ramos|Ruud van Nistelrooy|Robinho|Julio Baptista|Gonzalo Higuaín|Wayne Rooney|Steven Gerrard|David Beckham|Frank Lampard|Jermain Defoe|Peter Crouch|Ashley Cole|Rio Ferdinand|John Terry|Michael Owen|Joe Cole" },
+  moyes: { label: "David Moyes", players: "Tim Cahill|Leighton Baines|Phil Jagielka|Seamus Coleman|Marouane Fellaini|Tim Howard|Joleon Lescott|Romelu Lukaku|Ross Barkley|Wayne Rooney|Duncan Ferguson|Robin van Persie|Juan Mata|Michael Carrick|Ryan Giggs|Rio Ferdinand|Ashley Young|Declan Rice|Michail Antonio|Mark Noble|Jarrod Bowen|Lucas Paquetá|Carlos Vela|Mikel Arteta|Steven Pienaar|Gareth Barry|Dominic Calvert-Lewin|Jordan Pickford|Aaron Lennon" },
+  redknapp: { label: "Harry Redknapp", players: "Gareth Bale|Luka Modrić|Rafael van der Vaart|Jermain Defoe|Peter Crouch|Ledley King|Frank Lampard|Rio Ferdinand|Joe Cole|Paolo Di Canio|Michael Carrick|Emmanuel Adebayor|Darren Bent|Teddy Sheringham|Dimitar Berbatov|Sol Campbell|Kanu|David James|Glen Johnson|Niko Kranjčar|Tim Cahill|Craig Bellamy|Scott Parker|Matt Le Tissier|Shay Given|Robbie Keane" },
+  keegan: { label: "Kevin Keegan", players: "Alan Shearer|Les Ferdinand|Rob Lee|Nicolas Anelka|Shay Given|Michael Owen|Peter Beardsley|David Ginola|Craig Bellamy|Joey Barton|Andy Carroll|Joe Cole|Shaun Wright-Phillips|Claudio Reyna|Steve McManaman|Emmanuel Adebayor|Joleon Lescott" },
+  hodgson: { label: "Roy Hodgson", players: "Steven Gerrard|Jamie Carragher|Fernando Torres|Pepe Reina|Javier Mascherano|Dirk Kuyt|Ryan Babel|Christian Benteke|Wilfried Zaha|Andros Townsend|Jordan Henderson|Raheem Sterling|Clint Dempsey|Danny Murphy|Zoltán Gera|Mark Schwarzer|Bobby Zamora|Papiss Cissé|Jermaine Beckford" },
+  delbosque: { label: "Vicente del Bosque", players: "Raúl|Iker Casillas|Fernando Hierro|Roberto Carlos|Guti|Zinedine Zidane|Ronaldo|Claude Makélélé|Luís Figo|Fernando Morientes|Michel Salgado|Steve McManaman|Xavi|Andrés Iniesta|Sergio Ramos|Carles Puyol|Gerard Piqué|Sergio Busquets|David Villa|Fernando Torres|Xabi Alonso|Cesc Fàbregas|Pedro|Juan Mata|David Silva|Santi Cazorla|Jesús Navas|Álvaro Arbeloa|Joan Capdevila|Carlos Marchena|Raúl Albiol|Fernando Llorente|Pepe Reina|Koke|Diego Costa|Álvaro Morata|Isco" },
+  rijkaard: { label: "Frank Rijkaard", players: "Ronaldinho|Samuel Eto'o|Lionel Messi|Xavi|Andrés Iniesta|Carles Puyol|Deco|Ludovic Giuly|Thierry Henry|Éric Abidal|Lilian Thuram|Henrik Larsson|Rafael Márquez|Víctor Valdés|Giovanni van Bronckhorst|Gerard Piqué|Dani Alves|Bojan Krkić|Santiago Ezquerro|Eidur Gudjohnsen|Javier Saviola|Yaya Touré|Ludovic Giuly|Philippe Mexès|Edmílson" },
+  lopetegui: { label: "Julen Lopetegui", players: "Karim Benzema|Sergio Ramos|Luka Modrić|Toni Kroos|Gareth Bale|Marcelo|Casemiro|Dani Carvajal|Isco|Marco Asensio|Thibaut Courtois|Vinícius Júnior|Raphaël Varane|Nacho|Ivan Rakitić|Jules Koundé|Diego Carlos|Jesús Navas|Papu Gómez|Lucas Ocampos|Éver Banega|Iago Aspas|Raúl Albiol|Papu|Álvaro Morata|Isco" },
+  valverde: { label: "Ernesto Valverde", players: "Lionel Messi|Luis Suárez|Gerard Piqué|Sergio Busquets|Ivan Rakitić|Jordi Alba|Marc-André ter Stegen|Philippe Coutinho|Ousmane Dembélé|Antoine Griezmann|Andrés Iniesta|Arturo Vidal|Frenkie de Jong|Aritz Aduriz|Iker Muniain|Ander Herrera|Javi Martínez|Markel Susaeta|Óscar de Marcos|Kepa Arrizabalaga|Iñaki Williams|Joseba Etxeberria|Giuseppe Rossi|Bruno Soriano|Marcos Senna|Santi Cazorla|Joan Capdevila|Diego Forlán|Carlos Marchena|Dani Parejo|Raphinha|Ousmane Dembélé|Carles Aleñá|Carles Puyol|Neymar|Paulinho|Rodrigo Moreno" },
+  xavi: { label: "Xavi Hernández", players: "Robert Lewandowski|Raphinha|Jules Koundé|Frenkie de Jong|Ousmane Dembélé|Gerard Piqué|Sergio Busquets|Jordi Alba|Marc-André ter Stegen|Ferran Torres|Philippe Coutinho|Ansu Fati|Pedri|Gavi|Andreas Christensen|João Cancelo|İlkay Gündoğan|Memphis Depay|Luuk de Jong|Sergio Agüero|Antoine Griezmann|Martin Braithwaite|Eric García|Franck Kessié|Pierre-Emerick Aubameyang|Adama Traoré|Marcos Alonso|Clément Lenglet|Iñigo Martínez" },
+  flick: { label: "Hansi Flick", players: "Robert Lewandowski|Thomas Müller|Manuel Neuer|Joshua Kimmich|Kingsley Coman|David Alaba|Thiago Alcântara|Lucas Hernández|Benjamin Pavard|Leon Goretzka|Serge Gnabry|Philippe Coutinho|Ivan Perišić|Raphinha|Jules Koundé|Frenkie de Jong|Marc-André ter Stegen|Ferran Torres|Dani Olmo|Jordi Alba|Gerard Piqué|Ilkay Gündoğan|Eric García|Marcus Rashford|Gavi|Pedri" },
+  heynckes: { label: "Jupp Heynckes", players: "Franck Ribéry|Arjen Robben|Thomas Müller|Manuel Neuer|Mario Mandžukić|David Alaba|Toni Kroos|Thiago Alcântara|Bastian Schweinsteiger|Philipp Lahm|Jérôme Boateng|Javi Martínez|Luiz Gustavo|Dante|Mario Gómez|Xherdan Shaqiri|Robert Lewandowski|Joshua Kimmich|Arturo Vidal|Raúl|Fernando Hierro|Roberto Carlos|Clarence Seedorf|Fernando Redondo|Fernando Morientes|Davor Šuker|Predrag Mijatović|Christian Panucci|Iván Helguera" },
+  tuchel: { label: "Thomas Tuchel", players: "Kai Havertz|Thiago Silva|N'Golo Kanté|César Azpilicueta|Romelu Lukaku|Edouard Mendy|Antonio Rüdiger|Mason Mount|Timo Werner|Kylian Mbappé|Neymar|Ángel Di María|Marco Verratti|Marquinhos|Edinson Cavani|Marco Reus|Mats Hummels|Pierre-Emerick Aubameyang|Ousmane Dembélé|Harry Kane|Thomas Müller|Manuel Neuer|Joshua Kimmich|Kingsley Coman|Matthijs de Ligt|Mario Götze|Achraf Hakimi|Mauro Icardi|Presnel Kimpembe|Pedro|Hakim Ziyech|Christian Pulisic|Jorginho|Mateo Kovačić" },
+  vangaal: { label: "Louis van Gaal", players: "Xavi|Luis Enrique|Rivaldo|Patrick Kluivert|Marc Overmars|Edgar Davids|Clarence Seedorf|Arjen Robben|Franck Ribéry|Thomas Müller|Toni Kroos|David Alaba|Luiz Gustavo|Wayne Rooney|Marcus Rashford|Anthony Martial|Juan Mata|Ander Herrera|Michael Carrick|Luke Shaw|Ashley Young|Ángel Di María|Daley Blind|Memphis Depay|Bastian Schweinsteiger|Philipp Lahm|Frank de Boer|Ronald de Boer|Michael Reiziger|Winston Bogarde|Jari Litmanen|Gerard Piqué|Cesc Fàbregas|Carles Puyol|Víctor Valdés|Andrés Iniesta|Sergio Busquets" },
+};
+
+const BALLON_DOR = "Cristiano Ronaldo|Lionel Messi|Karim Benzema|Luka Modrić|Kaká|Ronaldinho|Ronaldo|Rivaldo|Zinedine Zidane|Michael Owen|Fabio Cannavaro|Andriy Shevchenko|George Weah|Marco van Basten|Ruud Gullit|Michel Platini|Roberto Baggio|Pavel Nedvěd|Alfredo Di Stéfano|Alfredo Di Stefano|Hristo Stoichkov|Luis Figo|Gerd Müller|Rodri";
+const WORLD_CUP_WINNERS = "Ronaldo|Cafu|Roberto Carlos|Rivaldo|Ronaldinho|Kaká|Aldair|Iker Casillas|Sergio Ramos|Gerard Piqué|Carles Puyol|Xavi|Andrés Iniesta|Sergio Busquets|David Villa|Fernando Torres|Xabi Alonso|Pedro|Cesc Fàbregas|Juan Mata|Jesús Navas|Pepe Reina|Álvaro Arbeloa|Joan Capdevila|Carlos Marchena|Fernando Llorente|David Silva|Santi Cazorla|Zinedine Zidane|Lilian Thuram|Thierry Henry|David Trezeguet|Patrick Vieira|Bixente Lizarazu|Kylian Mbappé|Antoine Griezmann|Olivier Giroud|Paul Pogba|N'Golo Kanté|Raphaël Varane|Hugo Lloris|Lucas Hernández|Benjamin Pavard|Ousmane Dembélé|Gianluigi Buffon|Fabio Cannavaro|Andrea Pirlo|Francesco Totti|Alessandro Del Piero|Filippo Inzaghi|Gennaro Gattuso|Marco Materazzi|Andrea Barzagli|Luca Toni|Alberto Gilardino|Alessandro Nesta|Manuel Neuer|Thomas Müller|Toni Kroos|Mario Götze|Miroslav Klose|Mats Hummels|Mesut Özil|Lionel Messi|Ángel Di María|Emiliano Martínez|Julián Álvarez|Rodrigo De Paul|Lautaro Martínez|Papu Gómez|Ángel Correa|Gonzalo Montiel|Marcos Acuña|Alexis Mac Allister|Giovani Lo Celso|Ronaldo|Gabriel Batistuta";
+
+function enrich(facts: Fact[]): Fact[] {
+  const mark = (names: string, tag: string) => {
+    const set = new Set(names.split("|"));
+    for (const fact of facts) if (set.has(fact.name) && !fact.tags.includes(tag)) fact.tags.push(tag);
+  };
+  for (const [key, manager] of Object.entries(MANAGERS)) mark(manager.players, `m_${key}`);
+  mark(BALLON_DOR, "bd");
+  mark(WORLD_CUP_WINNERS, "wc");
+  return facts;
+}
+
 const FACTS: Record<Competition, Fact[]> = {
-  pl: merge(PL_FACTS, PL_ALSO, PL_EXTRA),
-  laliga: merge(LALIGA_FACTS, LL_ALSO, LL_EXTRA),
-  ucl: merge(UCL_FACTS, UCL_ALSO, UCL_EXTRA),
-  seriea: merge(SA_FACTS, {}, []),
+  pl: enrich(merge(PL_FACTS, PL_ALSO, PL_EXTRA)),
+  laliga: enrich(merge(LALIGA_FACTS, LL_ALSO, LL_EXTRA)),
+  ucl: enrich(merge(UCL_FACTS, UCL_ALSO, UCL_EXTRA)),
+  seriea: enrich(merge(SA_FACTS, SA_ALSO, [])),
 };
 
 export function footballTicTacToePlayerNames(comp: Competition) {
@@ -723,7 +810,7 @@ const club = (label: string, badge: string, key: string, short = label): Def => 
 });
 const NAT_KEYS: Record<string, string> = {
   es: "esp", fr: "fra", br: "bra", ar: "arg", pt: "por", "gb-eng": "eng", nl: "ned", be: "bel",
-  de: "ger", it: "ita", uy: "uru", mx: "mex", hr: "cro",
+  de: "ger", it: "ita", uy: "uru", mx: "mex", hr: "cro", "gb-wls": "wal", sn: "sen", rs: "srb",
 };
 const national = (label: string, country: string): Def => ({
   clue: { label, badge: flag(country), badgeAlt: `${label.replace(" international", "")} flag` },
@@ -963,6 +1050,70 @@ const POOL_ROWS: Record<Competition, Def[]> = {
   ],
 };
 
+const managed = (key: string): Def => ({
+  clue: { label: `Managed by ${MANAGERS[key].label}` },
+  test: (fact) => fact.tags.includes(`m_${key}`),
+});
+const EXTRA_CLUB_BADGES: Record<string, [string, number]> = {
+  rma: ["Real Madrid", 86], bar: ["Barcelona", 83], atm: ["Atlético Madrid", 1068], bay: ["Bayern Munich", 132],
+  psg: ["PSG", 160], mci: ["Manchester City", 382], liv: ["Liverpool", 364], che: ["Chelsea", 363],
+  mun: ["Manchester United", 360], ars: ["Arsenal", 359], tot: ["Tottenham", 367], ajax: ["Ajax", 139],
+  dor: ["Dortmund", 124], juv: ["Juventus", 111], inter: ["Inter", 110], mil: ["AC Milan", 103],
+  rom: ["Roma", 104], nap: ["Napoli", 114], laz: ["Lazio", 112], val: ["Valencia", 94], sev: ["Sevilla", 243],
+  wham: ["West Ham", 371], new: ["Newcastle", 361], eve: ["Everton", 368], avl: ["Aston Villa", 362],
+};
+const EXTRA_CLUB_CODES: Record<Competition, string> = {
+  pl: "rma bar juv inter mil bay psg atm val",
+  laliga: "juv inter mil psg mun che liv ars mci bay tot ajax nap",
+  ucl: "tot nap rom laz val sev",
+  seriea: "rma bar mun che ars psg bay atm ajax mci tot liv",
+};
+const EXTRA_CLUB_DEFS = (comp: Competition): Def[] =>
+  EXTRA_CLUB_CODES[comp].split(" ").map((code) => {
+    const [label, id] = EXTRA_CLUB_BADGES[code];
+    return club(`${P}${label}`, espn(id), code, label);
+  });
+
+const EXTRA_ROWS: Record<Competition, Def[]> = {
+  pl: [
+    national("Portugal international", "pt"), national("Germany international", "de"),
+    national("Uruguay international", "uy"), national("Wales international", "gb-wls"),
+    national("Senegal international", "sn"), national("Croatia international", "hr"),
+    stat("Ballon d'Or winner", "bd"), stat("World Cup winner", "wc"),
+  ],
+  laliga: [
+    national("Portugal international", "pt"), national("Germany international", "de"),
+    national("Netherlands international", "nl"), national("Italy international", "it"),
+    national("Croatia international", "hr"), national("England international", "gb-eng"),
+    stat("Ballon d'Or winner", "bd"), stat("World Cup winner", "wc"),
+  ],
+  ucl: [
+    national("Spain international", "es"), national("Uruguay international", "uy"),
+    national("Belgium international", "be"), national("Croatia international", "hr"),
+    stat("Ballon d'Or winner", "bd"), stat("World Cup winner", "wc"),
+  ],
+  seriea: [
+    national("Spain international", "es"), national("Portugal international", "pt"),
+    national("Germany international", "de"), national("Uruguay international", "uy"),
+    national("Croatia international", "hr"), national("Serbia international", "rs"),
+    stat("Ballon d'Or winner", "bd"), stat("World Cup winner", "wc"),
+  ],
+};
+const MANAGER_KEYS: Record<Competition, string> = {
+  pl: "ferguson wenger mourinho guardiola klopp ancelotti benitez conte ranieri pochettino emery pellegrini mancini moyes redknapp keegan hodgson vangaal tuchel capello",
+  laliga: "ancelotti zidane guardiola luisenrique simeone benitez mourinho pellegrini emery valverde delbosque rijkaard lopetegui xavi flick vangaal capello heynckes",
+  ucl: "ferguson wenger mourinho guardiola klopp ancelotti zidane luisenrique simeone conte emery pochettino tuchel flick heynckes vangaal capello allegri lippi",
+  seriea: "ancelotti conte allegri spalletti sarri pioli inzaghi mancini lippi capello mourinho ranieri benitez emery",
+};
+
+const poolFor = (comp: Competition): Def[] => [
+  ...POOL_CLUBS[comp],
+  ...EXTRA_CLUB_DEFS(comp).filter((def) => !POOL_CLUBS[comp].some((c) => c.clue.label === def.clue.label)),
+  ...POOL_ROWS[comp],
+  ...EXTRA_ROWS[comp],
+  ...MANAGER_KEYS[comp].split(" ").map(managed),
+];
+
 function pick<T>(items: T[], count: number): T[] {
   const copy = [...items];
   for (let index = copy.length - 1; index > 0; index -= 1) {
@@ -972,18 +1123,16 @@ function pick<T>(items: T[], count: number): T[] {
   return copy.slice(0, count);
 }
 
-// Random clubs and clues each game; every square must have several valid players.
+// Any mix of clubs, stats, nations and managers on both axes; every square must have several valid players.
 function generatePuzzle(comp: Competition): FootballTicTacToePuzzle | null {
-  for (let attempt = 0; attempt < 300; attempt += 1) {
-    const puzzle = build(
-      comp,
-      pick(POOL_ROWS[comp], 3) as [Def, Def, Def],
-      pick(POOL_CLUBS[comp], 3) as [Def, Def, Def],
-    );
-    if (puzzle.answers.every((row) => row.every((answers) => answers.length >= 3))) return puzzle;
-  }
-  return null;
-}
+  const pool = poolFor(comp);
+  for (let attempt = 0; attempt < 1500; attempt += 1) {
+    const six = pick(pool, 6);
+    const puzzle = build(comp, six.slice(0, 3) as [Def, Def, Def], six.slice(3) as [Def, Def, Def]);
+    if (puzzle.answers.every((row) => row.every((answers) => answers.length >= (attempt < 1000 ? 3 : 2)))) return puzzle;
+      }
+      return null;
+    }
 
 export function randomFootballTicTacToePuzzle(comp: Competition): FootballTicTacToePuzzle {
   const generated = generatePuzzle(comp);

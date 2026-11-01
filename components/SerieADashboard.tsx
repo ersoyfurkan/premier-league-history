@@ -403,16 +403,19 @@ function Rivalries() {
             <div>
               <h3 className="text-2xl">{r.name}</h3>
               <div className="mt-3 grid grid-cols-[1fr_auto_1fr] items-center gap-3 text-sm">
-                {[r.club1, r.club2].map((club, index) => (
-                  <div
-                    key={club}
-                    className={`flex min-w-0 items-center gap-3 ${index === 1 ? "flex-row-reverse text-right" : ""}`}
-                  >
-                    <UclImage src={logoByName(club)} alt={`${club} logo`} className="h-12 w-12" />
-                    <span className="font-semibold">{club}</span>
-                  </div>
-                ))}
-                <span aria-hidden="true" className="font-mono text-primary">vs</span>
+                {[r.club1, "vs", r.club2].map((club, index) =>
+                  index === 1 ? (
+                    <span key="vs" aria-hidden="true" className="font-mono text-primary">vs</span>
+                  ) : (
+                    <div
+                      key={club}
+                      className={`flex min-w-0 items-center gap-3 ${index === 2 ? "flex-row-reverse text-right" : ""}`}
+                    >
+                      <UclImage src={logoByName(club)} alt={`${club} logo`} className="h-12 w-12" />
+                      <span className="font-semibold">{club}</span>
+                    </div>
+                  ),
+                )}
               </div>
             </div>
 
