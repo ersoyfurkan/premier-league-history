@@ -331,10 +331,10 @@ function FootballTicTacToeClient() {
         </div>
       )}
 
-      <div className="mt-6 flex flex-wrap items-end justify-between gap-4">
+      <div className="mt-3 flex flex-wrap items-end justify-between gap-3 lg:mt-2">
         <div>
           <p className="section-eyebrow text-accent">{competitionLabel} · {isLocal ? "Same device" : "Online vs Friend"}</p>
-          <h2 className="mt-2 text-3xl md:text-5xl">Tik Tak Toe</h2>
+          <h2 className="mt-1 text-2xl sm:text-3xl lg:text-4xl">Tik Tak Toe</h2>
         </div>
         <div className="text-right">
           <p className="text-lg text-fore-muted">{turnMessage}</p>
@@ -347,7 +347,10 @@ function FootballTicTacToeClient() {
       </div>
 
       {view.status !== "waiting" && (
-      <div className="mx-auto mt-6 w-full max-w-[920px] rounded-2xl border border-emerald-500/20 bg-surface/70 p-2 sm:p-4">
+      <div
+        className="mx-auto mt-3 w-full rounded-2xl border border-emerald-500/20 bg-surface/70 p-2 sm:p-3 lg:mt-2"
+        style={{ maxWidth: "min(920px, max(300px, calc(100svh - 400px)))" }}
+      >
         <div className="grid aspect-square grid-cols-4 grid-rows-4 overflow-hidden rounded-xl border border-emerald-500/20">
             <div className="flex min-h-0 min-w-0 flex-col items-center justify-center gap-1 bg-indigo-800 p-1 text-center text-[9px] font-black uppercase tracking-wide text-white sm:gap-2 sm:text-sm">
               <span className="text-xl sm:text-4xl" aria-hidden="true">⚽</span>
@@ -497,10 +500,10 @@ function FootballTicTacToeClient() {
 
 function Shell({ children }: { children: React.ReactNode }) {
   return (
-    <main className="min-h-screen bg-background text-foreground grid-bg px-4 py-8 md:px-8 md:py-12">
+    <main className="min-h-[calc(100svh-5rem)] bg-background text-foreground grid-bg px-4 py-4 md:px-8 md:py-6 lg:py-4">
       <section className="mx-auto w-full max-w-6xl">
         <div className="flex items-center justify-between gap-4">
-          <Link href="/game" className="section-title text-3xl md:text-5xl">Game Arena</Link>
+          <Link href="/game" className="section-title text-2xl md:text-4xl lg:text-3xl">Game Arena</Link>
           <Link href="/game" className="btn-ghost">Leave</Link>
         </div>
         {children}
