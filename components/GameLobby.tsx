@@ -126,7 +126,7 @@ export default function GameLobby({ comp }: { comp: Competition }) {
                   ))}
                   <div className="rounded-2xl border border-warning/25 bg-background/60 p-5 text-left transition hover:border-warning/60 hover:bg-warning/5">
                     <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-warning">Online · Invite a friend</p>
-                    <h3 className="mt-2 text-xl font-bold">Football Tic-Tac-Toe</h3>
+                    <h3 className="mt-2 text-xl font-bold">Tik Tak Toe</h3>
                     <p className="mt-2 text-sm leading-6 text-fore-muted">
                       Randomized clue grid, player portraits, and a one-minute timer for every turn.
                     </p>

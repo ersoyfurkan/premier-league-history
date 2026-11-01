@@ -3,7 +3,12 @@
 import Link from "next/link";
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { FOOTBALL_TIC_TAC_TOE, normalizeFootballPlayerName } from "@/data/footballTicTacToe";
+import {
+  FOOTBALL_TIC_TAC_TOE,
+  FOOTBALL_TIC_TAC_TOE_VARIANTS,
+  isFootballTicTacToeAnswer,
+  normalizeFootballPlayerName,
+} from "@/data/footballTicTacToe";
 import PlayerPhoto from "@/components/PlayerPhoto";
 import UclImage from "@/components/UclImage";
 import { poolFor, lobbyFor, parseComp, type Competition } from "@/lib/gameRoom";
@@ -34,6 +39,7 @@ function FootballTicTacToeClient() {
   const comp = parseComp(search.get("comp")) as Competition;
   const storageKey = `plttt:${code}`;
   const joining = useRef(false);
+  const playerInputRef = useRef<HTMLInputElement>(null);
 
   const [token, setToken] = useState<string | null>(null);
   const [remoteView, setRemoteView] = useState<FootballTicTacToeRoomView | null>(null);
@@ -84,6 +90,15 @@ function FootballTicTacToeClient() {
     }, 250);
     return () => clearInterval(interval);
   }, [isLocal]);
+
+  useEffect(() => {
+    if (selectedCell === null) return;
+    const frame = requestAnimationFrame(() => {
+      playerInputRef.current?.focus();
+      playerInputRef.current?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [selectedCell]);
 
   useEffect(() => {
     if (isLocal || !code || joining.current) return;
@@ -145,18 +160,29 @@ function FootballTicTacToeClient() {
         .filter((entry): entry is NonNullable<typeof entry> => Boolean(entry))
         .map((entry) => normalizeFootballPlayerName(entry.player)),
     );
-    const answers = puzzle.answers[Math.floor(selectedCell / 3)][selectedCell % 3]
-      .filter((name, index, list) =>
-        normalizeFootballPlayerName(name).includes(query) &&
-        !usedPlayers.has(normalizeFootballPlayerName(name)) &&
-        list.findIndex((other) => normalizeFootballPlayerName(other) === normalizeFootballPlayerName(name)) === index,
-      )
-      .slice(0, 8);
     const players = poolFor(activeComp);
-    return answers.map((name) => ({
-      name,
-      card: players.find((player) => normalizeFootballPlayerName(player.name) === normalizeFootballPlayerName(name)),
-    }));
+    const names = new Map<string, string>();
+    for (const player of players) names.set(normalizeFootballPlayerName(player.name), player.name);
+    for (const variant of FOOTBALL_TIC_TAC_TOE_VARIANTS[activeComp]) {
+      for (const row of variant.answers) {
+        for (const answers of row) {
+          for (const name of answers) {
+            const normalized = normalizeFootballPlayerName(name);
+            if (!names.has(normalized)) names.set(normalized, name);
+          }
+        }
+      }
+    }
+
+    return [...names.entries()]
+      .filter(([normalized]) => normalized.includes(query) && !usedPlayers.has(normalized))
+      .sort(([a], [b]) => Number(!a.startsWith(query)) - Number(!b.startsWith(query)))
+      .slice(0, 10)
+      .map(([normalized, name]) => ({
+        name,
+        card: players.find((player) => normalizeFootballPlayerName(player.name) === normalized),
+        fitsClues: isFootballTicTacToeAnswer(activeComp, selectedCell, name, puzzle),
+      }));
   }, [activeComp, playerName, puzzle, selectedCell, view]);
 
   const submitMove = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -308,7 +334,7 @@ function FootballTicTacToeClient() {
       <div className="mt-6 flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="section-eyebrow text-accent">{competitionLabel} · {isLocal ? "Same device" : "Online vs Friend"}</p>
-          <h2 className="mt-2 text-3xl md:text-5xl">Football Tic-Tac-Toe</h2>
+          <h2 className="mt-2 text-3xl md:text-5xl">Tik Tak Toe</h2>
         </div>
         <div className="text-right">
           <p className="text-lg text-fore-muted">{turnMessage}</p>
@@ -321,24 +347,26 @@ function FootballTicTacToeClient() {
       </div>
 
       {view.status !== "waiting" && (
-      <div className="mt-6 rounded-2xl border border-border bg-surface/70 p-2 sm:p-4 md:p-6">
-          <div className="grid grid-cols-[minmax(64px,0.8fr)_repeat(3,minmax(0,1.35fr))] gap-1.5 sm:gap-2">
-            <div />
+      <div className="mx-auto mt-6 w-full max-w-[920px] rounded-2xl border border-emerald-500/20 bg-surface/70 p-2 sm:p-4">
+        <div className="grid aspect-square grid-cols-4 grid-rows-4 overflow-hidden rounded-xl border border-emerald-500/20">
+            <div className="flex min-h-0 min-w-0 flex-col items-center justify-center gap-1 bg-indigo-800 p-1 text-center text-[9px] font-black uppercase tracking-wide text-white sm:gap-2 sm:text-sm">
+              <span className="text-xl sm:text-4xl" aria-hidden="true">⚽</span>
+            </div>
             {puzzle.columns.map((column) => (
-              <div key={column.label} className="flex min-h-20 min-w-0 flex-col items-center justify-center gap-1 rounded-lg border border-accent/30 bg-accent/5 p-1.5 text-center text-[10px] font-semibold leading-tight break-words sm:flex-row sm:gap-2 sm:rounded-xl sm:p-3 sm:text-sm">
+              <div key={column.label} className="flex min-h-0 min-w-0 flex-col items-center justify-center gap-1 border border-emerald-950 bg-emerald-900 p-1 text-center text-[9px] font-semibold leading-tight text-white sm:gap-2 sm:p-2 sm:text-sm">
                 {column.badge && (
-                  <UclImage src={column.badge} alt={column.badgeAlt ?? column.label} className="h-6 w-6 sm:h-8 sm:w-8" />
+                  <UclImage src={column.badge} alt={column.badgeAlt ?? column.label} className="h-6 w-6 sm:h-10 sm:w-10" />
                 )}
-                <span className="min-w-0">{column.label}</span>
+                <span className="line-clamp-3 min-w-0">{column.label}</span>
               </div>
             ))}
             {puzzle.rows.map((row, rowIndex) => (
               <div key={row.label} className="contents">
-                <div className="flex min-h-24 min-w-0 flex-col items-center justify-center gap-1 rounded-lg border border-primary/30 bg-primary/5 p-1.5 text-center text-[10px] font-semibold leading-tight break-words sm:min-h-32 sm:flex-row sm:gap-2 sm:rounded-xl sm:p-3 sm:text-sm sm:text-left">
+                <div className="flex min-h-0 min-w-0 flex-col items-center justify-center gap-1 border border-emerald-950 bg-emerald-900 p-1 text-center text-[9px] font-semibold leading-tight text-white sm:gap-2 sm:p-2 sm:text-sm">
                   {row.badge && (
-                    <UclImage src={row.badge} alt={row.badgeAlt ?? row.label} className="h-6 w-6 sm:h-8 sm:w-8" />
+                    <UclImage src={row.badge} alt={row.badgeAlt ?? row.label} className="h-6 w-6 sm:h-10 sm:w-10" />
                   )}
-                  <span className="min-w-0">{row.label}</span>
+                  <span className="line-clamp-3 min-w-0">{row.label}</span>
                 </div>
                 {puzzle.columns.map((column, columnIndex) => {
                   const index = rowIndex * 3 + columnIndex;
@@ -346,35 +374,43 @@ function FootballTicTacToeClient() {
                   const selectable = view.status === "playing" && isMyTurn && !cell;
                   return (
                     <button
-                      key={`${row}-${column}`}
+                      key={`${rowIndex}-${columnIndex}`}
                       type="button"
                       disabled={!selectable}
                       onClick={() => {
                         setSelectedCell(index);
+                        setPlayerName("");
                         setError(null);
                       }}
-                      className={`min-h-24 min-w-0 touch-manipulation rounded-lg border p-1.5 text-center transition sm:min-h-32 sm:rounded-xl sm:p-3 ${
+                      className={`relative flex min-h-0 min-w-0 touch-manipulation flex-col items-center justify-center gap-1 border border-emerald-950 p-1 text-center transition sm:gap-2 sm:p-3 ${
                         selectedCell === index
-                          ? "border-primary bg-primary/15"
+                          ? "bg-lime-500/30 ring-2 ring-inset ring-lime-300"
                           : cell?.side === "p1"
-                            ? "border-primary/40 bg-primary/10"
+                            ? "bg-emerald-600"
                             : cell?.side === "p2"
-                              ? "border-accent/40 bg-accent/10"
-                              : "border-border bg-background/70 hover:border-primary/50"
+                              ? "bg-teal-600"
+                              : "bg-emerald-700/80 hover:bg-emerald-600"
                       } disabled:cursor-default disabled:hover:border-border`}
                       aria-label={`${row.label} and ${column.label}${cell ? `: ${cell.player}` : ""}`}
                     >
                       {cell ? (
                         <>
-                          <span className={`block text-xs font-mono ${cell.side === "p1" ? "text-primary" : "text-accent"}`}>
+                          <JerseyIcon className="h-8 w-8 text-white/50 sm:h-16 sm:w-16" />
+                          <span className={`absolute top-1 text-[9px] font-black sm:top-2 sm:text-xs ${cell.side === "p1" ? "text-lime-200" : "text-cyan-100"}`}>
                             {cell.side === "p1" ? "X" : "O"}
                           </span>
-                          <span className="mt-1 block break-words text-[10px] font-semibold leading-tight sm:text-sm">{cell.player}</span>
+                          <span className="line-clamp-2 max-w-full break-words text-[9px] font-bold leading-tight text-white sm:text-sm">{cell.player}</span>
                         </>
                       ) : (
-                        <span className="text-[10px] text-fore-muted sm:text-sm">
-                          {selectable ? (selectedCell === index ? "Selected" : "Choose square") : "—"}
-                        </span>
+                        <>
+                          <span className="relative">
+                            <JerseyIcon className="h-8 w-8 text-emerald-950/30 sm:h-16 sm:w-16" />
+                            <span className="absolute inset-0 flex items-center justify-center text-xl font-black text-emerald-300/70 sm:text-4xl">+</span>
+                          </span>
+                          <span className="text-[8px] font-black uppercase leading-tight text-emerald-950/60 sm:text-xs">
+                            {selectable ? (selectedCell === index ? "Search player" : "Choose player") : "—"}
+                          </span>
+                        </>
                       )}
                     </button>
                   );
@@ -392,15 +428,22 @@ function FootballTicTacToeClient() {
         </p>
         {view.status === "playing" && isMyTurn && selectedCell !== null && (
           <form onSubmit={submitMove} className="mt-4 flex flex-wrap items-start gap-3">
+            <div className="w-full">
+              <h3 className="text-lg font-bold">Player Search</h3>
+              <p className="mt-1 text-sm leading-6 text-fore-muted">
+                Find a past or present player who matches <strong>{puzzle.rows[Math.floor(selectedCell / 3)].label}</strong> and <strong>{puzzle.columns[selectedCell % 3].label}</strong>.
+              </p>
+            </div>
             <label htmlFor="football-player-answer" className="sr-only">Player name</label>
             <div className="relative min-w-0 flex-1">
               <input
                 id="football-player-answer"
+                ref={playerInputRef}
                 autoComplete="off"
                 value={playerName}
                 onChange={(event) => setPlayerName(event.target.value)}
                 placeholder="Type a player name"
-                className="w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground"
+                className="w-full rounded-xl border-2 border-lime-400/80 bg-background px-4 py-3 text-foreground outline-none focus:border-lime-300 focus:ring-2 focus:ring-lime-400/20"
                 maxLength={80}
                 role="combobox"
                 aria-expanded={suggestions.length > 0}
@@ -408,14 +451,14 @@ function FootballTicTacToeClient() {
               />
               {suggestions.length > 0 && (
                 <div id="football-player-suggestions" role="listbox" className="absolute left-0 right-0 top-full z-20 mt-1 max-h-64 overflow-y-auto rounded-xl border border-border bg-surface shadow-xl">
-                  {suggestions.map(({ name, card }) => (
+                  {suggestions.map(({ name, card, fitsClues }) => (
                     <button
                       key={name}
                       type="button"
                       role="option"
                       aria-selected={playerName === name}
                       onClick={() => setPlayerName(name)}
-                      className="flex w-full items-center gap-3 px-3 py-2 text-left text-sm hover:bg-primary/10"
+                      className="flex w-full items-center gap-3 border-b border-border/50 px-3 py-2 text-left text-sm last:border-b-0 hover:bg-primary/10"
                     >
                       {card?.photo ? (
                         <UclImage src={card.photo} alt="" className="h-9 w-9" shape="circle" />
@@ -424,7 +467,10 @@ function FootballTicTacToeClient() {
                       ) : (
                         <UclImage alt={name} className="h-9 w-9" shape="circle" />
                       )}
-                      <span>{name}</span>
+                      <span className="min-w-0 flex-1 truncate">{name}</span>
+                      <span className={`shrink-0 text-[10px] font-semibold ${fitsClues ? "text-emerald-400" : "text-fore-muted"}`}>
+                        {fitsClues ? "Fits clues" : "Check clues"}
+                      </span>
                     </button>
                   ))}
                 </div>
@@ -460,6 +506,15 @@ function Shell({ children }: { children: React.ReactNode }) {
         {children}
       </section>
     </main>
+  );
+}
+
+function JerseyIcon({ className }: { className: string }) {
+  return (
+    <svg viewBox="0 0 64 64" aria-hidden="true" className={className} fill="currentColor">
+      <path d="M21 7 11 12 3 28l10 5 5-8v32h28V25l5 8 10-5-8-16L43 7c-2 5-6 8-11 8s-9-3-11-8Z" />
+      <path d="M25 8c1 4 4 6 7 6s6-2 7-6l-4-2h-6l-4 2Z" fill="none" stroke="currentColor" strokeWidth="2" />
+    </svg>
   );
 }
 
