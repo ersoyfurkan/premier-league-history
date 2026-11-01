@@ -1,11 +1,11 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   FOOTBALL_TIC_TAC_TOE,
-  FOOTBALL_TIC_TAC_TOE_VARIANTS,
+  footballTicTacToePlayerNames,
   normalizeFootballPlayerName,
 } from "@/data/footballTicTacToe";
 import PlayerPhoto from "@/components/PlayerPhoto";
@@ -163,15 +163,9 @@ function FootballTicTacToeClient() {
     const players = poolFor(activeComp);
     const names = new Map<string, string>();
     for (const player of players) names.set(normalizeFootballPlayerName(player.name), player.name);
-    for (const variant of FOOTBALL_TIC_TAC_TOE_VARIANTS[activeComp]) {
-      for (const row of variant.answers) {
-        for (const answers of row) {
-          for (const name of answers) {
-            const normalized = normalizeFootballPlayerName(name);
-            if (!names.has(normalized)) names.set(normalized, name);
-          }
-        }
-      }
+    for (const name of footballTicTacToePlayerNames(activeComp)) {
+      const normalized = normalizeFootballPlayerName(name);
+      if (!names.has(normalized)) names.set(normalized, name);
     }
 
     return [...names.entries()]
@@ -359,14 +353,14 @@ function FootballTicTacToeClient() {
       {view.status !== "waiting" && (
       <div
         className="mx-auto mt-3 w-full rounded-2xl border border-emerald-500/20 bg-surface/70 p-2 sm:p-3 lg:mt-2"
-        style={{ maxWidth: "min(920px, max(300px, calc(100svh - 400px)))" }}
+        style={{ maxWidth: "min(920px, max(420px, calc(100svh - 400px)))" }}
       >
-        <div className="grid aspect-square grid-cols-4 grid-rows-4 overflow-hidden rounded-xl border border-emerald-500/20">
+        <div className="grid aspect-square grid-cols-4 grid-rows-4 overflow-hidden [container-type:inline-size] rounded-xl border border-emerald-500/20">
             <div className="flex min-h-0 min-w-0 flex-col items-center justify-center gap-1 bg-indigo-800 p-1 text-center text-[9px] font-black uppercase tracking-wide text-white sm:gap-2 sm:text-sm">
               <span className="text-xl sm:text-4xl" aria-hidden="true">⚽</span>
             </div>
             {puzzle.columns.map((column) => (
-              <div key={column.label} className="flex min-h-0 min-w-0 flex-col items-center justify-center gap-1 border border-emerald-950 bg-emerald-900 p-1 text-center text-[clamp(7px,1.05vw,14px)] font-semibold leading-tight text-white sm:gap-2 sm:p-2">
+              <div key={column.label} className="flex min-h-0 min-w-0 flex-col items-center justify-center gap-1 border border-emerald-950 bg-emerald-900 p-1 text-center text-[clamp(8px,2.8cqw,16px)] font-semibold leading-tight text-white sm:gap-2 sm:p-2">
                 {column.badge && (
                   <UclImage src={column.badge} alt={column.badgeAlt ?? column.label} className="h-5 w-5 sm:h-8 sm:w-8 lg:h-9 lg:w-9" />
                 )}
@@ -375,7 +369,7 @@ function FootballTicTacToeClient() {
             ))}
             {puzzle.rows.map((row, rowIndex) => (
               <div key={row.label} className="contents">
-                <div className="flex min-h-0 min-w-0 flex-col items-center justify-center gap-1 border border-emerald-950 bg-emerald-900 p-1 text-center text-[clamp(7px,1.05vw,14px)] font-semibold leading-tight text-white sm:gap-2 sm:p-2">
+                <div className="flex min-h-0 min-w-0 flex-col items-center justify-center gap-1 border border-emerald-950 bg-emerald-900 p-1 text-center text-[clamp(8px,2.8cqw,16px)] font-semibold leading-tight text-white sm:gap-2 sm:p-2">
                   {row.badge && (
                     <UclImage src={row.badge} alt={row.badgeAlt ?? row.label} className="h-5 w-5 sm:h-8 sm:w-8 lg:h-9 lg:w-9" />
                   )}
@@ -412,7 +406,7 @@ function FootballTicTacToeClient() {
                           <span className={`absolute left-1 top-1 text-[9px] font-black sm:text-xs ${cell.side === "p1" ? "text-lime-200" : "text-cyan-100"}`}>
                             {cell.side === "p1" ? "X" : "O"}
                           </span>
-                          <span className="relative w-full min-w-0 text-balance [overflow-wrap:anywhere] text-[clamp(8px,0.95vw,13px)] font-bold leading-[1.1] text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">{cell.player}</span>
+                          <span className="relative w-full min-w-0 text-balance [overflow-wrap:anywhere] text-[clamp(8px,2.8cqw,15px)] font-bold leading-[1.1] text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">{cell.player}</span>
                         </>
                       ) : (
                         <>
@@ -420,7 +414,7 @@ function FootballTicTacToeClient() {
                             <JerseyIcon className="h-8 w-8 text-emerald-950/30 sm:h-16 sm:w-16" />
                             <span className="absolute inset-0 flex items-center justify-center text-xl font-black text-emerald-300/70 sm:text-4xl">+</span>
                           </span>
-                          <span className="max-w-full [overflow-wrap:anywhere] text-[clamp(6px,0.8vw,11px)] font-black uppercase leading-tight text-emerald-950/60">
+                          <span className="max-w-full [overflow-wrap:anywhere] text-[clamp(6px,1.8cqw,11px)] font-black uppercase leading-tight text-emerald-950/60">
                             {selectable ? (selectedCell === index ? "Search player" : "Choose player") : "—"}
                           </span>
                         </>

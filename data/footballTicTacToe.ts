@@ -269,17 +269,321 @@ const UCL_FACTS: Fact[] = [
   f("Thiago Alcântara", "esp", "bar bay", "a100"),
 ];
 
-const FACTS: Record<Competition, Fact[]> = {
-  pl: PL_FACTS,
-  laliga: LALIGA_FACTS,
-  ucl: UCL_FACTS,
+// Extra clubs for players already listed above.
+const PL_ALSO: Record<string, string> = {
+  "Wayne Rooney": "eve", "Michael Owen": "new", "Sadio Mané": "sou", "N'Golo Kanté": "lei",
+  "Theo Walcott": "eve sou", "Gareth Bale": "sou", "Rio Ferdinand": "wham", "Peter Crouch": "sou",
+  "Michael Carrick": "wham", "Richarlison": "eve", "Jordan Henderson": "", "James Milner": "avl new lee",
+  "Fernando Torres": "", "Roberto Soldado": "", "Mohamed Salah": "", "Ashley Cole": "",
+  "Gaël Clichy": "", "Marcos Alonso": "", "Harry Kane": "", "Robin van Persie": "",
+  "Michail Antonio": "",
 };
+const PL_EXTRA: Fact[] = [
+  f("Romelu Lukaku", "bel", "eve che mun wba", "g100 a300"),
+  f("Tim Cahill", "aus", "eve", "g50 a300"),
+  f("Leighton Baines", "eng", "eve", "a300 as50"),
+  f("Phil Jagielka", "eng", "eve sou", "a300"),
+  f("Seamus Coleman", "irl", "eve", "a300"),
+  f("Marouane Fellaini", "bel", "eve mun", "g50 a300"),
+  f("Tim Howard", "usa", "eve mun", "a300"),
+  f("Duncan Ferguson", "sco", "eve new", "g50"),
+  f("Gylfi Sigurdsson", "isl", "eve sou tot", "g50 as50"),
+  f("Jordan Pickford", "eng", "eve", "a300"),
+  f("Dominic Calvert-Lewin", "eng", "eve", "g50"),
+  f("Lucas Digne", "fra", "eve avl", ""),
+  f("Joleon Lescott", "eng", "eve mci", "won a300"),
+  f("Gareth Barry", "eng", "avl mci eve wba", "won a300 as50"),
+  f("Mikel Arteta", "esp", "eve ars", "a300 as50"),
+  f("Ross Barkley", "eng", "eve che avl", ""),
+  f("Alan Shearer", "eng", "new sou bla", "won g100 a300 as50"),
+  f("Andy Carroll", "eng", "new liv wham", "g50"),
+  f("Kieran Trippier", "eng", "tot new mun", "a300 as50"),
+  f("Les Ferdinand", "eng", "new tot qpr wham", "g100 a300"),
+  f("Craig Bellamy", "wal", "new liv mci wham cardiff", "g50 a300"),
+  f("Yohan Cabaye", "fra", "new", "g50"),
+  f("Papiss Cissé", "sen", "new", "g50"),
+  f("Demba Ba", "sen", "new che wham", "g50"),
+  f("Shay Given", "irl", "new mci avl", "a300"),
+  f("Alexander Isak", "swe", "new liv", "g50"),
+  f("Bruno Guimarães", "bra", "new", ""),
+  f("Joelinton", "bra", "new", ""),
+  f("Fabricio Coloccini", "arg", "new", "a300"),
+  f("Rob Lee", "eng", "new wham", ""),
+  f("Declan Rice", "eng", "wham ars", "a300"),
+  f("Mark Noble", "eng", "wham", "a300"),
+  f("Michail Antonio", "jam", "wham", "g50 a300"),
+  f("Dimitri Payet", "fra", "wham", "as50"),
+  f("Carlos Tevez", "arg", "wham mci mun", "won g50"),
+  f("Javier Mascherano", "arg", "wham liv", ""),
+  f("Joe Cole", "eng", "wham che liv", "won a300"),
+  f("Frank Lampard", "eng", "wham che mci", "won g100 a300 as50"),
+  f("Paolo Di Canio", "ita", "wham", "g50"),
+  f("Jarrod Bowen", "eng", "wham", "g50"),
+  f("Lucas Paquetá", "bra", "wham", ""),
+  f("Pablo Zabaleta", "arg", "mci wham", "won a300"),
+  f("Scott Parker", "eng", "wham che tot new", "a300"),
+  f("Robert Green", "eng", "wham", "a300"),
+  f("Jamie Vardy", "eng", "lei", "won g100 a300 as50"),
+  f("Riyad Mahrez", "alg", "lei mci", "won g50 as50"),
+  f("Wes Morgan", "jam", "lei", "won a300"),
+  f("Kasper Schmeichel", "den", "lei mci", "won a300"),
+  f("Danny Drinkwater", "eng", "lei che", "won"),
+  f("Harry Maguire", "eng", "lei mun", "a300"),
+  f("Wilfred Ndidi", "nga", "lei", ""),
+  f("James Maddison", "eng", "lei tot", "g50 as50"),
+  f("Kelechi Iheanacho", "nga", "lei mci", ""),
+  f("Ben Chilwell", "eng", "lei che", ""),
+  f("Emile Heskey", "eng", "lei liv avl wham bir", "g50 a300"),
+  f("Youri Tielemans", "bel", "lei avl", ""),
+  f("Marc Albrighton", "eng", "lei avl", "won a300"),
+  f("Gabriel Agbonlahor", "eng", "avl", "g50 a300"),
+  f("Ashley Young", "eng", "avl mun", "won a300 as50"),
+  f("Ollie Watkins", "eng", "avl", "g50"),
+  f("Jack Grealish", "eng", "avl mci", "won as50"),
+  f("Emiliano Martínez", "arg", "avl ars", ""),
+  f("Philippe Coutinho", "bra", "liv avl", "as50"),
+  f("Dwight Yorke", "tri", "avl mun bla", "won g100"),
+  f("Stiliyan Petrov", "bul", "avl", "a300"),
+  f("Darren Bent", "eng", "avl tot sun", "g100"),
+  f("Stewart Downing", "eng", "avl liv new wham", "a300 as50"),
+  f("Brad Friedel", "usa", "avl bla tot liv", "a300"),
+  f("John Carew", "nor", "avl wham", ""),
+  f("Matt Le Tissier", "eng", "sou", "g100 a300"),
+  f("Luke Shaw", "eng", "sou mun", ""),
+  f("Adam Lallana", "eng", "sou liv", "won"),
+  f("Virgil van Dijk", "ned", "sou liv", "won"),
+  f("Dušan Tadić", "srb", "sou", "as50"),
+  f("James Ward-Prowse", "eng", "sou wham", "as50 a300"),
+  f("Rickie Lambert", "eng", "sou liv", "g50"),
+  f("Morgan Schneiderlin", "fra", "sou mun eve", ""),
+  f("Nathaniel Clyne", "eng", "sou liv", ""),
+  f("Danny Ings", "eng", "sou liv avl wham", "g50"),
+  f("Wayne Bridge", "eng", "sou che mci wham", "won a300"),
+  f("Ryan Bertrand", "eng", "sou che lei", "won"),
+  f("Pierre-Emile Højbjerg", "den", "sou tot", ""),
+  f("Kevin De Bruyne", "bel", "che mci", "won g50 as50"),
+  f("Raheem Sterling", "eng", "liv mci che ars", "won g100 a300 as50"),
+  f("Kyle Walker", "eng", "tot mci", "won a300"),
+  f("Sergio Agüero", "arg", "mci", "won g100 a300"),
+  f("Yaya Touré", "civ", "mci", "won g50"),
+  f("Vincent Kompany", "bel", "mci", "won a300"),
+  f("Didier Drogba", "civ", "che", "won g100 a300"),
+  f("John Terry", "eng", "che", "won a300"),
+  f("Petr Čech", "cze", "che ars", "won a300"),
+  f("Eden Hazard", "bel", "che", "won g50 as50"),
+  f("Cole Palmer", "eng", "mci che", "g50"),
+  f("Jermain Defoe", "eng", "tot wham por sun", "g100 a300"),
+  f("Teddy Sheringham", "eng", "tot mun wham", "won g100 a300"),
+  f("Dimitar Berbatov", "bul", "tot mun fulham", "won g100"),
+  f("Emmanuel Adebayor", "tog", "ars mci tot", "g100"),
+];
+
+// Extra clubs for players already listed above.
+const LL_ALSO: Record<string, string> = {
+  "David Villa": "val", "David Silva": "", "Fernando Torres": "", "Roberto Soldado": "val vil",
+  "Jordi Alba": "val", "Raúl Albiol": "val vil", "Xabi Alonso": "soc", "Antoine Griezmann": "soc",
+  "Isco": "mal bet", "Dani Alves": "sev", "Sergio Ramos": "sev", "Aymeric Laporte": "ath val",
+  "Raúl García": "ath", "Luis Enrique": "cel", "Álvaro Morata": "",
+};
+const LL_EXTRA: Fact[] = [
+  f("David Silva", "esp", "val", "won"),
+  f("Santi Cazorla", "esp", "vil mal", ""),
+  f("Pablo Aimar", "arg", "val", ""),
+  f("Gaizka Mendieta", "esp", "val", ""),
+  f("Rubén Baraja", "esp", "val atm", "a300"),
+  f("Carlos Marchena", "esp", "val sev", "a300"),
+  f("David Albelda", "esp", "val", "a300"),
+  f("Daniel Parejo", "esp", "val vil", "a300"),
+  f("Edinson Cavani", "uru", "val", ""),
+  f("Paco Alcácer", "esp", "val bar vil", ""),
+  f("Ferran Torres", "esp", "val bar", ""),
+  f("Roberto Ayala", "arg", "val", ""),
+  f("Jesús Navas", "esp", "sev", "a300"),
+  f("Ivan Rakitić", "cro", "sev bar", "won"),
+  f("Frédéric Kanouté", "mli", "sev", "g100"),
+  f("Luis Fabiano", "bra", "sev", ""),
+  f("Julio Baptista", "bra", "sev rma", ""),
+  f("Éver Banega", "arg", "sev val", ""),
+  f("José Antonio Reyes", "esp", "sev rma atm", "won"),
+  f("Kevin Gameiro", "fra", "sev atm val", ""),
+  f("Jules Koundé", "fra", "sev bar", ""),
+  f("Diego Carlos", "bra", "sev", ""),
+  f("Papu Gómez", "arg", "sev", ""),
+  f("Andrés Palop", "esp", "sev val", "a300"),
+  f("Adriano", "bra", "sev bar", ""),
+  f("Juan Román Riquelme", "arg", "vil bar", ""),
+  f("Diego Forlán", "uru", "vil atm", "g100"),
+  f("Marcos Senna", "bra", "vil", ""),
+  f("Gerard Moreno", "esp", "vil", "g50"),
+  f("Bruno Soriano", "esp", "vil", "a300"),
+  f("Pepe Reina", "esp", "vil atm", ""),
+  f("Joan Capdevila", "esp", "vil atm", "a300"),
+  f("Giuseppe Rossi", "ita", "vil", ""),
+  f("Aritz Aduriz", "esp", "ath val", "g100 a300"),
+  f("Fernando Llorente", "esp", "ath", ""),
+  f("Iker Muniain", "esp", "ath", "a300"),
+  f("Óscar de Marcos", "esp", "ath", "a300"),
+  f("Ander Herrera", "esp", "ath", ""),
+  f("Javi Martínez", "esp", "ath", ""),
+  f("Iñaki Williams", "gha esp", "ath", "a300"),
+  f("Kepa Arrizabalaga", "esp", "ath", ""),
+  f("Joseba Etxeberria", "esp", "ath", "a300"),
+  f("Bixente Lizarazu", "fra", "ath", ""),
+  f("Markel Susaeta", "esp", "ath", "a300"),
+  f("Martin Ødegaard", "nor", "soc rma", ""),
+  f("Carlos Vela", "mex", "soc", ""),
+  f("Mikel Oyarzabal", "esp", "soc", "g50"),
+  f("Mikel Merino", "esp", "soc", ""),
+  f("Asier Illarramendi", "esp", "soc rma", ""),
+  f("Nihat Kahveci", "tur", "soc", ""),
+  f("Álvaro Odriozola", "esp", "soc rma", ""),
+  f("Alexander Isak", "swe", "soc", ""),
+  f("Willian José", "bra", "soc bet", ""),
+  f("Joaquín", "esp", "bet val", "a300"),
+  f("Nabil Fekir", "fra", "bet", ""),
+  f("Andrés Guardado", "mex", "bet val", "a300"),
+  f("Sergio Canales", "esp", "bet val soc", ""),
+  f("Giovani Lo Celso", "arg", "bet", ""),
+  f("Borja Iglesias", "esp", "bet", ""),
+  f("Rubén Castro", "esp", "bet", "g100 a300"),
+  f("Héctor Bellerín", "esp", "bet", ""),
+  f("Marc Bartra", "esp", "bet bar", ""),
+  f("William Carvalho", "por", "bet", ""),
+  f("Emerson Royal", "bra", "bet bar", ""),
+  f("Claudio Bravo", "chi", "bet bar", ""),
+  f("Rafael van der Vaart", "ned", "bet rma", ""),
+  f("Fabián Ruiz", "esp", "bet", ""),
+];
+
+// Extra clubs for players already listed above.
+const UCL_ALSO: Record<string, string> = {
+  "Cristiano Ronaldo": "mun juv", "Kylian Mbappé": "psg", "Lionel Messi": "psg", "Neymar": "psg",
+  "Sergio Ramos": "psg", "Xabi Alonso": "liv", "Luka Modrić": "tot", "Gareth Bale": "tot",
+  "Casemiro": "mun", "Raphaël Varane": "mun", "Claude Makélélé": "che psg", "Roberto Carlos": "inter",
+  "Ronaldo": "inter mil", "Ronaldinho": "psg mil", "Dani Alves": "juv psg", "Samuel Eto'o": "inter che",
+  "Gerard Piqué": "mun", "David Villa": "atm", "Luis Suárez": "liv atm ajax", "Robert Lewandowski": "dor",
+  "Arjen Robben": "che", "Mario Mandžukić": "juv atm", "Kingsley Coman": "juv psg",
+  "Benjamin Pavard": "inter", "Lucas Hernández": "atm psg", "Ousmane Dembélé": "dor psg",
+  "Thiago Alcântara": "liv", "João Cancelo": "juv mci", "Deco": "che", "Pedro": "che",
+  "Éric Abidal": "lyon", "Harry Kane": "tot", "Javier Mascherano": "liv", "Raúl": "",
+};
+const UCL_EXTRA: Fact[] = [
+  f("Zlatan Ibrahimović", "swe", "ajax juv inter bar mil psg mun", "g50 a100"),
+  f("Thierry Henry", "fra", "ars bar juv", "g50 a100 final"),
+  f("Didier Drogba", "civ", "che", "g50 a100 final"),
+  f("Frank Lampard", "eng", "che", "g50 a100"),
+  f("Steven Gerrard", "eng", "liv", "g50 a100 final"),
+  f("Mohamed Salah", "egy", "liv che", "g50 a100 final"),
+  f("Sadio Mané", "sen", "liv bay", "a100"),
+  f("Roberto Firmino", "bra", "liv", ""),
+  f("Jordan Henderson", "eng", "liv", "a100"),
+  f("Virgil van Dijk", "ned", "liv", ""),
+  f("Ole Gunnar Solskjær", "nor", "mun", "final"),
+  f("Teddy Sheringham", "eng", "mun tot", "final"),
+  f("Ryan Giggs", "wal", "mun", "a100"),
+  f("Wayne Rooney", "eng", "mun", "g50"),
+  f("Paul Scholes", "eng", "mun", "a100"),
+  f("Dwight Yorke", "tri", "mun", ""),
+  f("Paul Pogba", "fra", "juv mun", ""),
+  f("Andrea Pirlo", "ita", "mil juv inter", "a100"),
+  f("Gianluigi Buffon", "ita", "juv psg", "a100"),
+  f("Paolo Maldini", "ita", "mil", "a100"),
+  f("Filippo Inzaghi", "ita", "mil juv", "g50 final"),
+  f("Alessandro Del Piero", "ita", "juv", "g50 a100"),
+  f("Zinedine Zidane", "fra", "juv rma", "a100 final"),
+  f("David Trezeguet", "fra", "juv", "g50"),
+  f("Lilian Thuram", "fra", "juv bar", "a100"),
+  f("Gonzalo Higuaín", "arg", "juv rma", ""),
+  f("Paulo Dybala", "arg", "juv", ""),
+  f("Arturo Vidal", "chi", "juv bay bar inter", ""),
+  f("Carlos Tevez", "arg", "juv mun mci", ""),
+  f("Ángel Di María", "arg", "rma mun psg juv", "a100 final"),
+  f("Javier Zanetti", "arg", "inter", "a100"),
+  f("Diego Milito", "arg", "inter", "final"),
+  f("Esteban Cambiasso", "arg", "inter rma", "a100"),
+  f("Wesley Sneijder", "ned", "ajax rma inter", ""),
+  f("Clarence Seedorf", "ned", "ajax rma inter mil", "a100"),
+  f("Edgar Davids", "ned", "ajax mil juv inter tot", ""),
+  f("Patrick Kluivert", "ned", "ajax mil bar", "final"),
+  f("Marc Overmars", "ned", "ajax ars bar", ""),
+  f("Dennis Bergkamp", "ned", "ajax inter ars", ""),
+  f("Frenkie de Jong", "ned", "ajax bar", ""),
+  f("Matthijs de Ligt", "ned", "ajax juv bay", ""),
+  f("Cesc Fàbregas", "esp", "ars bar che", ""),
+  f("Robin van Persie", "ned", "ars mun", ""),
+  f("Patrick Vieira", "fra", "ars juv inter mci", ""),
+  f("Edinson Cavani", "uru", "psg mun", "g50"),
+  f("Marco Verratti", "ita", "psg", "a100"),
+  f("Marquinhos", "bra", "psg", "a100"),
+  f("Thiago Silva", "bra", "mil psg che", "a100"),
+  f("Achraf Hakimi", "mar", "dor inter psg rma", ""),
+  f("Erling Haaland", "nor", "dor mci", "g50"),
+  f("Marco Reus", "ger", "dor", "a100"),
+  f("Mats Hummels", "ger", "dor bay", "a100"),
+  f("Mario Götze", "ger", "dor bay", ""),
+  f("Pierre-Emerick Aubameyang", "gab", "dor ars", ""),
+  f("Sergio Agüero", "arg", "mci atm", "g50 a100"),
+  f("Kevin De Bruyne", "bel", "che mci", "a100"),
+  f("David Silva", "esp", "mci", "a100"),
+  f("Raheem Sterling", "eng", "liv mci che", "a100"),
+  f("Kyle Walker", "eng", "tot mci", "a100"),
+  f("Riyad Mahrez", "alg", "lei mci", ""),
+  f("Eden Hazard", "bel", "che rma", "a100"),
+  f("Thibaut Courtois", "bel", "che rma atm", "a100"),
+  f("John Terry", "eng", "che", "a100"),
+  f("Petr Čech", "cze", "che", "a100"),
+  f("Ashley Cole", "eng", "ars che", "a100"),
+  f("Kai Havertz", "ger", "che ars", "final"),
+  f("Michael Essien", "gha", "che mil", ""),
+  f("N'Golo Kanté", "fra", "che", ""),
+  f("Antoine Griezmann", "fra", "atm bar", "g50 a100"),
+  f("Diego Simeone", "arg", "atm inter", ""),
+  f("Koke", "esp", "atm", "a100"),
+  f("Diego Godín", "uru", "atm inter", "a100"),
+  f("Jan Oblak", "svn", "atm", "a100"),
+  f("Fernando Torres", "esp", "atm liv che mil", ""),
+  f("Diego Costa", "esp", "atm che", ""),
+];
+
+function merge(base: Fact[], also: Record<string, string>, extra: Fact[]): Fact[] {
+  const map = new Map<string, Fact>();
+  const put = (fact: Fact) => {
+    const existing = map.get(fact.name);
+    if (!existing) {
+      map.set(fact.name, { ...fact, nat: [...fact.nat], clubs: [...fact.clubs], tags: [...fact.tags] });
+      return;
+    }
+    for (const nat of fact.nat) if (!existing.nat.includes(nat)) existing.nat.push(nat);
+    for (const club of fact.clubs) if (!existing.clubs.includes(club)) existing.clubs.push(club);
+    for (const tag of fact.tags) if (!existing.tags.includes(tag)) existing.tags.push(tag);
+  };
+  base.forEach(put);
+  extra.forEach(put);
+  for (const [name, clubs] of Object.entries(also)) {
+    const fact = map.get(name);
+    if (fact) for (const club of clubs.split(" ").filter(Boolean)) if (!fact.clubs.includes(club)) fact.clubs.push(club);
+  }
+  return [...map.values()];
+}
+
+const FACTS: Record<Competition, Fact[]> = {
+  pl: merge(PL_FACTS, PL_ALSO, PL_EXTRA),
+  laliga: merge(LALIGA_FACTS, LL_ALSO, LL_EXTRA),
+  ucl: merge(UCL_FACTS, UCL_ALSO, UCL_EXTRA),
+};
+
+export function footballTicTacToePlayerNames(comp: Competition) {
+  return FACTS[comp].map((fact) => fact.name);
+}
 
 const club = (label: string, badge: string, key: string, short = label): Def => ({
   clue: { label, badge, badgeAlt: `${short} crest` },
   test: (fact) => fact.clubs.includes(key),
 });
-const NAT_KEYS: Record<string, string> = { es: "esp", fr: "fra", br: "bra", ar: "arg", pt: "por", "gb-eng": "eng" };
+const NAT_KEYS: Record<string, string> = {
+  es: "esp", fr: "fra", br: "bra", ar: "arg", pt: "por", "gb-eng": "eng", nl: "ned", be: "bel",
+  de: "ger", it: "ita", uy: "uru", mx: "mex", hr: "cro",
+};
 const national = (label: string, country: string): Def => ({
   clue: { label, badge: flag(country), badgeAlt: `${label.replace(" international", "")} flag` },
   test: (fact) => fact.nat.includes(NAT_KEYS[country] ?? country),
@@ -416,7 +720,93 @@ function shuffledIndexes() {
   return indexes;
 }
 
+const espn = (id: number) => `https://a.espncdn.com/i/teamlogos/soccer/500/${id}.png`;
+const POOL_CLUBS: Record<Competition, Def[]> = {
+  pl: [
+    PL_CLUBS.mun(P), PL_CLUBS.liv(P), PL_CLUBS.ars(P), PL_CLUBS.che(P), PL_CLUBS.mci(P), PL_CLUBS.tot(P),
+    club(`${P}Everton`, "/club-logos/everton.svg", "eve", "Everton"),
+    club(`${P}Newcastle`, "/club-logos/newcastle.svg", "new", "Newcastle"),
+    club(`${P}West Ham`, "/club-logos/west-ham.svg", "wham", "West Ham"),
+    club(`${P}Leicester City`, "/club-logos/leicester.svg", "lei", "Leicester City"),
+    club(`${P}Aston Villa`, "/club-logos/aston-villa.svg", "avl", "Aston Villa"),
+    club(`${P}Southampton`, "/club-logos/southampton.svg", "sou", "Southampton"),
+  ],
+  laliga: [
+    LL_CLUBS.rma(P), LL_CLUBS.bar(P), LL_CLUBS.atm(P),
+    club(`${P}Valencia`, espn(94), "val", "Valencia"),
+    club(`${P}Sevilla`, espn(243), "sev", "Sevilla"),
+    club(`${P}Villarreal`, espn(102), "vil", "Villarreal"),
+    club(`${P}Athletic Club`, espn(93), "ath", "Athletic Club"),
+    club(`${P}Real Sociedad`, espn(89), "soc", "Real Sociedad"),
+    club(`${P}Real Betis`, espn(244), "bet", "Real Betis"),
+  ],
+  ucl: [
+    UCL_CLUBS.rma(P), UCL_CLUBS.bar(P), UCL_CLUBS.bay(P),
+    club(`${P}Juventus`, espn(111), "juv", "Juventus"),
+    club(`${P}Inter`, espn(110), "inter", "Inter"),
+    club(`${P}AC Milan`, espn(103), "mil", "AC Milan"),
+    club(`${P}PSG`, espn(160), "psg", "PSG"),
+    club(`${P}Manchester City`, espn(382), "mci", "Manchester City"),
+    club(`${P}Liverpool`, espn(364), "liv", "Liverpool"),
+    club(`${P}Chelsea`, espn(363), "che", "Chelsea"),
+    club(`${P}Dortmund`, espn(124), "dor", "Borussia Dortmund"),
+    club(`${P}Manchester United`, espn(360), "mun", "Manchester United"),
+    club(`${P}Ajax`, espn(139), "ajax", "Ajax"),
+    club(`${P}Arsenal`, espn(359), "ars", "Arsenal"),
+    club(`${P}Atlético Madrid`, espn(1068), "atm", "Atlético Madrid"),
+  ],
+};
+const POOL_ROWS: Record<Competition, Def[]> = {
+  pl: [
+    national("England international", "gb-eng"), national("France international", "fr"),
+    national("Spain international", "es"), national("Brazil international", "br"),
+    national("Netherlands international", "nl"), national("Belgium international", "be"),
+    national("Argentina international", "ar"),
+    stat("Premier League winner", "won"), stat("100+ Premier League goals", "g100"),
+    stat("50+ Premier League goals", "g50"), stat("300+ Premier League appearances", "a300"),
+    stat("50+ Premier League assists", "as50"),
+  ],
+  laliga: [
+    national("Spanish international", "es"), national("Brazil international", "br"),
+    national("Argentina international", "ar"), national("France international", "fr"),
+    national("Uruguay international", "uy"),
+    stat("La Liga winner", "won"), stat("100+ La Liga goals", "g100"), stat("300+ La Liga appearances", "a300"),
+  ],
+  ucl: [
+    national("France international", "fr"), national("Brazil international", "br"),
+    national("Portugal international", "pt"), national("Argentina international", "ar"),
+    national("Netherlands international", "nl"), national("Germany international", "de"),
+    national("Italy international", "it"), national("England international", "gb-eng"),
+    stat("50+ Champions League goals", "g50"), stat("100+ Champions League appearances", "a100"),
+    stat("Scored in a Champions League final", "final"),
+  ],
+};
+
+function pick<T>(items: T[], count: number): T[] {
+  const copy = [...items];
+  for (let index = copy.length - 1; index > 0; index -= 1) {
+    const swapIndex = Math.floor(Math.random() * (index + 1));
+    [copy[index], copy[swapIndex]] = [copy[swapIndex], copy[index]];
+  }
+  return copy.slice(0, count);
+}
+
+// Random clubs and clues each game; every square must have several valid players.
+function generatePuzzle(comp: Competition): FootballTicTacToePuzzle | null {
+  for (let attempt = 0; attempt < 300; attempt += 1) {
+    const puzzle = build(
+      comp,
+      pick(POOL_ROWS[comp], 3) as [Def, Def, Def],
+      pick(POOL_CLUBS[comp], 3) as [Def, Def, Def],
+    );
+    if (puzzle.answers.every((row) => row.every((answers) => answers.length >= 3))) return puzzle;
+  }
+  return null;
+}
+
 export function randomFootballTicTacToePuzzle(comp: Competition): FootballTicTacToePuzzle {
+  const generated = generatePuzzle(comp);
+  if (generated) return generated;
   const variants = FOOTBALL_TIC_TAC_TOE_VARIANTS[comp];
   const puzzle = variants[Math.floor(Math.random() * variants.length)];
   const rowOrder = shuffledIndexes();
