@@ -148,6 +148,18 @@ export default function GameLobby({ comp }: { comp: Competition }) {
                       </Link>
                     </div>
                   </div>
+                  <Link
+                    href={`/game/rondo?comp=${comp}`}
+                    className="rounded-2xl border border-warning/25 bg-background/60 p-5 text-left transition hover:border-warning/60 hover:bg-warning/5"
+                  >
+                    <h3 className="text-xl font-bold">Football Rondo</h3>
+                    <p className="mt-2 text-sm leading-6 text-fore-muted">
+                      One question per letter, A to Z, in 3 minutes. Play solo, on one device, or 1v1 via a link.
+                    </p>
+                    <span className="mt-4 inline-block font-mono text-[10px] uppercase tracking-[0.12em] text-warning">
+                      Play now →
+                    </span>
+                  </Link>
                 </div>
               )}
             </div>
