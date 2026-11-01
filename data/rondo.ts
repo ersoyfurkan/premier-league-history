@@ -1,6 +1,8 @@
 import type { Competition } from "@/lib/gameRoom";
 import { RONDO_MORE } from "@/data/rondoMore";
 import { RONDO_EXTRA } from "@/data/rondoExtra";
+import { RONDO_BONUS } from "@/data/rondoBonus";
+import { RONDO_BONUS2 } from "@/data/rondoBonus2";
 
 export type RondoClue = {
   letter: string;
@@ -224,11 +226,35 @@ const UCL: RondoClue[] = [
   r("Z", "Swedish striker who has played for Ajax, Juventus, Inter, Barcelona, AC Milan and PSG", "Zlatan Ibrahimović|Zlatan|Ibrahimovic|Zlatan Ibrahimovic"),
 ];
 
+const normKey = (s: string) =>
+  s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, "");
+
+// Appends extra clues, skipping any whose answer (or leaked word) is already used.
+function mergeUnique(base: RondoClue[], ...extras: RondoClue[][]): RondoClue[] {
+  const seen = new Set<string>();
+  const out: RondoClue[] = [];
+  for (const c of base) {
+    out.push(c);
+    for (const a of c.answers) seen.add(normKey(a));
+  }
+  for (const list of extras) {
+    for (const c of list) {
+      const keys = c.answers.map(normKey);
+      if (keys.some((k) => seen.has(k))) continue;
+      const clueN = normKey(c.clue);
+      if (c.answers.some((a) => a.split(/\s+/).some((w) => normKey(w).length >= 5 && clueN.includes(normKey(w))))) continue;
+      out.push(c);
+      keys.forEach((k) => seen.add(k));
+    }
+  }
+  return out;
+}
+
 export const RONDO_CLUES: Record<Competition, RondoClue[]> = {
-  pl: [...PL, ...RONDO_MORE.pl, ...RONDO_EXTRA.pl],
-  laliga: [...LL, ...RONDO_MORE.laliga, ...RONDO_EXTRA.laliga],
-  seriea: [...SA, ...RONDO_MORE.seriea, ...RONDO_EXTRA.seriea],
-  ucl: [...UCL, ...RONDO_MORE.ucl, ...RONDO_EXTRA.ucl],
+  pl: mergeUnique([...PL, ...RONDO_MORE.pl, ...RONDO_EXTRA.pl], RONDO_BONUS.pl, RONDO_BONUS2.pl),
+  laliga: mergeUnique([...LL, ...RONDO_MORE.laliga, ...RONDO_EXTRA.laliga], RONDO_BONUS.laliga, RONDO_BONUS2.laliga),
+  seriea: mergeUnique([...SA, ...RONDO_MORE.seriea, ...RONDO_EXTRA.seriea], RONDO_BONUS.seriea, RONDO_BONUS2.seriea),
+  ucl: mergeUnique([...UCL, ...RONDO_MORE.ucl, ...RONDO_EXTRA.ucl], RONDO_BONUS.ucl, RONDO_BONUS2.ucl),
 };
 export const RONDO_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 export const RONDO_SECONDS = 180;
