@@ -3,7 +3,7 @@ import { normalizeFootballPlayerName } from "@/data/footballTicTacToe";
 import { DUEL_CLUBS, playersForBoth, playersForClub, searchDuelPlayers } from "@/data/clubDuel";
 
 export type TriviaEntry = { name: string; aliases: string[] };
-export type TriviaQuestion = { id: string; text: string; count: number; entries: TriviaEntry[] };
+export type TriviaQuestion = { id: string; text: string; count: number; noun: string; plural: string; entries: TriviaEntry[] };
 
 type Category = { id: string; noun: string; plural: string; entries: TriviaEntry[] };
 
@@ -108,7 +108,13 @@ export function rollDice() {
 
 export const BOARD_SIZE = 16;
 
-export type BoardTile = TriviaQuestion & { short: string };
+export type BoardTile = { id: string; short: string; noun: string; plural: string; entries: TriviaEntry[] };
+
+export const tileQuestion = (tile: BoardTile, count: number) =>
+  `Name ${WORDS[count]} ${count === 1 ? tile.noun : tile.plural}`;
+
+// How many answers a roll really demands: never more than the tile can reasonably supply.
+export const answersFor = (tile: BoardTile, roll: number) => Math.max(1, Math.min(roll, tile.entries.length - 2));
 
 const SHORT: Record<string, string> = {
   "s-ballon": "Ballon d'Or",
@@ -123,19 +129,17 @@ const SHORT: Record<string, string> = {
   "s-clubs": "League clubs",
 };
 
-// Builds a random path of questions. Early tiles ask for fewer answers, later ones for more.
+// Builds a random path of categories. The dice later decides how many answers each one needs.
 export function generateBoard(comp: Competition): BoardTile[] {
   const used = new Set<string>();
   const clubLabel = (key: string) => DUEL_CLUBS[comp].find((club) => club.key === key)?.label ?? key;
-  return Array.from({ length: BOARD_SIZE }, (_, i) => {
-    const max = i < 4 ? 2 : i < 10 ? 3 : 4;
-    const count = 1 + Math.floor(Math.random() * max);
-    const q = pickTriviaQuestion(comp, count, used);
+  return Array.from({ length: BOARD_SIZE }, () => {
+    const q = pickTriviaQuestion(comp, 6, used);
     used.add(q.id);
     let short = SHORT[q.id] ?? "Trivia";
     if (q.id.startsWith("c-")) short = clubLabel(q.id.slice(2));
     else if (q.id.startsWith("p-")) short = q.id.slice(2).split("-").map(clubLabel).join(" + ");
-    return { ...q, short };
+    return { id: q.id, short, noun: q.noun, plural: q.plural, entries: q.entries };
   });
 }
 
@@ -164,6 +168,8 @@ export function pickTriviaQuestion(comp: Competition, count: number, used: Set<s
   const build = (id: string, category: Category): TriviaQuestion => ({
     id,
     count,
+    noun: category.noun,
+    plural: category.plural,
     entries: category.entries,
     text: `Name ${WORDS[count]} ${count === 1 ? category.noun : category.plural}`,
   });

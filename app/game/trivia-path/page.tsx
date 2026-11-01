@@ -8,9 +8,12 @@ import { playerFaceUrl } from "@/data/playerFaces";
 import { lobbyFor, parseComp } from "@/lib/gameRoom";
 import {
   BOARD_SIZE,
+  answersFor,
   generateBoard,
   matchTriviaAnswer,
+  rollDice,
   suggestTrivia,
+  tileQuestion,
   triviaSeconds,
   type BoardTile,
   type TriviaEntry,
@@ -19,7 +22,8 @@ import {
 const LABELS = { pl: "Premier League", laliga: "La Liga", seriea: "Serie A", ucl: "Champions League" } as const;
 const DOTS = ["bg-accent", "bg-warning"];
 
-type Phase = "setup" | "play" | "result" | "over";
+type Phase = "setup" | "roll" | "play" | "result" | "over";
+// pos is the number of tiles reached: 0 is the start, BOARD_SIZE is the finish.
 type Player = { name: string; pos: number; turns: number };
 
 function TriviaClient() {
@@ -30,6 +34,9 @@ function TriviaClient() {
   const [players, setPlayers] = useState<Player[]>([]);
   const [board, setBoard] = useState<BoardTile[]>([]);
   const [turn, setTurn] = useState(0);
+  const [dice, setDice] = useState<number | null>(null);
+  const [rolling, setRolling] = useState(false);
+  const [required, setRequired] = useState(1);
   const [found, setFound] = useState<TriviaEntry[]>([]);
   const [deadline, setDeadline] = useState(0);
   const [now, setNow] = useState(() => Date.now());
@@ -46,31 +53,41 @@ function TriviaClient() {
 
   const secondsLeft = Math.max(0, Math.ceil((deadline - now) / 1000));
   const current = players[turn];
-  const tile = current ? board[current.pos] : undefined;
-
-  const beginTurn = (nextTurn: number, nextPlayers: Player[], nextBoard: BoardTile[]) => {
-    const t = nextBoard[nextPlayers[nextTurn].pos];
-    const stamp = Date.now();
-    setTurn(nextTurn);
-    setFound([]);
-    setGuess("");
-    setFeedback(null);
-    setNow(stamp);
-    setDeadline(stamp + triviaSeconds(t.count) * 1000);
-    finished.current = false;
-    setPhase("play");
-  };
+  const targetPos = current && dice ? Math.min(current.pos + dice, BOARD_SIZE) : 0;
+  const tile = current && dice ? board[targetPos - 1] : undefined;
 
   const start = () => {
-    const nextBoard = generateBoard(comp);
-    const nextPlayers = (versus ? names : [names[0]]).map((name, i) => ({
-      name: name.trim() || `Player ${i + 1}`,
-      pos: 0,
-      turns: 0,
-    }));
-    setBoard(nextBoard);
-    setPlayers(nextPlayers);
-    beginTurn(0, nextPlayers, nextBoard);
+    setBoard(generateBoard(comp));
+    setPlayers((versus ? names : [names[0]]).map((name, i) => ({ name: name.trim() || `Player ${i + 1}`, pos: 0, turns: 0 })));
+    setTurn(0);
+    setDice(null);
+    setPhase("roll");
+  };
+
+  const roll = () => {
+    if (rolling || !current) return;
+    setRolling(true);
+    let ticks = 0;
+    const timer = window.setInterval(() => {
+      ticks += 1;
+      setDice(rollDice());
+      if (ticks < 9) return;
+      window.clearInterval(timer);
+      const final = rollDice();
+      const target = board[Math.min(current.pos + final, BOARD_SIZE) - 1];
+      const count = answersFor(target, final);
+      const stamp = Date.now();
+      setDice(final);
+      setRequired(count);
+      setFound([]);
+      setGuess("");
+      setFeedback(null);
+      setNow(stamp);
+      setDeadline(stamp + triviaSeconds(count) * 1000);
+      finished.current = false;
+      setRolling(false);
+      setPhase("play");
+    }, 80);
   };
 
   const finishTurn = (success: boolean) => {
@@ -78,7 +95,7 @@ function TriviaClient() {
     finished.current = true;
     setPassed(success);
     setPlayers((prev) =>
-      prev.map((p, i) => (i === turn ? { ...p, pos: p.pos + (success ? 1 : 0), turns: p.turns + 1 } : p)),
+      prev.map((p, i) => (i === turn ? { ...p, pos: success ? targetPos : p.pos, turns: p.turns + 1 } : p)),
     );
     setPhase("result");
   };
@@ -103,7 +120,7 @@ function TriviaClient() {
     const next = [...found, entry];
     setFound(next);
     setFeedback(null);
-    if (next.length >= tile.count) finishTurn(true);
+    if (next.length >= required) finishTurn(true);
   };
 
   const submit = (event: FormEvent) => {
@@ -116,7 +133,9 @@ function TriviaClient() {
       setPhase("over");
       return;
     }
-    beginTurn((turn + 1) % players.length, players, board);
+    setTurn((turn + 1) % players.length);
+    setDice(null);
+    setPhase("roll");
   };
 
   const suggestions = useMemo(
@@ -129,6 +148,7 @@ function TriviaClient() {
     tile && phase === "result" && !passed && !versus
       ? tile.entries.filter((entry) => !found.includes(entry)).slice(0, 5)
       : [];
+  const showTarget = (phase === "play" || phase === "result") && dice;
 
   return (
     <main className="min-h-[calc(100svh-5rem)] bg-background text-foreground grid-bg px-4 py-4 md:px-8 md:py-6">
@@ -141,10 +161,11 @@ function TriviaClient() {
 
         {phase === "setup" && (
           <div className="mt-6 rounded-2xl border border-line bg-background/60 p-6">
-            <h1 className="text-2xl font-bold">Race along the board</h1>
+            <h1 className="text-2xl font-bold">Roll, move, answer</h1>
             <p className="mt-2 text-sm leading-6 text-fore-muted">
-              A random path of {BOARD_SIZE} tiles. On your turn, answer the question on your next tile before the clock
-              runs out. Get it right and you move forward. Get it wrong and you stay put. First to the last tile wins.
+              Take turns rolling the dice. The number is how many spaces you move and how many correct answers you must
+              give for the category on the space you land on, before the countdown ends. Get it right and you stay on
+              the new space. Get it wrong and you go back to where you were. First to the last space wins.
             </p>
             <div className="mt-5 flex gap-2">
               <button type="button" onClick={() => setVersus(false)} className={versus ? "btn-ghost" : "btn-primary"}>
@@ -181,7 +202,7 @@ function TriviaClient() {
                   }`}
                 >
                   <span className={`mr-2 inline-block h-3 w-3 rounded-full align-middle ${DOTS[i]}`} />
-                  {p.name} · tile {Math.min(p.pos, BOARD_SIZE)}/{BOARD_SIZE}
+                  {p.name} · {p.pos}/{BOARD_SIZE}
                 </div>
               ))}
             </div>
@@ -191,17 +212,14 @@ function TriviaClient() {
                 <div
                   key={i}
                   className={`relative flex min-h-20 flex-col justify-between rounded-xl border p-2 text-xs ${
-                    current && i === current.pos && phase !== "over" ? "border-accent bg-accent/10" : "border-line bg-background/60"
-                  } ${players.every((p) => p.pos > i) ? "opacity-50" : ""}`}
+                    showTarget && i === targetPos - 1 ? "border-accent bg-accent/10" : "border-line bg-background/60"
+                  }`}
                 >
-                  <div className="flex items-center justify-between">
-                    <span className="font-mono text-fore-muted">{i + 1}</span>
-                    <span className="rounded-md border border-line px-1.5 font-bold">{t.count}</span>
-                  </div>
+                  <span className="font-mono text-fore-muted">{i + 1}{i === BOARD_SIZE - 1 ? " 🏁" : ""}</span>
                   <span className="line-clamp-2 leading-tight">{t.short}</span>
                   <div className="absolute -top-2 right-1 flex gap-1">
                     {players.map((p, pi) =>
-                      p.pos === i ? (
+                      p.pos === i + 1 ? (
                         <span key={pi} className={`h-4 w-4 rounded-full border border-background ${DOTS[pi]}`} />
                       ) : null,
                     )}
@@ -212,20 +230,37 @@ function TriviaClient() {
           </>
         )}
 
-        {(phase === "play" || phase === "result") && tile && current && (
+        {phase === "roll" && current && (
+          <div className="mt-6 rounded-2xl border border-line bg-background/60 p-8 text-center">
+            <p className="text-lg font-bold">{current.name}, roll the dice</p>
+            <div className="mx-auto mt-5 flex h-24 w-24 items-center justify-center rounded-2xl border-2 border-accent text-5xl font-black">
+              {dice ?? "?"}
+            </div>
+            <button type="button" onClick={roll} disabled={rolling} className="btn-primary mt-6">
+              {rolling ? "Rolling…" : "Roll"}
+            </button>
+          </div>
+        )}
+
+        {(phase === "play" || phase === "result") && tile && current && dice && (
           <div className="mt-6 rounded-2xl border border-line bg-background/60 p-6">
             <div className="flex items-start justify-between gap-4">
               <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border-2 border-accent text-3xl font-black">
-                {tile.count}
+                {dice}
               </div>
-              <p className="flex-1 text-xl font-bold leading-snug">{tile.text}</p>
+              <div className="flex-1">
+                <p className="text-xs uppercase tracking-widest text-fore-muted">
+                  Rolled {dice} · moving to space {targetPos}
+                </p>
+                <p className="text-xl font-bold leading-snug">{tileQuestion(tile, required)}</p>
+              </div>
               {phase === "play" && (
                 <div className={`font-mono text-3xl font-black ${secondsLeft <= 5 ? "text-red-400" : "text-warning"}`}>
                   {secondsLeft}
                 </div>
               )}
             </div>
-            <p className="mt-3 text-sm text-fore-muted">{current.name}: {found.length}/{tile.count}</p>
+            <p className="mt-3 text-sm text-fore-muted">{current.name}: {found.length}/{required}</p>
             <ul className="mt-3 flex flex-wrap gap-2">
               {found.map((entry) => (
                 <li key={entry.name} className="rounded-full border border-accent/50 bg-accent/10 px-3 py-1 text-sm">
@@ -269,7 +304,7 @@ function TriviaClient() {
             {phase === "result" && (
               <div className="mt-5">
                 <p className={`text-lg font-bold ${passed ? "text-accent" : "text-red-400"}`}>
-                  {passed ? "Correct! Move forward." : "Wrong. You stay where you are."}
+                  {passed ? `Correct! You move to space ${targetPos}.` : "Wrong. Back to where you were."}
                 </p>
                 {missed.length > 0 && (
                   <p className="mt-1 text-sm text-fore-muted">Could have said: {missed.map((m) => m.name).join(", ")}</p>
