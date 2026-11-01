@@ -144,6 +144,9 @@ function allCareers() {
   return careers;
 }
 
+export const playersForClub = (key: string) =>
+  allCareers().filter((player) => player.clubs.has(key)).map((player) => player.name);
+
 export const playersForBoth = (a: string, b: string) =>
   allCareers().filter((player) => player.clubs.has(a) && player.clubs.has(b)).map((player) => player.name);
 
