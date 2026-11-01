@@ -1,4 +1,5 @@
 import type { Competition } from "@/lib/gameRoom";
+import { RONDO_MORE } from "@/data/rondoMore";
 
 export type RondoClue = {
   letter: string;
@@ -222,7 +223,12 @@ const UCL: RondoClue[] = [
   r("Z", "Swedish striker who has played for Ajax, Juventus, Inter, Barcelona, AC Milan and PSG", "Zlatan Ibrahimović|Zlatan|Ibrahimovic|Zlatan Ibrahimovic"),
 ];
 
-export const RONDO_CLUES: Record<Competition, RondoClue[]> = { pl: PL, laliga: LL, seriea: SA, ucl: UCL };
+export const RONDO_CLUES: Record<Competition, RondoClue[]> = {
+  pl: [...PL, ...RONDO_MORE.pl],
+  laliga: [...LL, ...RONDO_MORE.laliga],
+  seriea: [...SA, ...RONDO_MORE.seriea],
+  ucl: [...UCL, ...RONDO_MORE.ucl],
+};
 export const RONDO_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 export const RONDO_SECONDS = 180;
 
@@ -231,8 +237,14 @@ export type RondoQuestion = RondoClue & { index: number };
 const byLetter = (comp: Competition, letter: string) => RONDO_CLUES[comp].filter((clue) => clue.letter === letter);
 
 // A game is one clue index per letter, so both players in a match get identical questions.
-export function randomRondoPicks(comp: Competition): number[] {
-  return RONDO_LETTERS.map((letter) => Math.floor(Math.random() * byLetter(comp, letter).length));
+// `avoid` is the previous game's picks, so back-to-back games never repeat a question.
+export function randomRondoPicks(comp: Competition, avoid: number[] = []): number[] {
+  return RONDO_LETTERS.map((letter, index) => {
+    const size = byLetter(comp, letter).length;
+    let pick = Math.floor(Math.random() * size);
+    if (size > 1 && pick === avoid[index]) pick = (pick + 1 + Math.floor(Math.random() * (size - 1))) % size;
+    return pick;
+  });
 }
 
 export function rondoQuestions(comp: Competition, picks: number[]): RondoQuestion[] {
@@ -249,7 +261,32 @@ const normalize = (value: string) =>
     .replace(/[^a-zA-Z0-9]/g, "")
     .toLowerCase();
 
+function distance(a: string, b: string) {
+  let prev = Array.from({ length: b.length + 1 }, (_, i) => i);
+  for (let i = 1; i <= a.length; i += 1) {
+    const row = [i];
+    for (let j = 1; j <= b.length; j += 1) {
+      row[j] = Math.min(prev[j] + 1, row[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+    }
+    prev = row;
+  }
+  return prev[b.length];
+}
+
+const allowedTypos = (length: number) => (length <= 3 ? 0 : length <= 5 ? 1 : length <= 7 ? 2 : length <= 12 ? 3 : 4);
+
+// Accepts exact matches, then typos (e.g. "bordmunt" for Dortmund) against each answer and its single words.
 export function isRondoAnswer(question: RondoClue, guess: string) {
   const typed = normalize(guess);
-  return typed.length > 0 && question.answers.some((answer) => normalize(answer) === typed);
+  if (!typed) return false;
+  const targets = new Set<string>();
+  for (const answer of question.answers) {
+    targets.add(normalize(answer));
+    for (const word of answer.split(/[\s-]+/)) if (normalize(word).length >= 4) targets.add(normalize(word));
+  }
+  for (const target of targets) {
+    if (target === typed) return true;
+    if (typed.length >= 3 && distance(typed, target) <= allowedTypos(target.length)) return true;
+  }
+  return false;
 }

@@ -129,7 +129,13 @@ function RondoClient() {
   }, [code, token, finished]);
 
   const start = (nextMode: "solo" | "local") => {
-    setPicks(randomRondoPicks(comp));
+    let previous: number[] = [];
+    try {
+      previous = JSON.parse(localStorage.getItem(`plrondo:last:${comp}`) ?? "[]") as number[];
+    } catch {}
+    const next = randomRondoPicks(comp, previous);
+    localStorage.setItem(`plrondo:last:${comp}`, JSON.stringify(next));
+    setPicks(next);
     setLocalScores([]);
     setStarted(false);
     setHandoff(false);
