@@ -18,7 +18,8 @@ type DuelView = {
   myPick: string | null;
   opponentPicked: boolean;
   opponentPick: string | null;
-  club: string | null;
+  clubs: { you: string; opponent: string } | null;
+  notice: string | null;
   youPassed: boolean;
   opponentPassed: boolean;
   last: { winner: Side | null; player: string | null; reason: "correct" | "pass" | "timeout" } | null;
@@ -54,9 +55,31 @@ function Shell({ comp, children }: { comp: Competition; children: React.ReactNod
   );
 }
 
-const Badge = ({ src, label, size = 48 }: { src: string; label: string; size?: number }) => (
-  <Image src={src} alt={`${label} crest`} width={size} height={size} unoptimized className="object-contain" style={{ width: size, height: size }} />
-);
+function Badge({ src, label, size = 48 }: { src: string; label: string; size?: number }) {
+  const [failed, setFailed] = useState(false);
+  if (!src || failed) {
+    return (
+      <span
+        className="flex items-center justify-center rounded-full border border-line bg-background font-bold text-fore-muted"
+        style={{ width: size, height: size, fontSize: size / 3 }}
+      >
+        {label.split(" ").map((word) => word[0]).join("").slice(0, 3).toUpperCase()}
+      </span>
+    );
+  }
+  return (
+    <Image
+      src={src}
+      alt={`${label} crest`}
+      width={size}
+      height={size}
+      unoptimized
+      onError={() => setFailed(true)}
+      className="object-contain"
+      style={{ width: size, height: size }}
+    />
+  );
+}
 
 function DuelClient() {
   const search = useSearchParams();
@@ -199,7 +222,7 @@ function DuelClient() {
       <Shell comp={comp}>
         <h2 className="mt-1 text-3xl md:text-4xl">Club Duel</h2>
         <p className="mt-2 max-w-2xl text-sm text-fore-muted">
-          1v1, invite only. Both players have 20 seconds to pick a club from the league. One of the picks is chosen, then you race to name a player who played for it. The fastest correct answer wins the round. First to 5 wins. If you are stuck, both vote to pass.
+          1v1, invite only. Both players have 20 seconds to pick a club from the league this season. Then you race to name a player who has played for both clubs, for example Falcao for Chelsea and Manchester United. The fastest correct answer wins the round. First to 5 wins. If you are stuck, both vote to pass.
         </p>
         {error && <p className="mt-4 text-sm text-red-400">{error}</p>}
         <button type="button" onClick={createInvite} disabled={busy} className="btn-primary mt-6">
@@ -229,7 +252,8 @@ function DuelClient() {
   const me = view.you;
   const opp: Side = me === "p1" ? "p2" : "p1";
   const secondsLeft = view.msLeft === null ? null : Math.max(0, Math.ceil((view.msLeft - (now - receivedAt)) / 1000));
-  const club = view.club ? clubByKey(activeComp, view.club) : null;
+  const mine = view.clubs ? clubByKey(activeComp, view.clubs.you) : null;
+  const theirs = view.clubs ? clubByKey(activeComp, view.clubs.opponent) : null;
   const last = view.last;
 
   const scoreboard = (
@@ -269,6 +293,7 @@ function DuelClient() {
                 {view.myPick ? "Locked in. You can still change it." : "Choose any club."}{" "}
                 {view.opponentPicked ? "Opponent has picked." : "Waiting for the opponent."}
               </p>
+              {view.notice && <p className="mt-2 text-sm text-warning">{view.notice}</p>}
               <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
                 {DUEL_CLUBS[activeComp].map((item) => (
                   <button
@@ -287,17 +312,25 @@ function DuelClient() {
             </div>
           )}
 
-          {view.phase === "guess" && club && (
+          {view.phase === "guess" && mine && theirs && (
             <div className="mt-4 rounded-2xl border border-accent/30 bg-surface p-4 md:p-6">
               <div className="flex items-center justify-between gap-3">
-                <div className="flex items-center gap-3">
-                  <Badge src={club.badge} label={club.label} size={64} />
-                  <div>
-                    <p className="section-eyebrow text-accent">Name a player who played for</p>
-                    <h2 className="text-2xl">{club.label}</h2>
-                  </div>
-                </div>
+                <p className="section-eyebrow text-accent">Name a player who played for both</p>
                 <span className="font-mono text-2xl text-warning">{secondsLeft}s</span>
+              </div>
+              <div className="mt-4 flex items-center justify-center gap-4 md:gap-8">
+                {[mine, theirs].map((item, index) => (
+                  <div key={item.key} className="flex items-center gap-4 md:gap-8">
+                    {index === 1 && <span className="text-2xl font-bold text-fore-muted">&amp;</span>}
+                    <div className="flex flex-col items-center gap-2 text-center">
+                      <Badge src={item.badge} label={item.label} size={72} />
+                      <span className="text-lg font-bold">{item.label}</span>
+                      <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-fore-muted">
+                        {index === 0 ? "Your pick" : "Their pick"}
+                      </span>
+                    </div>
+                  </div>
+                ))}
               </div>
               <form onSubmit={submitGuess} className="mt-4 flex flex-col gap-3 sm:flex-row">
                 <input
@@ -323,7 +356,7 @@ function DuelClient() {
                 {view.opponentPassed && <span className="text-sm text-warning">Opponent voted to pass</span>}
               </div>
               <p className="mt-3 text-xs text-fore-muted">
-                Full names count, and so does a surname when only one player at the club has it. A player can only be used once per match.
+                Full names count, and so does a surname when only one shared player has it. A player can only be used once per match.
               </p>
             </div>
           )}

@@ -8,7 +8,8 @@ import {
   DUEL_RESULT_MS,
   DUEL_WIN_SCORE,
   clubByKey,
-  matchClubPlayer,
+  matchSharedPlayer,
+  playersForBoth,
 } from "@/data/clubDuel";
 import { normalizeFootballPlayerName } from "@/data/footballTicTacToe";
 
@@ -23,7 +24,8 @@ type DuelState = {
   round: number;
   scores: Record<Side, number>;
   picks: Partial<Record<Side, string>>;
-  club: string | null;
+  clubs: Record<Side, string> | null;
+  notice: string | null;
   used: string[]; // normalized names already guessed this match
   pass: Record<Side, boolean>;
   last: RoundResult | null;
@@ -71,14 +73,28 @@ const sideOf = (state: DuelState, token: string) =>
 function startPick(state: DuelState, now: number) {
   state.phase = "pick";
   state.picks = {};
-  state.club = null;
+  state.clubs = null;
   state.pass = { p1: false, p2: false };
   state.deadline = now + DUEL_PICK_MS;
 }
 
 function startGuess(state: DuelState, now: number) {
-  const chosen = [state.picks.p1, state.picks.p2].filter((key): key is string => Boolean(key));
-  state.club = chosen.length ? randomOf(chosen) : randomOf(DUEL_CLUBS[state.comp]).key;
+  const keys = DUEL_CLUBS[state.comp].map((club) => club.key);
+  const p1 = state.picks.p1 ?? randomOf(keys.filter((key) => key !== state.picks.p2));
+  const p2 = state.picks.p2 ?? randomOf(keys.filter((key) => key !== p1));
+  const label = (key: string) => clubByKey(state.comp, key)?.label;
+  if (p1 === p2) {
+    startPick(state, now);
+    state.notice = `Both picked ${label(p1)}. Pick different clubs.`;
+    return;
+  }
+  if (playersForBoth(p1, p2).length === 0) {
+    startPick(state, now);
+    state.notice = `No known player has played for both ${label(p1)} and ${label(p2)}. Pick again.`;
+    return;
+  }
+  state.notice = null;
+  state.clubs = { p1, p2 };
   state.phase = "guess";
   state.pass = { p1: false, p2: false };
   state.deadline = now + DUEL_GUESS_MS;
@@ -124,7 +140,11 @@ function view(state: DuelState, side: Side, now: number) {
     myPick: state.picks[side] ?? null,
     opponentPicked: Boolean(state.picks[opponent]),
     opponentPick: revealPicks ? state.picks[opponent] ?? null : null,
-    club: state.phase === "pick" || state.phase === "waiting" ? null : state.club,
+    clubs:
+      state.clubs && state.phase !== "pick" && state.phase !== "waiting"
+        ? { you: state.clubs[side], opponent: state.clubs[opponent] }
+        : null,
+    notice: state.notice,
     youPassed: state.pass[side],
     opponentPassed: state.pass[opponent],
     last: state.last,
@@ -193,7 +213,8 @@ async function handlePost(request: NextRequest) {
       round: 1,
       scores: { p1: 0, p2: 0 },
       picks: {},
-      club: null,
+      clubs: null,
+      notice: null,
       used: [],
       pass: { p1: false, p2: false },
       last: null,
@@ -244,9 +265,9 @@ async function handlePost(request: NextRequest) {
   if (body.action === "guess") {
     const guess = typeof body.guess === "string" ? body.guess.slice(0, 60) : "";
     return mutate(db, code, token, (state, side, now) => {
-      if (state.phase !== "guess" || !state.club) return { extra: { correct: false, message: "Too late" } };
-      const player = matchClubPlayer(state.comp, state.club, guess);
-      if (!player) return { extra: { correct: false, message: "Not a player we know for this club" } };
+      if (state.phase !== "guess" || !state.clubs) return { extra: { correct: false, message: "Too late" } };
+      const player = matchSharedPlayer(state.clubs.p1, state.clubs.p2, guess);
+      if (!player) return { extra: { correct: false, message: "Not a player we know who played for both clubs" } };
       if (state.used.includes(normalizeFootballPlayerName(player))) {
         return { extra: { correct: false, message: `${player} was already used` } };
       }
