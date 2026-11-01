@@ -6,7 +6,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import {
   FOOTBALL_TIC_TAC_TOE,
   FOOTBALL_TIC_TAC_TOE_VARIANTS,
-  isFootballTicTacToeAnswer,
   normalizeFootballPlayerName,
 } from "@/data/footballTicTacToe";
 import PlayerPhoto from "@/components/PlayerPhoto";
@@ -182,9 +181,8 @@ function FootballTicTacToeClient() {
       .map(([normalized, name]) => ({
         name,
         card: players.find((player) => normalizeFootballPlayerName(player.name) === normalized),
-        fitsClues: isFootballTicTacToeAnswer(activeComp, selectedCell, name, puzzle),
       }));
-  }, [activeComp, playerName, puzzle, selectedCell, view]);
+  }, [activeComp, playerName, selectedCell, view]);
 
   const playAnswer = async (player: string) => {
     if (selectedCell === null || submittingAnswer) return;
@@ -397,7 +395,7 @@ function FootballTicTacToeClient() {
                         setPlayerName("");
                         setError(null);
                       }}
-                      className={`relative flex min-h-0 min-w-0 touch-manipulation flex-col items-center justify-center gap-1 border border-emerald-950 p-1 text-center transition sm:gap-2 sm:p-3 ${
+                      className={`relative flex min-h-0 min-w-0 touch-manipulation flex-col items-center justify-center gap-1 overflow-hidden border border-emerald-950 p-0.5 text-center transition sm:gap-2 sm:p-2 ${
                         selectedCell === index
                           ? "bg-lime-500/30 ring-2 ring-inset ring-lime-300"
                           : cell?.side === "p1"
@@ -410,11 +408,11 @@ function FootballTicTacToeClient() {
                     >
                       {cell ? (
                         <>
-                          <JerseyIcon className="h-8 w-8 text-white/50 sm:h-16 sm:w-16" />
-                          <span className={`absolute top-1 text-[9px] font-black sm:top-2 sm:text-xs ${cell.side === "p1" ? "text-lime-200" : "text-cyan-100"}`}>
+                          <JerseyIcon className="pointer-events-none absolute inset-x-0 top-1 mx-auto h-[55%] w-[55%] text-white/25" />
+                          <span className={`absolute left-1 top-1 text-[9px] font-black sm:text-xs ${cell.side === "p1" ? "text-lime-200" : "text-cyan-100"}`}>
                             {cell.side === "p1" ? "X" : "O"}
                           </span>
-                          <span className="line-clamp-2 max-w-full break-words text-[9px] font-bold leading-tight text-white sm:text-sm">{cell.player}</span>
+                          <span className="relative w-full min-w-0 text-balance [overflow-wrap:anywhere] text-[clamp(8px,0.95vw,13px)] font-bold leading-[1.1] text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">{cell.player}</span>
                         </>
                       ) : (
                         <>
@@ -448,6 +446,7 @@ function FootballTicTacToeClient() {
               <p className="mt-1 text-sm leading-6 text-fore-muted">
                 Find a past or present player who matches <strong>{puzzle.rows[Math.floor(selectedCell / 3)].label}</strong> and <strong>{puzzle.columns[selectedCell % 3].label}</strong>.
               </p>
+              {error && <p role="alert" className="mt-2 rounded-lg bg-warning/10 px-3 py-2 text-sm font-semibold text-warning">{error}</p>}
             </div>
             <label htmlFor="football-player-answer" className="sr-only">Player name</label>
             <div className="relative min-w-0 flex-1">
@@ -466,7 +465,7 @@ function FootballTicTacToeClient() {
               />
               {suggestions.length > 0 && (
                 <div id="football-player-suggestions" role="listbox" className="absolute left-0 right-0 top-full z-20 mt-1 max-h-64 overflow-y-auto rounded-xl border border-border bg-surface shadow-xl">
-                  {suggestions.map(({ name, card, fitsClues }) => (
+                  {suggestions.map(({ name, card }) => (
                     <button
                       key={name}
                       type="button"
@@ -484,9 +483,7 @@ function FootballTicTacToeClient() {
                         <UclImage alt={name} className="h-9 w-9" shape="circle" />
                       )}
                       <span className="min-w-0 flex-1 truncate">{name}</span>
-                      <span className={`shrink-0 text-[10px] font-semibold ${fitsClues ? "text-emerald-400" : "text-fore-muted"}`}>
-                        {submittingAnswer ? "Playing…" : fitsClues ? "Tap to play" : "Tap to try"}
-                      </span>
+                      {submittingAnswer && <span className="shrink-0 text-[10px] font-semibold text-fore-muted">Playing…</span>}
                     </button>
                   ))}
                 </div>
@@ -494,7 +491,7 @@ function FootballTicTacToeClient() {
             </div>
           </div>
         )}
-        {error && <p role="alert" className="mt-3 text-sm text-warning">{error}</p>}
+        {error && !(view.status === "playing" && isMyTurn && selectedCell !== null) && <p role="alert" className="mt-3 text-sm text-warning">{error}</p>}
         {view.status === "finished" && (
           <div className="mt-4 flex flex-wrap items-center gap-3">
             <button type="button" onClick={playAgain} disabled={creating} className="btn-primary disabled:opacity-60">
