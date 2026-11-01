@@ -99,7 +99,7 @@ function finishTurn(state: PathState, now: number, success: boolean, message: st
   const side = state.turn;
   const key = targetOf(state);
   state.taken ??= {};
-  state.taken[key] = [...(state.taken[key] ?? []), ...state.found];
+  if (success) state.taken[key] = [...(state.taken[key] ?? []), ...state.found];
   if (success) state.pos[side] = targetOf(state);
   state.turns[side] += 1;
   state.last = { side, success, message, answers: state.found };

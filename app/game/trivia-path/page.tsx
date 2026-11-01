@@ -130,8 +130,8 @@ function TriviaClient() {
     if (finished.current) return;
     finished.current = true;
     setPassed(success);
-    // Answers given this turn are used up for this question, so the other player can't repeat them.
-    setTaken((prev) => ({ ...prev, [targetPos - 1]: [...(prev[targetPos - 1] ?? []), ...answers.map((a) => a.name)] }));
+    // Only answers from a completed question are used up; a failed attempt counts for nothing.
+    if (success) setTaken((prev) => ({ ...prev, [targetPos - 1]: [...(prev[targetPos - 1] ?? []), ...answers.map((a) => a.name)] }));
     setPlayers((prev) =>
       prev.map((p, i) => (i === turn ? { ...p, pos: success ? targetPos : p.pos, turns: p.turns + 1 } : p)),
     );
@@ -139,6 +139,7 @@ function TriviaClient() {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (phase === "play" && secondsLeft === 0 && deadline > 0) finishTurn(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase, secondsLeft, deadline]);
@@ -313,7 +314,7 @@ function TriviaClient() {
             <p className="mt-3 text-sm text-fore-muted">{current.name}: {found.length}/{required}</p>
             <ul className="mt-3 flex flex-wrap gap-2">
               {found.map((entry) => (
-                <li key={entry.name} className="rounded-full border border-accent/50 bg-accent/10 px-3 py-1 text-sm">
+                <li key={entry.name} className={`rounded-full border px-3 py-1 text-sm ${phase === "result" && !passed ? "border-red-400/40 bg-red-400/10 text-fore-muted line-through" : "border-accent/50 bg-accent/10"}`}>
                   {entry.name}
                 </li>
               ))}

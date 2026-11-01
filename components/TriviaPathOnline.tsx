@@ -247,7 +247,7 @@ export default function TriviaPathOnline({ comp, code }: { comp: Competition; co
               <p className="mt-3 text-sm text-fore-muted">{tag(view.turn)}: {view.found.length}/{view.required}</p>
               <ul className="mt-3 flex flex-wrap gap-2">
                 {(view.phase === "result" && view.last ? view.last.answers : view.found).map((name) => (
-                  <li key={name} className="rounded-full border border-accent/50 bg-accent/10 px-3 py-1 text-sm">{name}</li>
+                  <li key={name} className={`rounded-full border px-3 py-1 text-sm ${view.phase === "result" && view.last && !view.last.success ? "border-red-400/40 bg-red-400/10 text-fore-muted line-through" : "border-accent/50 bg-accent/10"}`}>{name}</li>
                 ))}
               </ul>
 
