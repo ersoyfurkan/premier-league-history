@@ -1,12 +1,20 @@
 "use client";
 
 import Link from "next/link";
-import { Suspense, useCallback, useEffect, useRef, useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { FOOTBALL_TIC_TAC_TOE } from "@/data/footballTicTacToe";
+import { FOOTBALL_TIC_TAC_TOE, normalizeFootballPlayerName } from "@/data/footballTicTacToe";
+import PlayerPhoto from "@/components/PlayerPhoto";
 import UclImage from "@/components/UclImage";
-import { lobbyFor, parseComp, type Competition } from "@/lib/gameRoom";
-import type { FootballTicTacToeRoomView } from "@/lib/footballTicTacToe";
+import { poolFor, lobbyFor, parseComp, type Competition } from "@/lib/gameRoom";
+import {
+  applyFootballTicTacToeMove,
+  expireFootballTicTacToeTurn,
+  footballTicTacToeView,
+  newFootballTicTacToeRoom,
+  type FootballTicTacToeRoomState,
+  type FootballTicTacToeRoomView,
+} from "@/lib/footballTicTacToe";
 
 type Api = {
   error?: string;
@@ -16,28 +24,69 @@ type Api = {
 };
 
 const POLL_MS = 1500;
+const TURN_MS = 60_000;
 
 function FootballTicTacToeClient() {
   const search = useSearchParams();
   const router = useRouter();
   const code = (search.get("code") ?? "").toUpperCase();
+  const isLocal = search.get("local") === "1";
   const comp = parseComp(search.get("comp")) as Competition;
   const storageKey = `plttt:${code}`;
   const joining = useRef(false);
 
   const [token, setToken] = useState<string | null>(null);
-  const [view, setView] = useState<FootballTicTacToeRoomView | null>(null);
+  const [remoteView, setRemoteView] = useState<FootballTicTacToeRoomView | null>(null);
+  const [localRoom, setLocalRoom] = useState<FootballTicTacToeRoomState | null>(null);
   const [selectedCell, setSelectedCell] = useState<number | null>(null);
   const [playerName, setPlayerName] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [fatal, setFatal] = useState<string | null>(code ? null : "No room code in this link.");
+  const [serverFatal, setFatal] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [creating, setCreating] = useState(false);
+  const [clockNow, setClockNow] = useState(0);
+  const view = isLocal && localRoom
+    ? footballTicTacToeView(localRoom, localRoom.turn)
+    : remoteView;
+  const fatal = serverFatal ?? (!isLocal && !code ? "No room code in this link." : null);
   const activeComp = view?.comp ?? comp;
-  const puzzle = FOOTBALL_TIC_TAC_TOE[activeComp];
+  const puzzle = view?.puzzle ?? FOOTBALL_TIC_TAC_TOE[activeComp];
 
   useEffect(() => {
-    if (!code || joining.current) return;
+    if (!isLocal) return;
+    const timer = setTimeout(() => {
+      const room = newFootballTicTacToeRoom("local-player-1", comp);
+      room.p2Token = "local-player-2";
+      room.status = "playing";
+      room.turnDeadline = Date.now() + TURN_MS;
+      setLocalRoom(room);
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [comp, isLocal]);
+
+  useEffect(() => {
+    const first = setTimeout(() => setClockNow(Date.now()), 0);
+    const interval = setInterval(() => setClockNow(Date.now()), 250);
+    return () => {
+      clearTimeout(first);
+      clearInterval(interval);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isLocal) return;
+    const interval = setInterval(() => {
+      setLocalRoom((current) => {
+        if (!current) return current;
+        const next = { ...current };
+        return expireFootballTicTacToeTurn(next, Date.now()) ? next : current;
+      });
+    }, 250);
+    return () => clearInterval(interval);
+  }, [isLocal]);
+
+  useEffect(() => {
+    if (isLocal || !code || joining.current) return;
     joining.current = true;
     const saved = localStorage.getItem(storageKey);
     if (saved) {
@@ -57,10 +106,10 @@ function FootballTicTacToeClient() {
         setToken(data.token);
       })
       .catch((cause: Error) => setFatal(cause.message));
-  }, [code, storageKey]);
+  }, [code, isLocal, storageKey]);
 
   const refresh = useCallback(async () => {
-    if (!token) return;
+    if (isLocal || !token) return;
     try {
       const res = await fetch(
         `/api/game/football-tic-tac-toe?code=${encodeURIComponent(code)}&token=${encodeURIComponent(token)}`,
@@ -71,12 +120,12 @@ function FootballTicTacToeClient() {
         if (res.status === 404 || res.status === 403) setFatal(data.error ?? "Room unavailable");
         return;
       }
-      setView(data.view ?? null);
+      setRemoteView(data.view ?? null);
       setError(null);
     } catch {
       setError("Connection interrupted. Reconnecting…");
     }
-  }, [code, token, setError]);
+  }, [code, isLocal, token]);
 
   useEffect(() => {
     if (!token) return;
@@ -86,12 +135,54 @@ function FootballTicTacToeClient() {
       clearTimeout(first);
       clearInterval(timer);
     };
-  }, [token, refresh]);
+  }, [isLocal, token, refresh]);
+
+  const suggestions = useMemo(() => {
+    if (selectedCell === null || !playerName.trim()) return [];
+    const query = normalizeFootballPlayerName(playerName);
+    const usedPlayers = new Set(
+      view?.board
+        .filter((entry): entry is NonNullable<typeof entry> => Boolean(entry))
+        .map((entry) => normalizeFootballPlayerName(entry.player)),
+    );
+    const answers = puzzle.answers[Math.floor(selectedCell / 3)][selectedCell % 3]
+      .filter((name, index, list) =>
+        normalizeFootballPlayerName(name).includes(query) &&
+        !usedPlayers.has(normalizeFootballPlayerName(name)) &&
+        list.findIndex((other) => normalizeFootballPlayerName(other) === normalizeFootballPlayerName(name)) === index,
+      )
+      .slice(0, 8);
+    const players = poolFor(activeComp);
+    return answers.map((name) => ({
+      name,
+      card: players.find((player) => normalizeFootballPlayerName(player.name) === normalizeFootballPlayerName(name)),
+    }));
+  }, [activeComp, playerName, puzzle, selectedCell, view]);
 
   const submitMove = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (selectedCell === null || !token) return;
+    if (selectedCell === null) return;
     setError(null);
+    if (isLocal && localRoom) {
+      const next = { ...localRoom, board: [...localRoom.board] };
+      const moveError = applyFootballTicTacToeMove(
+        next,
+        next.turn,
+        selectedCell,
+        playerName,
+        Date.now(),
+      );
+      if (moveError) {
+        setLocalRoom(next);
+        setError(moveError);
+        return;
+      }
+      setLocalRoom(next);
+      setSelectedCell(null);
+      setPlayerName("");
+      return;
+    }
+    if (!token) return;
     try {
       const res = await fetch("/api/game/football-tic-tac-toe", {
         method: "POST",
@@ -110,7 +201,7 @@ function FootballTicTacToeClient() {
         void refresh();
         return;
       }
-      setView(data.view ?? null);
+      setRemoteView(data.view ?? null);
       setSelectedCell(null);
       setPlayerName("");
     } catch {
@@ -134,6 +225,17 @@ function FootballTicTacToeClient() {
   };
 
   const playAgain = async () => {
+    if (isLocal) {
+      const room = newFootballTicTacToeRoom("local-player-1", activeComp);
+      room.p2Token = "local-player-2";
+      room.status = "playing";
+      room.turnDeadline = Date.now() + TURN_MS;
+      setLocalRoom(room);
+      setSelectedCell(null);
+      setPlayerName("");
+      setError(null);
+      return;
+    }
     setCreating(true);
     setError(null);
     try {
@@ -173,16 +275,22 @@ function FootballTicTacToeClient() {
 
   const isMyTurn = view.turn === view.you;
   const competitionLabel = activeComp === "pl" ? "Premier League" : activeComp === "laliga" ? "La Liga" : "Champions League";
+  const secondsLeft = view.status === "playing" && view.turnDeadline
+    ? Math.min(60, Math.max(0, Math.ceil((view.turnDeadline - clockNow) / 1000)))
+    : null;
+  const currentPlayerName = isLocal ? (view.turn === "p1" ? "Player 1" : "Player 2") : "You";
   const turnMessage = view.status === "waiting"
     ? "Waiting for your friend to join."
     : view.status === "finished"
       ? view.winner === null
         ? "It's a draw!"
+        : view.timedOut
+          ? `${view.timedOut === view.you ? (isLocal ? `Player ${view.you === "p1" ? "1" : "2"}` : "You") : (isLocal ? `Player ${view.timedOut === "p1" ? "1" : "2"}` : "Your friend")} ran out of time.`
         : view.winner === view.you
-          ? "You win!"
-          : "Your friend wins!"
+          ? isLocal ? `${currentPlayerName} wins!` : "You win!"
+          : isLocal ? `${view.winner === "p1" ? "Player 1" : "Player 2"} wins!` : "Your friend wins!"
       : isMyTurn
-        ? "Your turn — choose an empty square and name a player."
+        ? `${isLocal ? `${currentPlayerName}'s turn` : "Your turn"} — choose a square and name a player.`
         : "Your friend is choosing a player…";
 
   return (
@@ -199,32 +307,38 @@ function FootballTicTacToeClient() {
 
       <div className="mt-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="section-eyebrow text-accent">{competitionLabel} · Online vs Friend</p>
+          <p className="section-eyebrow text-accent">{competitionLabel} · {isLocal ? "Same device" : "Online vs Friend"}</p>
           <h2 className="mt-2 text-3xl md:text-5xl">Football Tic-Tac-Toe</h2>
         </div>
-        <p className="text-lg text-fore-muted">{turnMessage}</p>
+        <div className="text-right">
+          <p className="text-lg text-fore-muted">{turnMessage}</p>
+          {secondsLeft !== null && (
+            <p className={`mt-1 font-mono text-sm font-bold ${secondsLeft <= 10 ? "text-warning" : "text-primary"}`}>
+              {isLocal ? currentPlayerName : isMyTurn ? "Your" : "Opponent"} timer: {Math.floor(secondsLeft / 60)}:{String(secondsLeft % 60).padStart(2, "0")}
+            </p>
+          )}
+        </div>
       </div>
 
-      <div className="mt-6 overflow-x-auto rounded-2xl border border-border bg-surface/70 p-4 md:p-6">
-        <div className="min-w-[620px]">
-          <div className="grid grid-cols-[150px_repeat(3,minmax(130px,1fr))] gap-2">
+      {view.status !== "waiting" && (
+      <div className="mt-6 rounded-2xl border border-border bg-surface/70 p-2 sm:p-4 md:p-6">
+          <div className="grid grid-cols-[minmax(64px,0.8fr)_repeat(3,minmax(0,1.35fr))] gap-1.5 sm:gap-2">
             <div />
             {puzzle.columns.map((column) => (
-              <div key={column.label} className="flex min-h-20 items-center justify-center gap-2 rounded-xl border border-accent/30 bg-accent/5 p-3 text-center text-sm font-semibold">
+              <div key={column.label} className="flex min-h-20 min-w-0 flex-col items-center justify-center gap-1 rounded-lg border border-accent/30 bg-accent/5 p-1.5 text-center text-[10px] font-semibold leading-tight break-words sm:flex-row sm:gap-2 sm:rounded-xl sm:p-3 sm:text-sm">
                 {column.badge && (
-                  <UclImage src={column.badge} alt={column.badgeAlt ?? column.label} className="h-8 w-8" />
+                  <UclImage src={column.badge} alt={column.badgeAlt ?? column.label} className="h-6 w-6 sm:h-8 sm:w-8" />
                 )}
-                <span>{column.label}</span>
+                <span className="min-w-0">{column.label}</span>
               </div>
             ))}
-
             {puzzle.rows.map((row, rowIndex) => (
               <div key={row.label} className="contents">
-                <div className="flex min-h-32 items-center gap-2 rounded-xl border border-primary/30 bg-primary/5 p-3 text-sm font-semibold">
+                <div className="flex min-h-24 min-w-0 flex-col items-center justify-center gap-1 rounded-lg border border-primary/30 bg-primary/5 p-1.5 text-center text-[10px] font-semibold leading-tight break-words sm:min-h-32 sm:flex-row sm:gap-2 sm:rounded-xl sm:p-3 sm:text-sm sm:text-left">
                   {row.badge && (
-                    <UclImage src={row.badge} alt={row.badgeAlt ?? row.label} className="h-8 w-8" />
+                    <UclImage src={row.badge} alt={row.badgeAlt ?? row.label} className="h-6 w-6 sm:h-8 sm:w-8" />
                   )}
-                  <span>{row.label}</span>
+                  <span className="min-w-0">{row.label}</span>
                 </div>
                 {puzzle.columns.map((column, columnIndex) => {
                   const index = rowIndex * 3 + columnIndex;
@@ -239,7 +353,7 @@ function FootballTicTacToeClient() {
                         setSelectedCell(index);
                         setError(null);
                       }}
-                      className={`min-h-32 rounded-xl border p-3 text-center transition ${
+                      className={`min-h-24 min-w-0 touch-manipulation rounded-lg border p-1.5 text-center transition sm:min-h-32 sm:rounded-xl sm:p-3 ${
                         selectedCell === index
                           ? "border-primary bg-primary/15"
                           : cell?.side === "p1"
@@ -255,10 +369,10 @@ function FootballTicTacToeClient() {
                           <span className={`block text-xs font-mono ${cell.side === "p1" ? "text-primary" : "text-accent"}`}>
                             {cell.side === "p1" ? "X" : "O"}
                           </span>
-                          <span className="mt-1 block font-semibold">{cell.player}</span>
+                          <span className="mt-1 block break-words text-[10px] font-semibold leading-tight sm:text-sm">{cell.player}</span>
                         </>
                       ) : (
-                        <span className="text-sm text-fore-muted">
+                        <span className="text-[10px] text-fore-muted sm:text-sm">
                           {selectable ? (selectedCell === index ? "Selected" : "Choose square") : "—"}
                         </span>
                       )}
@@ -268,26 +382,54 @@ function FootballTicTacToeClient() {
               </div>
             ))}
           </div>
-        </div>
       </div>
+      )}
 
       <div className="mt-5 rounded-2xl border border-border bg-surface/70 p-5 md:p-6">
         <p className="text-sm text-fore-muted">
-          You are <span className={view.you === "p1" ? "font-bold text-primary" : "font-bold text-accent"}>{view.you === "p1" ? "X" : "O"}</span>.
+          {isLocal ? `${currentPlayerName} is` : "You are"} <span className={view.you === "p1" ? "font-bold text-primary" : "font-bold text-accent"}>{view.you === "p1" ? "X" : "O"}</span>.
           Take turns naming a real player who matches both clues. First to complete a line wins.
         </p>
         {view.status === "playing" && isMyTurn && selectedCell !== null && (
-          <form onSubmit={submitMove} className="mt-4 flex flex-wrap gap-3">
+          <form onSubmit={submitMove} className="mt-4 flex flex-wrap items-start gap-3">
             <label htmlFor="football-player-answer" className="sr-only">Player name</label>
-            <input
-              id="football-player-answer"
-              autoComplete="off"
-              value={playerName}
-              onChange={(event) => setPlayerName(event.target.value)}
-              placeholder="Enter a player matching both clues"
-              className="min-w-60 flex-1 rounded-xl border border-border bg-background px-4 py-3 text-foreground"
-              maxLength={80}
-            />
+            <div className="relative min-w-0 flex-1">
+              <input
+                id="football-player-answer"
+                autoComplete="off"
+                value={playerName}
+                onChange={(event) => setPlayerName(event.target.value)}
+                placeholder="Type a player name"
+                className="w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground"
+                maxLength={80}
+                role="combobox"
+                aria-expanded={suggestions.length > 0}
+                aria-controls="football-player-suggestions"
+              />
+              {suggestions.length > 0 && (
+                <div id="football-player-suggestions" role="listbox" className="absolute left-0 right-0 top-full z-20 mt-1 max-h-64 overflow-y-auto rounded-xl border border-border bg-surface shadow-xl">
+                  {suggestions.map(({ name, card }) => (
+                    <button
+                      key={name}
+                      type="button"
+                      role="option"
+                      aria-selected={playerName === name}
+                      onClick={() => setPlayerName(name)}
+                      className="flex w-full items-center gap-3 px-3 py-2 text-left text-sm hover:bg-primary/10"
+                    >
+                      {card?.photo ? (
+                        <UclImage src={card.photo} alt="" className="h-9 w-9" shape="circle" />
+                      ) : activeComp === "pl" && card ? (
+                        <PlayerPhoto id={card.id} name={name} />
+                      ) : (
+                        <UclImage alt={name} className="h-9 w-9" shape="circle" />
+                      )}
+                      <span>{name}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
             <button type="submit" disabled={!playerName.trim()} className="btn-primary disabled:opacity-50">
               Play answer
             </button>

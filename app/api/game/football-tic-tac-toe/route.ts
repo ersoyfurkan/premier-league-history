@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import {
   applyFootballTicTacToeMove,
+  expireFootballTicTacToeTurn,
   footballTicTacToeSideOf,
   footballTicTacToeView,
   newFootballTicTacToeRoom,
@@ -50,6 +51,14 @@ async function handleGet(request: NextRequest) {
 
   const side = footballTicTacToeSideOf(room.state, token);
   if (!side) return json({ error: "You are not in this room" }, 403);
+  const now = Date.now();
+  const needsDeadline = room.state.status === "playing" && room.state.turnDeadline === undefined;
+  if (needsDeadline) {
+    room.state.turnDeadline = now + 60_000;
+  }
+  if (expireFootballTicTacToeTurn(room.state, now) || needsDeadline) {
+    await saveRoom(env.DB, code, room.state, room.version);
+  }
   return json({ view: footballTicTacToeView(room.state, side) });
 }
 
@@ -98,6 +107,7 @@ async function handlePost(request: NextRequest) {
     const token = crypto.randomUUID();
     state.p2Token = token;
     state.status = "playing";
+    state.turnDeadline = Date.now() + 60_000;
     if (!(await saveRoom(db, code, state, version))) return json({ error: "Room is busy, try again" }, 409);
     return json({ code, token });
   }
@@ -107,8 +117,14 @@ async function handlePost(request: NextRequest) {
   if (!side) return json({ error: "You are not in this room" }, 403);
 
   if (body.action !== "move") return json({ error: "Unknown action" }, 400);
-  const error = applyFootballTicTacToeMove(state, side, Number(body.cell), String(body.player ?? ""));
-  if (error) return json({ error }, 400);
+  const error = applyFootballTicTacToeMove(state, side, Number(body.cell), String(body.player ?? ""), Date.now());
+  if (error) {
+    if (state.status === "finished" && state.timedOut) {
+      await saveRoom(db, code, state, version);
+      return json({ error, view: footballTicTacToeView(state, side) }, 409);
+    }
+    return json({ error }, 400);
+  }
   if (!(await saveRoom(db, code, state, version))) return json({ error: "Room is busy, try again" }, 409);
   return json({ view: footballTicTacToeView(state, side) });
 }

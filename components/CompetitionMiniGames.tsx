@@ -177,6 +177,14 @@ const FALLBACK_PLAYER_PHOTOS: Record<string, string> = {
   "Kylian Mbappé": espnHeadshot("231388"),
   "Luka Modrić": espnHeadshot("125859"),
   "Vinícius Júnior": espnHeadshot("252107"),
+  "Alexander Isak": espnHeadshot("234613"),
+  "Ollie Watkins": espnHeadshot("229647"),
+  "Cole Palmer": espnHeadshot("294357"),
+  "Mikel Oyarzabal": espnHeadshot("229018"),
+  "Nabil Fekir": espnHeadshot("212888"),
+  "Takefusa Kubo": espnHeadshot("254453"),
+  "Lautaro Martínez": espnHeadshot("219713"),
+  "Julián Álvarez": espnHeadshot("277206"),
 };
 
 function marketPlayerCard(comp: Competition, name: string) {
@@ -295,9 +303,11 @@ function TransferMarketHigherLower({ comp, onBack }: { comp: Competition; onBack
                 <p className={`mt-5 font-display text-5xl ${reveal ? "text-primary" : "text-accent"}`}>
                   {reveal ? formatValue(snapshot.value) : "€?"}
                 </p>
+                <p className="mt-1 text-sm text-fore-muted">
+                  {reveal ? "Market value" : "Value in"} · {snapshot.year}
+                </p>
                 {reveal && (
                   <>
-                    <p className="mt-1 text-sm text-fore-muted">Market value · {snapshot.year}</p>
                     <a href={player.source} target="_blank" rel="noreferrer" className="mt-3 text-xs text-primary underline">
                       View Transfermarkt value history
                     </a>

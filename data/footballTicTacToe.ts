@@ -73,6 +73,28 @@ export const FOOTBALL_TIC_TAC_TOE: Record<Competition, FootballTicTacToePuzzle> 
   },
 };
 
+function shuffledIndexes() {
+  const indexes = [0, 1, 2];
+  for (let index = indexes.length - 1; index > 0; index -= 1) {
+    const swapIndex = Math.floor(Math.random() * (index + 1));
+    [indexes[index], indexes[swapIndex]] = [indexes[swapIndex], indexes[index]];
+  }
+  return indexes;
+}
+
+export function randomFootballTicTacToePuzzle(comp: Competition): FootballTicTacToePuzzle {
+  const puzzle = FOOTBALL_TIC_TAC_TOE[comp];
+  const rowOrder = shuffledIndexes();
+  const columnOrder = shuffledIndexes();
+  return {
+    rows: rowOrder.map((index) => puzzle.rows[index]) as FootballTicTacToePuzzle["rows"],
+    columns: columnOrder.map((index) => puzzle.columns[index]) as FootballTicTacToePuzzle["columns"],
+    answers: rowOrder.map((row) =>
+      columnOrder.map((column) => puzzle.answers[row][column]),
+    ),
+  };
+}
+
 export function normalizeFootballPlayerName(value: string) {
   return value
     .normalize("NFD")
@@ -82,12 +104,17 @@ export function normalizeFootballPlayerName(value: string) {
     .toLowerCase();
 }
 
-export function isFootballTicTacToeAnswer(comp: Competition, cell: number, guess: string) {
+export function isFootballTicTacToeAnswer(
+  comp: Competition,
+  cell: number,
+  guess: string,
+  puzzle: FootballTicTacToePuzzle = FOOTBALL_TIC_TAC_TOE[comp],
+) {
   if (!Number.isInteger(cell) || cell < 0 || cell > 8) return false;
   const row = Math.floor(cell / 3);
   const column = cell % 3;
   const normalizedGuess = normalizeFootballPlayerName(guess);
-  return FOOTBALL_TIC_TAC_TOE[comp].answers[row][column].some(
+  return puzzle.answers[row][column].some(
     (answer) => normalizeFootballPlayerName(answer) === normalizedGuess,
   );
 }
