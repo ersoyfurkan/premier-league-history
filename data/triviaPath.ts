@@ -1,11 +1,11 @@
 import type { Competition } from "@/lib/gameRoom";
-import { normalizeFootballPlayerName } from "@/data/footballTicTacToe";
+import { footballFacts, normalizeFootballPlayerName } from "@/data/footballTicTacToe";
 import { DUEL_CLUBS, playersForBoth, playersForClub, searchDuelPlayers } from "@/data/clubDuel";
 
 export type TriviaEntry = { name: string; aliases: string[] };
-export type TriviaQuestion = { id: string; text: string; count: number; noun: string; plural: string; entries: TriviaEntry[] };
+export type TriviaQuestion = { id: string; text: string; count: number; noun: string; plural: string; entries: TriviaEntry[]; short?: string };
 
-type Category = { id: string; noun: string; plural: string; entries: TriviaEntry[] };
+type Category = { id: string; noun: string; plural: string; entries: TriviaEntry[]; short?: string };
 
 const WORDS = ["", "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX"];
 const e = (name: string, ...aliases: string[]): TriviaEntry => ({ name, aliases });
@@ -79,11 +79,19 @@ const SHARED_EXTRA: Category[] = [
   cat("s-wcfinal", "player who scored in a World Cup final", "players who scored in a World Cup final", "Pelé/Pele|Geoff Hurst/Hurst|Zinedine Zidane/Zidane|Kylian Mbappé/Kylian Mbappe/Mbappe|Lionel Messi/Messi|Mario Götze/Mario Gotze/Gotze|Ronaldo Nazário/Ronaldo|Mario Kempes/Kempes|Andrés Iniesta/Andres Iniesta/Iniesta|Paul Breitner/Breitner|Gerd Müller/Gerd Muller|Marco Tardelli/Tardelli|Ángel Di María/Angel Di Maria/Di Maria|Marco Materazzi/Materazzi|Marcel Desailly/Desailly|Emmanuel Petit/Petit"),
   cat("s-clmgr", "manager who has won the Champions League or European Cup", "managers who have won the Champions League or European Cup", "Carlo Ancelotti/Ancelotti|Pep Guardiola/Guardiola|Zinedine Zidane/Zidane|Jürgen Klopp/Jurgen Klopp/Klopp|José Mourinho/Jose Mourinho/Mourinho|Alex Ferguson/Ferguson|Hansi Flick/Flick|Luis Enrique|Jupp Heynckes/Heynckes|Vicente del Bosque/Del Bosque|Frank Rijkaard/Rijkaard|Bob Paisley/Paisley|Ottmar Hitzfeld/Hitzfeld|Marcello Lippi/Lippi|Arrigo Sacchi/Sacchi|Johan Cruyff/Cruyff|Louis van Gaal/Van Gaal|Rafa Benítez/Rafa Benitez/Benitez|Thomas Tuchel/Tuchel|Brian Clough/Clough|Fabio Capello/Capello|Roberto Di Matteo/Di Matteo"),
   cat("s-clmulti", "player who has won the Champions League with two different clubs", "players who have won the Champions League with two different clubs", "Clarence Seedorf/Seedorf|Samuel Eto'o/Eto'o/Etoo|Cristiano Ronaldo|Xabi Alonso|Toni Kroos/Kroos|David Alaba/Alaba|Marcel Desailly/Desailly|Paulo Sousa|Edwin van der Sar/Van der Sar"),
+  cat("s-wchost", "country that has hosted the men's World Cup", "countries that have hosted the men's World Cup", "Uruguay|Italy|France|Brazil|Switzerland|Sweden|Chile|England|Mexico|West Germany/Germany|Argentina|Spain|United States/USA|South Korea/Japan|South Africa|Russia|Qatar"),
+  cat("s-wcball", "player who has won the World Cup Golden Ball", "players who have won the World Cup Golden Ball", "Paolo Rossi/Rossi|Diego Maradona/Maradona|Salvatore Schillaci/Schillaci|Romário/Romario|Ronaldo Nazário/Ronaldo|Oliver Kahn/Kahn|Zinedine Zidane/Zidane|Diego Forlán/Diego Forlan/Forlan|Lionel Messi/Messi|Luka Modrić/Luka Modric/Modric|Mario Kempes/Kempes"),
+  cat("s-wcboot", "player who has won the World Cup Golden Boot", "players who have won the World Cup Golden Boot", "Just Fontaine/Fontaine|Gerd Müller/Gerd Muller|Gary Lineker/Lineker|Salvatore Schillaci/Schillaci|Davor Šuker/Davor Suker/Suker|Ronaldo Nazário/Ronaldo|Miroslav Klose/Klose|Thomas Müller/Thomas Muller|James Rodríguez/James Rodriguez/James|Harry Kane/Kane|Kylian Mbappé/Kylian Mbappe/Mbappe|Eusébio/Eusebio|Paolo Rossi/Rossi|Mario Kempes/Kempes|Sándor Kocsis/Sandor Kocsis/Kocsis|Ademir"),
+  cat("s-wccapt", "captain of a men's World Cup-winning team", "captains of men's World Cup-winning teams", "Lionel Messi/Messi|Hugo Lloris/Lloris|Didier Deschamps/Deschamps|Cafu|Fabio Cannavaro/Cannavaro|Iker Casillas/Casillas|Philipp Lahm/Lahm|Lothar Matthäus/Lothar Matthaus/Matthaus|Diego Maradona/Maradona|Dunga|Bobby Moore/Moore|Franz Beckenbauer/Beckenbauer|Daniel Passarella/Passarella|Dino Zoff/Zoff|Carlos Alberto"),
+  cat("s-wcgk", "goalkeeper who has won the World Cup", "goalkeepers who have won the World Cup", "Gianluigi Buffon/Buffon|Iker Casillas/Casillas|Hugo Lloris/Lloris|Manuel Neuer/Neuer|Emiliano Martínez/Emiliano Martinez/Martinez|Fabien Barthez/Barthez|Dino Zoff/Zoff|Gordon Banks/Banks|Gilmar|Cláudio Taffarel/Claudio Taffarel/Taffarel|Marcos|Sepp Maier/Maier|Harald Schumacher|Ubaldo Fillol/Fillol"),
+  cat("s-ballonfw", "player who has won the Ballon d'Or while playing for Real Madrid or Barcelona", "players who have won the Ballon d'Or while playing for Real Madrid or Barcelona", "Cristiano Ronaldo|Lionel Messi/Messi|Luka Modrić/Luka Modric/Modric|Karim Benzema/Benzema|Ronaldo Nazário/Ronaldo|Luís Figo/Luis Figo/Figo|Rivaldo|Hristo Stoichkov/Stoichkov|Alfredo Di Stéfano/Alfredo Di Stefano/Di Stefano|Raymond Kopa/Kopa|Ronaldinho|Johan Cruyff/Cruyff"),
 ];
 
 const LEAGUE_EXTRA: Record<Competition, Category[]> = {
   pl: [
-    cat("s-plgb", "player who has won the Premier League Golden Boot", "players who have won the Premier League Golden Boot", "Alan Shearer/Shearer|Thierry Henry/Henry|Mohamed Salah/Salah|Harry Kane/Kane|Erling Haaland/Haaland|Son Heung-min/Heung-min Son/Son|Sergio Agüero/Sergio Aguero/Aguero|Jamie Vardy/Vardy|Luis Suárez/Luis Suarez/Suarez|Robin van Persie/Van Persie|Didier Drogba/Drogba|Cristiano Ronaldo|Ruud van Nistelrooy/Van Nistelrooy|Kevin Phillips|Jimmy Floyd Hasselbaink/Hasselbaink|Andy Cole|Teddy Sheringham/Sheringham|Michael Owen/Owen|Nicolas Anelka/Anelka|Dwight Yorke/Yorke|Carlos Tevez/Tevez|Dimitar Berbatov/Berbatov|Sadio Mané/Sadio Mane/Mane|Pierre-Emerick Aubameyang/Aubameyang"),
+    cat("s-pllondon", "London club that has played in the Premier League", "London clubs that have played in the Premier League", "Arsenal|Chelsea|Tottenham Hotspur/Tottenham/Spurs|West Ham United/West Ham|Crystal Palace/Palace|Fulham|Brentford|Charlton Athletic/Charlton|Wimbledon|Queens Park Rangers/QPR"),
+    cat("s-plnw", "North West England club that has played in the Premier League", "North West England clubs that have played in the Premier League", "Manchester United/Man United/Man Utd|Manchester City/Man City|Liverpool|Everton|Blackburn Rovers/Blackburn|Bolton Wanderers/Bolton|Wigan Athletic/Wigan|Burnley|Oldham Athletic/Oldham|Blackpool"),
+    cat("s-plgb",  "player who has won the Premier League Golden Boot", "players who have won the Premier League Golden Boot", "Alan Shearer/Shearer|Thierry Henry/Henry|Mohamed Salah/Salah|Harry Kane/Kane|Erling Haaland/Haaland|Son Heung-min/Heung-min Son/Son|Sergio Agüero/Sergio Aguero/Aguero|Jamie Vardy/Vardy|Luis Suárez/Luis Suarez/Suarez|Robin van Persie/Van Persie|Didier Drogba/Drogba|Cristiano Ronaldo|Ruud van Nistelrooy/Van Nistelrooy|Kevin Phillips|Jimmy Floyd Hasselbaink/Hasselbaink|Andy Cole|Teddy Sheringham/Sheringham|Michael Owen/Owen|Nicolas Anelka/Anelka|Dwight Yorke/Yorke|Carlos Tevez/Tevez|Dimitar Berbatov/Berbatov|Sadio Mané/Sadio Mane/Mane|Pierre-Emerick Aubameyang/Aubameyang"),
     cat("s-plclub", "club that has won the Premier League", "clubs that have won the Premier League", "Manchester United/Man United/Man Utd|Arsenal|Chelsea|Manchester City/Man City|Blackburn Rovers/Blackburn|Leicester City/Leicester|Liverpool"),
     cat("s-plrel", "club that has been relegated from the Premier League", "clubs that have been relegated from the Premier League", "Sunderland|Norwich City/Norwich|Burnley|Sheffield United|Southampton|Leicester City/Leicester|Ipswich Town/Ipswich|Wigan Athletic/Wigan|Bolton Wanderers/Bolton|Blackburn Rovers/Blackburn|Middlesbrough|Hull City/Hull|Queens Park Rangers/QPR|Stoke City/Stoke|Swansea City/Swansea|Watford|Fulham|Derby County/Derby|Portsmouth|Birmingham City/Birmingham|Charlton Athletic/Charlton|Coventry City/Coventry|Leeds United/Leeds|West Ham United/West Ham|Newcastle United/Newcastle|Aston Villa|West Bromwich Albion/West Brom|Cardiff City/Cardiff|Huddersfield Town/Huddersfield|Reading|Wolverhampton Wanderers/Wolves|Wimbledon|Nottingham Forest/Forest"),
     cat("s-plinv", "member of Arsenal's 2003/04 Invincibles squad", "members of Arsenal's 2003/04 Invincibles squad", "Thierry Henry/Henry|Dennis Bergkamp/Bergkamp|Patrick Vieira/Vieira|Robert Pires/Pires|Freddie Ljungberg/Ljungberg|Sol Campbell/Campbell|Ashley Cole/Cole|Lauren|Kolo Touré/Kolo Toure/Toure|Jens Lehmann/Lehmann|Gilberto Silva/Gilberto|Edu|Nwankwo Kanu/Kanu|Sylvain Wiltord/Wiltord|Ray Parlour/Parlour|Martin Keown/Keown|Jose Antonio Reyes/Reyes|Cesc Fàbregas/Cesc Fabregas/Fabregas"),
@@ -106,7 +114,9 @@ const LEAGUE_EXTRA: Record<Competition, Category[]> = {
     cat("s-sadef", "legendary Serie A defender", "legendary Serie A defenders", "Paolo Maldini/Maldini|Franco Baresi/Baresi|Fabio Cannavaro/Cannavaro|Alessandro Nesta/Nesta|Giorgio Chiellini/Chiellini|Leonardo Bonucci/Bonucci|Lilian Thuram/Thuram|Gaetano Scirea/Scirea|Alessandro Costacurta/Costacurta|Andrea Barzagli/Barzagli|Jaap Stam/Stam|Javier Zanetti/Zanetti|Walter Samuel/Samuel|Marcel Desailly/Desailly"),
   ],
   ucl: [
-    cat("s-uclscorers", "player among the Champions League's all-time top scorers", "players among the Champions League's all-time top scorers", "Cristiano Ronaldo|Lionel Messi/Messi|Robert Lewandowski/Lewandowski|Karim Benzema/Benzema|Raúl/Raul|Thomas Müller/Thomas Muller/Muller|Ruud van Nistelrooy/Van Nistelrooy|Thierry Henry/Henry|Kylian Mbappé/Kylian Mbappe/Mbappe|Erling Haaland/Haaland|Andriy Shevchenko/Shevchenko|Alessandro Del Piero/Del Piero"),
+    cat("s-uclfinallost", "club that has lost a European Cup or Champions League final", "clubs that have lost a European Cup or Champions League final", "Real Madrid|Juventus|Liverpool|Bayern Munich/Bayern|AC Milan/Milan|Inter Milan/Inter|Barcelona|Manchester United/Man United/Man Utd|Chelsea|Atlético Madrid/Atletico Madrid/Atletico|Borussia Dortmund/Dortmund|Paris Saint-Germain/PSG|Tottenham Hotspur/Tottenham/Spurs|Manchester City/Man City|Arsenal|Valencia|Benfica|Stade de Reims/Reims|Fiorentina|Leeds United/Leeds|Monaco|Bayer Leverkusen/Leverkusen|Club Brugge/Brugge|Panathinaikos|Partizan|Sampdoria|Malmö/Malmo|Roma/AS Roma|Eintracht Frankfurt/Frankfurt|Hamburg|Saint-Étienne/Saint-Etienne/St Etienne"),
+    cat("s-uclpens", "club that has won a European Cup or Champions League final on penalties", "clubs that have won a European Cup or Champions League final on penalties", "Liverpool|Steaua Bucharest/Steaua|Juventus|Red Star Belgrade/Red Star|Bayern Munich/Bayern|AC Milan/Milan|Manchester United/Man United/Man Utd|Chelsea|Real Madrid"),
+    cat("s-uclscorers",  "player among the Champions League's all-time top scorers", "players among the Champions League's all-time top scorers", "Cristiano Ronaldo|Lionel Messi/Messi|Robert Lewandowski/Lewandowski|Karim Benzema/Benzema|Raúl/Raul|Thomas Müller/Thomas Muller/Muller|Ruud van Nistelrooy/Van Nistelrooy|Thierry Henry/Henry|Kylian Mbappé/Kylian Mbappe/Mbappe|Erling Haaland/Haaland|Andriy Shevchenko/Shevchenko|Alessandro Del Piero/Del Piero"),
   ],
 };
 
@@ -169,7 +179,103 @@ const SHORT: Record<string, string> = {
   "s-scotstad": "Scottish stadiums",
   "s-clwin": "UCL winners",
   "s-clubs": "League clubs",
+  "s-wchost": "WC hosts",
+  "s-wcball": "WC Golden Ball",
+  "s-wcboot": "WC Golden Boot",
+  "s-wccapt": "WC captains",
+  "s-wcgk": "WC keepers",
+  "s-ballonfw": "Madrid/Barça Ballon d'Or",
+  "s-pllondon": "London clubs",
+  "s-plnw": "North West clubs",
+  "s-uclfinallost": "Final losers",
+  "s-uclpens": "Penalty winners",
+  "s-euro": "Euro winners",
+  "s-wcfinal": "WC final scorers",
+  "s-clmgr": "UCL managers",
+  "s-clmulti": "Double UCL winners",
+  "s-plgb": "Golden Boot",
+  "s-plclub": "PL champions",
+  "s-plrel": "Relegated clubs",
+  "s-plinv": "Invincibles",
+  "s-plcapt": "Title captains",
+  "s-plmun7": "United No. 7",
+  "s-llclub": "Liga champions",
+  "s-ll2010": "Spain 2010",
+  "s-llpich": "Pichichi",
+  "s-llmasia": "La Masia",
+  "s-llspmgr": "Spanish managers",
+  "s-lleuro": "Euro trophies",
+  "s-saclub": "Scudetto clubs",
+  "s-sacap": "Capocannoniere",
+  "s-sagk": "Serie A keepers",
+  "s-sajuve": "Juve foreigners",
+  "s-sadef": "Defenders",
+  "s-uclscorers": "UCL scorers",
 };
+
+const NATIONS: Record<string, string> = {
+  esp: "Spanish", fra: "French", bra: "Brazilian", arg: "Argentine", por: "Portuguese", eng: "English", ned: "Dutch",
+  bel: "Belgian", ger: "German", ita: "Italian", uru: "Uruguayan", mex: "Mexican", cro: "Croatian", wal: "Welsh",
+  sen: "Senegalese", srb: "Serbian",
+};
+
+// Questions built from the career dataset, so any player in it is a valid answer.
+function dynamicCategory(comp: Competition): Category | null {
+  const clubs = DUEL_CLUBS[comp];
+  const facts = footballFacts(comp);
+  const leagueKeys = new Set(clubs.map((club) => club.key));
+  const names = (items: typeof facts) => playerEntries(items.map((fact) => fact.name));
+  const kind = Math.floor(Math.random() * 5);
+
+  if (kind === 0) {
+    const nat = pick(Object.keys(NATIONS));
+    const club = pick(clubs);
+    const pool = facts.filter((fact) => fact.nat.includes(nat) && fact.clubs.includes(club.key));
+    if (pool.length < 7) return null;
+    return {
+      id: `n-${nat}-${club.key}`,
+      short: `${NATIONS[nat]} at ${club.label}`,
+      noun: `${NATIONS[nat]} player who played for ${club.label}`,
+      plural: `${NATIONS[nat]} players who played for ${club.label}`,
+      entries: names(pool),
+    };
+  }
+  if (kind === 1) {
+    const nat = pick(Object.keys(NATIONS));
+    const pool = facts.filter((fact) => fact.nat.includes(nat) && fact.clubs.some((key) => leagueKeys.has(key)));
+    if (pool.length < 10) return null;
+    return {
+      id: `l-${nat}`,
+      short: `${NATIONS[nat]} players`,
+      noun: `${NATIONS[nat]} player who played for a club in this league this season`,
+      plural: `${NATIONS[nat]} players who played for a club in this league this season`,
+      entries: names(pool),
+    };
+  }
+  if (kind === 2) {
+    const club = pick(clubs);
+    const pool = facts.filter((fact) => fact.tags.includes("wc") && fact.clubs.includes(club.key));
+    if (pool.length < 7) return null;
+    return {
+      id: `h-wc-${club.key}`,
+      short: `WC winners at ${club.label}`,
+      noun: `World Cup winner who played for ${club.label}`,
+      plural: `World Cup winners who played for ${club.label}`,
+      entries: names(pool),
+    };
+  }
+  const min = kind === 3 ? 3 : 4;
+  const pool = facts.filter((fact) => fact.clubs.filter((key) => leagueKeys.has(key)).length >= min);
+  if (pool.length < 8) return null;
+  const word = min === 3 ? "three" : "four";
+  return {
+    id: `m${min}`,
+    short: `${min}+ league clubs`,
+    noun: `player who played for at least ${word} of this season's clubs in this league`,
+    plural: `players who played for at least ${word} of this season's clubs in this league`,
+    entries: names(pool),
+  };
+}
 
 // Builds a random path of categories. The dice later decides how many answers each one needs.
 export function generateBoard(comp: Competition): BoardTile[] {
@@ -178,7 +284,7 @@ export function generateBoard(comp: Competition): BoardTile[] {
   return Array.from({ length: BOARD_SIZE }, () => {
     const q = pickTriviaQuestion(comp, 6, used);
     used.add(q.id);
-    let short = SHORT[q.id] ?? "Trivia";
+    let short = q.short ?? SHORT[q.id] ?? "Trivia";
     if (q.id.startsWith("c-")) short = clubLabel(q.id.slice(2));
     else if (q.id.startsWith("p-")) short = q.id.slice(2).split("-").map(clubLabel).join(" + ");
     return { id: q.id, short, noun: q.noun, plural: q.plural, entries: q.entries };
@@ -213,12 +319,13 @@ export function pickTriviaQuestion(comp: Competition, count: number, used: Set<s
     noun: category.noun,
     plural: category.plural,
     entries: category.entries,
+    short: category.short,
     text: `Name ${WORDS[count]} ${count === 1 ? category.noun : category.plural}`,
   });
 
-  for (let attempt = 0; attempt < 60; attempt += 1) {
+  for (let attempt = 0; attempt < 80; attempt += 1) {
     const roll = Math.random();
-    if (roll < 0.5) {
+    if (roll < 0.25) {
       const club = pick(clubs);
       const id = `c-${club.key}`;
       if (used.has(id)) continue;
@@ -231,7 +338,7 @@ export function pickTriviaQuestion(comp: Competition, count: number, used: Set<s
         entries: playerEntries(names),
       });
     }
-    if (roll < 0.75) {
+    if (roll < 0.4) {
       const a = pick(clubs);
       const b = pick(clubs);
       if (a.key >= b.key) continue;
@@ -245,6 +352,11 @@ export function pickTriviaQuestion(comp: Competition, count: number, used: Set<s
         plural: `players who played for both ${a.label} and ${b.label}`,
         entries: playerEntries(names),
       });
+    }
+    if (roll < 0.65) {
+      const dynamic = dynamicCategory(comp);
+      if (!dynamic || used.has(dynamic.id)) continue;
+      return build(dynamic.id, dynamic);
     }
     const statics = [...STATIC[comp], leagueClubCategory(comp)].filter(
       (category) => !used.has(category.id) && category.entries.length >= need,

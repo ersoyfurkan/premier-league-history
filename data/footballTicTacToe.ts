@@ -1,6 +1,6 @@
 ﻿import type { Competition } from "@/lib/gameRoom";
 import { CAREERS } from "@/data/clubDuelCareers";
-import { NATIONS } from "@/data/playerNations";
+import { nationOf } from "@/data/playerNations";
 
 export type FootballTicTacToeCell = {
   player: string;
@@ -824,7 +824,7 @@ function withUniverse(own: Fact[], others: Fact[][]): Fact[] {
     const [name, keys] = line.split(":");
     if (!name || !keys || name.startsWith("//")) continue;
     const trimmed = name.trim();
-    const nation = NATIONS.get(trimmed);
+    const nation = nationOf(trimmed);
     const fact = get(trimmed, nation ? [nation] : []);
     if (nation && !fact.nat.includes(nation)) fact.nat.push(nation);
     for (const club of keys.trim().split(/\s+/)) if (!fact.clubs.includes(club)) fact.clubs.push(club);
@@ -858,6 +858,10 @@ export function footballCareers(): { name: string; clubs: string[] }[] {
   return (Object.keys(FACTS) as Competition[]).flatMap((comp) =>
     FACTS[comp].map((fact) => ({ name: fact.name, clubs: fact.clubs })),
   );
+}
+
+export function footballFacts(comp: Competition): { name: string; nat: string[]; clubs: string[]; tags: string[] }[] {
+  return FACTS[comp];
 }
 
 const club = (label: string, badge: string, key: string, short = label): Def => ({

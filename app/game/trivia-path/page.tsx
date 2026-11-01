@@ -43,6 +43,7 @@ function TriviaClient() {
   const [guess, setGuess] = useState("");
   const [feedback, setFeedback] = useState<string | null>(null);
   const [passed, setPassed] = useState(false);
+  const [origin, setOrigin] = useState(0);
   const finished = useRef(false);
 
   useEffect(() => {
@@ -53,8 +54,9 @@ function TriviaClient() {
 
   const secondsLeft = Math.max(0, Math.ceil((deadline - now) / 1000));
   const current = players[turn];
-  const targetPos = current && dice ? Math.min(current.pos + dice, BOARD_SIZE) : 0;
-  const tile = current && dice ? board[targetPos - 1] : undefined;
+  // origin is the position at roll time, so the target stays correct after pos updates in the result phase
+  const targetPos = dice ? Math.min(origin + dice, BOARD_SIZE) : 0;
+  const tile = dice ? board[targetPos - 1] : undefined;
 
   const start = () => {
     setBoard(generateBoard(comp));
@@ -78,6 +80,7 @@ function TriviaClient() {
       const count = answersFor(target, final);
       const stamp = Date.now();
       setDice(final);
+      setOrigin(current.pos);
       setRequired(count);
       setFound([]);
       setGuess("");
@@ -113,7 +116,8 @@ function TriviaClient() {
       matchTriviaAnswer(tile.entries, value);
     setGuess("");
     if (!entry) {
-      setFeedback("Not a valid answer");
+      setFeedback("Wrong answer — you lose your turn");
+      finishTurn(false);
       return;
     }
     if (found.includes(entry)) {
@@ -168,7 +172,7 @@ function TriviaClient() {
             <p className="mt-2 text-sm leading-6 text-fore-muted">
               Take turns rolling the dice. The number is how many spaces you move and how many correct answers you must
               give for the category on the space you land on, before the countdown ends. Get it right and you stay on
-              the new space. Get it wrong and you go back to where you were. First to the last space wins.
+              the new space. Get one wrong and you lose your turn and stay where you were. First to the last space wins.
             </p>
             <div className="mt-5 flex gap-2">
               <button type="button" onClick={() => setVersus(false)} className={versus ? "btn-ghost" : "btn-primary"}>

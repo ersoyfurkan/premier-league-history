@@ -18,12 +18,47 @@ const GROUPS: Record<string, string> = {
   mex: "Rafael Márquez|Santiago Giménez|Hirving Lozano|Orbelin Pineda|Javier Hernández|Raúl Jiménez",
 };
 
-export const NATIONS: Map<string, string> = new Map(
-  Object.entries(GROUPS).flatMap(([nat, names]) =>
+const CP1252: Record<string, number> = {
+  "€": 0x80, "‚": 0x82, "ƒ": 0x83, "„": 0x84, "…": 0x85, "†": 0x86, "‡": 0x87, "ˆ": 0x88, "‰": 0x89, "Š": 0x8a, "‹": 0x8b,
+  "Œ": 0x8c, "Ž": 0x8e, "‘": 0x91, "’": 0x92, "“": 0x93, "”": 0x94, "•": 0x95, "–": 0x96, "—": 0x97, "˜": 0x98, "™": 0x99,
+  "š": 0x9a, "›": 0x9b, "œ": 0x9c, "ž": 0x9e, "Ÿ": 0x9f,
+};
+
+// Some names above were saved with broken encoding (e.g. "Ãlvaro", "CubarsÃ­"); repair them so accents match.
+function repair(name: string) {
+  if (!/[ÃÄ]/.test(name)) return name;
+  const bytes = [...name.replace(/Ã(?=[A-Za-z])/g, "A")].map((ch) => (ch.charCodeAt(0) < 256 ? ch.charCodeAt(0) : (CP1252[ch] ?? 63)));
+  return Buffer.from(bytes).toString("utf8");
+}
+
+const keyOf = (name: string) =>
+  repair(name).normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[’']/g, "").replace(/[^a-z0-9]/gi, "").toLowerCase();
+
+const MORE: Record<string, string> = {
+  esp: "Pedri|Gavi|Lamine Yamal|Pau Cubarsí|Alejandro Balde|Fermín López|Marc Casadó|Eric García|Álex Baena|Pablo Barrios|Koke|Marcos Llorente|Dani Carvajal|Álvaro Carreras|Arda Güler|Oihan Sancet|Mikel Oyarzabal|Mikel Merino|Martin Zubimendi|Pedro Porro|Unai Simón|Aymeric Laporte|Ferran Torres|Álex Remiro|Dani Vivian|Rodri|Fabián Ruiz|Gerard Moreno|Pau López|Jesús Navas|Dani Carvajal",
+  fra: "William Saliba|Aurélien Tchouaméni|Jules Koundé|Kylian Mbappé|Ousmane Dembélé|Antoine Griezmann|Désiré Doué|Warren Zaïre-Emery|Théo Hernandez|Mike Maignan|Ibrahima Konaté|Eduardo Camavinga|Ferland Mendy|Dayot Upamecano|Manu Koné|Bradley Barcola",
+  arg: "Julián Álvarez|Franco Mastantuono|Rodrigo De Paul|Nicolás González|Thiago Almada|Lautaro Martínez|Exequiel Palacios|Alexis Mac Allister|Emiliano Martínez|Lisandro Martínez|Nico Paz|Giovanni Simeone|Facundo Buonanotte",
+  bra: "Raphinha|Vinícius Júnior|Rodrygo|Éder Militão|Gabriel Magalhães|Casemiro|Bruno Guimarães|Alisson|Lucas Paquetá|Richarlison|Marquinhos|Gabriel Jesus|Gabriel Martinelli|Igor Jesus|Joao Pedro",
+  por: "Vitinha|João Neves|Nuno Mendes|Rúben Dias|Bruno Fernandes|Diogo Costa|João Cancelo|Rafael Leão|Cristiano Ronaldo|Francisco Conceição|Pedro Neto|João Palhinha",
+  uru: "Ronald Araújo|Federico Valverde|José María Giménez|Darwin Núñez|Nahitan Nández|Maximiliano Araújo",
+  ned: "Frenkie de Jong|Virgil van Dijk|Nathan Aké|Cody Gakpo|Tijjani Reijnders|Matthijs de Ligt|Memphis Depay|Ryan Gravenberch|Jurriën Timber|Denzel Dumfries|Xavi Simons",
+  ger: "Florian Wirtz|Kai Havertz|Joshua Kimmich|Leroy Sané|Antonio Rüdiger|Marc-André ter Stegen|Manuel Neuer|Leon Goretzka|Jonathan Tah|Nico Schlotterbeck|Aleksandar Pavlović",
+  eng: "Phil Foden|Declan Rice|Bukayo Saka|Cole Palmer|Harry Kane|Marcus Rashford|Trent Alexander-Arnold|Jude Bellingham|Dean Huijsen|Eberechi Eze|Ollie Watkins|Jordan Pickford|Reece James|John Stones|Harry Maguire|Marc Guéhi|Elliot Anderson|Kyle Walker|Jack Grealish|James Maddison|Jarrod Bowen|Anthony Elanga|Morgan Rogers",
+  ita: "Nicolò Barella|Alessandro Bastoni|Federico Chiesa|Sandro Tonali|Gianluigi Donnarumma|Giovanni Di Lorenzo|Alessandro Buongiorno|Nicolo Rovella|Mateo Retegui|Guglielmo Vicario|Riccardo Calafiori",
+  sen: "Pape Matar Sarr|Sadio Mané|Nicolas Jackson|Pape Gueye|Ismaila Sarr",
+  bel: "Kevin De Bruyne|Romelu Lukaku|Jérémy Doku|Thibaut Courtois|Leandro Trossard|Youri Tielemans|Lois Openda",
+  cro: "Josko Gvardiol|Luka Modrić|Mateo Kovačić|Ivan Perišić|Marcelo Brozović|Ivan Rakitić|Andrej Kramarić",
+  mex: "Santiago Giménez|Edson Álvarez|Raúl Jiménez|Johan Vásquez",
+};
+
+const NATION_MAP: Map<string, string> = new Map(
+  [...Object.entries(GROUPS), ...Object.entries(MORE)].flatMap(([nat, names]) =>
     names
       .split("|")
       .map((name) => name.trim())
       .filter((name) => name && !name.endsWith("?"))
-      .map((name) => [name, nat] as [string, string]),
+      .map((name) => [keyOf(name), nat] as [string, string]),
   ),
 );
+
+export const nationOf = (name: string): string | undefined => NATION_MAP.get(keyOf(name));

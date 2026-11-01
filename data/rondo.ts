@@ -3,6 +3,7 @@ import { RONDO_MORE } from "@/data/rondoMore";
 import { RONDO_EXTRA } from "@/data/rondoExtra";
 import { RONDO_BONUS } from "@/data/rondoBonus";
 import { RONDO_BONUS2 } from "@/data/rondoBonus2";
+import { RONDO_BONUS3 } from "@/data/rondoBonus3";
 
 export type RondoClue = {
   letter: string;
@@ -251,10 +252,10 @@ function mergeUnique(base: RondoClue[], ...extras: RondoClue[][]): RondoClue[] {
 }
 
 export const RONDO_CLUES: Record<Competition, RondoClue[]> = {
-  pl: mergeUnique([...PL, ...RONDO_MORE.pl, ...RONDO_EXTRA.pl], RONDO_BONUS.pl, RONDO_BONUS2.pl),
-  laliga: mergeUnique([...LL, ...RONDO_MORE.laliga, ...RONDO_EXTRA.laliga], RONDO_BONUS.laliga, RONDO_BONUS2.laliga),
-  seriea: mergeUnique([...SA, ...RONDO_MORE.seriea, ...RONDO_EXTRA.seriea], RONDO_BONUS.seriea, RONDO_BONUS2.seriea),
-  ucl: mergeUnique([...UCL, ...RONDO_MORE.ucl, ...RONDO_EXTRA.ucl], RONDO_BONUS.ucl, RONDO_BONUS2.ucl),
+  pl: mergeUnique([...PL, ...RONDO_MORE.pl, ...RONDO_EXTRA.pl], RONDO_BONUS.pl, RONDO_BONUS2.pl, RONDO_BONUS3.pl),
+  laliga: mergeUnique([...LL, ...RONDO_MORE.laliga, ...RONDO_EXTRA.laliga], RONDO_BONUS.laliga, RONDO_BONUS2.laliga, RONDO_BONUS3.laliga),
+  seriea: mergeUnique([...SA, ...RONDO_MORE.seriea, ...RONDO_EXTRA.seriea], RONDO_BONUS.seriea, RONDO_BONUS2.seriea, RONDO_BONUS3.seriea),
+  ucl: mergeUnique([...UCL, ...RONDO_MORE.ucl, ...RONDO_EXTRA.ucl], RONDO_BONUS.ucl, RONDO_BONUS2.ucl, RONDO_BONUS3.ucl),
 };
 export const RONDO_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 export const RONDO_SECONDS = 180;

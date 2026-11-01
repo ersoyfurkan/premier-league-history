@@ -1,10 +1,11 @@
 // Player careers for Club Duel. Format "Name:club keys". These are merged with the Tik Tak Toe facts.
+import { SQUADS } from "@/data/clubDuelSquads";
 // Keys: ars avl bou bre bha bur che cry eve fulham lee liv mci mun new nfo sun tot wham wol (PL)
 // alv ath atm bar cel elc esp get gir lvt mll osa ovi ray bet rma soc sev val vil (La Liga)
 // ata bol cag com cre fio gen ver inter juv laz lec mil nap par pis sas tor udi rom (Serie A)
 // bay dor psg ajax lev ben spo mon mar psv (other Champions League clubs)
 // por bru fey lil bod rbl fen sha gal sla slo stu aek lask lens vik sab (2026-27 Champions League newcomers)
-export const CAREERS = `
+const BASE_CAREERS = `
 Radamel Falcao:atm mon mun che ray
 Gareth Bale:tot rma
 Daley Blind:ajax mun gir
@@ -1391,5 +1392,44 @@ Ibrahima Konaté:rbl liv rma
 Denzel Dumfries:psv inter rma
 Gabriel Jesus:mci ars bar
 Nick Woltemade:stu new juv
-Pape Matar Sarr:tot juv
+Pedri:lpa bar
+Gavi:bar
+Lamine Yamal:bar
+Pau Cubarsí:bar
+Alejandro Balde:bar
+Fermín López:bar
+Marc Casadó:bar
+Eric García:mci gir bar
+Marc-André ter Stegen:bmg bar
+Wojciech Szczęsny:ars juv bar
+Álex Baena:vil atm
+Pablo Barrios:atm
+Koke:atm
+Marcos Llorente:rma atm
+Dani Carvajal:rma lev
+Álvaro Carreras:ben rma
+Arda Güler:rma
+Oihan Sancet:ath
+Mikel Oyarzabal:soc
+Mikel Merino:soc ars
+Martin Zubimendi:soc ars
+Ronald Araújo:bar
+Federico Valverde:rma
+Rodrygo:rma
+Vinícius Júnior:rma
+Éder Militão:rma
+Jude Bellingham:bir dor rma
+Jules Koundé:bor sev bar
+Aurélien Tchouaméni:rma
+William Saliba:ars
+Gabriel Magalhães:ars
+Phil Foden:mci
+Joan García:bar
+João Neves:ben psg
+Vitinha:psg
+Luis Díaz:liv bay
+Viktor Gyökeres:ars
+Lamine Yamal:bar
 `;
+
+export const CAREERS = BASE_CAREERS + SQUADS;
