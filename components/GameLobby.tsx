@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { Competition } from "@/lib/gameRoom";
 import CompetitionMiniGames, { type MiniGameMode } from "@/components/CompetitionMiniGames";
+import { LEAGUE_META, isEspnComp } from "@/lib/leagues";
 
 export default function GameLobby({ comp }: { comp: Competition }) {
   const router = useRouter();
@@ -14,8 +15,8 @@ export default function GameLobby({ comp }: { comp: Competition }) {
   const [creatingGrid, setCreatingGrid] = useState(false);
   const [gridError, setGridError] = useState<string | null>(null);
   const isUcl = comp === "ucl";
-  const label = isUcl ? "Champions League" : comp === "laliga" ? "La Liga" : comp === "seriea" ? "Serie A" : "Premier League";
-  const home = isUcl ? "/champions-league" : comp === "laliga" ? "/la-liga" : comp === "seriea" ? "/serie-a" : "/premier-league";
+  const label = isUcl ? "Champions League" : isEspnComp(comp) ? LEAGUE_META[comp].label : "Premier League";
+  const home = isUcl ? "/champions-league" : isEspnComp(comp) ? LEAGUE_META[comp].home : "/premier-league";
 
   const createRoom = async () => {
     setCreating(true);

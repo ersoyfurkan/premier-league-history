@@ -1,10 +1,11 @@
 // ESPN's public soccer API powers the La Liga section: standings, fixtures, leaders and live match detail.
 import type { LineupPlayer, MatchDetail, MatchEvent, MatchStatus, Side, StatRow, TeamDetail } from "@/lib/matchDetail";
+import { LEAGUE_META, type EspnComp } from "@/lib/leagues";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type Json = any;
 
-export type EspnLeague = "esp.1" | "ita.1";
+export type EspnLeague = "esp.1" | "ita.1" | "ger.1" | "fra.1" | "tur.1";
 const site = (league: EspnLeague) => `https://site.api.espn.com/apis/site/v2/sports/soccer/${league}`;
 export const espnStandings = (league: EspnLeague = "esp.1") =>
   `https://site.api.espn.com/apis/v2/sports/soccer/${league}/standings`;
@@ -184,9 +185,10 @@ function parseMinute(display: string): { minute: number; extra?: number } {
 
 export const fetchLaLigaMatch = (id: string) => fetchEspnMatch(id, "laliga");
 export const fetchSerieAMatch = (id: string) => fetchEspnMatch(id, "seriea");
+export const fetchEspnLeagueMatch = (id: string, comp: EspnComp) => fetchEspnMatch(id, comp);
 
-async function fetchEspnMatch(id: string, comp: "laliga" | "seriea"): Promise<MatchDetail> {
-  const data = await espnJson(`${site(comp === "seriea" ? "ita.1" : "esp.1")}/summary?event=${id}`);
+async function fetchEspnMatch(id: string, comp: EspnComp): Promise<MatchDetail> {
+  const data = await espnJson(`${site(LEAGUE_META[comp].espn)}/summary?event=${id}`);
   const header = data.header?.competitions?.[0];
   if (!header) throw new Error("Match not found");
   const homeC = header.competitors.find((c: Json) => c.homeAway === "home");

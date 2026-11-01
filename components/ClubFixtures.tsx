@@ -5,9 +5,10 @@ import { useEffect, useRef, useState } from "react";
 import PlTeamBadge from "@/components/PlTeamBadge";
 import UclImage from "@/components/UclImage";
 import type { ClubFixture } from "@/app/api/club-fixtures/route";
+import { LEAGUE_META } from "@/lib/leagues";
 
 export type ClubTeam = { id: string; name: string; logo?: string };
-type Comp = "pl" | "ucl" | "laliga" | "seriea";
+type Comp = "pl" | "ucl" | "laliga" | "seriea" | "bundesliga" | "ligue1" | "superlig";
 
 function Crest({ comp, side, className }: { comp: Comp; side: ClubFixture["home"]; className?: string }) {
   return comp === "pl" ? (
@@ -89,13 +90,7 @@ function ClubFixtures({ comp, team, onClose }: { comp: Comp; team: ClubTeam; onC
 
   const ready = state?.team === team.id ? state : null;
   const base =
-    comp === "pl"
-      ? "/premier-league/match"
-      : comp === "laliga"
-        ? "/la-liga/match"
-        : comp === "seriea"
-          ? "/serie-a/match"
-          : "/champions-league/match";
+    comp === "pl" ? "/premier-league/match" : comp === "ucl" ? "/champions-league/match" : LEAGUE_META[comp].match;
 
   return (
     <div className="mt-4 rounded-xl border border-primary/30 bg-primary-dim/40 p-4">

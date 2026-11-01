@@ -72,6 +72,60 @@ const competitions = [
       />
     ),
   },
+  {
+    name: "Bundesliga",
+    eyebrow: "Germany · since 1963",
+    description:
+      "Follow live matches, the current table and fixtures, club and player stats, derbies, all-time records, and the Bundesliga mini-games.",
+    href: "/bundesliga",
+    accent: "text-danger",
+    border: "border-danger/25 hover:border-danger/60",
+    glow: "glow-orb-purple",
+    mark: (
+      <span
+        role="img"
+        aria-label="Bundesliga logo"
+        className="h-20 w-20 bg-contain bg-center bg-no-repeat"
+        style={{ backgroundImage: "url(https://a.espncdn.com/i/leaguelogos/soccer/500/10.png)" }}
+      />
+    ),
+  },
+  {
+    name: "Ligue 1 McDonald's",
+    eyebrow: "France · since 1932",
+    description:
+      "Follow live matches, the current table and fixtures, club and player stats, derbies, all-time records, and the Ligue 1 mini-games.",
+    href: "/ligue-1",
+    accent: "text-primary",
+    border: "border-primary/25 hover:border-primary/60",
+    glow: "glow-orb-cyan",
+    mark: (
+      <span
+        role="img"
+        aria-label="Ligue 1 logo"
+        className="h-20 w-20 bg-contain bg-center bg-no-repeat"
+        style={{ backgroundImage: "url(https://a.espncdn.com/i/leaguelogos/soccer/500/9.png)" }}
+      />
+    ),
+  },
+  {
+    name: "Süper Lig",
+    eyebrow: "Türkiye · since 1959",
+    description:
+      "Follow live matches, the current table and fixtures, club and player stats, derbies, all-time records, and the Süper Lig mini-games.",
+    href: "/super-lig",
+    accent: "text-warning",
+    border: "border-warning/25 hover:border-warning/60",
+    glow: "glow-orb-violet",
+    mark: (
+      <span
+        role="img"
+        aria-label="Süper Lig logo"
+        className="h-20 w-20 bg-contain bg-center bg-no-repeat"
+        style={{ backgroundImage: "url(https://a.espncdn.com/i/leaguelogos/soccer/500/18.png)" }}
+      />
+    ),
+  },
 ];
 
 export default function Home() {

@@ -1,6 +1,9 @@
 import type { Competition } from "@/lib/gameRoom";
 import { footballFacts, normalizeFootballPlayerName } from "@/data/footballTicTacToe";
 import { DUEL_CLUBS, playersForBoth, playersForClub, searchDuelPlayers } from "@/data/clubDuel";
+import { BUNDESLIGA_TRIVIA } from "@/data/bundesligaContent";
+import { LIGUE1_TRIVIA } from "@/data/ligue1Content";
+import { SUPERLIG_TRIVIA } from "@/data/superligContent";
 
 export type TriviaEntry = { name: string; aliases: string[] };
 export type TriviaQuestion = { id: string; text: string; count: number; noun: string; plural: string; entries: TriviaEntry[]; short?: string };
@@ -44,6 +47,9 @@ const UCL_STADIUMS = list(
 );
 
 const STATIC: Record<Competition, Category[]> = {
+  bundesliga: [],
+  ligue1: [],
+  superlig: [],
   pl: [
     { id: "s-ballon", noun: "Ballon d'Or winner", plural: "Ballon d'Or winners", entries: BALLON },
     { id: "s-wc", noun: "nation that has won the World Cup", plural: "nations that have won the World Cup", entries: WC_NATIONS },
@@ -87,7 +93,7 @@ const SHARED_EXTRA: Category[] = [
   cat("s-ballonfw", "player who has won the Ballon d'Or while playing for Real Madrid or Barcelona", "players who have won the Ballon d'Or while playing for Real Madrid or Barcelona", "Cristiano Ronaldo|Lionel Messi/Messi|Luka Modrić/Luka Modric/Modric|Karim Benzema/Benzema|Ronaldo Nazário/Ronaldo|Luís Figo/Luis Figo/Figo|Rivaldo|Hristo Stoichkov/Stoichkov|Alfredo Di Stéfano/Alfredo Di Stefano/Di Stefano|Raymond Kopa/Kopa|Ronaldinho|Johan Cruyff/Cruyff"),
 ];
 
-const LEAGUE_EXTRA: Record<Competition, Category[]> = {
+const LEAGUE_EXTRA: Pick<Record<Competition, Category[]>, "pl" | "laliga" | "seriea" | "ucl"> = {
   pl: [
     cat("s-pllondon", "London club that has played in the Premier League", "London clubs that have played in the Premier League", "Arsenal|Chelsea|Tottenham Hotspur/Tottenham/Spurs|West Ham United/West Ham|Crystal Palace/Palace|Fulham|Brentford|Charlton Athletic/Charlton|Wimbledon|Queens Park Rangers/QPR"),
     cat("s-plnw", "North West England club that has played in the Premier League", "North West England clubs that have played in the Premier League", "Manchester United/Man United/Man Utd|Manchester City/Man City|Liverpool|Everton|Blackburn Rovers/Blackburn|Bolton Wanderers/Bolton|Wigan Athletic/Wigan|Burnley|Oldham Athletic/Oldham|Blackpool"),
@@ -120,8 +126,25 @@ const LEAGUE_EXTRA: Record<Competition, Category[]> = {
   ],
 };
 
+const LEAGUE_ONLY = (items: { id: string; noun: string; plural: string; raw: string }[]): Category[] =>
+  items.map((item) => ({ id: item.id, noun: item.noun, plural: item.plural, entries: list(item.raw) }));
+
+const newLeagueStatic = (items: { id: string; noun: string; plural: string; raw: string }[]): Category[] => [
+  { id: "s-ballon", noun: "Ballon d'Or winner", plural: "Ballon d'Or winners", entries: BALLON },
+  { id: "s-wc", noun: "nation that has won the World Cup", plural: "nations that have won the World Cup", entries: WC_NATIONS },
+  { id: "s-clwin", noun: "club that has won the Champions League", plural: "clubs that have won the Champions League", entries: CL_WINNERS },
+  ...LEAGUE_ONLY(items),
+];
+
+STATIC.bundesliga = newLeagueStatic(BUNDESLIGA_TRIVIA);
+STATIC.ligue1 = newLeagueStatic(LIGUE1_TRIVIA);
+STATIC.superlig = newLeagueStatic(SUPERLIG_TRIVIA);
+
 for (const comp of ["pl", "laliga", "seriea", "ucl"] as const) {
   STATIC[comp].push(...SHARED_EXTRA, ...LEAGUE_EXTRA[comp]);
+}
+for (const comp of ["bundesliga", "ligue1", "superlig"] as const) {
+  STATIC[comp].push(...SHARED_EXTRA);
 }
 
 const CLUB_ALIASES: Record<string, string[]> = {
@@ -142,7 +165,10 @@ const CLUB_ALIASES: Record<string, string[]> = {
 };
 
 function leagueClubCategory(comp: Competition): Category {
-  const names = { pl: "Premier League", laliga: "La Liga", seriea: "Serie A", ucl: "Champions League" }[comp];
+  const names = {
+    pl: "Premier League", laliga: "La Liga", seriea: "Serie A", ucl: "Champions League",
+    bundesliga: "Bundesliga", ligue1: "Ligue 1", superlig: "Süper Lig",
+  }[comp];
   return {
     id: "s-clubs",
     noun: `club in the ${names} this season`,
@@ -220,75 +246,121 @@ const NATIONS: Record<string, string> = {
 };
 
 // Questions built from the career dataset, so any player in it is a valid answer.
-function dynamicCategory(comp: Competition): Category | null {
+function dynamicById(comp: Competition, id: string): Category | null {
   const clubs = DUEL_CLUBS[comp];
   const facts = footballFacts(comp);
   const leagueKeys = new Set(clubs.map((club) => club.key));
   const names = (items: typeof facts) => playerEntries(items.map((fact) => fact.name));
-  const kind = Math.floor(Math.random() * 5);
+  const [kind, a, b] = id.split("-");
 
-  if (kind === 0) {
-    const nat = pick(Object.keys(NATIONS));
-    const club = pick(clubs);
-    const pool = facts.filter((fact) => fact.nat.includes(nat) && fact.clubs.includes(club.key));
+  if (kind === "n") {
+    const club = clubs.find((item) => item.key === b);
+    if (!club || !NATIONS[a]) return null;
+    const pool = facts.filter((fact) => fact.nat.includes(a) && fact.clubs.includes(club.key));
     if (pool.length < 7) return null;
     return {
-      id: `n-${nat}-${club.key}`,
-      short: `${NATIONS[nat]} at ${club.label}`,
-      noun: `${NATIONS[nat]} player who played for ${club.label}`,
-      plural: `${NATIONS[nat]} players who played for ${club.label}`,
+      id,
+      short: `${NATIONS[a]} at ${club.label}`,
+      noun: `${NATIONS[a]} player who played for ${club.label}`,
+      plural: `${NATIONS[a]} players who played for ${club.label}`,
       entries: names(pool),
     };
   }
-  if (kind === 1) {
-    const nat = pick(Object.keys(NATIONS));
-    const pool = facts.filter((fact) => fact.nat.includes(nat) && fact.clubs.some((key) => leagueKeys.has(key)));
+  if (kind === "l") {
+    if (!NATIONS[a]) return null;
+    const pool = facts.filter((fact) => fact.nat.includes(a) && fact.clubs.some((key) => leagueKeys.has(key)));
     if (pool.length < 10) return null;
     return {
-      id: `l-${nat}`,
-      short: `${NATIONS[nat]} players`,
-      noun: `${NATIONS[nat]} player who played for a club in this league this season`,
-      plural: `${NATIONS[nat]} players who played for a club in this league this season`,
+      id,
+      short: `${NATIONS[a]} players`,
+      noun: `${NATIONS[a]} player who played for a club in this league this season`,
+      plural: `${NATIONS[a]} players who played for a club in this league this season`,
       entries: names(pool),
     };
   }
-  if (kind === 2) {
-    const club = pick(clubs);
+  if (kind === "h") {
+    const club = clubs.find((item) => item.key === (b ?? a));
+    if (!club) return null;
     const pool = facts.filter((fact) => fact.tags.includes("wc") && fact.clubs.includes(club.key));
     if (pool.length < 7) return null;
     return {
-      id: `h-wc-${club.key}`,
+      id,
       short: `WC winners at ${club.label}`,
       noun: `World Cup winner who played for ${club.label}`,
       plural: `World Cup winners who played for ${club.label}`,
       entries: names(pool),
     };
   }
-  const min = kind === 3 ? 3 : 4;
-  const pool = facts.filter((fact) => fact.clubs.filter((key) => leagueKeys.has(key)).length >= min);
-  if (pool.length < 8) return null;
-  const word = min === 3 ? "three" : "four";
-  return {
-    id: `m${min}`,
-    short: `${min}+ league clubs`,
-    noun: `player who played for at least ${word} of this season's clubs in this league`,
-    plural: `players who played for at least ${word} of this season's clubs in this league`,
-    entries: names(pool),
-  };
+  if (kind === "m3" || kind === "m4") {
+    const min = kind === "m3" ? 3 : 4;
+    const pool = facts.filter((fact) => fact.clubs.filter((key) => leagueKeys.has(key)).length >= min);
+    if (pool.length < 8) return null;
+    const word = min === 3 ? "three" : "four";
+    return {
+      id,
+      short: `${min}+ league clubs`,
+      noun: `player who played for at least ${word} of this season's clubs in this league`,
+      plural: `players who played for at least ${word} of this season's clubs in this league`,
+      entries: names(pool),
+    };
+  }
+  return null;
+}
+
+function dynamicCategory(comp: Competition): Category | null {
+  const kind = Math.floor(Math.random() * 5);
+  const club = pick(DUEL_CLUBS[comp]).key;
+  const nat = pick(Object.keys(NATIONS));
+  const id = [`n-${nat}-${club}`, `l-${nat}`, `h-wc-${club}`, "m3", "m4"][kind];
+  return dynamicById(comp, id);
+}
+
+// Rebuilds a board tile from its id, so a server only needs to store the 16 ids.
+export function tileById(comp: Competition, id: string): BoardTile | null {
+  const clubs = DUEL_CLUBS[comp];
+  const clubLabel = (key: string) => clubs.find((club) => club.key === key)?.label ?? key;
+  let category: Category | null = null;
+  let short = SHORT[id];
+  if (id.startsWith("c-")) {
+    const club = clubs.find((item) => item.key === id.slice(2));
+    if (club) {
+      category = { id, noun: `player who played for ${club.label}`, plural: `players who played for ${club.label}`, entries: playerEntries(playersForClub(club.key)) };
+      short = club.label;
+    }
+  } else if (id.startsWith("p-")) {
+    const [a, b] = id.slice(2).split("-");
+    const ca = clubs.find((item) => item.key === a);
+    const cb = clubs.find((item) => item.key === b);
+    if (ca && cb) {
+      category = {
+        id,
+        noun: `player who played for both ${ca.label} and ${cb.label}`,
+        plural: `players who played for both ${ca.label} and ${cb.label}`,
+        entries: playerEntries(playersForBoth(a, b)),
+      };
+      short = `${clubLabel(a)} + ${clubLabel(b)}`;
+    }
+  } else if (/^(n|l|h|m\d)/.test(id) && id !== "s-clubs") {
+    category = dynamicById(comp, id);
+    short = category?.short ?? short;
+  } else {
+    category = [...STATIC[comp], leagueClubCategory(comp)].find((item) => item.id === id) ?? null;
+  }
+  return category ? { id, short: short ?? "Trivia", noun: category.noun, plural: category.plural, entries: category.entries } : null;
 }
 
 // Builds a random path of categories. The dice later decides how many answers each one needs.
-export function generateBoard(comp: Competition): BoardTile[] {
+export function generateBoardIds(comp: Competition): string[] {
   const used = new Set<string>();
-  const clubLabel = (key: string) => DUEL_CLUBS[comp].find((club) => club.key === key)?.label ?? key;
   return Array.from({ length: BOARD_SIZE }, () => {
     const q = pickTriviaQuestion(comp, 6, used);
     used.add(q.id);
-    let short = q.short ?? SHORT[q.id] ?? "Trivia";
-    if (q.id.startsWith("c-")) short = clubLabel(q.id.slice(2));
-    else if (q.id.startsWith("p-")) short = q.id.slice(2).split("-").map(clubLabel).join(" + ");
-    return { id: q.id, short, noun: q.noun, plural: q.plural, entries: q.entries };
+    return q.id;
   });
+}
+
+export function generateBoard(comp: Competition): BoardTile[] {
+  return generateBoardIds(comp).map((id) => tileById(comp, id) as BoardTile);
 }
 
 // Search over every possible answer type so suggestions never reveal which ones are correct.

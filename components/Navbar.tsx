@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import { LEAGUE_META, isEspnComp } from "@/lib/leagues";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -13,22 +14,18 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
   const inUcl = pathname.startsWith("/champions-league") || searchParams.get("comp") === "ucl";
-  const inLaLiga = pathname.startsWith("/la-liga") || searchParams.get("comp") === "laliga";
-  const inSerieA = pathname.startsWith("/serie-a") || searchParams.get("comp") === "seriea";
+  const compParam = searchParams.get("comp");
+  const sectionComp = (Object.keys(LEAGUE_META) as (keyof typeof LEAGUE_META)[]).find(
+    (key) => pathname === LEAGUE_META[key].home || pathname.startsWith(`${LEAGUE_META[key].home}/`) || (isEspnComp(compParam) && compParam === key),
+  );
   const links =
     pathname === "/"
       ? []
-      : inSerieA
+      : sectionComp
         ? [
             { href: "/", label: "Home" },
-            { href: "/serie-a", label: "Serie A" },
-            { href: "/serie-a/game", label: "Game" },
-          ]
-        : inLaLiga
-        ? [
-            { href: "/", label: "Home" },
-            { href: "/la-liga", label: "La Liga" },
-            { href: "/la-liga/game", label: "Game" },
+            { href: LEAGUE_META[sectionComp].home, label: LEAGUE_META[sectionComp].label },
+            { href: LEAGUE_META[sectionComp].game, label: "Game" },
           ]
         : inUcl
         ? [
@@ -45,7 +42,9 @@ export default function Navbar() {
   ];
 
   const isActive = (href: string) =>
-    href === "/" || href === "/champions-league" || href === "/la-liga" || href === "/serie-a" ? pathname === href : pathname === href || pathname.startsWith(`${href}/`);
+    href === "/" || href === "/champions-league" || Object.values(LEAGUE_META).some((meta) => meta.home === href)
+      ? pathname === href
+      : pathname === href || pathname.startsWith(`${href}/`);
 
   return (
     <nav className="fixed inset-x-0 top-0 z-50 border-b border-[rgba(0,229,255,0.08)] bg-[rgba(3,4,10,0.85)] backdrop-blur-[20px]">

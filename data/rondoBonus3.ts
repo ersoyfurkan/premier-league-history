@@ -439,4 +439,4 @@ const UCL: RondoClue[] = [
   r("Z", "Spanish midfielder who joined Arsenal from Real Sociedad in 2025", "Zubimendi|Martín Zubimendi|Martin Zubimendi"),
 ];
 
-export const RONDO_BONUS3: Record<Competition, RondoClue[]> = { pl: PL, laliga: LL, seriea: SA, ucl: UCL };
+export const RONDO_BONUS3: Pick<Record<Competition, RondoClue[]>, "pl" | "laliga" | "seriea" | "ucl"> = { pl: PL, laliga: LL, seriea: SA, ucl: UCL };

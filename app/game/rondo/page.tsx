@@ -24,6 +24,9 @@ const LABELS: Record<Competition, string> = {
   laliga: "La Liga",
   seriea: "Serie A",
   ucl: "Champions League",
+  bundesliga: "Bundesliga",
+  ligue1: "Ligue 1 McDonald's",
+  superlig: "Süper Lig",
 };
 
 // 1 = first beats second, -1 = second beats first, 0 = draw

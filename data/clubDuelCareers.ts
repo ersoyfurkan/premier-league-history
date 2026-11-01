@@ -1,5 +1,8 @@
 // Player careers for Club Duel. Format "Name:club keys". These are merged with the Tik Tak Toe facts.
 import { SQUADS } from "@/data/clubDuelSquads";
+import { BUNDESLIGA_CAREERS } from "@/data/bundesligaContent";
+import { LIGUE1_CAREERS } from "@/data/ligue1Content";
+import { SUPERLIG_CAREERS } from "@/data/superligContent";
 // Keys: ars avl bou bre bha bur che cry eve fulham lee liv mci mun new nfo sun tot wham wol (PL)
 // alv ath atm bar cel elc esp get gir lvt mll osa ovi ray bet rma soc sev val vil (La Liga)
 // ata bol cag com cre fio gen ver inter juv laz lec mil nap par pis sas tor udi rom (Serie A)
@@ -1432,4 +1435,4 @@ Viktor Gyökeres:ars
 Lamine Yamal:bar
 `;
 
-export const CAREERS = BASE_CAREERS + SQUADS;
+export const CAREERS = BASE_CAREERS + SQUADS + "\n" + BUNDESLIGA_CAREERS + "\n" + LIGUE1_CAREERS + "\n" + SUPERLIG_CAREERS + "\n";

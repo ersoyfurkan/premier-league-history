@@ -347,4 +347,4 @@ const UCL: RondoClue[] = [
   r("Z", "French playmaker who managed Real Madrid to three straight titles", "Zinedine Zidane|Zidane"),
 ];
 
-export const RONDO_MORE: Record<Competition, RondoClue[]> = { pl: PL, laliga: LL, seriea: SA, ucl: UCL };
+export const RONDO_MORE: Pick<Record<Competition, RondoClue[]>, "pl" | "laliga" | "seriea" | "ucl"> = { pl: PL, laliga: LL, seriea: SA, ucl: UCL };

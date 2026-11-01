@@ -1,6 +1,9 @@
 ﻿import type { Competition } from "@/lib/gameRoom";
 import { CAREERS } from "@/data/clubDuelCareers";
 import { nationOf } from "@/data/playerNations";
+import { BUNDESLIGA_FACTS } from "@/data/bundesligaContent";
+import { LIGUE1_FACTS } from "@/data/ligue1Content";
+import { SUPERLIG_FACTS } from "@/data/superligContent";
 
 export type FootballTicTacToeCell = {
   player: string;
@@ -832,7 +835,16 @@ function withUniverse(own: Fact[], others: Fact[][]): Fact[] {
   return [...map.values()];
 }
 
+const parseFacts = (text: string): Fact[] =>
+  text.split("\n").filter((line) => line.includes("|")).map((line) => {
+    const [name, nat, clubs, tags = ""] = line.split("|");
+    return f(name.trim(), nat.trim(), clubs.trim(), tags.trim());
+  });
+
 const RAW_FACTS: Record<Competition, Fact[]> = {
+  bundesliga: merge(parseFacts(BUNDESLIGA_FACTS), {}, []),
+  ligue1: merge(parseFacts(LIGUE1_FACTS), {}, []),
+  superlig: merge(parseFacts(SUPERLIG_FACTS), {}, []),
   pl: merge(PL_FACTS, PL_ALSO, PL_EXTRA),
   laliga: merge(LALIGA_FACTS, LL_ALSO, LL_EXTRA),
   ucl: merge(UCL_FACTS, UCL_ALSO, UCL_EXTRA),
@@ -871,7 +883,9 @@ const club = (label: string, badge: string, key: string, short = label): Def => 
 const NAT_KEYS: Record<string, string> = {
   es: "esp", fr: "fra", br: "bra", ar: "arg", pt: "por", "gb-eng": "eng", nl: "ned", be: "bel",
   de: "ger", it: "ita", uy: "uru", mx: "mex", hr: "cro", "gb-wls": "wal", sn: "sen", rs: "srb",
-};
+    tr: "tur", at: "aut", ch: "sui", pl: "pol", dk: "den", se: "swe", ba: "bih", ma: "mar", dz: "alg",
+    ci: "civ", ng: "nga", kr: "kor", jp: "jpn", eg: "egy", ro: "rou", cm: "cmr", gh: "gha", ml: "mli", hu: "hun",
+  };
 const national = (label: string, country: string): Def => ({
   clue: { label, badge: flag(country), badgeAlt: `${label.replace(" international", "")} flag` },
   test: (fact) => fact.nat.includes(NAT_KEYS[country] ?? country),
@@ -938,8 +952,49 @@ function build(
 }
 
 const P = "Played for ";
+const badgeUrl = (id: number) => `https://a.espncdn.com/i/teamlogos/soccer/500/${id}.png`;
+const pc = (label: string, id: number, key: string) => club(`${P}${label}`, badgeUrl(id), key, label);
+const BL = { bay: pc("Bayern Munich", 132, "bay"), dor: pc("Dortmund", 124, "dor"), s04: pc("Schalke 04", 133, "s04"), lev: pc("Leverkusen", 131, "lev"), wer: pc("Werder Bremen", 137, "wer"), bmg: pc("Gladbach", 268, "bmg") };
+const L1 = { psg: pc("PSG", 160, "psg"), mar: pc("Marseille", 176, "mar"), lyon: pc("Lyon", 167, "lyon"), mon: pc("Monaco", 174, "mon"), lil: pc("Lille", 166, "lil"), ren: pc("Rennes", 169, "ren") };
+const SL = { gal: pc("Galatasaray", 432, "gal"), fen: pc("Fenerbahçe", 436, "fen"), bes: pc("Beşiktaş", 1895, "bes"), tra: pc("Trabzonspor", 997, "tra"), ibf: pc("Başakşehir", 7914, "ibf"), ala: pc("Alanyaspor", 9078, "ala") };
 
 export const FOOTBALL_TIC_TAC_TOE_VARIANTS: Record<Competition, FootballTicTacToePuzzle[]> = {
+  bundesliga: [
+    build(
+      "bundesliga",
+      [national("Germany international", "de"), stat("Bundesliga winner", "won"), stat("300+ Bundesliga appearances", "a300")],
+      [BL.bay, BL.dor, BL.wer],
+    ),
+    build(
+      "bundesliga",
+            [national("Germany international", "de"), stat("Bundesliga winner", "won"), stat("50+ Bundesliga goals", "g50")],
+      [BL.bay, BL.dor, BL.s04],
+    ),
+  ],
+  ligue1: [
+    build(
+      "ligue1",
+      [national("France international", "fr"), stat("Ligue 1 winner", "won"), national("Brazil international", "br")],
+      [L1.psg, L1.mar, L1.lyon],
+    ),
+    build(
+      "ligue1",
+      [national("France international", "fr"), stat("Ligue 1 winner", "won"), national("Brazil international", "br")],
+      [L1.psg, L1.mon, L1.lil],
+    ),
+  ],
+  superlig: [
+    build(
+      "superlig",
+      [national("Turkey international", "tr"), stat("Süper Lig winner", "won"), national("Brazil international", "br")],
+      [SL.gal, SL.fen, SL.bes],
+    ),
+    build(
+      "superlig",
+      [national("Turkey international", "tr"), stat("Süper Lig winner", "won"), stat("50+ Süper Lig goals", "g50")],
+      [SL.gal, SL.fen, SL.tra],
+    ),
+  ],
   pl: [
     build(
       "pl",
@@ -1011,6 +1066,9 @@ export const FOOTBALL_TIC_TAC_TOE_VARIANTS: Record<Competition, FootballTicTacTo
 };
 
 export const FOOTBALL_TIC_TAC_TOE: Record<Competition, FootballTicTacToePuzzle> = {
+  bundesliga: FOOTBALL_TIC_TAC_TOE_VARIANTS.bundesliga[0],
+  ligue1: FOOTBALL_TIC_TAC_TOE_VARIANTS.ligue1[0],
+  superlig: FOOTBALL_TIC_TAC_TOE_VARIANTS.superlig[0],
   pl: FOOTBALL_TIC_TAC_TOE_VARIANTS.pl[0],
   laliga: FOOTBALL_TIC_TAC_TOE_VARIANTS.laliga[0],
   ucl: FOOTBALL_TIC_TAC_TOE_VARIANTS.ucl[0],
@@ -1028,6 +1086,34 @@ function shuffledIndexes() {
 
 const espn = (id: number) => `https://a.espncdn.com/i/teamlogos/soccer/500/${id}.png`;
 const POOL_CLUBS: Record<Competition, Def[]> = {
+  bundesliga: [
+    ...Object.values(BL),
+    club(`${P}RB Leipzig`, espn(11420), "rbl", "RB Leipzig"),
+    club(`${P}Stuttgart`, espn(134), "stu", "Stuttgart"),
+    club(`${P}Eintracht Frankfurt`, espn(125), "sge", "Eintracht Frankfurt"),
+    club(`${P}Hamburg`, espn(127), "hsv", "Hamburg"),
+    club(`${P}Mainz`, espn(2950), "mai", "Mainz"),
+    club(`${P}Freiburg`, espn(126), "fre", "Freiburg"),
+    club(`${P}Köln`, espn(122), "koe", "Köln"),
+    club(`${P}Hoffenheim`, espn(7911), "hof", "Hoffenheim"),
+  ],
+  ligue1: [
+    ...Object.values(L1),
+    club(`${P}Nice`, espn(2502), "nic", "Nice"),
+    club(`${P}Lens`, espn(175), "lens", "Lens"),
+    club(`${P}Strasbourg`, espn(180), "str", "Strasbourg"),
+    club(`${P}Toulouse`, espn(179), "tou", "Toulouse"),
+    club(`${P}Auxerre`, espn(172), "aux", "Auxerre"),
+    club(`${P}Le Mans`, espn(2697), "lem", "Le Mans"),
+  ],
+  superlig: [
+    ...Object.values(SL),
+    club(`${P}Kasımpaşa`, espn(6870), "kas", "Kasımpaşa"),
+    club(`${P}Konyaspor`, espn(7648), "kon", "Konyaspor"),
+    club(`${P}Göztepe`, espn(789), "goz", "Göztepe"),
+    club(`${P}Gaziantep`, espn(20070), "gaz", "Gaziantep"),
+    club(`${P}Çaykur Rizespor`, espn(7656), "riz", "Çaykur Rizespor"),
+  ],
   pl: [
     PL_CLUBS.mun(P), PL_CLUBS.liv(P), PL_CLUBS.ars(P), PL_CLUBS.che(P), PL_CLUBS.mci(P), PL_CLUBS.tot(P),
     club(`${P}Everton`, "/club-logos/everton.svg", "eve", "Everton"),
@@ -1079,6 +1165,27 @@ const POOL_CLUBS: Record<Competition, Def[]> = {
   ],
 };
 const POOL_ROWS: Record<Competition, Def[]> = {
+  bundesliga: [
+    national("Germany international", "de"), national("Poland international", "pl"),
+    national("Austria international", "at"), national("Switzerland international", "ch"),
+    national("Brazil international", "br"), national("France international", "fr"),
+    stat("Bundesliga winner", "won"), stat("100+ Bundesliga goals", "g100"),
+    stat("50+ Bundesliga goals", "g50"), stat("300+ Bundesliga appearances", "a300"),
+  ],
+  ligue1: [
+    national("France international", "fr"), national("Brazil international", "br"),
+    national("Ivory Coast international", "ci"), national("Senegal international", "sn"),
+    national("Morocco international", "ma"), national("Algeria international", "dz"),
+    stat("Ligue 1 winner", "won"), stat("100+ Ligue 1 goals", "g100"),
+    stat("50+ Ligue 1 goals", "g50"), stat("300+ Ligue 1 appearances", "a300"),
+  ],
+  superlig: [
+    national("Turkey international", "tr"), national("Brazil international", "br"),
+    national("Netherlands international", "nl"), national("Bosnia international", "ba"),
+    national("Romania international", "ro"), national("Senegal international", "sn"),
+    stat("Süper Lig winner", "won"), stat("50+ Süper Lig goals", "g50"),
+    stat("300+ Süper Lig appearances", "a300"),
+  ],
   pl: [
     national("England international", "gb-eng"), national("France international", "fr"),
     national("Spain international", "es"), national("Brazil international", "br"),
@@ -1123,6 +1230,9 @@ const EXTRA_CLUB_BADGES: Record<string, [string, number]> = {
   wham: ["West Ham", 371], new: ["Newcastle", 361], eve: ["Everton", 368], avl: ["Aston Villa", 362],
 };
 const EXTRA_CLUB_CODES: Record<Competition, string> = {
+  bundesliga: "rma bar mun che ars mci liv juv inter mil psg tot",
+  ligue1: "rma bar mun che ars mci liv juv inter mil bay tot",
+  superlig: "rma bar mun che ars liv juv inter bay mil psg",
   pl: "rma bar juv inter mil bay psg atm val",
   laliga: "juv inter mil psg mun che liv ars mci bay tot ajax nap",
   ucl: "tot nap rom laz val sev",
@@ -1135,6 +1245,9 @@ const EXTRA_CLUB_DEFS = (comp: Competition): Def[] =>
   });
 
 const EXTRA_ROWS: Record<Competition, Def[]> = {
+  bundesliga: [national("Netherlands international", "nl"), stat("Ballon d'Or winner", "bd"), stat("World Cup winner", "wc")],
+  ligue1: [national("Spain international", "es"), national("Argentina international", "ar"), stat("Ballon d'Or winner", "bd"), stat("World Cup winner", "wc")],
+  superlig: [national("Germany international", "de"), national("France international", "fr"), stat("World Cup winner", "wc")],
   pl: [
     national("Portugal international", "pt"), national("Germany international", "de"),
     national("Uruguay international", "uy"), national("Wales international", "gb-wls"),
@@ -1160,6 +1273,9 @@ const EXTRA_ROWS: Record<Competition, Def[]> = {
   ],
 };
 const MANAGER_KEYS: Record<Competition, string> = {
+  bundesliga: "klopp tuchel guardiola ancelotti flick heynckes",
+  ligue1: "ancelotti emery pochettino tuchel",
+  superlig: "mourinho",
   pl: "ferguson wenger mourinho guardiola klopp ancelotti benitez conte ranieri pochettino emery pellegrini mancini moyes redknapp keegan hodgson vangaal tuchel capello",
   laliga: "ancelotti zidane guardiola luisenrique simeone benitez mourinho pellegrini emery valverde delbosque rijkaard lopetegui xavi flick vangaal capello heynckes",
   ucl: "ferguson wenger mourinho guardiola klopp ancelotti zidane luisenrique simeone conte emery pochettino tuchel flick heynckes vangaal capello allegri lippi",

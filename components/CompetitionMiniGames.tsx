@@ -10,6 +10,7 @@ import { MARKET_VALUE_PLAYERS, type MarketValuePlayer, type MarketValueSnapshot 
 import { normalizeFootballPlayerName } from "@/data/footballTicTacToe";
 import type { PlayerCard } from "@/data/players";
 import { poolFor, type Competition } from "@/lib/gameRoom";
+import { LEAGUE_META } from "@/lib/leagues";
 import { espnHeadshot } from "@/lib/clubArt";
 
 export type MiniGameMode = "higher-lower" | "transfer-market";
@@ -198,7 +199,7 @@ function marketPlayerCard(comp: Competition, name: string) {
 
 function MarketPlayerPhoto({ comp, name }: { comp: Competition; name: string }) {
   const card = marketPlayerCard(comp, name);
-  if (card?.id && !card.id.startsWith("ll") && !card.id.startsWith("sa") && !card.id.startsWith("ucl")) {
+  if (card?.id && !/^(ll|sa|bl|l1|sl|ucl)/.test(card.id)) {
     return <PlayerPhoto id={card.id} name={name} size="lg" />;
   }
   if (card?.photo) {
@@ -326,7 +327,7 @@ function TransferMarketHigherLower({ comp, onBack }: { comp: Competition; onBack
         </div>
       ) : (
         <div className="mt-6 rounded-xl border border-border bg-background/50 p-8 text-center">
-          <p className="text-fore-muted">Can you beat your best streak using {comp === "pl" ? "Premier League" : comp === "laliga" ? "La Liga" : comp === "seriea" ? "Serie A" : "Champions League"} stars?</p>
+          <p className="text-fore-muted">Can you beat your best streak using {comp === "pl" ? "Premier League" : comp === "ucl" ? "Champions League" : LEAGUE_META[comp].label} stars?</p>
           <button type="button" onClick={start} className="btn-primary mt-5">Open the market</button>
         </div>
       )}

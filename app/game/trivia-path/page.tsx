@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { FormEvent, Suspense, useEffect, useMemo, useRef, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import UclImage from "@/components/UclImage";
+import TriviaPathOnline from "@/components/TriviaPathOnline";
 import { playerFaceUrl } from "@/data/playerFaces";
 import { lobbyFor, parseComp } from "@/lib/gameRoom";
 import {
@@ -19,7 +20,15 @@ import {
   type TriviaEntry,
 } from "@/data/triviaPath";
 
-const LABELS = { pl: "Premier League", laliga: "La Liga", seriea: "Serie A", ucl: "Champions League" } as const;
+const LABELS = {
+  pl: "Premier League",
+  laliga: "La Liga",
+  seriea: "Serie A",
+  ucl: "Champions League",
+  bundesliga: "Bundesliga",
+  ligue1: "Ligue 1 McDonald's",
+  superlig: "Süper Lig",
+} as const;
 const DOTS = ["bg-accent", "bg-warning"];
 
 type Phase = "setup" | "roll" | "play" | "result" | "over";
@@ -28,6 +37,9 @@ type Player = { name: string; pos: number; turns: number };
 
 function TriviaClient() {
   const comp = parseComp(useSearchParams().get("comp"));
+  const router = useRouter();
+  const [inviteError, setInviteError] = useState<string | null>(null);
+  const [inviting, setInviting] = useState(false);
   const [phase, setPhase] = useState<Phase>("setup");
   const [versus, setVersus] = useState(true);
   const [names, setNames] = useState(["Player 1", "Player 2"]);
@@ -57,6 +69,25 @@ function TriviaClient() {
   // origin is the position at roll time, so the target stays correct after pos updates in the result phase
   const targetPos = dice ? Math.min(origin + dice, BOARD_SIZE) : 0;
   const tile = dice ? board[targetPos - 1] : undefined;
+
+  const createInvite = async () => {
+    setInviting(true);
+    setInviteError(null);
+    try {
+      const res = await fetch("/api/game/trivia-path", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "create", comp }),
+      });
+      const data = (await res.json()) as { error?: string; code?: string; token?: string };
+      if (!res.ok || !data.code || !data.token) throw new Error(data.error ?? "Could not create the game");
+      localStorage.setItem(`pltrivia:${data.code}`, data.token);
+      router.push(`/game/trivia-path?code=${data.code}&comp=${comp}`);
+    } catch (e) {
+      setInviteError(e instanceof Error ? e.message : "Could not create the game");
+      setInviting(false);
+    }
+  };
 
   const start = () => {
     setBoard(generateBoard(comp));
@@ -195,6 +226,13 @@ function TriviaClient() {
               ))}
             </div>
             <button type="button" onClick={start} className="btn-primary mt-5">Start</button>
+            <div className="mt-6 border-t border-line pt-5">
+              <p className="text-sm text-fore-muted">Or play a friend on their own device, invite only.</p>
+              <button type="button" onClick={createInvite} disabled={inviting} className="btn-ghost mt-3">
+                {inviting ? "Creating…" : "Play online"}
+              </button>
+              {inviteError && <p className="mt-2 text-sm text-red-400">{inviteError}</p>}
+            </div>
           </div>
         )}
 
@@ -337,10 +375,21 @@ function TriviaClient() {
   );
 }
 
+function Entry() {
+  const search = useSearchParams();
+  const code = (search.get("code") ?? "").toUpperCase();
+  if (!code) return <TriviaClient />;
+  return (
+    <main className="min-h-[calc(100svh-5rem)] bg-background text-foreground grid-bg px-4 py-4 md:px-8 md:py-6">
+      <TriviaPathOnline comp={parseComp(search.get("comp"))} code={code} />
+    </main>
+  );
+}
+
 export default function TriviaPathPage() {
   return (
     <Suspense fallback={null}>
-      <TriviaClient />
+      <Entry />
     </Suspense>
   );
 }

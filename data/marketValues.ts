@@ -1,42 +1,12 @@
 import type { Competition } from "@/lib/gameRoom";
 
-export type MarketValueSnapshot = {
-  value: number;
-  year: number;
-  club: string;
-};
+import { player, type MarketValuePlayer, type MarketValueSnapshot } from "@/data/marketPlayer";
+import { BUNDESLIGA_MARKET } from "@/data/bundesligaContent";
+import { LIGUE1_MARKET } from "@/data/ligue1Content";
+import { SUPERLIG_MARKET } from "@/data/superligContent";
 
-export type MarketValuePlayer = {
-  name: string;
-  nationality: string;
-  countryCode: string;
-  source: string;
-  values: MarketValueSnapshot[];
-};
-
-const transfermarktHistory = (name: string, playerId: string) => {
-  const slug = name
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
-  return `https://www.transfermarkt.com/${slug}/marktwertverlauf/spieler/${playerId}`;
-};
-
-const player = (
-  name: string,
-  nationality: string,
-  countryCode: string,
-  transfermarktId: string,
-  values: MarketValueSnapshot[],
-): MarketValuePlayer => ({
-  name,
-  nationality,
-  countryCode,
-  source: transfermarktHistory(name, transfermarktId),
-  values,
-});
+export { player };
+export type { MarketValuePlayer, MarketValueSnapshot };
 
 export const MARKET_VALUE_PLAYERS: Record<Competition, MarketValuePlayer[]> = {
   pl: [
@@ -485,7 +455,9 @@ export const MARKET_VALUE_PLAYERS: Record<Competition, MarketValuePlayer[]> = {
       { value: 10, year: 2020, club: "Bayern Munich" },
       { value: 50, year: 2022, club: "Bayern Munich" },
       { value: 110, year: 2023, club: "Bayern Munich" },
-      { value: 140, year: 2025, club: "Bayern Munich" },
     ]),
   ],
+  bundesliga: BUNDESLIGA_MARKET,
+  ligue1: LIGUE1_MARKET,
+  superlig: SUPERLIG_MARKET,
 };

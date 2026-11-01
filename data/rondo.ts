@@ -4,6 +4,9 @@ import { RONDO_EXTRA } from "@/data/rondoExtra";
 import { RONDO_BONUS } from "@/data/rondoBonus";
 import { RONDO_BONUS2 } from "@/data/rondoBonus2";
 import { RONDO_BONUS3 } from "@/data/rondoBonus3";
+import { BUNDESLIGA_RONDO } from "@/data/bundesligaContent";
+import { LIGUE1_RONDO } from "@/data/ligue1Content";
+import { SUPERLIG_RONDO } from "@/data/superligContent";
 
 export type RondoClue = {
   letter: string;
@@ -256,6 +259,9 @@ export const RONDO_CLUES: Record<Competition, RondoClue[]> = {
   laliga: mergeUnique([...LL, ...RONDO_MORE.laliga, ...RONDO_EXTRA.laliga], RONDO_BONUS.laliga, RONDO_BONUS2.laliga, RONDO_BONUS3.laliga),
   seriea: mergeUnique([...SA, ...RONDO_MORE.seriea, ...RONDO_EXTRA.seriea], RONDO_BONUS.seriea, RONDO_BONUS2.seriea, RONDO_BONUS3.seriea),
   ucl: mergeUnique([...UCL, ...RONDO_MORE.ucl, ...RONDO_EXTRA.ucl], RONDO_BONUS.ucl, RONDO_BONUS2.ucl, RONDO_BONUS3.ucl),
+  bundesliga: mergeUnique(BUNDESLIGA_RONDO),
+  ligue1: mergeUnique(LIGUE1_RONDO),
+  superlig: mergeUnique(SUPERLIG_RONDO),
 };
 export const RONDO_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 export const RONDO_SECONDS = 180;

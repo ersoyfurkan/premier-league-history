@@ -40,6 +40,9 @@ const LABELS: Record<Competition, string> = {
   laliga: "La Liga",
   seriea: "Serie A",
   ucl: "Champions League",
+  bundesliga: "Bundesliga",
+  ligue1: "Ligue 1 McDonald's",
+  superlig: "Süper Lig",
 };
 
 function Shell({ comp, children }: { comp: Competition; children: React.ReactNode }) {

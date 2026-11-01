@@ -107,4 +107,4 @@ const UCL: RondoClue[] = [
   r("Z", "French midfielder who volleyed the winner in the 2002 final", "Zinedine Zidane|Zidane|Zinedine"),
 ];
 
-export const RONDO_EXTRA: Record<Competition, RondoClue[]> = { pl: PL, laliga: LL, seriea: SA, ucl: UCL };
+export const RONDO_EXTRA: Pick<Record<Competition, RondoClue[]>, "pl" | "laliga" | "seriea" | "ucl"> = { pl: PL, laliga: LL, seriea: SA, ucl: UCL };

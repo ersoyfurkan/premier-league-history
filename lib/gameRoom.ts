@@ -2,20 +2,26 @@ import { PLAYERS, type PlayerCard } from "@/data/players";
 import { UCL_CARDS } from "@/data/uclCards";
 import { LALIGA_CARDS } from "@/data/laLigaCards";
 import { SERIEA_CARDS } from "@/data/serieACards";
+import { BUNDESLIGA_CARDS } from "@/data/bundesligaCards";
+import { LIGUE1_CARDS } from "@/data/ligue1Cards";
+import { SUPERLIG_CARDS } from "@/data/superligCards";
+import { LEAGUE_META, isEspnComp } from "@/lib/leagues";
 
-export type Competition = "pl" | "ucl" | "laliga" | "seriea";
-export const poolFor = (comp: Competition | undefined): PlayerCard[] =>
-  comp === "ucl" ? UCL_CARDS : comp === "laliga" ? LALIGA_CARDS : comp === "seriea" ? SERIEA_CARDS : PLAYERS;
+export type Competition = "pl" | "ucl" | "laliga" | "seriea" | "bundesliga" | "ligue1" | "superlig";
+const CARDS: Record<Competition, PlayerCard[]> = {
+  pl: PLAYERS,
+  ucl: UCL_CARDS,
+  laliga: LALIGA_CARDS,
+  seriea: SERIEA_CARDS,
+  bundesliga: BUNDESLIGA_CARDS,
+  ligue1: LIGUE1_CARDS,
+  superlig: SUPERLIG_CARDS,
+};
+export const poolFor = (comp: Competition | undefined): PlayerCard[] => CARDS[comp ?? "pl"];
 export const lobbyFor = (comp: Competition | undefined) =>
-  comp === "ucl"
-    ? "/champions-league/game"
-    : comp === "laliga"
-      ? "/la-liga/game"
-      : comp === "seriea"
-        ? "/serie-a/game"
-        : "/game";
+  comp === "ucl" ? "/champions-league/game" : comp && isEspnComp(comp) ? LEAGUE_META[comp].game : "/game";
 export const parseComp = (value: unknown): Competition =>
-  value === "ucl" || value === "laliga" || value === "seriea" ? value : "pl";
+  value === "ucl" || isEspnComp(value) ? value : "pl";
 
 export type Side = "p1" | "p2";
 export type StatKey = "appearances" | "goals" | "assists";

@@ -316,4 +316,4 @@ const UCL: RondoClue[] = [
   r("Z", "Swedish striker who played for Ajax, Juventus, Inter, Barcelona, Milan and PSG", "Zlatan Ibrahimović|Zlatan Ibrahimovic|Zlatan|Ibrahimović|Ibrahimovic"),
 ];
 
-export const RONDO_BONUS: Record<Competition, RondoClue[]> = { pl: PL, laliga: LL, seriea: SA, ucl: UCL };
+export const RONDO_BONUS: Pick<Record<Competition, RondoClue[]>, "pl" | "laliga" | "seriea" | "ucl"> = { pl: PL, laliga: LL, seriea: SA, ucl: UCL };

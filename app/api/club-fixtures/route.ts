@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { fmtPlKickoff, fmtUclKickoff } from "@/lib/dates";
 import { espnBadge, seasonFixtures, withLiveScores, type EspnLeague } from "@/lib/espn";
+import { LEAGUE_META, isEspnComp } from "@/lib/leagues";
 
 const PL_BASE = "https://sdp-prem-prod.premier-league-prod.pulselive.com/api";
 const PL_SEASON = 2026;
@@ -76,18 +77,16 @@ async function espnLeagueFixtures(team: string, league: EspnLeague): Promise<Clu
 export async function GET(request: NextRequest) {
   const comp = request.nextUrl.searchParams.get("comp");
   const team = request.nextUrl.searchParams.get("team") ?? "";
-  if ((comp !== "pl" && comp !== "ucl" && comp !== "laliga" && comp !== "seriea") || !/^\d{1,8}$/.test(team)) {
+  if ((comp !== "pl" && comp !== "ucl" && !isEspnComp(comp)) || !/^\d{1,8}$/.test(team)) {
     return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   }
   try {
     const list =
       comp === "pl"
         ? await plFixtures(team)
-        : comp === "laliga"
-          ? await espnLeagueFixtures(team, "esp.1")
-          : comp === "seriea"
-            ? await espnLeagueFixtures(team, "ita.1")
-            : await uclFixtures(team);
+        : isEspnComp(comp)
+          ? await espnLeagueFixtures(team, LEAGUE_META[comp].espn)
+          : await uclFixtures(team);
     list.sort((a, b) => a.sort.localeCompare(b.sort));
     return NextResponse.json(list, { headers: { "Cache-Control": "public, max-age=10, s-maxage=15" } });
   } catch {

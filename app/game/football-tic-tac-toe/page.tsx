@@ -12,6 +12,7 @@ import PlayerPhoto from "@/components/PlayerPhoto";
 import UclImage from "@/components/UclImage";
 import { playerFaceUrl } from "@/data/playerFaces";
 import { poolFor, lobbyFor, parseComp, type Competition } from "@/lib/gameRoom";
+import { LEAGUE_META } from "@/lib/leagues";
 import {
   applyFootballTicTacToeMove,
   expireFootballTicTacToeTurn,
@@ -306,7 +307,7 @@ function FootballTicTacToeClient() {
 
   const isMyTurn = view.turn === view.you;
   const competitionLabel =
-    activeComp === "pl" ? "Premier League" : activeComp === "laliga" ? "La Liga" : activeComp === "seriea" ? "Serie A" : "Champions League";
+    activeComp === "pl" ? "Premier League" : activeComp === "ucl" ? "Champions League" : LEAGUE_META[activeComp].label;
   const secondsLeft = view.status === "playing" && view.turnDeadline
     ? Math.min(60, Math.max(0, Math.ceil((view.turnDeadline - clockNow) / 1000)))
     : null;

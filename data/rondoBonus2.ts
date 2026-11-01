@@ -205,4 +205,4 @@ const UCL: RondoClue[] = [
   r("Z", "Inter captain who lifted the 2010 trophy", "Javier Zanetti|Zanetti"),
 ];
 
-export const RONDO_BONUS2: Record<Competition, RondoClue[]> = { pl: PL, laliga: LL, seriea: SA, ucl: UCL };
+export const RONDO_BONUS2: Pick<Record<Competition, RondoClue[]>, "pl" | "laliga" | "seriea" | "ucl"> = { pl: PL, laliga: LL, seriea: SA, ucl: UCL };
