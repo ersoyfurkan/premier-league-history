@@ -30,6 +30,7 @@ type PathState = {
   required: number;
   question: string | null;
   found: string[];
+  taken?: Record<number, string[]>;
   last: Last | null;
   winner: Side | null;
   rematch: Record<Side, boolean>;
@@ -96,6 +97,9 @@ function startPlay(state: PathState, now: number, dice: number) {
 
 function finishTurn(state: PathState, now: number, success: boolean, message: string) {
   const side = state.turn;
+  const key = targetOf(state);
+  state.taken ??= {};
+  state.taken[key] = [...(state.taken[key] ?? []), ...state.found];
   if (success) state.pos[side] = targetOf(state);
   state.turns[side] += 1;
   state.last = { side, success, message, answers: state.found };
@@ -188,6 +192,7 @@ function freshState(comp: Competition, p1Token: string): PathState {
     required: 1,
     question: null,
     found: [],
+    taken: {},
     last: null,
     winner: null,
     rematch: { p1: false, p2: false },
@@ -261,13 +266,18 @@ async function handlePost(request: NextRequest) {
       if (state.phase !== "play" || state.turn !== side) return { extra: { message: "Not your question" } };
       const tile = tileById(state.comp, state.board[targetOf(state) - 1]);
       if (!tile) return { error: "Question unavailable" };
-      const open = tile.entries.filter((entry) => !state.found.includes(entry.name));
-      const entry = matchTriviaAnswer(open, guess) ?? matchTriviaAnswer(tile.entries, guess);
+      const used = (state.taken ??= {})[targetOf(state)] ?? [];
+      const open = tile.entries.filter((entry) => !state.found.includes(entry.name) && !used.includes(entry.name));
+      const entry = matchTriviaAnswer(open, guess);
       if (!entry) {
+        const repeat = matchTriviaAnswer(tile.entries, guess);
+        if (repeat) {
+          const message = state.found.includes(repeat.name) ? "Already said that one" : "Already answered on this question, try another";
+          return { extra: { message } };
+        }
         finishTurn(state, now, false, "Wrong answer, you lose your turn");
         return { extra: { message: "Wrong answer, you lose your turn" } };
       }
-      if (state.found.includes(entry.name)) return { extra: { message: "Already said that one" } };
       state.found.push(entry.name);
       if (state.found.length >= state.required) finishTurn(state, now, true, "Correct");
     });

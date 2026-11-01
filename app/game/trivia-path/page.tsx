@@ -50,6 +50,7 @@ function TriviaClient() {
   const [rolling, setRolling] = useState(false);
   const [required, setRequired] = useState(1);
   const [found, setFound] = useState<TriviaEntry[]>([]);
+  const [taken, setTaken] = useState<Record<number, string[]>>({});
   const [deadline, setDeadline] = useState(0);
   const [now, setNow] = useState(() => Date.now());
   const [guess, setGuess] = useState("");
@@ -93,6 +94,7 @@ function TriviaClient() {
     setBoard(generateBoard(comp));
     setPlayers((versus ? names : [names[0]]).map((name, i) => ({ name: name.trim() || `Player ${i + 1}`, pos: 0, turns: 0 })));
     setTurn(0);
+    setTaken({});
     setDice(null);
     setPhase("roll");
   };
@@ -124,10 +126,12 @@ function TriviaClient() {
     }, 80);
   };
 
-  const finishTurn = (success: boolean) => {
+  const finishTurn = (success: boolean, answers: TriviaEntry[] = found) => {
     if (finished.current) return;
     finished.current = true;
     setPassed(success);
+    // Answers given this turn are used up for this question, so the other player can't repeat them.
+    setTaken((prev) => ({ ...prev, [targetPos - 1]: [...(prev[targetPos - 1] ?? []), ...answers.map((a) => a.name)] }));
     setPlayers((prev) =>
       prev.map((p, i) => (i === turn ? { ...p, pos: success ? targetPos : p.pos, turns: p.turns + 1 } : p)),
     );
@@ -141,24 +145,25 @@ function TriviaClient() {
 
   const submitAnswer = (value: string) => {
     if (!tile || phase !== "play") return;
-    // Match against unanswered entries first so a shared name (e.g. "Ronaldo") can still reach the other player.
-    const entry =
-      matchTriviaAnswer(tile.entries.filter((e) => !found.includes(e)), value) ??
-      matchTriviaAnswer(tile.entries, value);
+    const used = taken[targetPos - 1] ?? [];
+    const open = tile.entries.filter((e) => !found.includes(e) && !used.includes(e.name));
+    // Match against open entries first so a shared name (e.g. "Ronaldo") can still reach the other player.
+    const entry = matchTriviaAnswer(open, value);
     setGuess("");
     if (!entry) {
+      const repeat = matchTriviaAnswer(tile.entries, value);
+      if (repeat) {
+        setFeedback(found.includes(repeat) ? "Already said that one" : "Already answered on this question — try another");
+        return;
+      }
       setFeedback("Wrong answer — you lose your turn");
       finishTurn(false);
-      return;
-    }
-    if (found.includes(entry)) {
-      setFeedback("Already said that one");
       return;
     }
     const next = [...found, entry];
     setFound(next);
     setFeedback(null);
-    if (next.length >= required) finishTurn(true);
+    if (next.length >= required) finishTurn(true, next);
   };
 
   const submit = (event: FormEvent) => {

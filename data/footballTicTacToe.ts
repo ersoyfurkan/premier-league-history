@@ -1,4 +1,4 @@
-﻿import type { Competition } from "@/lib/gameRoom";
+import type { Competition } from "@/lib/gameRoom";
 import { CAREERS } from "@/data/clubDuelCareers";
 import { nationOf } from "@/data/playerNations";
 import { BUNDESLIGA_FACTS } from "@/data/bundesligaContent";
@@ -1230,16 +1230,16 @@ const EXTRA_CLUB_BADGES: Record<string, [string, number]> = {
   wham: ["West Ham", 371], new: ["Newcastle", 361], eve: ["Everton", 368], avl: ["Aston Villa", 362],
 };
 const EXTRA_CLUB_CODES: Record<Competition, string> = {
-  bundesliga: "rma bar mun che ars mci liv juv inter mil psg tot",
-  ligue1: "rma bar mun che ars mci liv juv inter mil bay tot",
-  superlig: "rma bar mun che ars liv juv inter bay mil psg",
-  pl: "rma bar juv inter mil bay psg atm val",
-  laliga: "juv inter mil psg mun che liv ars mci bay tot ajax nap",
+  bundesliga: "",
+  ligue1: "",
+  superlig: "",
+  pl: "",
+  laliga: "",
+  seriea: "",
   ucl: "tot nap rom laz val sev",
-  seriea: "rma bar mun che ars psg bay atm ajax mci tot liv",
 };
 const EXTRA_CLUB_DEFS = (comp: Competition): Def[] =>
-  EXTRA_CLUB_CODES[comp].split(" ").map((code) => {
+  EXTRA_CLUB_CODES[comp].split(" ").filter(Boolean).map((code) => {
     const [label, id] = EXTRA_CLUB_BADGES[code];
     return club(`${P}${label}`, espn(id), code, label);
   });
@@ -1282,11 +1282,14 @@ const MANAGER_KEYS: Record<Competition, string> = {
   seriea: "ancelotti conte allegri spalletti sarri pioli inzaghi mancini lippi capello mourinho ranieri benitez emery",
 };
 
+// Global honours are only used in the Champions League; domestic leagues stick to their own clubs and stats.
+const GLOBAL_ROW_LABELS = new Set(["Ballon d'Or winner", "World Cup winner"]);
+
 const poolFor = (comp: Competition): Def[] => [
   ...POOL_CLUBS[comp],
   ...EXTRA_CLUB_DEFS(comp).filter((def) => !POOL_CLUBS[comp].some((c) => c.clue.label === def.clue.label)),
   ...POOL_ROWS[comp],
-  ...EXTRA_ROWS[comp],
+  ...EXTRA_ROWS[comp].filter((def) => comp === "ucl" || !GLOBAL_ROW_LABELS.has(def.clue.label)),
   ...MANAGER_KEYS[comp].split(" ").map(managed),
 ];
 

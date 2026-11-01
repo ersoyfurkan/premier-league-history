@@ -141,10 +141,18 @@ STATIC.ligue1 = newLeagueStatic(LIGUE1_TRIVIA);
 STATIC.superlig = newLeagueStatic(SUPERLIG_TRIVIA);
 
 for (const comp of ["pl", "laliga", "seriea", "ucl"] as const) {
-  STATIC[comp].push(...SHARED_EXTRA, ...LEAGUE_EXTRA[comp]);
+  STATIC[comp].push(...LEAGUE_EXTRA[comp]);
 }
-for (const comp of ["bundesliga", "ligue1", "superlig"] as const) {
-  STATIC[comp].push(...SHARED_EXTRA);
+// General football / international trivia belongs to the Champions League; domestic leagues keep their own content.
+const GENERAL_IDS = new Set(["s-ballon", "s-wc", "s-clwin", "s-scotstad", ...SHARED_EXTRA.map((item) => item.id)]);
+const KEEP_FOR: Record<string, Competition[]> = { "s-ballonfw": ["laliga", "ucl"] };
+for (const comp of Object.keys(STATIC) as Competition[]) {
+  if (comp === "ucl") {
+    STATIC.ucl.push(...SHARED_EXTRA);
+    continue;
+  }
+  STATIC[comp] = STATIC[comp].filter((item) => !GENERAL_IDS.has(item.id));
+  if (comp === "laliga") STATIC.laliga.push(...SHARED_EXTRA.filter((item) => KEEP_FOR[item.id]?.includes(comp)));
 }
 
 const CLUB_ALIASES: Record<string, string[]> = {
@@ -349,13 +357,26 @@ export function tileById(comp: Competition, id: string): BoardTile | null {
   return category ? { id, short: short ?? "Trivia", noun: category.noun, plural: category.plural, entries: category.entries } : null;
 }
 
-// Builds a random path of categories. The dice later decides how many answers each one needs.
+// Builds a random path that gets harder: early squares have big answer pools, the final ones have the smallest.
 export function generateBoardIds(comp: Competition): string[] {
   const used = new Set<string>();
-  return Array.from({ length: BOARD_SIZE }, () => {
+  const candidates: { id: string; size: number }[] = [];
+  for (let i = 0; i < BOARD_SIZE * 25 && candidates.length < BOARD_SIZE * 5; i += 1) {
     const q = pickTriviaQuestion(comp, 6, used);
+    if (used.has(q.id)) continue;
     used.add(q.id);
-    return q.id;
+    candidates.push({ id: q.id, size: q.entries.length });
+  }
+  candidates.sort((a, b) => b.size - a.size);
+  const chunk = Math.max(1, candidates.length / BOARD_SIZE);
+  const taken = new Set<string>();
+  return Array.from({ length: BOARD_SIZE }, (_, i) => {
+    const start = Math.floor(i * chunk);
+    const end = Math.max(start + 1, Math.floor((i + 1) * chunk));
+    const options = candidates.slice(start, end).filter((c) => !taken.has(c.id));
+    const choice = options.length ? options[Math.floor(Math.random() * options.length)] : candidates.find((c) => !taken.has(c.id)) ?? candidates[0];
+    taken.add(choice.id);
+    return choice.id;
   });
 }
 
