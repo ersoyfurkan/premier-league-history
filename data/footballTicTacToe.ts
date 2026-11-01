@@ -1,4 +1,5 @@
 ﻿import type { Competition } from "@/lib/gameRoom";
+import { CAREERS } from "@/data/clubDuelCareers";
 
 export type FootballTicTacToeCell = {
   player: string;
@@ -793,11 +794,25 @@ function enrich(facts: Fact[]): Fact[] {
   return facts;
 }
 
+// Applies the up-to-date career list (Club Duel data) to players already in a game's pool.
+function applyCareers(facts: Fact[]): Fact[] {
+  const byName = new Map<string, Fact>();
+  for (const fact of facts) byName.set(normalizeFootballPlayerName(fact.name), fact);
+  for (const line of CAREERS.split("\n")) {
+    const [name, keys] = line.split(":");
+    if (!name || !keys) continue;
+    const fact = byName.get(normalizeFootballPlayerName(name.trim()));
+    if (!fact) continue;
+    for (const club of keys.trim().split(/\s+/)) if (!fact.clubs.includes(club)) fact.clubs.push(club);
+  }
+  return facts;
+}
+
 const FACTS: Record<Competition, Fact[]> = {
-  pl: enrich(merge(PL_FACTS, PL_ALSO, PL_EXTRA)),
-  laliga: enrich(merge(LALIGA_FACTS, LL_ALSO, LL_EXTRA)),
-  ucl: enrich(merge(UCL_FACTS, UCL_ALSO, UCL_EXTRA)),
-  seriea: enrich(merge(SA_FACTS, SA_ALSO, [])),
+  pl: applyCareers(enrich(merge(PL_FACTS, PL_ALSO, PL_EXTRA))),
+  laliga: applyCareers(enrich(merge(LALIGA_FACTS, LL_ALSO, LL_EXTRA))),
+  ucl: applyCareers(enrich(merge(UCL_FACTS, UCL_ALSO, UCL_EXTRA))),
+  seriea: applyCareers(enrich(merge(SA_FACTS, SA_ALSO, []))),
 };
 
 export function footballTicTacToePlayerNames(comp: Competition) {

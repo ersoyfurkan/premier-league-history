@@ -1035,4 +1035,342 @@ Federico Barba:com
 Jonathan Rodríguez:com
 Mattia Mustacchio:com
 Lorenzo Pirola:com
+Matthijs de Ligt:ajax juv bay mun
+Jadon Sancho:dor mun che avl mci
+Marcus Rashford:mun avl bar
+Antony:ajax mun bet
+Alejandro Garnacho:mun che
+Mason Greenwood:mun mar get
+Casemiro:rma mun por
+Harry Maguire:mun lei
+Rasmus Højlund:ata mun nap
+Mason Mount:che mun
+Jonny Evans:mun lei
+Christian Eriksen:tot ajax inter mun bre
+Raphaël Varane:rma mun com
+Donny van de Beek:ajax mun eve
+Anthony Martial:mun sev
+Bruno Fernandes:udi spo mun
+Matheus Cunha:wol mun atm
+Bryan Mbeumo:bre mun
+Benjamin Šeško:rbl mun
+Patrick Dorgu:mun lec
+Diogo Dalot:por mun mil
+Leny Yoro:lil mun
+Manuel Ugarte:spo psg mun
+Joshua Zirkzee:bay bol mun
+Noussair Mazraoui:ajax bay mun
+Kobbie Mainoo:mun
+Ruben Amorim:spo mun
+Trent Alexander-Arnold:liv rma
+Dean Huijsen:bou rma juv
+Álvaro Carreras:ben rma mun
+Franco Mastantuono:rma
+Florian Wirtz:lev liv
+Alexander Isak:soc new liv bor
+Hugo Ekitike:psg lens fra liv
+Jeremie Frimpong:lev liv cel
+Milos Kerkez:bou liv
+Viktor Gyökeres:spo ars cov
+Eberechi Eze:cry ars
+Martín Zubimendi:soc ars
+Noni Madueke:psv che ars
+Kai Havertz:lev che ars
+Declan Rice:wham ars
+Leandro Trossard:bha ars
+Gabriel Jesus:mci ars
+Raheem Sterling:liv mci che ars
+Jorginho:ver nap che ars
+Thomas Partey:atm ars vil
+Ben White:bha ars
+Jurrien Timber:ajax ars
+Martin Ødegaard:rma ars soc
+Riccardo Calafiori:bol ars
+Mikel Merino:soc ars osa
+Viktor Gyokeres:spo ars
+Joan García:esp bar
+Marcus Rashford:bar
+Robert Lewandowski:dor bay bar
+Raphinha:spo lee bar
+Ferran Torres:val mci bar
+Dani Olmo:rbl dor bar
+Frenkie de Jong:ajax bar
+Jules Koundé:sev che bar
+João Cancelo:mci bay juv mun bar
+João Félix:ben atm che bar mil
+Wojciech Szczęsny:ars juv rom bar
+Ronald Araújo:bar
+Ousmane Dembélé:dor bar psg
+Gonçalo Ramos:ben psg
+Marco Asensio:rma avl psg
+Randal Kolo Muani:psg juv tot
+Kylian Mbappé:psg rma
+Khvicha Kvaratskhelia:nap psg
+João Neves:ben psg
+Lucas Chevalier:lil psg
+Bradley Barcola:lyon psg
+Désiré Doué:psg
+Achraf Hakimi:rma dor inter psg
+Gianluigi Donnarumma:mil psg mci
+Tijjani Reijnders:mil mci
+Rayan Aït-Nouri:wol mci
+Rayan Cherki:lyon mci
+Josko Gvardiol:rbl mci
+Nathan Aké:che bou mci
+Matheus Nunes:spo wol mci
+Savinho:mci
+Jérémy Doku:mci
+Erling Haaland:bod mol dor mci
+Julián Álvarez:mci atm
+Kevin De Bruyne:che wol mci nap
+Ilkay Gündogan:dor mci bar
+Bernardo Silva:mon mci
+Kyle Walker:tot mci mil
+Jack Grealish:avl mci eve
+Cole Palmer:mci che
+Romeo Lavia:sou che
+Moisés Caicedo:bha che
+Enzo Fernández:ben che
+Nicolas Jackson:vil che bay
+Joao Pedro:wat bha che
+Liam Delap:ips che
+Jamie Gittens:dor che
+Estevão:che
+Mykhailo Mudryk:sha che
+Christopher Nkunku:rbl che mil
+Raheem Sterling:che ars
+Conor Gallagher:cry che atm
+Álvaro Morata:atm che juv mil com gal
+Pedro Neto:wol che
+Dario Essugo:spo che
+Marc Cucurella:bha che
+Axel Disasi:mon che
+Malo Gusto:lyon che
+Trevoh Chalobah:cry che
+Cole Palmer:che
+Xavi Simons:psv psg rbl tot
+Mohammed Kudus:ajax wham tot
+Mathys Tel:bay tot
+Richarlison:eve tot wat
+Dominic Solanke:bou tot
+James Maddison:lei tot
+Dejan Kulusevski:juv tot par
+Pedro Porro:spo tot man
+Cristian Romero:ata juv tot
+Micky van de Ven:wol tot
+Son Heung-min:lev tot
+Harry Kane:tot bay
+Yves Bissouma:bha tot
+Lucas Moura:psg tot
+Alexander Sørloth:atm vil
+Alexander Sørloth:cry
+Tomas Soucek:sla wham
+Nick Woltemade:stu new
+Anthony Gordon:eve new
+Sandro Tonali:mil bre new
+Bruno Guimarães:new lyon
+Alexander Isak:new
+Anthony Elanga:nfo new
+Jacob Murphy:new
+Jacob Ramsey:avl new
+Emiliano Martínez:ars avl
+Ollie Watkins:bre avl
+Morgan Rogers:avl
+Youri Tielemans:lei avl mon
+Lucas Digne:psg bar avl eve
+Douglas Luiz:avl juv nfo
+Leon Bailey:lev avl rom
+Jhon Durán:avl fen
+Donyell Malen:psv dor avl
+Marcus Rashford:avl
+Amadou Onana:eve avl lil
+Ezri Konsa:avl
+Pau Torres:vil avl
+Alberto Moreno:liv vil
+Gerard Moreno:vil
+Alexander Sørloth:vil
+Ayoze Pérez:new lei bet vil
+Dani Parejo:val vil
+Unai Emery:avl
+Antoine Griezmann:soc atm bar
+Álvaro Morata:rma
+Nahuel Molina:atm udi
+Thiago Almada:atm
+Conor Gallagher:atm
+Giuliano Simeone:atm
+Jan Oblak:atm
+Rodrigo De Paul:val atm udi
+Marcos Llorente:rma atm
+Koke:atm
+Ángel Correa:atm
+Joao Felix:atm
+Iago Aspas:cel lvt
+Jude Bellingham:dor rma bir
+Aurélien Tchouaméni:mon rma
+Eduardo Camavinga:rma
+Vinícius Júnior:rma
+Rodrygo:rma
+Endrick:rma
+Arda Güler:rma fen
+Antonio Rüdiger:stu che rom rma
+David Alaba:bay rma
+Eder Militão:por rma
+Fran García:ray rma
+Brahim Díaz:mci mil rma
+Thibaut Courtois:atm che rma
+Luka Modrić:tot rma mil
+Nico Williams:ath
+Dani Carvajal:lev rma
+Lucas Vázquez:esp rma
+Rafael Leão:lil mil
+Christian Pulisic:dor che mil
+Luka Jović:rma fio mil
+Strahinja Pavlović:sal mil
+Youssouf Fofana:mon mil
+Santiago Giménez:fey mil
+Rafael Leao:mil
+Adrien Rabiot:psg juv mar mil
+Samuele Ricci:tor mil
+Ardon Jashari:bru mil
+Mike Maignan:lil mil
+Luka Modric:mil
+Christian Pulisic:mil
+Romelu Lukaku:che eve mun inter rom nap
+Scott McTominay:mun nap
+Rasmus Højlund:nap
+Noa Lang:psv nap
+Alessandro Buongiorno:tor nap
+Billy Gilmour:bha nap
+Sam Beukema:bol nap
+Lorenzo Lucca:udi nap
+Antonio Conte:che tot juv inter nap
+David Neres:ben nap
+Alisson Santos:nap
+Amir Rrahmani:ver nap
+Leonardo Spinazzola:juv rom nap
+Stanislav Lobotka:cel nap
+Alessandro Bastoni:ata inter
+Federico Dimarco:ver inter
+Denzel Dumfries:psv inter
+Hakan Çalhanoğlu:lev mil inter
+Henrikh Mkhitaryan:dor mun ars rom inter
+Marcus Thuram:bor inter
+Yann Sommer:bay inter
+Lautaro Martínez:inter
+Nicolò Barella:cag inter
+Piotr Zieliński:nap inter
+Davide Frattesi:sas inter
+Carlos Augusto:mon inter
+Manuel Akanji:dor mci inter
+Benjamin Pavard:bay inter
+Francesco Acerbi:sas laz inter
+Mehdi Taremi:por inter
+Marko Arnautović:inter bol
+Luis Henrique:mar inter
+Petar Sučić:inter
+Ange-Yoan Bonny:par inter
+Dušan Vlahović:fio juv
+Kenan Yıldız:juv
+Teun Koopmeiners:ata juv
+Khéphren Thuram:nic juv
+Jonathan David:lil juv
+Lois Openda:lens rbl juv
+Randal Kolo Muani:juv
+Edon Zhegrova:lil juv
+Pierre Kalulu:mil juv
+Andrea Cambiaso:gen juv
+Gleison Bremer:tor juv
+Federico Gatti:juv
+Manuel Locatelli:sas juv
+Nicolás González:fio stu juv atm
+Douglas Luiz:juv
+Weston McKennie:sch juv
+Paul Pogba:juv mun
+Mateo Retegui:gen ata
+Ademola Lookman:ata ful lei eve
+Marten de Roon:ata
+Charles De Ketelaere:bru mil ata
+Gianluca Scamacca:sas wham ata
+Sead Kolašinac:ars mar ata
+Paulo Dybala:juv rom
+Artem Dovbyk:gir rom
+Evan Ndicka:fra rom
+Lorenzo Pellegrini:rom
+Gianluca Mancini:ata rom
+Angeliño:man rom
+Leandro Paredes:psg juv rom
+Stephan El Shaarawy:mil rom
+Matías Soulé:juv rom
+Wesley França:rom
+Manu Koné:bor rom
+Zeki Çelik:lil rom
+Mario Hermoso:atm rom
+Nicolò Zaniolo:rom gal avl ata fio
+Kasper Dolberg:ajax sev
+Dayot Upamecano:rbl bay
+Luis Díaz:por liv bay
+Michael Olise:cry bay
+Harry Kane:bay
+Jonathan Tah:lev bay
+Joshua Kimmich:rbl stu bay
+Serge Gnabry:ars wer bay
+Leroy Sané:sch mci bay gal
+Kingsley Coman:psg juv bay
+Konrad Laimer:rbl bay
+Raphaël Guerreiro:dor bay
+Aleksandar Pavlović:bay
+Nicolas Jackson:bay
+Jamal Musiala:che bay
+Karim Adeyemi:sal dor
+Serhou Guirassy:stu dor
+Julian Brandt:lev dor
+Waldemar Anton:stu dor
+Maximilian Beier:hof dor
+Jobe Bellingham:sun dor
+Felix Nmecha:wol dor
+Marcel Sabitzer:rbl bay dor
+Niklas Süle:bay dor
+Emre Can:lev dor
+Gregor Kobel:dor
+Donyell Malen:dor
+Ramy Bensebaini:dor
+Jamie Gittens:dor
+Fábio Silva:por wol dor
+Daniel Svensson:dor
+Yan Couto:mci dor
+Nico Schlotterbeck:dor
+Pascal Groß:bha dor
+Ibrahima Konaté:rbl liv
+Dominik Szoboszlai:rbl liv
+Cody Gakpo:psv liv
+Alisson Becker:rom liv
+Virgil van Dijk:cel sou liv
+Mohamed Salah:bas che fio rom liv
+Andrew Robertson:hul liv
+Wataru Endō:stu liv
+Ryan Gravenberch:ajax bay liv
+Curtis Jones:liv
+Darwin Núñez:ben alm liv
+Federico Chiesa:fio juv liv
+Giorgi Mamardashvili:val liv
+Alexis Mac Allister:bha liv
+Joe Gomez:cha liv
+Luis Suárez:ajax liv bar atm
+Diogo Jota:wol por atl liv
+Kostas Tsimikas:oly liv
+Jarell Quansah:liv lev
+Álvaro Arbeloa:liv rma
+Ibrahim Konaté:liv
+Antoine Semenyo:bou mci
+Marc Guéhi:cry mci
+Emiliano Buendía:avl lev
+Dean Henderson:cry
+Ismaïla Sarr:wat cry
+Jean-Philippe Mateta:cry
+Maxence Lacroix:wol cry
+Adam Wharton:bla cry
+Yeremi Pino:vil cry
+Mohamed Salah:liv
+Xabi Alonso:soc liv rma bay
+Alexander Isak:dor soc new liv
 `;
