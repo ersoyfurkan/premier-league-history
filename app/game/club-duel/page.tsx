@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { FormEvent, Suspense, useEffect, useState } from "react";
+import { FormEvent, Suspense, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { DUEL_CLUBS, clubByKey } from "@/data/clubDuel";
+import UclImage from "@/components/UclImage";
+import { playerFaceUrl } from "@/data/playerFaces";
+import { DUEL_CLUBS, clubByKey, searchDuelPlayers } from "@/data/clubDuel";
 import { lobbyFor, parseComp, type Competition } from "@/lib/gameRoom";
 
 type Side = "p1" | "p2";
@@ -196,9 +198,8 @@ function DuelClient() {
     }
   };
 
-  const submitGuess = async (event: FormEvent) => {
-    event.preventDefault();
-    const text = guess.trim();
+  const sendGuess = async (raw: string) => {
+    const text = raw.trim();
     if (!text) return;
     setGuess("");
     try {
@@ -209,6 +210,11 @@ function DuelClient() {
     }
   };
 
+  const submitGuess = (event: FormEvent) => {
+    event.preventDefault();
+    void sendGuess(guess);
+  };
+
   const copyLink = async () => {
     await navigator.clipboard.writeText(`${window.location.origin}/game/club-duel?code=${code}&comp=${comp}`);
     setCopied(true);
@@ -216,6 +222,7 @@ function DuelClient() {
   };
 
   const activeComp = view?.comp ?? comp;
+  const suggestions = useMemo(() => searchDuelPlayers(activeComp, guess), [activeComp, guess]);
 
   if (!code) {
     return (
@@ -333,14 +340,34 @@ function DuelClient() {
                 ))}
               </div>
               <form onSubmit={submitGuess} className="mt-4 flex flex-col gap-3 sm:flex-row">
-                <input
-                  value={guess}
-                  onChange={(event) => setGuess(event.target.value)}
-                  autoFocus
-                  autoComplete="off"
-                  placeholder="Type a player name…"
-                  className="min-w-0 flex-1 rounded-xl border border-line bg-background px-4 py-3 outline-none focus:border-accent"
-                />
+                <div className="relative min-w-0 flex-1">
+                  <input
+                    value={guess}
+                    onChange={(event) => setGuess(event.target.value)}
+                    autoFocus
+                    autoComplete="off"
+                    maxLength={80}
+                    placeholder="Type a player name…"
+                    className="w-full rounded-xl border-2 border-lime-400/80 bg-background px-4 py-3 outline-none focus:border-lime-300 focus:ring-2 focus:ring-lime-400/20"
+                  />
+                  {suggestions.length > 0 && (
+                    <div role="listbox" className="absolute left-0 right-0 top-full z-20 mt-1 max-h-64 overflow-y-auto rounded-xl border border-border bg-surface shadow-xl">
+                      {suggestions.map((name) => (
+                        <button
+                          key={name}
+                          type="button"
+                          role="option"
+                          aria-selected={false}
+                          onClick={() => void sendGuess(name)}
+                          className="flex w-full items-center gap-3 border-b border-border/50 px-3 py-2 text-left text-sm last:border-b-0 hover:bg-primary/10"
+                        >
+                          <UclImage fallback={playerFaceUrl(name)} alt={name} className="h-9 w-9" shape="circle" />
+                          <span className="min-w-0 flex-1 truncate">{name}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
                 <button type="submit" className="btn-primary">Guess</button>
               </form>
               {feedback && <p className="mt-2 text-sm text-red-400">{feedback}</p>}

@@ -77,31 +77,42 @@ export const DUEL_CLUBS: Record<Competition, DuelClub[]> = {
     c("udi", "Udinese", espn(118)),
   ],
   ucl: [
-    c("ajax", "Ajax", espn(139)),
+    c("aek", "AEK Athens"),
     c("ars", "Arsenal", espn(359)),
-    c("ata", "Atalanta", espn(105)),
     c("atm", "Atlético Madrid", espn(1068)),
+    c("avl", "Aston Villa", espn(362)),
     c("bar", "Barcelona", espn(83)),
     c("bay", "Bayern Munich", espn(132)),
-    c("ben", "Benfica", espn(1929)),
-    c("che", "Chelsea", espn(363)),
+    c("bet", "Real Betis", espn(244)),
+    c("bod", "Bodø/Glimt"),
+    c("bru", "Club Brugge"),
     c("dor", "Dortmund", espn(124)),
+    c("fen", "Fenerbahçe"),
+    c("fey", "Feyenoord"),
+    c("gal", "Galatasaray"),
     c("inter", "Inter", espn(110)),
-    c("juv", "Juventus", espn(111)),
-    c("lev", "Leverkusen", espn(131)),
+    c("lask", "LASK"),
+    c("lens", "Lens"),
+    c("lil", "Lille"),
     c("liv", "Liverpool", espn(364)),
     c("mci", "Manchester City", espn(382)),
-    c("mar", "Marseille", espn(176)),
-    c("mil", "AC Milan", espn(103)),
-    c("mon", "Monaco", espn(174)),
+    c("mun", "Manchester United", espn(360)),
     c("nap", "Napoli", espn(114)),
-    c("new", "Newcastle", espn(361)),
+    c("por", "Porto"),
     c("psg", "PSG", espn(160)),
     c("psv", "PSV", espn(148)),
+    c("rbl", "RB Leipzig"),
     c("rma", "Real Madrid", espn(86)),
+    c("rom", "Roma", espn(104)),
+    c("sab", "Sabah"),
+    c("sha", "Shakhtar Donetsk"),
+    c("sla", "Slavia Praha"),
+    c("slo", "Slovan Bratislava"),
     c("spo", "Sporting CP", espn(2250)),
-    c("tot", "Tottenham", espn(367)),
-    c("mun", "Manchester United", espn(360)),
+    c("stu", "Stuttgart"),
+    c("vik", "Viking"),
+    c("vil", "Villarreal", espn(102)),
+    c("com", "Como"),
   ],
 };
 
@@ -135,6 +146,24 @@ function allCareers() {
 
 export const playersForBoth = (a: string, b: string) =>
   allCareers().filter((player) => player.clubs.has(a) && player.clubs.has(b)).map((player) => player.name);
+
+// Autocomplete over every known player from the league's clubs, so suggestions never reveal the answer.
+export function searchDuelPlayers(comp: Competition, query: string, limit = 8): string[] {
+  const q = normalizeFootballPlayerName(query);
+  if (q.length < 2) return [];
+  const keys = new Set(DUEL_CLUBS[comp].map((club) => club.key));
+  const hits = allCareers().filter(
+    (player) => [...player.clubs].some((club) => keys.has(club)) && normalizeFootballPlayerName(player.name).includes(q),
+  );
+  const starts = (name: string) => {
+    const n = normalizeFootballPlayerName(name);
+    return n.startsWith(q) || n.split(" ").some((part) => part.startsWith(q)) ? 0 : 1;
+  };
+  return hits
+    .map((player) => player.name)
+    .sort((a, b) => starts(a) - starts(b))
+    .slice(0, limit);
+}
 
 // Returns the canonical player name if the guess is a full name, or a surname that is unique among the shared players.
 export function matchSharedPlayer(a: string, b: string, guess: string): string | null {
