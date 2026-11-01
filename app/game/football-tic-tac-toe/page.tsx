@@ -46,6 +46,7 @@ function FootballTicTacToeClient() {
   const [localRoom, setLocalRoom] = useState<FootballTicTacToeRoomState | null>(null);
   const [selectedCell, setSelectedCell] = useState<number | null>(null);
   const [playerName, setPlayerName] = useState("");
+  const [submittingAnswer, setSubmittingAnswer] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [serverFatal, setFatal] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
@@ -185,30 +186,35 @@ function FootballTicTacToeClient() {
       }));
   }, [activeComp, playerName, puzzle, selectedCell, view]);
 
-  const submitMove = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (selectedCell === null) return;
+  const playAnswer = async (player: string) => {
+    if (selectedCell === null || submittingAnswer) return;
     setError(null);
+    setSubmittingAnswer(true);
     if (isLocal && localRoom) {
       const next = { ...localRoom, board: [...localRoom.board] };
       const moveError = applyFootballTicTacToeMove(
         next,
         next.turn,
         selectedCell,
-        playerName,
-        Date.now(),
+        player,
+        clockNow,
       );
       if (moveError) {
         setLocalRoom(next);
         setError(moveError);
+        setSubmittingAnswer(false);
         return;
       }
       setLocalRoom(next);
       setSelectedCell(null);
       setPlayerName("");
+      setSubmittingAnswer(false);
       return;
     }
-    if (!token) return;
+    if (!token) {
+      setSubmittingAnswer(false);
+      return;
+    }
     try {
       const res = await fetch("/api/game/football-tic-tac-toe", {
         method: "POST",
@@ -218,7 +224,7 @@ function FootballTicTacToeClient() {
           code,
           token,
           cell: selectedCell,
-          player: playerName,
+          player,
         }),
       });
       const data = (await res.json()) as Api;
@@ -232,6 +238,8 @@ function FootballTicTacToeClient() {
       setPlayerName("");
     } catch {
       setError("Could not submit your move. Please try again.");
+    } finally {
+      setSubmittingAnswer(false);
     }
   };
 
@@ -356,20 +364,20 @@ function FootballTicTacToeClient() {
               <span className="text-xl sm:text-4xl" aria-hidden="true">⚽</span>
             </div>
             {puzzle.columns.map((column) => (
-              <div key={column.label} className="flex min-h-0 min-w-0 flex-col items-center justify-center gap-1 border border-emerald-950 bg-emerald-900 p-1 text-center text-[9px] font-semibold leading-tight text-white sm:gap-2 sm:p-2 sm:text-sm">
+              <div key={column.label} className="flex min-h-0 min-w-0 flex-col items-center justify-center gap-1 border border-emerald-950 bg-emerald-900 p-1 text-center text-[clamp(7px,1.05vw,14px)] font-semibold leading-tight text-white sm:gap-2 sm:p-2">
                 {column.badge && (
-                  <UclImage src={column.badge} alt={column.badgeAlt ?? column.label} className="h-6 w-6 sm:h-10 sm:w-10" />
+                  <UclImage src={column.badge} alt={column.badgeAlt ?? column.label} className="h-5 w-5 sm:h-8 sm:w-8 lg:h-9 lg:w-9" />
                 )}
-                <span className="line-clamp-3 min-w-0">{column.label}</span>
+                <span className="min-w-0 max-w-full [overflow-wrap:anywhere]">{column.label}</span>
               </div>
             ))}
             {puzzle.rows.map((row, rowIndex) => (
               <div key={row.label} className="contents">
-                <div className="flex min-h-0 min-w-0 flex-col items-center justify-center gap-1 border border-emerald-950 bg-emerald-900 p-1 text-center text-[9px] font-semibold leading-tight text-white sm:gap-2 sm:p-2 sm:text-sm">
+                <div className="flex min-h-0 min-w-0 flex-col items-center justify-center gap-1 border border-emerald-950 bg-emerald-900 p-1 text-center text-[clamp(7px,1.05vw,14px)] font-semibold leading-tight text-white sm:gap-2 sm:p-2">
                   {row.badge && (
-                    <UclImage src={row.badge} alt={row.badgeAlt ?? row.label} className="h-6 w-6 sm:h-10 sm:w-10" />
+                    <UclImage src={row.badge} alt={row.badgeAlt ?? row.label} className="h-5 w-5 sm:h-8 sm:w-8 lg:h-9 lg:w-9" />
                   )}
-                  <span className="line-clamp-3 min-w-0">{row.label}</span>
+                  <span className="min-w-0 max-w-full [overflow-wrap:anywhere]">{row.label}</span>
                 </div>
                 {puzzle.columns.map((column, columnIndex) => {
                   const index = rowIndex * 3 + columnIndex;
@@ -410,7 +418,7 @@ function FootballTicTacToeClient() {
                             <JerseyIcon className="h-8 w-8 text-emerald-950/30 sm:h-16 sm:w-16" />
                             <span className="absolute inset-0 flex items-center justify-center text-xl font-black text-emerald-300/70 sm:text-4xl">+</span>
                           </span>
-                          <span className="text-[8px] font-black uppercase leading-tight text-emerald-950/60 sm:text-xs">
+                          <span className="max-w-full [overflow-wrap:anywhere] text-[clamp(6px,0.8vw,11px)] font-black uppercase leading-tight text-emerald-950/60">
                             {selectable ? (selectedCell === index ? "Search player" : "Choose player") : "—"}
                           </span>
                         </>
@@ -430,7 +438,7 @@ function FootballTicTacToeClient() {
           Take turns naming a real player who matches both clues. First to complete a line wins.
         </p>
         {view.status === "playing" && isMyTurn && selectedCell !== null && (
-          <form onSubmit={submitMove} className="mt-4 flex flex-wrap items-start gap-3">
+          <div className="mt-4 flex flex-wrap items-start gap-3">
             <div className="w-full">
               <h3 className="text-lg font-bold">Player Search</h3>
               <p className="mt-1 text-sm leading-6 text-fore-muted">
@@ -460,8 +468,9 @@ function FootballTicTacToeClient() {
                       type="button"
                       role="option"
                       aria-selected={playerName === name}
-                      onClick={() => setPlayerName(name)}
-                      className="flex w-full items-center gap-3 border-b border-border/50 px-3 py-2 text-left text-sm last:border-b-0 hover:bg-primary/10"
+                      disabled={submittingAnswer}
+                      onClick={() => void playAnswer(name)}
+                      className="flex w-full items-center gap-3 border-b border-border/50 px-3 py-2 text-left text-sm last:border-b-0 hover:bg-primary/10 disabled:opacity-60"
                     >
                       {card?.photo ? (
                         <UclImage src={card.photo} alt="" className="h-9 w-9" shape="circle" />
@@ -472,17 +481,14 @@ function FootballTicTacToeClient() {
                       )}
                       <span className="min-w-0 flex-1 truncate">{name}</span>
                       <span className={`shrink-0 text-[10px] font-semibold ${fitsClues ? "text-emerald-400" : "text-fore-muted"}`}>
-                        {fitsClues ? "Fits clues" : "Check clues"}
+                        {submittingAnswer ? "Playing…" : fitsClues ? "Tap to play" : "Tap to try"}
                       </span>
                     </button>
                   ))}
                 </div>
               )}
             </div>
-            <button type="submit" disabled={!playerName.trim()} className="btn-primary disabled:opacity-50">
-              Play answer
-            </button>
-          </form>
+          </div>
         )}
         {error && <p role="alert" className="mt-3 text-sm text-warning">{error}</p>}
         {view.status === "finished" && (
