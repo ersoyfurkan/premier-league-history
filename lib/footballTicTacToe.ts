@@ -66,10 +66,9 @@ export function footballTicTacToeView(
 
 export function expireFootballTicTacToeTurn(state: FootballTicTacToeRoomState, now: number) {
   if (state.status !== "playing" || state.turnDeadline === null || now < state.turnDeadline) return false;
-  state.status = "finished";
-  state.winner = state.turn === "p1" ? "p2" : "p1";
   state.timedOut = state.turn;
-  state.turnDeadline = null;
+  state.turn = other(state.turn);
+  state.turnDeadline = now + 60_000;
   return true;
 }
 
@@ -81,7 +80,7 @@ export function applyFootballTicTacToeMove(
   now: number,
 ): string | null {
   if (state.status !== "playing") return "The game is not in progress";
-  if (expireFootballTicTacToeTurn(state, now)) return "Time ran out. Your opponent wins.";
+  if (expireFootballTicTacToeTurn(state, now)) return "Time ran out. The turn passed to your opponent.";
   if (state.turn !== side) return "It is your opponent's turn";
   if (!Number.isInteger(cell) || cell < 0 || cell > 8 || state.board[cell]) return "Choose an empty square";
   if (typeof player !== "string" || player.trim().length < 2 || player.trim().length > 80) {
@@ -97,6 +96,7 @@ export function applyFootballTicTacToeMove(
   }
 
   state.board[cell] = { side, player: player.trim() };
+  state.timedOut = null;
   const winner = footballTicTacToeWinner(state.board);
   if (winner) {
     state.status = "finished";

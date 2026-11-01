@@ -228,12 +228,12 @@ function FootballTicTacToeClient() {
         }),
       });
       const data = (await res.json()) as Api;
+      if (data.view) setRemoteView(data.view);
       if (!res.ok) {
         setError(data.error ?? "Could not play that answer");
         void refresh();
         return;
       }
-      setRemoteView(data.view ?? null);
       setSelectedCell(null);
       setPlayerName("");
     } catch {
@@ -318,11 +318,15 @@ function FootballTicTacToeClient() {
     : view.status === "finished"
       ? view.winner === null
         ? "It's a draw!"
-        : view.timedOut
-          ? `${view.timedOut === view.you ? (isLocal ? `Player ${view.you === "p1" ? "1" : "2"}` : "You") : (isLocal ? `Player ${view.timedOut === "p1" ? "1" : "2"}` : "Your friend")} ran out of time.`
         : view.winner === view.you
           ? isLocal ? `${currentPlayerName} wins!` : "You win!"
           : isLocal ? `${view.winner === "p1" ? "Player 1" : "Player 2"} wins!` : "Your friend wins!"
+      : view.timedOut
+        ? isLocal
+          ? `${currentPlayerName}'s turn — Player ${view.timedOut === "p1" ? "1" : "2"} ran out of time.`
+          : view.timedOut === view.you
+            ? "Your time ran out; your friend gets the turn."
+            : "Your friend ran out of time; it's your turn."
       : isMyTurn
         ? `${isLocal ? `${currentPlayerName}'s turn` : "Your turn"} — choose a square and name a player.`
         : "Your friend is choosing a player…";

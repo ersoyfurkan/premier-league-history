@@ -117,12 +117,16 @@ async function handlePost(request: NextRequest) {
   if (!side) return json({ error: "You are not in this room" }, 403);
 
   if (body.action !== "move") return json({ error: "Unknown action" }, 400);
-  const error = applyFootballTicTacToeMove(state, side, Number(body.cell), String(body.player ?? ""), Date.now());
+  const now = Date.now();
+  if (expireFootballTicTacToeTurn(state, now)) {
+    if (!(await saveRoom(db, code, state, version))) return json({ error: "Room is busy, try again" }, 409);
+    return json({
+      error: "Time ran out. The turn passed to your opponent.",
+      view: footballTicTacToeView(state, side),
+    }, 409);
+  }
+  const error = applyFootballTicTacToeMove(state, side, Number(body.cell), String(body.player ?? ""), now);
   if (error) {
-    if (state.status === "finished" && state.timedOut) {
-      await saveRoom(db, code, state, version);
-      return json({ error, view: footballTicTacToeView(state, side) }, 409);
-    }
     return json({ error }, 400);
   }
   if (!(await saveRoom(db, code, state, version))) return json({ error: "Room is busy, try again" }, 409);
