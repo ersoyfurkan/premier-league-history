@@ -11,6 +11,7 @@
     "live:refresh": "npx --yes tsx scripts/refresh-live-facts.mts && npx --yes tsx scripts/refresh-wiki-facts.mts && npx --yes tsx scripts/refresh-tournament-history.mts",
     "lint": "eslint",
     "test:stat-games": "node --test scripts/check-stat-games.mjs",
+    "data:club-history": "node scripts/refresh-club-history.mjs",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
     "preview": "pnpm build && wrangler dev"
   },

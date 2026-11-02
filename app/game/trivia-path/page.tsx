@@ -5,6 +5,9 @@ import { FormEvent, Suspense, useEffect, useMemo, useRef, useState } from "react
 import { useRouter, useSearchParams } from "next/navigation";
 import UclImage from "@/components/UclImage";
 import TriviaPathOnline from "@/components/TriviaPathOnline";
+import TriviaTileVisuals from "@/components/TriviaTileVisuals";
+import NationText from "@/components/NationText";
+import { triviaTileVisuals } from "@/data/triviaPathVisuals";
 import { playerFaceUrl } from "@/data/playerFaces";
 import { lobbyFor, parseComp } from "@/lib/gameRoom";
 import { COMPETITION_LABELS } from "@/lib/competitions";
@@ -50,6 +53,7 @@ function TriviaClient() {
   const [feedback, setFeedback] = useState<string | null>(null);
   const [passed, setPassed] = useState(false);
   const [origin, setOrigin] = useState(0);
+  const [finalRevealed, setFinalRevealed] = useState(false);
   const finished = useRef(false);
 
   useEffect(() => {
@@ -89,6 +93,7 @@ function TriviaClient() {
     setTurn(0);
     setTaken({});
     setDice(null);
+    setFinalRevealed(false);
     setPhase("roll");
   };
 
@@ -103,6 +108,7 @@ function TriviaClient() {
       window.clearInterval(timer);
       const final = rollDice();
       const target = board[Math.min(current.pos + final, BOARD_SIZE) - 1];
+      if (Math.min(current.pos + final, BOARD_SIZE) === BOARD_SIZE) setFinalRevealed(true);
       const count = answersFor(target, final);
       const stamp = Date.now();
       setDice(final);
@@ -203,6 +209,8 @@ function TriviaClient() {
               Take turns rolling the dice. The number is how many spaces you move and how many correct answers you must
               give for the category on the space you land on, before the countdown ends. Get it right and you stay on
               the new space. Get one wrong and you lose your turn and stay where you were. First to the last space wins.
+              {" "}Board spaces use visual clues; the full question appears when you land. The final space stays hidden
+              until either player reaches it.
             </p>
             <div className="mt-5 flex gap-2">
               <button type="button" onClick={() => setVersus(false)} className={versus ? "btn-ghost" : "btn-primary"}>
@@ -260,13 +268,10 @@ function TriviaClient() {
                   }`}
                 >
                   <span className="font-mono text-fore-muted">{i + 1}{i === BOARD_SIZE - 1 ? " 🏁" : ""}</span>
-                  <div className="flex gap-1">
-                    {t.logos.slice(0, 2).map((src) => (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img key={src} src={src} alt="" className="h-5 w-5 object-contain" onError={(e) => (e.currentTarget.style.display = "none")} />
-                    ))}
-                  </div>
-                  <span className="text-[11px] leading-tight">{t.short}</span>
+                  <TriviaTileVisuals
+                    hidden={i === BOARD_SIZE - 1 && !finalRevealed}
+                    visuals={i === BOARD_SIZE - 1 && !finalRevealed ? [] : triviaTileVisuals(t)}
+                  />
                   <div className="absolute -top-2 right-1 flex gap-1">
                     {players.map((p, pi) =>
                       p.pos === i + 1 ? (
@@ -302,7 +307,7 @@ function TriviaClient() {
                 <p className="text-xs uppercase tracking-widest text-fore-muted">
                   Rolled {dice} · moving to space {targetPos}
                 </p>
-                <p className="text-xl font-bold leading-snug">{tileQuestion(tile, required)}</p>
+                <p className="text-xl font-bold leading-snug"><NationText text={tileQuestion(tile, required)} includeAdjectives /></p>
               </div>
               {phase === "play" && (
                 <div className={`font-mono text-3xl font-black ${secondsLeft <= 5 ? "text-red-400" : "text-warning"}`}>

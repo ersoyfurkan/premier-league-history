@@ -32,13 +32,85 @@ const { REAL_COMPETITIONS, TOURNAMENT_COMPETITIONS } = await import("../lib/comp
 const { STAT_TRIVIA_CATEGORIES, STAT_RONDO_CLUES } = await import("../data/statTrivia.ts");
 const { AUTHORED_STAT_CATEGORIES, STAT_RECORDS } = await import("../data/statTriviaRecords.ts");
 const { STAT_SEASONS } = await import("../data/statTriviaSeasons.ts");
-const { BOARD_SIZE, generateBoardIds, tileById, triviaDifficulty, answersFor, matchTriviaAnswer, suggestTrivia } = await import("../data/triviaPath.ts");
+const { BOARD_SIZE, NORMAL_TILE_MIN_ANSWERS, FINAL_TILE_MIN_ANSWERS, uniqueTriviaEntries, generateBoardIds, tileById, triviaDifficulty, answersFor, matchTriviaAnswer, suggestTrivia } = await import("../data/triviaPath.ts");
 const { RONDO_CLUES, isRondoAnswer } = await import("../data/rondo.ts");
 const { KNOWLEDGE_TRIVIA_CATEGORIES, KNOWLEDGE_RONDO_CLUES } = await import("../data/knowledgeTrivia.ts");
 const { FOOTBALL_KNOWLEDGE_GROUPS, MODERN_SQUADS, MODERN_MANAGER_GROUPS, TEAMMATE_GROUPS, knowledgeMatches } = await import("../data/footballKnowledge.ts");
 const { STADIUM_COUNTRIES } = await import("../data/stadiumTrivia.ts");
-const { footballFacts, randomFootballTicTacToePuzzle, isFootballTicTacToeAnswer } = await import("../data/footballTicTacToe.ts");
+const { FOOTBALL_TIC_TAC_TOE, footballFacts, randomFootballTicTacToePuzzle, isFootballTicTacToeAnswer } = await import("../data/footballTicTacToe.ts");
+const { triviaTileVisuals, triviaBoardPresentation } = await import("../data/triviaPathVisuals.ts");
+const { NATION_INFO } = await import("../data/nations.ts");
+const { nationFlagSrc, nationMentions } = await import("../data/nationVisuals.ts");
+const { default: tournamentHistory } = await import("../data/tournamentHistory.generated.json");
+const { freshState, pathView, startPlay } = await import("../lib/triviaPathState.ts");
+const { extractClubPlayers } = await import("./refresh-club-history.mjs");
 const comps = ["general", ...REAL_COMPETITIONS, ...TOURNAMENT_COMPETITIONS];
+
+test("nation visuals cover every historical tournament nation, aliases and combined hosts", () => {
+  for (const [code, [name, iso]] of Object.entries(NATION_INFO)) {
+    assert.equal(nationFlagSrc(code), nationFlagSrc(iso), name);
+    assert.equal(nationFlagSrc(name), nationFlagSrc(code), name);
+    assert.equal(nationMentions(name)[0]?.name, name);
+  }
+  for (const [comp, tables] of Object.entries(tournamentHistory.tournaments)) {
+    for (const [kind, table] of Object.entries(tables)) {
+      if (!table) continue;
+      const columns = table.headers.flatMap((header, index) => /^(team|nation|country|hosts?|champions|winners|runners-up)$/i.test(header) ? [index] : []);
+      for (const row of table.rows) {
+        for (const column of columns) {
+          const text = row[column];
+          if (/^(Totals|Various|Europe)\b/.test(text) || !/\p{L}/u.test(text)) continue;
+          const mentions = nationMentions(text);
+          assert.ok(mentions.length, `${comp} ${kind}: ${text}`);
+          let cursor = 0;
+          let remainder = "";
+          for (const mention of mentions) {
+            assert.ok(mention.src.startsWith("https://"));
+            remainder += text.slice(cursor, mention.start);
+            cursor = mention.end;
+          }
+          remainder += text.slice(cursor);
+          assert.ok(!/\p{L}/u.test(remainder), `Unrecognized country text: ${text} -> ${remainder}`);
+        }
+      }
+    }
+  }
+  assert.deepEqual(nationMentions("Canada, Mexico, United States").map((nation) => nation.name), ["Canada", "Mexico", "United States"]);
+  assert.deepEqual(nationMentions("West Germany, Germany").map((nation) => nation.name), ["West Germany", "Germany"]);
+  assert.deepEqual(nationMentions("FR Yugoslavia").map((nation) => nation.name), ["FR Yugoslavia"]);
+  assert.notEqual(nationFlagSrc("Soviet Union"), nationFlagSrc("Russia"));
+  assert.notEqual(nationFlagSrc("East Germany"), nationFlagSrc("Germany"));
+  for (const text of ["Argentinian", "Finnish", "Ivorian", "Nigerian", "South African", "Northern Irish", "Uruguayan"]) {
+    assert.equal(nationMentions(`${text} players`, true).length, 1, text);
+  }
+  for (const text of ["C\u00f4te d\u2019Ivoire", "T\u00fcrkiye", "Curacao"]) {
+    const [mention] = nationMentions(text);
+    assert.equal(text.slice(mention.start, mention.end), text);
+  }
+  assert.deepEqual(nationMentions("International totals (10 entries)"), []);
+  assert.deepEqual(nationMentions("South American nations", true), []);
+  assert.deepEqual(nationMentions("North American players", true), []);
+  assert.throws(() => nationFlagSrc("not a nation"), /Unknown nation visual/);
+});
+
+test("Trivia Path and Tic-Tac-Toe share nation assets without ambiguous partial matches", () => {
+  const base = tileById("general", "s-clubs");
+  for (const [word, name] of [["Uruguayan", "Uruguay"], ["Nigerian", "Nigeria"], ["Finnish", "Finland"], ["South African", "South Africa"], ["Bolivia", "Bolivia"]]) {
+    const visuals = triviaTileVisuals({ ...base, id: "test-nation", noun: `${word} players`, short: word, logos: [] });
+    assert.ok(visuals.some((visual) => visual.kind === "image" && visual.label === name && visual.src === nationFlagSrc(name)), word);
+  }
+  for (const comp of comps) {
+    const puzzles = [FOOTBALL_TIC_TAC_TOE[comp], randomFootballTicTacToePuzzle(comp)];
+    for (const puzzle of puzzles) {
+      for (const clue of [...puzzle.rows, ...puzzle.columns]) {
+        if (!/international/.test(clue.label)) continue;
+        const [nation] = nationMentions(clue.label, true);
+        assert.ok(nation, `${comp}: ${clue.label}`);
+        assert.equal(clue.badge, nation.src, `${comp}: ${clue.label}`);
+      }
+    }
+  }
+});
 
 test("all seven requested competitions have dated statistics and combination categories", () => {
   assert.equal(STAT_SEASONS.length, 7);
@@ -87,14 +159,108 @@ test("boards are unique, reconstructible and nondecreasing, with the bank's high
       assert.ok(tiles.every(Boolean), comp);
       const scores = tiles.map(triviaDifficulty);
       assert.deepEqual(scores, [...scores].sort((a, b) => a - b), comp);
-      const bankMaximum = Math.max(...[...STAT_TRIVIA_CATEGORIES[comp], ...KNOWLEDGE_TRIVIA_CATEGORIES[comp]].map(triviaDifficulty));
+      const bankMaximum = Math.max(...[...STAT_TRIVIA_CATEGORIES[comp], ...KNOWLEDGE_TRIVIA_CATEGORIES[comp]]
+        .filter((category) => uniqueTriviaEntries(category.entries).length >= FINAL_TILE_MIN_ANSWERS).map(triviaDifficulty));
       if (Number.isFinite(bankMaximum)) assert.ok(scores.at(-1) >= bankMaximum, comp);
       assert.ok(scores.slice(0, -1).every((score) => score < scores.at(-1)), `${comp}: finish must be strictly hardest`);
-      if (STAT_TRIVIA_CATEGORIES[comp].some((category) => category.difficulty === 5)) {
-        assert.equal(tiles.at(-1).difficulty, 5);
+      for (let index = 0; index < tiles.length; index += 1) {
+        const minimum = index === BOARD_SIZE - 1 ? FINAL_TILE_MIN_ANSWERS : NORMAL_TILE_MIN_ANSWERS;
+        assert.ok(tiles[index].entries.length >= minimum, `${comp}: ${ids[index]} has fewer than ${minimum} answers`);
+        assert.equal(tiles[index].entries.length, uniqueTriviaEntries(tiles[index].entries).length);
       }
     }
   }
+});
+
+test("Origi is accepted for Forest and other senior clubs, including loans", () => {
+  for (const [comp, key] of [["general", "nfo"], ["pl", "nfo"], ["general", "lil"], ["seriea", "mil"]]) {
+    const tile = tileById(comp, `c-${key}`);
+    assert.ok(tile, `${comp}: ${key}`);
+    assert.equal(matchTriviaAnswer(tile.entries, "Divock Origi")?.name, "Divock Origi");
+    assert.equal(matchTriviaAnswer(tile.entries, "Origi")?.name, "Divock Origi");
+  }
+  for (const key of ["udi", "lec", "fio", "che", "juv", "inter", "ata"]) {
+    const tile = tileById("general", `c-${key}`);
+    assert.ok(tile, key);
+    assert.equal(matchTriviaAnswer(tile.entries, "Juan Cuadrado")?.name, "Juan Cuadrado");
+    assert.equal(matchTriviaAnswer(tile.entries, "Cuadrado")?.name, "Juan Cuadrado");
+  }
+});
+
+test("tile visual clues encode combined stats, trophies, flags and teammates without question prose", () => {
+  const tile = (noun) => ({ id: "visual-test", short: "", noun, plural: noun, entries: [], logos: [] });
+  const goals = triviaTileVisuals(tile("player who scored 100+ goals for Barcelona"));
+  assert.ok(goals.some((visual) => visual.kind === "image" && visual.label === "Barcelona"));
+  assert.ok(goals.some((visual) => visual.kind === "icon" && visual.icon === "ball"));
+  assert.ok(goals.some((visual) => visual.kind === "badge" && visual.text === "100+"));
+  const assists = triviaTileVisuals(tile("player who provided 50+ assists for Barcelona"));
+  assert.ok(assists.some((visual) => visual.kind === "image" && visual.label === "Barcelona"));
+  assert.ok(assists.some((visual) => visual.kind === "icon" && visual.icon === "boot"));
+  const ucl = triviaTileVisuals(tile("player who won the Champions League at least 3 times"));
+  assert.ok(ucl.some((visual) => visual.kind === "icon" && visual.icon === "trophy"));
+  assert.ok(ucl.some((visual) => visual.kind === "badge" && visual.text === "3x"));
+  const brazil = triviaTileVisuals(tile("football stadium in Brazil"));
+  assert.ok(brazil.some((visual) => visual.kind === "image" && visual.label === "Brazil"));
+  assert.ok(brazil.some((visual) => visual.kind === "icon" && visual.icon === "stadium"));
+  const teammates = triviaTileVisuals(tileById("general", "s-knowledge-teammate-bar1415-lionelmessi"));
+  assert.ok(teammates.some((visual) => visual.kind === "image" && visual.label === "Lionel Messi"));
+  assert.ok(teammates.some((visual) => visual.kind === "icon" && visual.icon === "players"));
+  const england = triviaTileVisuals(tile("England international"));
+  assert.ok(!england.some((visual) => visual.label === "Inter"));
+});
+
+test("final tile stays secret in both online views and is permanently revealed on the first landing", () => {
+  const state = freshState("general", "secret-host-token");
+  state.p2Token = "secret-guest-token";
+  state.phase = "roll";
+  const finalTile = tileById(state.comp, state.board.at(-1));
+  assert.ok(finalTile.entries.length >= FINAL_TILE_MIN_ANSWERS);
+  for (const side of ["p1", "p2"]) {
+    const view = pathView(state, side, 0);
+    assert.deepEqual(view.tiles.at(-1), { hidden: true, visuals: [] });
+    const serialized = JSON.stringify(view);
+    for (const forbidden of ["secret-host-token", "secret-guest-token", finalTile.id, finalTile.noun, finalTile.short]) {
+      if (forbidden) assert.ok(!serialized.includes(forbidden), forbidden);
+    }
+    assert.ok(!("shorts" in view));
+    assert.ok(!("board" in view));
+  }
+  state.pos.p1 = BOARD_SIZE - 6;
+  startPlay(state, 1000, 6);
+  assert.equal(state.required, 6);
+  assert.equal(state.finalRevealed, true);
+  for (const side of ["p1", "p2"]) {
+    const view = pathView(state, side, 1000);
+    assert.equal(view.tiles.at(-1).hidden, false);
+    assert.ok(view.tiles.at(-1).visuals.length > 0);
+    assert.equal(view.question, state.question);
+  }
+  // A failed attempt leaves positions unchanged; reveal must survive later turns and reloads.
+  state.phase = "roll";
+  state.dice = null;
+  state.question = null;
+  const restored = JSON.parse(JSON.stringify(state));
+  assert.equal(pathView(restored, "p2", 2000).tiles.at(-1).hidden, false);
+  const fresh = freshState("general", "new-token");
+  assert.equal(pathView(fresh, "p1", 0).tiles.at(-1).hidden, true);
+  const tiles = fresh.board.map((id) => tileById(fresh.comp, id));
+  assert.deepEqual(triviaBoardPresentation(tiles, false).at(-1), { hidden: true, visuals: [] });
+  assert.equal(triviaBoardPresentation(tiles, true).at(-1).hidden, false);
+});
+
+test("club-history import requires actual positive appearances, not a transfer or a squad listing", () => {
+  const html = `<table class="wikitable"><tr><th>Name</th><th>Career</th><th>Appearances</th></tr>
+    <tr><td><a href="/wiki/Divock_Origi">Divock Origi</a></td><td>2023-2024</td><td>22</td></tr>
+    <tr><td>Unused Signing</td><td>2024-2025</td><td>0</td></tr>
+    <tr><td>Unknown appearances</td><td>2024-2025</td><td>-</td></tr></table>`;
+  assert.deepEqual(extractClubPlayers(html), ["Divock Origi"]);
+  const substitute = `<table class="wikitable"><tr><th rowspan="2">Player</th><th colspan="3">Appearances</th></tr>
+    <tr><th>Starts</th><th>Subs</th><th>Total</th></tr>
+    <tr><td>Senior Substitute</td><td>0</td><td>1</td><td>1</td></tr></table>`;
+  assert.deepEqual(extractClubPlayers(substitute), ["Senior Substitute"]);
+  const appearances = uniqueTriviaEntries([{ name: "Luka Modric", aliases: ["Modric"] }, { name: "Luka Modrić", aliases: [] }]);
+  assert.equal(appearances.length, 1);
+  assert.equal(uniqueTriviaEntries([{ name: "Xavi", aliases: [] }, { name: "Xavi Hernandez", aliases: ["Xavi"] }]).length, 1);
 });
 
 test("Rondo includes the sourced additions and preserves valid A-Z questions", () => {

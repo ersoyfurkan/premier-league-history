@@ -1,5 +1,6 @@
 ﻿import { REAL_COMPETITIONS, TOURNAMENT_COMPETITIONS, isTournamentComp, type Competition, type RealCompetition, type TournamentComp } from "@/lib/competitions";
 import { NATION_INFO, natsAllowed } from "@/data/nations";
+import { nationFlagSrc } from "@/data/nationVisuals";
 import { CAREERS } from "@/data/clubDuelCareers";
 import { nationOf } from "@/data/playerNations";
 import { BUNDESLIGA_FACTS } from "@/data/bundesligaContent";
@@ -27,7 +28,7 @@ export type FootballTicTacToePuzzle = {
 type Fact = { name: string; nat: string[]; clubs: string[]; tags: string[] };
 type Def = { clue: FootballClue; test: (fact: Fact) => boolean };
 
-const flag = (country: string) => `https://flagcdn.com/w40/${country}.png`;
+const flag = nationFlagSrc;
 
 // name | nationalities | clubs | tags. Stat tags are career totals in the competition
 // (every club combined), so a player counts for any club they played for.

@@ -1,42 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { parseComp, type Competition } from "@/lib/gameRoom";
+import { parseComp } from "@/lib/gameRoom";
+import { freshState, pathView, startPlay, targetOf, type PathSide as Side, type PathState } from "@/lib/triviaPathState";
 import {
   BOARD_SIZE,
-  answersFor,
-  generateBoardIds,
   matchTriviaAnswer,
   rollDice,
   tileById,
-  tileQuestion,
-  triviaSeconds,
 } from "@/data/triviaPath";
-
-type Side = "p1" | "p2";
-type Last = { side: Side; success: boolean; message: string; answers: string[] };
-type PathState = {
-  game: "triviapath";
-  comp: Competition;
-  p1Token: string;
-  p2Token?: string;
-  phase: "waiting" | "roll" | "play" | "result" | "finished";
-  board: string[];
-  shorts: string[];
-  logos?: string[][];
-  pos: Record<Side, number>;
-  turns: Record<Side, number>;
-  turn: Side;
-  dice: number | null;
-  origin: number;
-  required: number;
-  question: string | null;
-  found: string[];
-  taken?: Record<number, string[]>;
-  last: Last | null;
-  winner: Side | null;
-  rematch: Record<Side, boolean>;
-  deadline: number | null;
-};
 
 const CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 const ROOM_TTL_MS = 24 * 60 * 60 * 1000;
@@ -75,25 +46,12 @@ async function saveRoom(db: D1Database, code: string, state: PathState, version:
 const sideOf = (state: PathState, token: string) =>
   token && state.p1Token === token ? "p1" : token && state.p2Token === token ? "p2" : null;
 
-const targetOf = (state: PathState) => Math.min(state.origin + (state.dice ?? 0), BOARD_SIZE);
-
 function startRoll(state: PathState, now: number) {
   state.phase = "roll";
   state.dice = null;
   state.question = null;
   state.found = [];
   state.deadline = now + ROLL_MS;
-}
-
-function startPlay(state: PathState, now: number, dice: number) {
-  state.dice = dice;
-  state.origin = state.pos[state.turn];
-  const tile = tileById(state.comp, state.board[targetOf(state) - 1]);
-  state.required = tile ? answersFor(tile, dice) : 1;
-  state.question = tile ? tileQuestion(tile, state.required) : "Name a player";
-  state.found = [];
-  state.phase = "play";
-  state.deadline = now + triviaSeconds(state.required) * 1000;
 }
 
 function finishTurn(state: PathState, now: number, success: boolean, message: string) {
@@ -125,32 +83,6 @@ function tick(state: PathState, now: number) {
   }
 }
 
-function view(state: PathState, side: Side, now: number) {
-  const opponent = otherSide(side);
-  return {
-    comp: state.comp,
-    you: side,
-    phase: state.phase,
-    opponentJoined: Boolean(state.p2Token),
-    shorts: state.shorts,
-    logos: state.logos ?? state.shorts.map(() => []),
-    pos: state.pos,
-    turns: state.turns,
-    turn: state.turn,
-    dice: state.dice,
-    target: targetOf(state),
-    required: state.required,
-    question: state.question,
-    found: state.found,
-    last: state.last,
-    winner: state.winner,
-    boardSize: BOARD_SIZE,
-    youWantRematch: state.rematch[side],
-    opponentWantsRematch: state.rematch[opponent],
-    msLeft: state.deadline === null ? null : Math.max(0, state.deadline - now),
-  };
-}
-
 type Outcome = { error?: string; status?: number; extra?: Record<string, unknown> } | void;
 
 // Reloads and retries on version conflicts so that simultaneous requests are applied in order.
@@ -171,36 +103,10 @@ async function mutate(
     const outcome = apply(room.state, side, now);
     if (outcome?.error) return json({ error: outcome.error }, outcome.status ?? 400);
     if (JSON.stringify(room.state) === before || (await saveRoom(db, code, room.state, room.version))) {
-      return json({ view: view(room.state, side, now), ...(outcome?.extra ?? {}) });
+      return json({ view: pathView(room.state, side, now), ...(outcome?.extra ?? {}) });
     }
   }
   return json({ error: "Room is busy, try again" }, 409);
-}
-
-function freshState(comp: Competition, p1Token: string): PathState {
-  const board = generateBoardIds(comp);
-  return {
-    game: "triviapath",
-    comp,
-    p1Token,
-    phase: "waiting",
-    board,
-    shorts: board.map((id) => tileById(comp, id)?.short ?? "Football question"),
-    logos: board.map((id) => tileById(comp, id)?.logos ?? []),
-    pos: { p1: 0, p2: 0 },
-    turns: { p1: 0, p2: 0 },
-    turn: "p1",
-    dice: null,
-    origin: 0,
-    required: 1,
-    question: null,
-    found: [],
-    taken: {},
-    last: null,
-    winner: null,
-    rematch: { p1: false, p2: false },
-    deadline: null,
-  };
 }
 
 async function handleGet(request: NextRequest) {

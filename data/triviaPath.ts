@@ -233,6 +233,25 @@ export function rollDice() {
 }
 
 export const BOARD_SIZE = 16;
+export const NORMAL_TILE_MIN_ANSWERS = 13;
+export const FINAL_TILE_MIN_ANSWERS = 6;
+
+export function uniqueTriviaEntries(entries: TriviaEntry[]): TriviaEntry[] {
+  const unique = new Map<string, TriviaEntry>();
+  const identityAliases: Record<string, string> = {
+    xavihernandez: "xavi", ronaldonazario: "ronaldo", neymarjr: "neymar", alissonbecker: "alisson",
+    andrewcole: "andycole", andrewrobertson: "andyrobertson", danielcarvajal: "danicarvajal",
+    rodrihernandez: "rodri", nachofernandez: "nacho", thiagoalcantara: "thiago",
+  };
+  for (const entry of entries) {
+    const normalized = normalizeFootballPlayerName(entry.name);
+    const key = identityAliases[normalized] ?? normalized;
+    const existing = unique.get(key);
+    if (existing) existing.aliases = [...new Set([...existing.aliases, ...entry.aliases, ...(entry.name !== existing.name ? [entry.name] : [])])];
+    else unique.set(key, { name: entry.name, aliases: [...entry.aliases] });
+  }
+  return [...unique.values()];
+}
 
 export type BoardTile = { id: string; short: string; noun: string; plural: string; entries: TriviaEntry[]; logos: string[]; difficulty?: number };
 
@@ -243,7 +262,7 @@ export const tileQuestion = (tile: BoardTile, count: number) =>
   `Name ${WORDS[count]} ${count === 1 ? tile.noun : tile.plural}`;
 
 // How many answers a roll really demands: never more than the tile can reasonably supply.
-export const answersFor = (tile: BoardTile, roll: number) => Math.max(1, Math.min(roll, tile.entries.length - 2));
+export const answersFor = (tile: BoardTile, roll: number) => Math.max(1, Math.min(roll, tile.entries.length));
 
 const capitalize = (text: string) => text.charAt(0).toUpperCase() + text.slice(1);
 
@@ -323,8 +342,8 @@ function dynamicById(comp: Competition, id: string): Category | null {
     return {
       id,
       short: "",
-      noun: `${NATIONS[a]} player who played for a ${scope} club this season`,
-      plural: `${NATIONS[a]} players who played for a ${scope} club this season`,
+      noun: `${NATIONS[a]} player who played for a club in the ${scope} club list (career history, not just this season)`,
+      plural: `${NATIONS[a]} players who played for a club in the ${scope} club list (career history, not just this season)`,
       entries: names(pool),
     };
   }
@@ -349,8 +368,8 @@ function dynamicById(comp: Competition, id: string): Category | null {
     return {
       id,
       short: "",
-      noun: `player who played for at least ${word} ${scope} clubs this season`,
-      plural: `players who played for at least ${word} ${scope} clubs this season`,
+      noun: `player who played for at least ${word} clubs in the ${scope} club list during their career`,
+      plural: `players who played for at least ${word} clubs in the ${scope} club list during their careers`,
       entries: names(pool),
     };
   }
@@ -398,7 +417,11 @@ function dynamicCategory(comp: Competition): Category | null {
 }
 
 // Rebuilds a board tile from its id, so a server only needs to store the 16 ids.
+const tileCache = new Map<string, BoardTile>();
 export function tileById(comp: Competition, id: string): BoardTile | null {
+  const cacheKey = `${comp}:${id}`;
+  const cached = tileCache.get(cacheKey);
+  if (cached) return cached;
   const clubs = triviaClubs(comp);
   let category: Category | null = null;
   if (id.startsWith("c-")) {
@@ -424,30 +447,39 @@ export function tileById(comp: Competition, id: string): BoardTile | null {
     category = [...STATIC[comp], leagueClubCategory(comp)].find((item) => item.id === id) ?? null;
   }
   if (!category) return null;
-  return { id, short: category.short ?? capitalize(category.plural), noun: category.noun, plural: category.plural, entries: category.entries, logos: logosFor(comp, id), difficulty: category.difficulty };
+  const tile = { id, short: category.short ?? capitalize(category.plural), noun: category.noun, plural: category.plural, entries: uniqueTriviaEntries(category.entries), logos: logosFor(comp, id), difficulty: category.difficulty };
+  tileCache.set(cacheKey, tile);
+  return tile;
 }
 
+type BoardCandidate = { id: string; score: number; count: number };
+const candidateCache = new Map<Competition, BoardCandidate[]>();
 // Reserve the highest-rated category for the finish, then order the other tiles by difficulty.
 export function generateBoardIds(comp: Competition): string[] {
-  const used = new Set<string>();
-  const candidates: { id: string; score: number }[] = [];
-  for (const category of STATIC[comp]) {
-    if (!category.entries.length || used.has(category.id)) continue;
-    used.add(category.id);
-    candidates.push({ id: category.id, score: triviaDifficulty(category) });
-  }
-  const targetCandidates = candidates.length + BOARD_SIZE * 3;
-  for (let i = 0; i < BOARD_SIZE * 25 && candidates.length < targetCandidates; i += 1) {
-    const q = pickTriviaQuestion(comp, 6, used);
-    if (used.has(q.id)) continue;
-    used.add(q.id);
-    candidates.push({ id: q.id, score: triviaDifficulty(q) });
+  let candidates = candidateCache.get(comp);
+  if (!candidates) {
+    const clubs = triviaClubs(comp);
+    const ids = new Set([...STATIC[comp].map((category) => category.id), "s-clubs", ...clubs.map((club) => `c-${club.key}`)]);
+    for (let attempt = 0; attempt < BOARD_SIZE * 3; attempt += 1) {
+      const category = dynamicCategory(comp);
+      if (category) ids.add(category.id);
+      const first = pick(clubs);
+      const second = pick(clubs);
+      if (first.key !== second.key) ids.add(`p-${[first.key, second.key].sort().join("-")}`);
+    }
+    candidates = [];
+    for (const id of ids) {
+      const tile = tileById(comp, id);
+      if (!tile || tile.entries.length < FINAL_TILE_MIN_ANSWERS) continue;
+      candidates.push({ id, score: triviaDifficulty(tile), count: tile.entries.length });
+    }
+    candidates.sort((a, b) => a.score - b.score);
+    candidateCache.set(comp, candidates);
   }
   if (candidates.length < BOARD_SIZE) throw new Error(`Not enough distinct Trivia Path categories for ${comp}.`);
-  candidates.sort((a, b) => a.score - b.score);
   const hardest = candidates[candidates.length - 1].score;
   const finish = pick(candidates.filter((candidate) => candidate.score === hardest));
-  const available = candidates.filter((candidate) => candidate.score < hardest);
+  const available = candidates.filter((candidate) => candidate.score < hardest && candidate.count >= NORMAL_TILE_MIN_ANSWERS);
   if (available.length < BOARD_SIZE - 1) throw new Error(`Not enough easier Trivia Path categories for ${comp}.`);
   const chunk = available.length / (BOARD_SIZE - 1);
   const board = Array.from({ length: BOARD_SIZE - 1 }, (_, i) => {
@@ -562,13 +594,14 @@ export function matchTriviaAnswer(entries: TriviaEntry[], guess: string): Trivia
   const forms = entries.map((entry) => ({
     entry,
     full: [entry.name, ...entry.aliases].map(normalizeFootballPlayerName),
+    words: [entry.name, ...entry.aliases].map((name) => name.split(/\s+/).map(normalizeFootballPlayerName)),
   }));
   const exact = forms.find((form) => form.full.includes(g));
   if (exact) return exact.entry;
 
   if (g.length >= 4) {
     const byWord = forms.filter((form) =>
-      form.full.some((full) => full.split(" ").some((word) => word === g)),
+      form.words.some((words) => words.includes(g)),
     );
     if (byWord.length === 1) return byWord[0].entry;
   }
@@ -579,8 +612,9 @@ export function matchTriviaAnswer(entries: TriviaEntry[], guess: string): Trivia
   let bestScore = tolerance + 1;
   let ties = 0;
   for (const form of forms) {
-    for (const full of form.full) {
-      const words = full.split(" ");
+    for (let index = 0; index < form.full.length; index += 1) {
+      const full = form.full[index];
+      const words = form.words[index];
       const candidates = [full, ...(words.length > 1 ? [words[words.length - 1]] : [])];
       for (const candidate of candidates) {
         const d = distance(g, candidate);

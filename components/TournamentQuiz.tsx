@@ -2,11 +2,12 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
+import NationText from "@/components/NationText";
 import history from "@/data/tournamentHistory.generated.json";
 import { TOURNAMENTS, type TournamentKey } from "@/lib/tournaments";
 
 type Table = { headers: string[]; rows: string[][] };
-type Question = { prompt: string; answer: string; options: string[] };
+type Question = { prompt: string; answer: string; options: string[]; nations: boolean };
 
 const tables = history.tournaments as unknown as Record<TournamentKey, Record<string, Table | null>>;
 
@@ -28,10 +29,10 @@ function buildQuestions(tk: TournamentKey, count: number): Question[] {
   const col = (re: RegExp) => table.headers.findIndex((h) => re.test(h));
   const year = col(/^year/i);
   const asks = [
-    { idx: col(/^champions/i), make: (y: string) => `Who won the ${meta.short} in ${y}?` },
-    { idx: col(/^host/i), make: (y: string) => `Who hosted the ${meta.short} in ${y}?` },
-    { idx: col(/coach/i), make: (y: string) => `Who coached the ${meta.short} winners in ${y}?` },
-    { idx: col(/(most goals|top scorer|golden boot)/i), make: (y: string) => `Who was top scorer at the ${meta.short} in ${y}?` },
+    { idx: col(/^champions/i), nations: true, make: (y: string) => `Who won the ${meta.short} in ${y}?` },
+    { idx: col(/^host/i), nations: true, make: (y: string) => `Who hosted the ${meta.short} in ${y}?` },
+    { idx: col(/coach/i), nations: false, make: (y: string) => `Who coached the ${meta.short} winners in ${y}?` },
+    { idx: col(/(most goals|top scorer|golden boot)/i), nations: false, make: (y: string) => `Who was top scorer at the ${meta.short} in ${y}?` },
   ].filter((a) => a.idx >= 0);
 
   const pool: Question[] = [];
@@ -43,7 +44,7 @@ function buildQuestions(tk: TournamentKey, count: number): Question[] {
       if (!answer || answer.length > 60) continue;
       const others = [...new Set(table.rows.map((r) => clean(r[ask.idx] ?? "")).filter((v) => v && v !== answer && v.length <= 60))];
       if (others.length < 3) continue;
-      pool.push({ prompt: ask.make(y), answer, options: shuffle([answer, ...shuffle(others).slice(0, 3)]) });
+      pool.push({ prompt: ask.make(y), answer, options: shuffle([answer, ...shuffle(others).slice(0, 3)]), nations: ask.nations });
     }
   }
   return shuffle(pool).slice(0, count);
@@ -104,7 +105,7 @@ export default function TournamentQuiz({ tk }: { tk: TournamentKey }) {
                       }}
                       className={`rounded-lg border border-border-dim bg-surface px-4 py-3 text-left text-sm transition hover:border-primary/40 ${state}`}
                     >
-                      {option}
+                      {q.nations ? <NationText text={option} /> : option}
                     </button>
                   );
                 })}

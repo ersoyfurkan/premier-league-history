@@ -2,6 +2,9 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import NationText from "@/components/NationText";
+import UclImage from "@/components/UclImage";
+import { nationMentions } from "@/data/nationVisuals";
 import history from "@/data/tournamentHistory.generated.json";
 import { STAGE_LABEL, STAGE_ORDER, TOURNAMENTS, type TournamentKey } from "@/lib/tournaments";
 
@@ -71,7 +74,10 @@ function HistoryTable({ table, limit, highlight }: { table: HistTable | null | u
           {rows.map((row, r) => (
             <tr key={r} className="border-b border-border-dim/50 hover:bg-white/5">
               {row.map((cell, c) => (
-                <td key={c} className={`px-3 py-2 ${c === highlight ? "font-semibold text-foreground" : "text-fore-muted"}`}>{cell}</td>
+                <td key={c} className={`px-3 py-2 ${c === highlight ? "font-semibold text-foreground" : "text-fore-muted"}`}>
+                  {/^(team|nation|country|hosts?|champions|winners|runners-up)$/i.test(table.headers[c])
+                    ? <NationText text={cell} /> : cell}
+                </td>
               ))}
             </tr>
           ))}
@@ -103,8 +109,7 @@ function GroupTables({ groups }: { groups: Group[] }) {
                   <td className="px-3 py-2 text-fore-muted">{e.rank}</td>
                   <td className="px-3 py-2">
                     <span className="flex items-center gap-2">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={e.team.logo} alt="" className="h-5 w-5 object-contain" />
+                      <UclImage src={e.team.logo} fallback={nationMentions(e.team.name)[0]?.src} alt={`${e.team.name} badge`} className="h-5 w-7" />
                       {e.team.name}
                     </span>
                   </td>
@@ -134,10 +139,7 @@ function MatchRow({ match, base }: { match: Match; base: string }) {
   const name = (side: Side, align: string) => (
     <span className={`flex flex-1 items-center gap-2 ${align} ${side.winner && match.state === "post" ? "font-semibold text-foreground" : ""}`}>
       {align.includes("end") && <span>{side.name}</span>}
-      {side.logo && (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={side.logo} alt="" className="h-6 w-6 object-contain" />
-      )}
+      <UclImage src={side.logo} fallback={nationMentions(side.name)[0]?.src} alt={`${side.name} badge`} className="h-6 w-7" />
       {!align.includes("end") && <span>{side.name}</span>}
     </span>
   );
@@ -260,7 +262,7 @@ function Current({ tk }: { tk: TournamentKey }) {
                       {rows.map((row, i) => (
                         <li key={row.id} className="flex items-center gap-3 text-sm">
                           <span className="w-6 text-fore-muted">{i + 1}</span>
-                          <span className="flex-1">{row.name} <span className="text-fore-muted">· {row.club}</span></span>
+                          <span className="flex-1">{row.name} <span className="text-fore-muted">· <NationText text={row.club} /></span></span>
                           <span className="font-display text-lg text-primary">{row.value}</span>
                         </li>
                       ))}
@@ -458,12 +460,12 @@ function Rivalries({ tk }: { tk: TournamentKey }) {
           {rows.map((p) => (
             <div key={`${p.a}-${p.b}`} className="cyber-card scanline">
               <h3 className="mb-3 text-2xl font-bold">
-                {p.a} <span className="text-fore-muted">vs</span> {p.b}
+                <NationText text={p.a} imageClassName="h-8 w-10" /> <span className="text-fore-muted">vs</span> <NationText text={p.b} imageClassName="h-8 w-10" />
               </h3>
               <div className="mb-4 grid grid-cols-[1fr_auto_1fr] items-center gap-3 text-sm">
-                <span className="font-semibold text-foreground">{p.a}</span>
+                <span className="font-semibold text-foreground"><NationText text={p.a} /></span>
                 <span className="font-mono text-primary">vs</span>
-                <span className="text-right font-semibold text-foreground">{p.b}</span>
+                <span className="text-right font-semibold text-foreground"><NationText text={p.b} /></span>
               </div>
               <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.14em] text-primary">
                 Final title record · {p.finals.length} final games
@@ -494,7 +496,7 @@ function Rivalries({ tk }: { tk: TournamentKey }) {
                 <div className="space-y-2">
                   {p.finals.map((final) => (
                     <p key={`${final.year}-${final.score}`} className="text-sm font-semibold text-success">
-                      {final.winner} {final.score} {final.runnerUp}
+                      <NationText text={final.winner} /> {final.score} <NationText text={final.runnerUp} />
                       <span className="font-normal text-fore-muted"> · {final.year}</span>
                     </p>
                   ))}

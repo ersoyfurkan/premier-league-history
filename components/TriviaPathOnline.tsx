@@ -3,6 +3,9 @@
 import Link from "next/link";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import UclImage from "@/components/UclImage";
+import TriviaTileVisuals from "@/components/TriviaTileVisuals";
+import NationText from "@/components/NationText";
+import type { TriviaVisual } from "@/data/triviaPathVisuals";
 import { playerFaceUrl } from "@/data/playerFaces";
 import { suggestTrivia } from "@/data/triviaPath";
 import { lobbyFor, type Competition } from "@/lib/gameRoom";
@@ -13,8 +16,8 @@ type PathView = {
   you: Side;
   phase: "waiting" | "roll" | "play" | "result" | "finished";
   opponentJoined: boolean;
-  shorts: string[];
-  logos?: string[][];
+  tiles: { hidden: boolean; visuals: TriviaVisual[] }[];
+  finalRevealed: boolean;
   pos: Record<Side, number>;
   turns: Record<Side, number>;
   turn: Side;
@@ -200,7 +203,7 @@ export default function TriviaPathOnline({ comp, code }: { comp: Competition; co
           </div>
 
           <div className="mt-4 grid grid-cols-4 gap-2">
-            {view.shorts.map((short, i) => (
+            {view.tiles.map((tile, i) => (
               <div
                 key={i}
                 className={`relative flex min-h-24 flex-col justify-between rounded-xl border p-2 text-xs ${
@@ -208,13 +211,7 @@ export default function TriviaPathOnline({ comp, code }: { comp: Competition; co
                 }`}
               >
                 <span className="font-mono text-fore-muted">{i + 1}{i === view.boardSize - 1 ? " 🏁" : ""}</span>
-                <div className="flex gap-1">
-                  {(view.logos?.[i] ?? []).slice(0, 2).map((src) => (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img key={src} src={src} alt="" className="h-5 w-5 object-contain" onError={(e) => (e.currentTarget.style.display = "none")} />
-                  ))}
-                </div>
-                <span className="text-[11px] leading-tight">{short}</span>
+                <TriviaTileVisuals hidden={tile.hidden} visuals={tile.visuals} />
                 <div className="absolute -top-2 right-1 flex gap-1">
                   {(["p1", "p2"] as Side[]).map((side) =>
                     view.pos[side] === i + 1 ? (
@@ -245,7 +242,7 @@ export default function TriviaPathOnline({ comp, code }: { comp: Competition; co
                   <p className="text-xs uppercase tracking-widest text-fore-muted">
                     {tag(view.turn)} rolled {view.dice} · space {view.target}
                   </p>
-                  <p className="text-xl font-bold leading-snug">{view.question}</p>
+                  <p className="text-xl font-bold leading-snug"><NationText text={view.question ?? ""} includeAdjectives /></p>
                 </div>
                 {view.phase === "play" && secondsLeft !== null && (
                   <div className={`font-mono text-3xl font-black ${secondsLeft <= 5 ? "text-red-400" : "text-warning"}`}>{secondsLeft}</div>

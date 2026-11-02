@@ -29,7 +29,7 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
 - Additional verified topics include Bundesliga saves and duels, La Liga and Serie A penalty saves, and international tournament sendings-off and shootout saves. Shootout saves are explicitly distinguished from in-match penalty saves.
 - Completed long passes and offsides are not included in this expansion: comparable, completed historical datasets were not verified. Do not infer them from total passes, pass accuracy, or shots.
 - A dataset's `minimum` is its complete coverage boundary, including ties. Never generate lower-threshold questions from a top-scorer excerpt. Partial season archives must not be presented as completed-season totals. Assist questions preserve provider-specific definitions.
-- Difficulty tiers prioritize multi-condition and specialist questions, then smaller accepted-answer pools. The final Trivia Path tile is reserved from the highest-rated eligible categories, and every preceding tile has a strictly lower rating. Solo and online games share this generator.
+- Difficulty tiers prioritize multi-condition and specialist questions, then smaller accepted-answer pools. Normal Trivia Path tiles need **13 distinct accepted answers** (more than twelve); the final tile needs **at least six**. Small-answer categories remain available to Rondo but cannot appear on new Trivia Path boards. The final tile is reserved from the highest-rated eligible categories, and every preceding tile has a strictly lower rating. Solo and online games share this generator.
 - Rondo additions preserve existing clue indices and allow different statistical questions about the same player.
 
 Run the focused checks with `pnpm test:stat-games` (Node.js 22.15+). They cover source metadata, answer pools and aliases, statistical boundaries, Rondo integration, and the final-tile invariant across all competition modes.
@@ -43,9 +43,19 @@ Run the focused checks with `pnpm test:stat-games` (Node.js 22.15+). They cover 
 - Football Tic-Tac-Toe uses these same teammate and honour memberships. Managed-by categories now use familiar coaches and explicit club spells from **2010 onward**; Capello and the old all-time manager pools are removed. A manager clue is restricted to the club/season printed on it, not every player they ever coached.
 - Tic-Tac-Toe samples compatible axes before building a grid, retaining the existing minimum of three answers per square (two if generation needs to relax). Domestic modes now admit global trophy and award categories too.
 - [The stadium bank](./data/stadiumTrivia.ts) covers Brazil, Argentina, England, Spain, Germany, Italy, France, Portugal, and Egypt. Country questions use stadium nouns, while Rondo has club-home and national-venue clues, including **A: Liverpool's stadium → Anfield**. Historic/sponsor names are aliases of one venue, not extra answers.
-- Additions are appended to Rondo to preserve saved clue indices. Trivia Path category IDs reconstruct in both solo and online games, and the highest-rated statistical finish remains strictly harder than earlier tiles.
+- Additions are appended to Rondo to preserve saved clue indices. Trivia Path category IDs reconstruct in both solo and online games. The finish is the hardest **eligible** category, not a single-answer statistical riddle.
 
 The same focused test command also checks stadium aliases/search, modern manager boundaries, teammate overlap/self-exclusion, trophy rosters, compound predicates, and playable generated Tic-Tac-Toe grids in every mode.
+
+### Trivia Path board clues and answer coverage
+
+- [Shared nation visuals](./data/nationVisuals.ts) provide flags for tournament quiz answers, all-time stats, finals/hosts and rivalry cards, plus Trivia Path and Tic-Tac-Toe nation clues. Name aliases and nationality adjectives resolve to the same asset; historical teams such as the Soviet Union, Yugoslavia and East Germany retain their own flags. Combined country cells show each nation's flag and preserve their original text. Unknown/non-nation cells are left as text.
+
+- Spaces show club badges, national flags, competition/trophy imagery, player/manager portraits, and metric icons: a ball for goals, boot for assists, gloves for saves, and numeric threshold or title-count badges. Full question text appears only in the active-question panel.
+- The final space shows a lock until the first landing, including an unsuccessful attempt. The reveal persists for the rest of the match and is shared by both online players. Before reveal, the room API sends no final-tile ID, question label, answers, or visual clues. A rematch resets the lock.
+- Career answers include senior loan appearances. Divock Origi is accepted for Nottingham Forest and Lille as well as Liverpool and AC Milan. His Wolfsburg spell uses `wob`, not Wolverhampton's `wol` key. Name matching preserves word boundaries for unique surnames.
+- Run `pnpm data:club-history` to refresh [the sourced senior-appearance supplement](./data/clubHistory.generated.json). Its `checkedAt`, per-club source URLs, coverage statements, and unavailable/unsupported sources are persisted. Only positive appearance rows are imported; merely signing for a club is not evidence of playing.
+- **Coverage is not guaranteed exhaustive.** Many public player lists impose minimum appearance counts, and some clubs lack a compatible list. The supplement broadens the existing career union; it does not prove that every short loan, every historic player, or every authored trivia category has been captured. A successful refresh reports remaining source gaps explicitly rather than claiming completeness. Existing live and award snapshots retain their own update dates; dated historical questions retain their printed cutoffs rather than silently becoming live totals.
 
 ## Learn More
 
