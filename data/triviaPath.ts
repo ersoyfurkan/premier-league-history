@@ -13,11 +13,12 @@ import { SERIEA_CARDS } from "@/data/serieACards";
 import { BUNDESLIGA_CARDS } from "@/data/bundesligaCards";
 import { LIGUE1_CARDS } from "@/data/ligue1Cards";
 import { SUPERLIG_CARDS } from "@/data/superligCards";
+import { STAT_TRIVIA_CATEGORIES } from "@/data/statTrivia";
 
 export type TriviaEntry = { name: string; aliases: string[] };
 export type TriviaQuestion = { id: string; text: string; count: number; noun: string; plural: string; entries: TriviaEntry[]; short?: string };
 
-type Category = { id: string; noun: string; plural: string; entries: TriviaEntry[]; short?: string };
+type Category = { id: string; noun: string; plural: string; entries: TriviaEntry[]; short?: string; difficulty?: number };
 
 const WORDS = ["", "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX"];
 const e = (name: string, ...aliases: string[]): TriviaEntry => ({ name, aliases });
@@ -185,6 +186,9 @@ for (const comp of TOURNAMENT_COMPETITIONS) {
   ];
 }
 STATIC.general = [...new Map([...REAL_COMPETITIONS.filter((comp) => comp !== "superlig").flatMap((comp) => STATIC[comp]), ...TOURNAMENT_CATEGORIES].map((item) => [item.id, item])).values()];
+for (const comp of ["general", ...REAL_COMPETITIONS, ...TOURNAMENT_COMPETITIONS] as const) {
+  STATIC[comp].push(...STAT_TRIVIA_CATEGORIES[comp]);
+}
 
 // General mode drops the Süper Lig clubs; every other competition uses its own club list.
 const TURKISH_CLUB_KEYS = new Set(DUEL_CLUBS.superlig.map((club) => club.key));
@@ -228,7 +232,10 @@ export function rollDice() {
 
 export const BOARD_SIZE = 16;
 
-export type BoardTile = { id: string; short: string; noun: string; plural: string; entries: TriviaEntry[]; logos: string[] };
+export type BoardTile = { id: string; short: string; noun: string; plural: string; entries: TriviaEntry[]; logos: string[]; difficulty?: number };
+
+export const triviaDifficulty = (tile: Pick<BoardTile, "entries" | "difficulty">) =>
+  (tile.difficulty ?? 2) * 1000 + 1000 - Math.min(tile.entries.length, 1000);
 
 export const tileQuestion = (tile: BoardTile, count: number) =>
   `Name ${WORDS[count]} ${count === 1 ? tile.noun : tile.plural}`;
@@ -415,32 +422,38 @@ export function tileById(comp: Competition, id: string): BoardTile | null {
     category = [...STATIC[comp], leagueClubCategory(comp)].find((item) => item.id === id) ?? null;
   }
   if (!category) return null;
-  return { id, short: capitalize(category.plural), noun: category.noun, plural: category.plural, entries: category.entries, logos: logosFor(comp, id) };
+  return { id, short: category.short ?? capitalize(category.plural), noun: category.noun, plural: category.plural, entries: category.entries, logos: logosFor(comp, id), difficulty: category.difficulty };
 }
 
-// Builds a random path that gets harder: early squares have big answer pools, the final ones have the smallest.
+// Reserve the highest-rated category for the finish, then order the other tiles by difficulty.
 export function generateBoardIds(comp: Competition): string[] {
   const used = new Set<string>();
-  const candidates: { id: string; size: number }[] = [];
-  for (let i = 0; i < BOARD_SIZE * 25 && candidates.length < BOARD_SIZE * 5; i += 1) {
+  const candidates: { id: string; score: number }[] = [];
+  for (const category of STATIC[comp]) {
+    if (!category.entries.length || used.has(category.id)) continue;
+    used.add(category.id);
+    candidates.push({ id: category.id, score: triviaDifficulty(category) });
+  }
+  const targetCandidates = candidates.length + BOARD_SIZE * 3;
+  for (let i = 0; i < BOARD_SIZE * 25 && candidates.length < targetCandidates; i += 1) {
     const q = pickTriviaQuestion(comp, 6, used);
     if (used.has(q.id)) continue;
     used.add(q.id);
-    candidates.push({ id: q.id, size: q.entries.length });
+    candidates.push({ id: q.id, score: triviaDifficulty(q) });
   }
-  candidates.sort((a, b) => b.size - a.size);
-  const chunk = Math.max(1, candidates.length / BOARD_SIZE);
-  const taken = new Set<string>();
-  return Array.from({ length: BOARD_SIZE }, (_, i) => {
-    const last = i === BOARD_SIZE - 1;
-    // The final square is drawn from the three smallest answer pools in the candidate list.
-    const start = last ? Math.max(0, candidates.length - 3) : Math.floor(i * chunk);
-    const end = last ? candidates.length : Math.max(start + 1, Math.floor((i + 1) * chunk));
-    const options = candidates.slice(start, end).filter((c) => !taken.has(c.id));
-    const choice = options.length ? options[Math.floor(Math.random() * options.length)] : candidates.find((c) => !taken.has(c.id)) ?? candidates[0];
-    taken.add(choice.id);
-    return choice.id;
+  if (candidates.length < BOARD_SIZE) throw new Error(`Not enough distinct Trivia Path categories for ${comp}.`);
+  candidates.sort((a, b) => a.score - b.score);
+  const hardest = candidates[candidates.length - 1].score;
+  const finish = pick(candidates.filter((candidate) => candidate.score === hardest));
+  const available = candidates.filter((candidate) => candidate.score < hardest);
+  if (available.length < BOARD_SIZE - 1) throw new Error(`Not enough easier Trivia Path categories for ${comp}.`);
+  const chunk = available.length / (BOARD_SIZE - 1);
+  const board = Array.from({ length: BOARD_SIZE - 1 }, (_, i) => {
+    const start = Math.floor(i * chunk);
+    const end = Math.floor((i + 1) * chunk);
+    return pick(available.slice(start, end)).id;
   });
+  return [...board, finish.id];
 }
 
 export function generateBoard(comp: Competition): BoardTile[] {

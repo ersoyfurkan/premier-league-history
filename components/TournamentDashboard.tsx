@@ -410,19 +410,36 @@ function Rivalries({ tk }: { tk: TournamentKey }) {
     const run = finals.headers.findIndex((h) => /^runners/i.test(h));
     const yr = finals.headers.findIndex((h) => /^year/i.test(h));
     const score = finals.headers.findIndex((h) => /^score/i.test(h));
-    const pairs = new Map<string, { a: string; b: string; wins: Record<string, number>; years: string[] }>();
+    if ([win, run, yr, score].some((index) => index < 0)) return [];
+    const pairs = new Map<string, {
+      a: string;
+      b: string;
+      titles: Record<string, number>;
+      draws: number;
+      finals: { year: string; winner: string; runnerUp: string; score: string }[];
+    }>();
     for (const row of finals.rows) {
       const w = row[win];
       const r = row[run];
-      if (!w || !r) continue;
+      const year = row[yr];
+      const result = row[score];
+      if (!w || !r || !year || !result) continue;
       const [a, b] = [w, r].sort();
       const key = `${a}|${b}`;
-      const entry = pairs.get(key) ?? { a, b, wins: {}, years: [] };
-      entry.wins[w] = (entry.wins[w] ?? 0) + 1;
-      entry.years.push(`${row[yr]} (${w} ${row[score]})`);
+      const entry = pairs.get(key) ?? { a, b, titles: {}, draws: 0, finals: [] };
+      entry.titles[w] = (entry.titles[w] ?? 0) + 1;
+      const parsedScore = result.match(/(\d+)\s*[–-]\s*(\d+)/);
+      if (parsedScore) {
+        const winnerGoals = Number(parsedScore[1]);
+        const runnerUpGoals = Number(parsedScore[2]);
+        if (winnerGoals === runnerUpGoals) entry.draws += 1;
+      }
+      entry.finals.push({ year, winner: w, runnerUp: r, score: result });
       pairs.set(key, entry);
     }
-    return [...pairs.values()].filter((p) => p.years.length >= 2).sort((x, y) => y.years.length - x.years.length);
+    return [...pairs.values()]
+      .filter((pair) => pair.finals.length >= 2)
+      .sort((a, b) => b.finals.length - a.finals.length);
   }, [finals]);
 
   return (
@@ -430,23 +447,59 @@ function Rivalries({ tk }: { tk: TournamentKey }) {
       <div className="text-center">
         <p className="section-eyebrow text-primary">Rivalries</p>
         <h2 className="mt-2 text-4xl">Final rematches</h2>
-        <p className="mt-3 text-sm text-fore-muted">Pairs of nations that have met in more than one {TOURNAMENTS[tk].short} final, built from the finals history.</p>
+        <p className="mt-3 text-sm text-fore-muted">
+          Nations that have met in multiple {TOURNAMENTS[tk].short} finals. Title counts and scorelines reflect finalist history only.
+        </p>
       </div>
       {rows.length === 0 ? (
         <p className="py-8 text-center text-fore-muted">No repeated final pairings yet.</p>
       ) : (
         <div className="grid gap-4 md:grid-cols-2">
           {rows.map((p) => (
-            <div key={`${p.a}-${p.b}`} className="data-card p-5">
-              <h3 className="text-2xl">{p.a} <span className="text-fore-muted">vs</span> {p.b}</h3>
-              <p className="mt-2 text-sm text-primary">
-                {p.a} {p.wins[p.a] ?? 0} – {p.wins[p.b] ?? 0} {p.b} in finals
+            <div key={`${p.a}-${p.b}`} className="cyber-card scanline">
+              <h3 className="mb-3 text-2xl font-bold">
+                {p.a} <span className="text-fore-muted">vs</span> {p.b}
+              </h3>
+              <div className="mb-4 grid grid-cols-[1fr_auto_1fr] items-center gap-3 text-sm">
+                <span className="font-semibold text-foreground">{p.a}</span>
+                <span className="font-mono text-primary">vs</span>
+                <span className="text-right font-semibold text-foreground">{p.b}</span>
+              </div>
+              <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.14em] text-primary">
+                Final title record · {p.finals.length} final games
               </p>
-              <ul className="mt-3 space-y-1 text-sm text-fore-muted">
-                {p.years.map((line) => (
-                  <li key={line}>{line}</li>
-                ))}
-              </ul>
+              <div className="mb-3 flex h-2 overflow-hidden rounded-sm bg-white/5">
+                <div
+                  className="bg-gradient-to-r from-primary to-primary/80 shadow-[0_0_8px_rgba(0,229,255,0.45)]"
+                  style={{ width: `${((p.titles[p.a] ?? 0) / p.finals.length) * 100}%` }}
+                />
+                <div
+                  className="bg-gradient-to-r from-danger to-danger/80 shadow-[0_0_8px_rgba(239,68,68,0.45)]"
+                  style={{ width: `${((p.titles[p.b] ?? 0) / p.finals.length) * 100}%` }}
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <span className="pill-badge justify-center border border-primary/35 bg-primary/15 text-primary">
+                  {p.a}: {p.titles[p.a] ?? 0} titles
+                </span>
+                <span className="pill-badge justify-center border border-danger/35 bg-danger/15 text-danger">
+                  {p.b}: {p.titles[p.b] ?? 0} titles
+                </span>
+              </div>
+              <p className="mt-3 text-xs text-fore-muted">
+                {p.draws > 0 ? `Level scorelines: ${p.draws}` : "No level scorelines in listed finals"}
+              </p>
+              <div className="mt-4 border-t border-border pt-4">
+                <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.14em] text-success">Final results</p>
+                <div className="space-y-2">
+                  {p.finals.map((final) => (
+                    <p key={`${final.year}-${final.score}`} className="text-sm font-semibold text-success">
+                      {final.winner} {final.score} {final.runnerUp}
+                      <span className="font-normal text-fore-muted"> · {final.year}</span>
+                    </p>
+                  ))}
+                </div>
+              </div>
             </div>
           ))}
         </div>

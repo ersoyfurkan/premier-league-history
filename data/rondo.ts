@@ -11,6 +11,7 @@ import { RONDO_BONUS4 } from "@/data/rondoBonus4";
 import { BUNDESLIGA_RONDO } from "@/data/bundesligaContent";
 import { LIGUE1_RONDO } from "@/data/ligue1Content";
 import { SUPERLIG_RONDO } from "@/data/superligContent";
+import { STAT_RONDO_CLUES } from "@/data/statTrivia";
 
 export type RondoClue = {
   letter: string;
@@ -285,6 +286,15 @@ export const RONDO_CLUES: Record<Competition, RondoClue[]> = {
     (clue) => !TURKISH_LEAGUE.test(`${clue.clue} ${clue.answers.join(" ")}`),
   ),
 };
+for (const comp of ["general", ...REAL_COMPETITIONS, ...TOURNAMENT_COMPETITIONS] as const) {
+  const seen = new Set(RONDO_CLUES[comp].map((clue) => `${clue.letter}:${clue.clue}`));
+  RONDO_CLUES[comp].push(...STAT_RONDO_CLUES[comp].filter((clue) => {
+    const key = `${clue.letter}:${clue.clue}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  }));
+}
 export const RONDO_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 export const RONDO_SECONDS = 180;
 
