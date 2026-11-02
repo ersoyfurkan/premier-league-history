@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Suspense, useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
+import { Suspense, useCallback, useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import UclImage from "@/components/UclImage";
 import { playerFaceUrl } from "@/data/playerFaces";
@@ -9,9 +9,10 @@ import { formationPortrait, FORMATION_SLOTS } from "@/data/formationInvasion";
 import { COMPETITION_LABELS, type Competition } from "@/lib/competitions";
 import { lobbyFor } from "@/lib/gameNavigation";
 import {
-  applyFormationAction, expireFormationStanding, formationSideLabel, formationView, isFormationComp, newFormationGame,
+  applyFormationAction, expireFormationStanding, formationSideLabel, formationView, isFormationComp, newFormationGame, FORMATION_STANDING_TURN_MS,
   type FormationAction, type FormationSide, type FormationState, type FormationView,
 } from "@/lib/formationInvasion";
+import { FORMATION_HISTORY_KEY, mergeFormationQuestionHistory, readFormationQuestionHistory } from "@/lib/formationQuestionHistory";
 
 type Api = { error?: string; code?: string; token?: string; view?: FormationView };
 const ENDPOINT = "/api/game/formation-invasion";
@@ -40,6 +41,7 @@ function Rules() {
       <summary className="cursor-pointer font-bold">How to play</summary>
       <ul className="mt-3 list-disc space-y-2 pl-5 text-fore-muted">
         <li>Pick any unlocked footballer in the 4-3-3. New games use one easy and two different medium career questions per footballer, randomly chosen and fixed for this match.</li>
+        <li>This browser remembers revealed questions. New games prefer unseen questions for each footballer and difficulty; exhausted pools recycle the least recently used questions. Online room creation uses the creator&apos;s browser history.</li>
         <li>Choosing a footballer commits you to their current question. You cannot browse other questions or pass after choosing. A correct answer keeps your turn and lets you choose that footballer again or someone else.</li>
         <li>Once a footballer is chosen, both players see the same question and any revealed clues. Only the turn-holder can answer unless a shared-clue race is active.</li>
         <li>A wrong answer passes the turn without resetting progress. Your opponent can finish your work.</li>
@@ -47,7 +49,7 @@ function Rules() {
         <li>Both players must request a clue for that same question. This starts a race: one attempt each, and the first correct answer advances progress and takes the turn. Question 3 still claims the footballer.</li>
         <li>During a clue race, finish that question before switching or passing. If both answers are wrong, normal turns resume with the original player and the clue remains visible.</li>
         <li>Each question has three progressively stronger clues. Both players agree to each clue, one at a time; each revealed clue starts a new answer race.</li>
-        <li>After clue 3, both can vote for Last Man Standing. Both get the same football category, such as South American Premier League winners. A random player starts. Alternate unique answers, with seven seconds per turn. Wrong, repeated or late answers lose.</li>
+        <li>After clue 3, both can vote for Last Man Standing. Both get the same football category, such as South American Premier League winners. A random player starts. Alternate unique answers, with {FORMATION_STANDING_TURN_MS / 1000} seconds per turn. Wrong, repeated or late answers lose.</li>
         <li>The Last Man Standing winner completes the current question and keeps the turn. Only question 3 claims the footballer. If a category runs out of answers, a new category starts.</li>
         <li>You can pass your turn. In solo practice, mistakes are counted; claim six without an opponent and reveal clues immediately.</li>
         <li>Lineups use well-known players active this century with senior appearances in this competition. Questions cover their wider careers.</li>
@@ -159,7 +161,7 @@ function StandingPanel({ view, now, busy, act }: {
   const [answer, setAnswer] = useState("");
   const standing = view.standing;
   if (!standing) return null;
-  const seconds = Math.max(0, Math.min(7, Math.ceil((standing.deadline - now) / 1000)));
+  const seconds = Math.max(0, Math.min(FORMATION_STANDING_TURN_MS / 1000, Math.ceil((standing.deadline - now) / 1000)));
   const canAnswer = seconds > 0 && (view.mode === "local" || view.you === standing.turn);
   return (
     <div className="rounded-2xl border border-warning bg-surface p-5 md:p-6" data-testid="formation-standing">
@@ -204,17 +206,37 @@ function FormationClient({ comp, code }: { comp: Competition; code: string }) {
   const [copied, setCopied] = useState(false);
   const [joinCode, setJoinCode] = useState("");
   const submitting = useRef(false);
+  const recordedQuestions = useRef(new Set<string>());
   const pitch = useRef<HTMLDivElement>(null);
   const panel = useRef<HTMLDivElement>(null);
   const view = code ? online?.view ?? null : local ? formationView(local, "p1") : null;
   const now = clock + (code ? online?.offset ?? 0 : 0);
   const activeComp = view?.comp ?? comp;
 
-  const acceptView = (next: FormationView) => {
+  const rememberQuestions = useCallback((next: FormationView) => {
+    const revealed = next.slots.filter((slot) => slot.questionIndex !== null &&
+      !recordedQuestions.current.has(`${next.gameId}:${slot.playerId}:${slot.questionIndex}`));
+    if (!revealed.length) return;
+    try {
+      const history = readFormationQuestionHistory(localStorage);
+      for (const slot of revealed) {
+        if (slot.questionIndex === null) continue;
+        const merged = mergeFormationQuestionHistory(history, { [slot.playerId]: [slot.questionIndex] });
+        history[slot.playerId] = merged[slot.playerId];
+      }
+      localStorage.setItem(FORMATION_HISTORY_KEY, JSON.stringify(history));
+      for (const slot of revealed) recordedQuestions.current.add(`${next.gameId}:${slot.playerId}:${slot.questionIndex}`);
+    } catch (e) {
+      setError(e instanceof Error ? `Could not remember Formation questions: ${e.message}` : "Could not save Formation question history. Enable browser storage.");
+    }
+  }, []);
+
+  const acceptView = useCallback((next: FormationView) => {
     const offset = next.serverNow - Date.now();
     setOnline((current) => !current || next.revision > current.view.revision ||
       (next.revision === current.view.revision && next.serverNow >= current.view.serverNow) ? { view: next, offset } : current);
-  };
+    rememberQuestions(next);
+  }, [rememberQuestions]);
 
   const standingActive = Boolean(view?.standing);
   useEffect(() => {
@@ -261,7 +283,7 @@ function FormationClient({ comp, code }: { comp: Competition; code: string }) {
     };
     void poll();
     return () => { active = false; clearTimeout(timer); };
-  }, [code, token, standingActive]);
+  }, [code, token, standingActive, acceptView]);
 
   const request = async (payload: Record<string, unknown>) => {
     const res = await fetch(ENDPOINT, {
@@ -284,7 +306,7 @@ function FormationClient({ comp, code }: { comp: Competition; code: string }) {
   };
 
   const create = () => guarded(async () => {
-    const data = await request({ action: "create", comp });
+    const data = await request({ action: "create", comp, questionHistory: readFormationQuestionHistory(localStorage) });
     if (!data.code || !data.token) throw new Error("The server did not return a room token.");
     localStorage.setItem(`formation:${data.code}`, data.token);
     router.push(`/game/formation-invasion?comp=${comp}&code=${data.code}`);
@@ -299,6 +321,7 @@ function FormationClient({ comp, code }: { comp: Competition; code: string }) {
 
   const act = (action: FormationAction, side?: FormationSide) => guarded(async () => {
     if (!view) throw new Error("Start or join a game first.");
+    if (action.action === "rematch") action = { ...action, questionHistory: readFormationQuestionHistory(localStorage) };
     if (code) {
       await request({ code, token, gameId: view.gameId, revision: view.revision, ...action });
     } else {
@@ -307,12 +330,13 @@ function FormationClient({ comp, code }: { comp: Competition; code: string }) {
       const error = applyFormationAction(next, side ?? next.turn, action, { gameId: view.gameId, revision: view.revision });
       if (error) throw new Error(error);
       setLocal(next);
+      rememberQuestions(formationView(next, "p1"));
     }
   });
 
   const start = (mode: "local" | "solo") => {
     setError(null);
-    try { setLocal(newFormationGame(comp, mode)); } catch (e) {
+    try { setLocal(newFormationGame(comp, mode, null, readFormationQuestionHistory(localStorage))); } catch (e) {
       setError(e instanceof Error ? e.message : "Could not prepare the formation.");
     }
   };

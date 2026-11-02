@@ -595,8 +595,500 @@ const IDENTITY_CLUES: Record<string, ExtraClues> = {
   "Janis Blaswich": ["This German goalkeeper came through Monchengladbach's youth system.", "He played for Heracles before joining RB Leipzig in 2022."],
 };
 
-export function formationClues(question: Pick<FormationQuestion, "answers" | "hint">): FormationQuestion["clues"] {
-  const extra = IDENTITY_CLUES[question.answers[0]];
+// An answer's identity can already be in the question or its original hint.
+// These authored pairs deliberately supply other facts; the original hint stays first.
+const QUESTION_CLUES: Record<string, ExtraClues> = {
+  "Which award for goalkeepers did Neuer win at the 2014 World Cup?": [
+    "Its World Cup version was first awarded in 1994.",
+    "FIFA's Technical Study Group selects its recipient.",
+  ],
+  "Which Madrid suburb is Casillas's birthplace?": [
+    "Its mayors called for resistance to Napoleon's forces in May 1808.",
+    "Casillas's nickname links him to this town as its Saint.",
+  ],
+  "Which goalkeeper captained Spain at the 1998 World Cup before Casillas's senior career?": [
+    "He joined Valencia in 1994.",
+    "He represented Spain at four successive World Cups, starting in 1986.",
+  ],
+  "Which protective item became Cech's trademark after his 2006 head injury?": [
+    "His version was borrowed from rugby equipment.",
+    "The soft-shell design uses foam rather than a rigid outer casing.",
+  ],
+  // https://en.wikipedia.org/wiki/FK_Chmel_Bl%C5%A1any
+  "Which Czech club gave Cech his senior league debut in 1999?": [
+    "It was founded in 1946.",
+    "It competed in the Czech top division from 1998 to 2006.",
+  ],
+  "Which Istanbul club signed Muslera in 2011?": [
+    "It won the UEFA Cup in 2000.",
+    "It also beat Real Madrid to win the 2000 UEFA Super Cup.",
+  ],
+  "Which position did Muslera play in Galatasaray's 2012 title-winning team?": [
+    "Its traditional starting shirt number is 1.",
+    "The laws require this player to wear colours distinguishable from the other players.",
+  ],
+  "Which Costa Rican club launched Navas's senior career?": [
+    "It finished third at the 2005 Club World Championship.",
+    "It was founded in 1935.",
+  ],
+  "Which Portuguese club did Ederson represent between Ribeirao and Benfica?": [
+    "Its crest includes a sailing ship.",
+    "It reached the Portuguese Cup final in both 1984 and 2014.",
+  ],
+  "Which Barcelona youth academy developed Pique before his move to England?": [
+    "It also developed Xavi, Iniesta and Messi.",
+    "Its original residential building began housing young players in 1979.",
+  ],
+  "Which Czech club faced Pique in his final Champions League appearance in November 2022?": [
+    "It won its first national league title in 2011.",
+    "Its home ground is known as the Doosan Arena.",
+  ],
+  "Which goalkeeper played behind Silva for Brazil at the 2018 World Cup?": [
+    "He began his senior career at Internacional.",
+    "He headed an injury-time winner at West Brom in May 2021.",
+  ],
+  "At which Brazilian club did Marquinhos make his senior debut?": [
+    "It beat Chelsea to win the 2012 Club World Cup.",
+    "Railway workers founded it in 1910.",
+  ],
+  "Which French club signed Boateng in 2021?": [
+    "It plays at Groupama Stadium.",
+    "Juninho Pernambucano was its celebrated free-kick specialist.",
+  ],
+  "Which winger scored Bayern's winner with Boateng in defence in the 2013 Champions League final?": [
+    "He also played for PSV, Chelsea and Real Madrid.",
+    "He was renowned for cutting inside from the right onto his left foot.",
+  ],
+  "Which Swiss goalkeeper conceded Pepe's header in Portugal's 6-1 World Cup win in 2022?": [
+    "He spent nine seasons at Borussia Monchengladbach.",
+    "He won four consecutive Swiss league titles with Basel.",
+  ],
+  "Which English club signed Lugano from PSG in 2013?": [
+    "It won the FA Cup in 1968.",
+    "Its only English top-flight league title came in 1919/20.",
+  ],
+  // https://en.wikipedia.org/wiki/US_Livorno_1915
+  "Which Italian club launched Chiellini's senior career in 2000?": [
+    "It returned to Serie A in 2004 after a 55-year absence.",
+    "Its home ground is the Armando Picchi stadium.",
+  ],
+  "Which Serie A club did Chiellini play for in 2004/05 before Juventus?": [
+    "It won the inaugural Cup Winners' Cup in 1961.",
+    "Its home ground is the Stadio Artemio Franchi.",
+  ],
+  "Which position did Alba occupy in Barcelona's 2015 Champions League final?": [
+    "Its traditional shirt number is 3.",
+    "Players in this role often overlap their winger to deliver crosses.",
+  ],
+  // https://en.wikipedia.org/wiki/UE_Cornell%C3%A0
+  "Which Catalan club did Alba join after leaving Barcelona's youth system in 2005?": [
+    "Its traditional kit colour is green.",
+    "It was founded in 1951.",
+  ],
+  "Which Uruguayan striker joined Alba and Messi in Miami in 2024?": [
+    "He began his senior career at Nacional.",
+    "He won the European Golden Shoe in both 2014 and 2016.",
+  ],
+  // https://en.wikipedia.org/wiki/ASD_Marsala_1912
+  "Which Italian club gave Evra his first senior football in 1998?": [
+    "It was founded in 1912.",
+    "Its nickname Lilybetani refers to its city's ancient Roman name, Lilybaeum.",
+  ],
+  "Which Italian second-division club did Evra represent in 1999/2000?": [
+    "It reached Serie A for the first time in 2022.",
+    "Its home ground is the Stadio Brianteo.",
+  ],
+  "Which French club did Evra leave for Monaco in 2002?": [
+    "It won four French league titles during the 1950s.",
+    "Its home ground is the Allianz Riviera.",
+  ],
+  "Which Brazilian club did Filipe Luis join in 2019?": [
+    "It won the Copa Libertadores in 1981, 2019 and 2022.",
+    "It began as a rowing club in 1895.",
+  ],
+  "Which Turkish club signed Telles from Gremio in 2014?": [
+    "It won the UEFA Cup in 2000.",
+    "It also beat Real Madrid to win the 2000 UEFA Super Cup.",
+  ],
+  "Which Brazilian club launched Telles's senior career in 2011?": [
+    "It won the Brazilian national cup in 1999.",
+    "Its home ground is the Estadio Alfredo Jaconi.",
+  ],
+  "Which Brazilian club signed Telles from Juventude in 2013?": [
+    "It won the Copa Libertadores in 1983, 1995 and 2017.",
+    "It moved into its new arena in 2013, leaving the Olimpico Monumental.",
+  ],
+  "Which Germany striker scored Stuttgart's second goal against Manchester United with Lahm at left-back in October 2003?": [
+    "He was born in Rio de Janeiro.",
+    "His mother is Panamanian and his father has German and Hungarian ancestry.",
+  ],
+  "Which club did Lahm beat 4-1 on his final professional appearance in May 2017?": [
+    "Christian Streich had a long spell as its head coach.",
+    "Its home ground is the Europa-Park Stadion.",
+  ],
+  "In which English city was Walker born?": [
+    "It is in South Yorkshire.",
+    "It became an industrial centre for steelmaking and cutlery.",
+  ],
+  "Which position did Walker usually play for Manchester City in their 2023 treble season?": [
+    "Its traditional shirt number is 2.",
+    "Players in this role often overlap their winger to deliver crosses.",
+  ],
+  "Which Brazilian club did Alves leave to join Sevilla in 2002?": [
+    "It won Brazilian national titles in 1959 and 1988.",
+    "Its home ground is the Arena Fonte Nova.",
+  ],
+  "Which position did Alves play in Barcelona's 2009 treble-winning team?": [
+    "Its traditional shirt number is 2.",
+    "Players in this role often overlap their winger to deliver crosses.",
+  ],
+  "Which nickname, meaning the Tractor, was commonly used for Zanetti?": [
+    "The player who bore it made a club-record 858 appearances for Inter.",
+    "He captained Inter's 2010 treble-winning team.",
+  ],
+  // https://en.wikipedia.org/wiki/Hacettepe_S.K.
+  "Which Ankara club did Gonul leave for Fenerbahce in 2007?": [
+    "It earned promotion to the Super Lig in 2007.",
+    "It was founded in 1949.",
+  ],
+  "Which position did Gokhan Gonul play in Besiktas's 2016/17 title-winning team?": [
+    "Its traditional shirt number is 2.",
+    "Players in this role often overlap their winger to deliver crosses.",
+  ],
+  // https://en.wikipedia.org/wiki/G%C3%B6khan_G%C3%B6n%C3%BCl
+  "Which amateur club did Gonul join as a youth player in 1999?": [
+    "He initially played in goal there.",
+    "His next move took him to Genclerbirligi's youth system in 2002.",
+  ],
+  // https://en.wikipedia.org/wiki/UEFA_European_Under-21_Championship
+  "Which Turkish national youth team did Gonul take charge of in 2024?": [
+    "UEFA's European championship for this age category began in its current form in 1978.",
+    "Eligibility is tied to a birth-date cutoff for the qualifying cycle, so some finalists are older than the label suggests.",
+  ],
+  "Which Barcelona academy did Xavi graduate from?": [
+    "It also developed Iniesta and Messi.",
+    "Its original residential building began housing young players in 1979.",
+  ],
+  "Who coached Barcelona when Xavi captained their 2015 treble-winning squad?": [
+    "He began his senior playing career at Sporting Gijon.",
+    "He led PSG to its first Champions League title in 2025.",
+  ],
+  "Which Barcelona teammate succeeded Xavi as club captain in 2015?": [
+    "He moved to Vissel Kobe in 2018.",
+    "He later played for Emirates Club in the UAE.",
+  ],
+  "Which Barcelona coach won the 2009 treble with Iniesta?": [
+    "As a player, he won the 1992 European Cup under Johan Cruyff.",
+    "He led Manchester City to a treble in 2023.",
+  ],
+  "Which club conceded Iniesta's first Barcelona league goal in April 2004?": [
+    "Its traditional shirt has violet-and-white stripes.",
+    "Brazilian striker Ronaldo became its owner in 2018.",
+  ],
+  "Which shirt number did Pirlo wear for Italy at the 2006 World Cup?": [
+    "It equals the sum of all the dots on a standard six-sided die.",
+    "It is the target total in blackjack.",
+  ],
+  "Which shirt number did Kimmich wear for Bayern in their 2019/20 treble season?": [
+    "A full set of adult teeth, including wisdom teeth, has this many.",
+    "It is the total number of pieces at the start of a chess game.",
+  ],
+  "Which national-team captain did Kimmich succeed as Bayern's regular right-back after 2017?": [
+    "He spent two seasons on loan at Stuttgart.",
+    "He captained Bayern's 2013 treble-winning team.",
+  ],
+  "Which Bayern midfielder opened the scoring before Kimmich's winner in the 2020 German Super Cup?": [
+    "He won the 2018 World Cup with France.",
+    "He returned to Lyon in 2022.",
+  ],
+  // https://en.wikipedia.org/wiki/Greifswald
+  "In which German city was Kroos born?": [
+    "Its university was founded in 1456.",
+    "It stands on the River Ryck.",
+  ],
+  "Which youth club did Kroos leave to join Bayern in 2006?": [
+    "It won the last East German league title in 1991.",
+    "Its home ground is the Ostseestadion.",
+  ],
+  "Who coached Tottenham when Modric arrived in 2008?": [
+    "He won the 2008 League Cup with the north London club.",
+    "He also managed CSKA Moscow and Dnipro.",
+  ],
+  "Which Saudi club signed Kante in 2023?": [
+    "Its traditional shirts have yellow-and-black stripes.",
+    "It was founded in 1927.",
+  ],
+  "Which club gave Kante his senior debut before Caen?": [
+    "Its traditional kit colours are red and black.",
+    "Its home ground is the Stade de la Liberation.",
+  ],
+  "Which Italian club sold Verratti to PSG?": [
+    "It won the 2011/12 Serie B title under Zdenek Zeman.",
+    "Lorenzo Insigne and Ciro Immobile were Verratti's teammates there.",
+  ],
+  // This question asks for the city, not the identically named football club.
+  // https://en.wikipedia.org/wiki/Pescara
+  "In which Italian city was Verratti born?": [
+    "Poet Gabriele D'Annunzio was also born here.",
+    "It is served by Abruzzo Airport.",
+  ],
+  "Who coached France when Matuidi won the 2018 World Cup?": [
+    "His playing career included Nantes, Juventus and Chelsea.",
+    "He captained Marseille to the 1993 Champions League title.",
+  ],
+  "Which club gave Matuidi his senior debut in 2004?": [
+    "Its home ground is the Stade de l'Aube.",
+    "It joined City Football Group in 2020.",
+  ],
+  "Who coached Juventus when Matuidi joined in 2017?": [
+    "He played in midfield for Pescara and Cagliari.",
+    "He led Juventus to five straight league titles from 2015 to 2019.",
+  ],
+  "Which Uruguayan coach managed Matuidi at Inter Miami in 2020?": [
+    "He began his professional playing career at Bella Vista.",
+    "He won the 2016/17 CONCACAF Champions League as Pachuca's coach.",
+  ],
+  "Which Norwegian city hosted Casemiro's 2016 UEFA Super Cup victory?": [
+    "It was historically known as Nidaros.",
+    "It is the seat of the Norwegian University of Science and Technology.",
+  ],
+  "Which Chilean club launched Vidal's senior career?": [
+    "It won the Copa Libertadores in 1991.",
+    "Its home ground is the Estadio Monumental David Arellano.",
+  ],
+  "Which Brazilian club signed Vidal in 2022?": [
+    "It won the Copa Libertadores in 1981, 2019 and 2022.",
+    "It began as a rowing club in 1895.",
+  ],
+  "Which Chile coach led Vidal to the 2016 Copa America title?": [
+    "He won the Spanish league's top-scorer award while playing for Tenerife.",
+    "He coached Saudi Arabia at the 2018 World Cup.",
+  ],
+  "Which Italian club sold Felipe Melo to Juventus in 2009?": [
+    "It won the inaugural Cup Winners' Cup in 1961.",
+    "Its home ground is the Stadio Artemio Franchi.",
+  ],
+  "Which Brazilian club launched Felipe Melo's senior career in 2001?": [
+    "It won the Copa Libertadores in 1981, 2019 and 2022.",
+    "It began as a rowing club in 1895.",
+  ],
+  "In which Dutch city was Sneijder born?": [
+    "Its university was founded in 1636.",
+    "The Oudegracht canal runs through its historic centre.",
+  ],
+  "Which French club did Sneijder join after Galatasaray in 2017?": [
+    "It won four French league titles during the 1950s.",
+    "Its home ground is the Allianz Riviera.",
+  ],
+  "Which Inter striker scored from Sneijder's through ball for the opener in the 2010 Champions League final?": [
+    "He played for Racing Club, Genoa and Real Zaragoza.",
+    "His younger brother Gabriel was a defender.",
+  ],
+  "Which Portugal striker scored the winner after Ronaldo went off injured in the Euro 2016 final?": [
+    "He was born in Guinea-Bissau.",
+    "He played club football for Academica, Swansea and Lille.",
+  ],
+  "Which United defender crossed for Ronaldo's header in the 2008 Champions League final?": [
+    "He was selected for England's 2002 World Cup squad.",
+    "He later played for Sunderland and Blackburn.",
+  ],
+  // https://en.wikipedia.org/wiki/Mogi_das_Cruzes
+  "In which Brazilian city was Neymar born?": [
+    "It has a substantial community of Japanese immigrants and their descendants.",
+    "Its settlement dates to 1560.",
+  ],
+  // https://en.wikipedia.org/wiki/Football_at_the_Summer_Olympics
+  "Which gold medal did Neymar win with Brazil at Rio 2016?": [
+    "The men's football event normally permits only three players above its under-23 age limit.",
+    "Brazil beat Germany on penalties in the 2016 men's final.",
+  ],
+  "In which Argentine city was Di Maria born?": [
+    "It is in the province of Santa Fe.",
+    "Manuel Belgrano first raised the Argentine flag here in 1812.",
+  ],
+  "Which Argentine club gave Di Maria his senior debut?": [
+    "British railway workers founded it in 1889.",
+    "Its home ground is the Gigante de Arroyito.",
+  ],
+  "Which Italian club did Ribery join after Bayern in 2019?": [
+    "It won the inaugural Cup Winners' Cup in 1961.",
+    "Its home ground is the Stadio Artemio Franchi.",
+  ],
+  "In which French city was Ribery born?": [
+    "It is home to the Nausicaa marine centre.",
+    "Its Roman name was Gesoriacum.",
+  ],
+  // https://en.wikipedia.org/wiki/Nagrig
+  "In which Egyptian village was Salah born?": [
+    "It is in the Nile Delta.",
+    "Salah funded school buildings and a small stadium here.",
+  ],
+  "Which Italian club took Salah on loan from Chelsea in February 2015?": [
+    "It won the inaugural Cup Winners' Cup in 1961.",
+    "Its home ground is the Stadio Artemio Franchi.",
+  ],
+  "Which Saudi club signed Benzema from Real Madrid in 2023?": [
+    "It was founded in 1927.",
+    "It won back-to-back AFC Champions League titles in 2004 and 2005.",
+  ],
+  "Which position did Benzema usually play for Real Madrid?": [
+    "Its traditional shirt number is 9.",
+    "Tactical variations include the target man and the false nine.",
+  ],
+  "Which MLS club did Drogba join in 2015?": [
+    "It entered Major League Soccer in 2012.",
+    "Its home ground is Saputo Stadium.",
+  ],
+  "Which Italian club did Eto'o join from Barcelona in 2009?": [
+    "It shares the San Siro stadium with AC Milan.",
+    "Its traditional shirts have blue-and-black stripes.",
+  ],
+  "Which Turkish club signed Eto'o in 2015?": [
+    "It was founded in 1966.",
+    "Its nickname means the Scorpions.",
+  ],
+  "Which coach managed Sampdoria when Eto'o joined in January 2015?": [
+    "He played for Roma, Lazio and Inter.",
+    "He also had two spells as Bologna's head coach.",
+  ],
+  // https://en.wikipedia.org/wiki/FK_%C3%9Ast%C3%AD_nad_Labem
+  "Which Czech club took Dzeko on loan from Teplice in 2005?": [
+    "It was founded in 1945.",
+    "Its home ground is the Mestsky stadion, or Municipal Stadium.",
+  ],
+  "Who coached Portugal during Quaresma's Euro 2016 title win?": [
+    "He qualified as an electrical and telecommunications engineer.",
+    "He also led Portugal to the inaugural Nations League title in 2019.",
+  ],
+  "Which club did Mbappe leave to join PSG in 2017?": [
+    "Its home ground is the Stade Louis II.",
+    "Its traditional shirt is divided diagonally into red and white.",
+  ],
+  "Who coached France when Mbappe won the 2018 World Cup?": [
+    "His playing career included Nantes, Juventus and Chelsea.",
+    "He captained Marseille to the 1993 Champions League title.",
+  ],
+  "Which shirt number did Haaland wear at Manchester City in the 2022/23 season?": [
+    "It is the highest single-digit decimal number.",
+    "A baseball team fields this many players.",
+  ],
+  "Which Austrian club sold Haaland to Dortmund in January 2020?": [
+    "Its home ground is the Red Bull Arena.",
+    "Its former players include Sadio Mane and Dominik Szoboszlai.",
+  ],
+  "Which former Norway international is Haaland's father?": [
+    "He also played for Nottingham Forest.",
+    "He made his senior Norway debut against Costa Rica in January 1994.",
+  ],
+  "Which Juventus teammate captained Italy when Buffon won the 2006 World Cup?": [
+    "He played for Parma and Real Madrid.",
+    "His younger brother Paolo was also a professional defender.",
+  ],
+  "Which position did Ramos play for Spain in the 2010 World Cup final?": [
+    "Its traditional shirt number is 2.",
+    "Players in this role often overlap their winger to deliver crosses.",
+  ],
+  "Which Ecuadorian team beat Silva's Fluminense in the 2008 Libertadores final?": [
+    "It won the Copa Sudamericana in 2009 and 2023.",
+    "Its home ground is the Rodrigo Paz Delgado stadium.",
+  ],
+  "Which Turin club did Chiellini play for from 2005 to 2022?": [
+    "It was founded in 1897.",
+    "Its traditional shirts have black-and-white stripes.",
+  ],
+  "Which position did Evra play in Manchester United's 2008 European final?": [
+    "Its traditional shirt number is 3.",
+    "Players in this role often overlap their winger to deliver crosses.",
+  ],
+  "Which Austria coach led Alaba's team to the Euro 2020 last 16?": [
+    "He played club football for Basel.",
+    "He also managed Kaiserslautern.",
+  ],
+  "Which position did Filipe Luis play in Atletico Madrid's 2014 league-winning side?": [
+    "Its traditional shirt number is 3.",
+    "Players in this role often overlap their winger to deliver crosses.",
+  ],
+  "Which Palmeiras substitute scored the extra-time winner against Filipe Luis's Flamengo in the 2021 Libertadores final?": [
+    "He played in Spain for Levante and Alaves.",
+    "He helped Palmeiras win the 2018 Brazilian league title.",
+  ],
+  "Which position did Telles play for Brazil at the 2022 World Cup?": [
+    "Its traditional shirt number is 3.",
+    "Players in this role often overlap their winger to deliver crosses.",
+  ],
+  "Which position did Lahm play in Germany's 2014 World Cup final?": [
+    "Its traditional shirt number is 2.",
+    "Players in this role often overlap their winger to deliver crosses.",
+  ],
+  "Which compatriot scored both goals when Zanetti's Inter won the 2010 Champions League final?": [
+    "He played for Racing Club, Genoa and Real Zaragoza.",
+    "UEFA named him its Club Footballer of the Year for 2009/10.",
+  ],
+  // https://en.wikipedia.org/wiki/Talleres_de_Remedios_de_Escalada
+  "Which Argentine lower-division club gave Zanetti his senior debut?": [
+    "It was founded in 1906.",
+    "Its traditional shirts have red-and-white stripes.",
+  ],
+  "Which position did Hakimi play for Morocco at the 2022 World Cup?": [
+    "Its traditional shirt number is 2.",
+    "Players in this role often overlap their winger to deliver crosses.",
+  ],
+  "Who coached Fenerbahce when Gonul won his first Super Lig title in 2010/11?": [
+    "His playing career included Sakaryaspor.",
+    "He coached Konyaspor to its first Turkish Cup in 2017.",
+  ],
+  "Which town in Samsun province is Gonul's birthplace?": [
+    "Its economy has historically depended on tobacco cultivation.",
+    "It lies near Turkey's Black Sea coast.",
+  ],
+  "Which UAE club signed Iniesta after Vissel Kobe in 2023?": [
+    "Its traditional kit colour is green.",
+    "It was formed in 1969 through a merger of three local teams.",
+  ],
+  "Which shirt number did Kroos wear at Real Madrid from 2014 to 2024?": [
+    "An octopus has this many arms.",
+    "A byte contains this many bits.",
+  ],
+  "Which Real Madrid teammate headed in Kroos's corner to open the scoring in the 2024 Champions League final?": [
+    "He spent a season at Bayer Leverkusen.",
+    "He scored his first senior Spain goal against Croatia at Euro 2024.",
+  ],
+  "Which award did Modric receive as the best player of the 2018 World Cup?": [
+    "Its official World Cup presentation began in 1982.",
+    "The runner-up and third-placed player receive silver and bronze counterparts.",
+  ],
+  "Who coached Chile when Vidal won the 2015 Copa America?": [
+    "He also managed Santos and Marseille.",
+    "He led Universidad de Chile to the 2011 Copa Sudamericana.",
+  ],
+  "Which Italian club won the 2010 treble with Sneijder in midfield?": [
+    "It shares the San Siro stadium with AC Milan.",
+    "Its traditional shirts have blue-and-black stripes.",
+  ],
+  "Which Dutch forward was Henry's Arsenal strike partner and wore number 10?": [
+    "His fear of flying earned him the nickname Non-Flying Dutchman.",
+    "He scored a famous turn-and-finish against Newcastle in 2002.",
+  ],
+  "Which goalkeeper conceded Lewandowski's record-breaking 41st Bundesliga goal in May 2021?": [
+    "He played for Freiburg and Union Berlin.",
+    "His twin brother Lukasz was also a professional footballer.",
+  ],
+  "Which position did Suarez play in Barcelona's MSN attack?": [
+    "Its traditional shirt number is 9.",
+    "Tactical variations include the target man and the false nine.",
+  ],
+  "Which national team does Haaland represent?": [
+    "This Scandinavian country has a long Atlantic coastline and fjords.",
+    "It qualified for both the 1994 and 1998 men's World Cups.",
+  ],
+  "Which position did Haaland play for Manchester City in their 2023 treble?": [
+    "Its traditional shirt number is 9.",
+    "Tactical variations include the target man and the false nine.",
+  ],
+};
+
+export function formationClues(question: Pick<FormationQuestion, "text" | "answers" | "hint">): FormationQuestion["clues"] {
+  const extra = QUESTION_CLUES[question.text] ?? IDENTITY_CLUES[question.answers[0]];
   if (!extra) throw new Error(`Missing Formation Invasion clues for ${question.answers[0]}`);
   return [question.hint, ...extra];
 }

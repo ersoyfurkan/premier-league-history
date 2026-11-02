@@ -14,6 +14,10 @@ const {
 const { FORMATION_STANDING_CATEGORIES, formationStandingCategory, pickFormationStandingCategory } = await import("../data/formationStanding.ts");
 const { normalizeFootballPlayerName } = await import("../data/footballNames.ts");
 const { lobbyFor } = await import("../lib/gameNavigation.ts");
+const {
+  FORMATION_HISTORY_KEY, parseFormationQuestionHistory, mergeFormationQuestionHistory,
+  pickFormationQuestions, readFormationQuestionHistory,
+} = await import("../lib/formationQuestionHistory.ts");
 
 const expected = (state) => ({ gameId: state.gameId, revision: state.revision });
 const play = (state, side, action, now) => applyFormationAction(state, side, action, expected(state), now);
@@ -69,16 +73,19 @@ test("Formation Invasion has eleven unique position-correct players in every sco
   }
 });
 
-test("Each footballer has eighteen specific questions, six per difficulty, with aliases, clues, portraits and provenance", () => {
+test("The expanded player banks have accessible append-only questions, aliases, distinct clues, portraits and provenance", () => {
   assert.equal(FORMATION_PLAYERS.length, 125);
-  assert.equal(FORMATION_PLAYERS.reduce((total, player) => total + player.questions.length, 0), 2250);
-  for (const player of FORMATION_PLAYERS) {
+  assert.equal(FORMATION_PLAYERS.reduce((total, player) => total + player.questions.length, 0), 3834);
+  for (const [playerIndex, player] of FORMATION_PLAYERS.entries()) {
+    const expanded = playerIndex >= 59;
+    const expectedCount = expanded ? 42 : 18;
     assert.match(player.source, /^https:\/\/en.wikipedia.org\/wiki\//);
     assert.ok(playerFaceUrl(player.name) || formationPortrait(player.id), `${player.name} needs a portrait`);
-    assert.equal(player.questions.length, 18);
-    assert.equal(new Set(player.questions.map((question) => question.text)).size, 18);
+    assert.equal(player.questions.length, expectedCount);
+    assert.equal(new Set(player.questions.map((question) => question.text.trim().toLowerCase())).size, expectedCount);
     for (const tier of ["easy", "medium", "hard"]) {
-      assert.equal(player.questions.filter((question) => question.difficulty === tier).length, 6, `${player.name}: ${tier}`);
+      assert.equal(player.questions.filter((question) => question.difficulty === tier).length,
+        expanded && tier !== "hard" ? 18 : 6, `${player.name}: ${tier}`);
     }
     for (const [index, question] of player.questions.entries()) {
       assert.ok(question.text.length > 30);
@@ -90,7 +97,7 @@ test("Each footballer has eighteen specific questions, six per difficulty, with 
       assert.ok(question.answers.length > 0);
       const state = newFormationGame("general", "solo");
       state.slots[0].playerId = player.id;
-      state.slots[0].questionPicks = [index, (index + 1) % 18, (index + 2) % 18];
+      state.slots[0].questionPicks = [index, (index + 1) % expectedCount, (index + 2) % expectedCount];
       for (const alias of question.answers) {
         const copy = structuredClone(state);
         assert.equal(play(copy, "p1", { action: "answer", slot: 0, question: 0, answer: ` ${alias.toUpperCase()} ` }), null);
@@ -105,10 +112,20 @@ test("Each footballer has eighteen specific questions, six per difficulty, with 
 test("The 66-player expansion preserves the original bank and adds top-five-league players with non-revealing clues", () => {
   const words = (value) => value.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
     .replace(/['\u2019]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
-  assert.equal(createHash("sha256").update(JSON.stringify(FORMATION_PLAYERS.slice(0, 59))).digest("hex"),
-    "dfd5b96f7ca6f6a5413728cffd9415bcf98e29505b8db7c350e9e7e51c75ae7a");
+  const originalFacts = FORMATION_PLAYERS.slice(0, 59).map((player) => ({
+    ...player, questions: player.questions.map((question) => {
+      const original = { ...question };
+      delete original.clues;
+      return original;
+    }),
+  }));
+  assert.equal(createHash("sha256").update(JSON.stringify(originalFacts)).digest("hex"),
+    "10d193960a6ce376b3a4a36c63f4117eaef05f91d3d6150694f3afffeaa17cb8");
   const added = FORMATION_PLAYERS.slice(59);
   assert.equal(added.length, 66);
+  const originalAdded = added.map((player) => ({ ...player, questions: player.questions.slice(0, 18) }));
+  assert.equal(createHash("sha256").update(JSON.stringify(originalAdded)).digest("hex"),
+    "18f3110902fdf4daa2dd88ef5bf9d050d72e897b60be90e2bc4ff442dfe9a9b9");
   assert.equal(new Set(FORMATION_PLAYERS.map((player) => normalizeFootballPlayerName(player.name))).size, 125);
   for (const player of added) {
     assert.ok(player.competitions.some((comp) => ["pl", "laliga", "seriea", "bundesliga", "ligue1"].includes(comp)), player.name);
@@ -125,6 +142,17 @@ test("The 66-player expansion preserves the original bank and adds top-five-leag
   }
 });
 
+test("Chiellini's Livorno clues add new facts instead of repeating Tuscany, the port or shirt colour", () => {
+  const question = formationPlayer("chiellini").questions.find((item) => item.answers[0] === "Livorno");
+  assert.ok(question);
+  assert.match(question.clues[0], /Tuscan port city's club in dark red/);
+  for (const clue of question.clues.slice(1)) {
+    assert.doesNotMatch(clue, /tuscan|tuscany|port city|dark red/i);
+    assert.doesNotMatch(clue, /livorno/i);
+  }
+  assert.notEqual(question.clues[1], question.clues[2]);
+});
+
 test("Easier easy-medium-medium question picks are distinct and persist through JSON, wrong answers, passes and clue votes", () => {
   for (const mode of ["online", "local", "solo"]) {
     const seen = new Set();
@@ -134,7 +162,8 @@ test("Easier easy-medium-medium question picks are distinct and persist through 
       for (const slot of state.slots) {
         assert.equal(slot.questionPicks.length, 3);
         assert.equal(new Set(slot.questionPicks).size, 3);
-        assert.ok(slot.questionPicks.every((index) => Number.isInteger(index) && index >= 0 && index < 18));
+        assert.ok(slot.questionPicks.every((index) => Number.isInteger(index) &&
+          index >= 0 && index < formationPlayer(slot.playerId).questions.length));
         assert.deepEqual(slot.questionPicks.map((index) => formationPlayer(slot.playerId).questions[index].difficulty),
           ["easy", "medium", "medium"]);
       }
@@ -196,6 +225,72 @@ test("Previously saved easy-medium-hard matches keep their hard final question",
     assert.equal(solve(restored, 0), null);
   }
   assert.equal(restored.slots[0].owner, "p1");
+});
+
+test("Question history exhausts each difficulty pool before recycling its least recently used question", () => {
+  for (const player of FORMATION_PLAYERS) {
+    const history = {};
+    const cycles = { easy: new Set(), medium: new Set() };
+    const counts = Object.fromEntries(["easy", "medium"].map((tier) =>
+      [tier, player.questions.filter((question) => question.difficulty === tier).length]));
+    for (let round = 0; round < Math.max(counts.easy, counts.medium) * 2; round++) {
+      const before = [...(history[player.id] ?? [])];
+      const picks = pickFormationQuestions(player.id, history);
+      assert.equal(new Set(picks).size, 3);
+      for (const index of picks) {
+        const tier = player.questions[index].difficulty;
+        if (cycles[tier].size === counts[tier]) cycles[tier].clear();
+        assert.ok(!cycles[tier].has(index), `${player.name}: repeated ${tier} before exhaustion`);
+        cycles[tier].add(index);
+      }
+      if (before.length === counts.easy + counts.medium) {
+        assert.equal(picks[0], before.find((index) => player.questions[index].difficulty === "easy"));
+        assert.equal(picks[1], before.find((index) => player.questions[index].difficulty === "medium"));
+      }
+      assert.ok(history[player.id].length <= counts.easy + counts.medium);
+    }
+  }
+});
+
+test("Browser history is persistent, bounded, validated and reports damaged storage explicitly", () => {
+  const history = { rooney: [0, 6, 7] };
+  const storage = { getItem: (key) => key === FORMATION_HISTORY_KEY ? JSON.stringify(history) : null };
+  assert.deepEqual(readFormationQuestionHistory(storage), history);
+  assert.deepEqual(readFormationQuestionHistory({ getItem: () => null }), {});
+  assert.deepEqual(mergeFormationQuestionHistory(history, { rooney: [6, 8] }), { rooney: [0, 7, 6, 8] });
+  assert.deepEqual(history, { rooney: [0, 6, 7] });
+  for (const invalid of [null, [], { unknown: [0] }, { rooney: [0, 0] }, { rooney: [-1] },
+    { rooney: [0.5] }, { rooney: ["0"] }, { rooney: [Infinity] }, { rooney: [10000] }]) {
+    assert.equal(parseFormationQuestionHistory(invalid), null);
+  }
+  assert.throws(() => readFormationQuestionHistory({ getItem: () => "{" }), /damaged/);
+  assert.throws(() => readFormationQuestionHistory({ getItem: () => "[]" }), /invalid/);
+  assert.throws(() => readFormationQuestionHistory({ getItem: () => { throw new Error("Storage blocked"); } }), /Storage blocked/);
+});
+
+test("Local, solo and online rematches preserve question history, including rooms saved before history existed", () => {
+  for (const mode of ["local", "solo", "online"]) {
+    for (const legacy of [false, true]) {
+      const state = mode === "online" ? playing() : newFormationGame("general", mode);
+      const oldPicks = Object.fromEntries(state.slots.map((slot) => [slot.playerId, [...slot.questionPicks]]));
+      if (legacy) delete state.questionHistory;
+      state.phase = "finished";
+      state.winner = "p1";
+      assert.equal(play(state, "p1", { action: "rematch", questionHistory: { rooney: [0] } }), null);
+      if (mode !== "solo") assert.equal(play(state, "p2", { action: "rematch" }), null);
+      assert.equal(state.phase, "playing");
+      for (const slot of state.slots) {
+        if (!oldPicks[slot.playerId]) continue;
+        assert.ok(slot.questionPicks.every((index) => !oldPicks[slot.playerId].includes(index)), slot.playerId);
+      }
+      assert.ok(state.questionHistory.rooney.includes(0));
+      for (const side of ["p1", "p2"]) {
+        const view = formationView(state, side);
+        assert.ok(!JSON.stringify(view).includes('"questionHistory"'));
+        assert.ok(view.slots.every((slot) => slot.questionIndex === null));
+      }
+    }
+  }
 });
 
 test("Shared progress lets the opponent claim question three; correct keeps turn, wrong passes without revealing answer", () => {
@@ -299,7 +394,7 @@ test("Online views share the chosen question with both players but hide unchosen
   for (const side of ["p1", "p2"]) play(state, side, { action: "standing-vote", slot: 0, question: 0 }, 1000);
   assert.ok(state.standing);
   for (const side of ["p1", "p2"]) assert.ok(formationView(state, side).slots[0].question);
-  assert.equal(expireFormationStanding(state, 8000), true);
+  assert.equal(expireFormationStanding(state, 13000), true);
   assert.ok(formationView(state, state.turn).slots.every((slot) => slot.question === null));
   const local = newFormationGame("general", "local");
   play(local, "p1", { action: "select", slot: 0, question: 0 });
@@ -457,7 +552,8 @@ test("Legacy revealed-clue rooms retain their first clue and can mutually unlock
   assert.equal(state.clueRace.slot, 0);
 });
 
-test("Last Man Standing requires three clues, matching votes, a random starter and an exact seven-second deadline", (t) => {
+test("Last Man Standing requires three clues, matching votes, a random starter and an exact twelve-second deadline", (t) => {
+  assert.equal(FORMATION_STANDING_TURN_MS, 12000);
   const state = playing();
   threeClues(state);
   assert.equal(state.slots[0].progress, 0);
@@ -481,7 +577,7 @@ test("Last Man Standing requires three clues, matching votes, a random starter a
   assert.ok(!JSON.stringify(view.standing).includes('"aliases"'));
 });
 
-test("Standing answer aliases alternate turns, reset seven seconds, and a repeated alias loses only the current question", () => {
+test("Standing answer aliases alternate turns, reset twelve seconds, and a repeated alias loses only the current question", () => {
   const state = playing();
   startStanding(state);
   state.standing.categoryId = "world-cup-winners";
@@ -494,9 +590,10 @@ test("Standing answer aliases alternate turns, reset seven seconds, and a repeat
   assert.equal(play(state, first, { action: "standing-answer", answer: "  BRASIL  ", deadline }, 2000), null);
   assert.deepEqual(state.standing.used, ["Brazil"]);
   assert.equal(state.standing.turn, second);
-  assert.equal(state.standing.deadline, 9000);
+  assert.equal(state.standing.deadline, 14000);
+  assert.match(state.notice, /has 12 seconds/);
   assert.match(play(state, second, { action: "standing-answer", answer: "Italy", deadline }, 2001), /turn has ended/);
-  assert.equal(play(state, second, { action: "standing-answer", answer: "Brazil", deadline: 9000 }, 3000), null);
+  assert.equal(play(state, second, { action: "standing-answer", answer: "Brazil", deadline: 14000 }, 3000), null);
   assert.equal(state.standing, null);
   assert.equal(state.turn, first);
   assert.equal(state.slots[0].progress, 1);
@@ -506,7 +603,7 @@ test("Standing answer aliases alternate turns, reset seven seconds, and a repeat
   assert.match(state.notice, /repeated an answer/);
 });
 
-test("Standing timeout at exactly seven seconds is persisted once and cannot spill into a later question or rematch", () => {
+test("Standing timeout at exactly twelve seconds is persisted once and cannot spill into a later question or rematch", () => {
   for (const mode of ["online", "local"]) {
     let state = mode === "online" ? playing() : newFormationGame("general", mode);
     startStanding(state);
@@ -515,13 +612,14 @@ test("Standing timeout at exactly seven seconds is persisted once and cannot spi
     const winner = loser === "p1" ? "p2" : "p1";
     const old = expected(state);
     const action = { action: "standing-answer", answer: "Brazil", deadline: state.standing.deadline };
-    assert.equal(expireFormationStanding(state, 7999), false);
-    assert.equal(applyFormationAction(state, loser, action, old, 8000), null);
+    assert.equal(expireFormationStanding(state, 8000), false);
+    assert.equal(expireFormationStanding(state, 12999), false);
+    assert.equal(applyFormationAction(state, loser, action, old, 13000), null);
     assert.equal(state.turn, winner);
     assert.equal(state.slots[0].progress, 1);
     assert.match(state.notice, /ran out of time/);
-    assert.equal(expireFormationStanding(state, 10000), false);
-    assert.match(applyFormationAction(state, loser, action, old, 10000), /game changed/);
+    assert.equal(expireFormationStanding(state, 15000), false);
+    assert.match(applyFormationAction(state, loser, action, old, 15000), /game changed/);
     assert.equal(state.slots[0].progress, 1);
   }
 });
@@ -692,7 +790,7 @@ test("Standing categories accept all aliases and rotate without awarding progres
       answer: category.entries.at(-1).name, deadline: state.standing.deadline }, 1001), null);
     assert.notEqual(state.standing.categoryId, category.id);
     assert.equal(state.standing.turn, first === "p1" ? "p2" : "p1");
-    assert.equal(state.standing.deadline, 8001);
+    assert.equal(state.standing.deadline, 13001);
     assert.deepEqual(state.standing.used, []);
     assert.equal(state.slots[0].progress, 0);
   }
@@ -833,6 +931,31 @@ const api = async (body) => {
   return { status: response.status, ...await response.json() };
 };
 
+test("Room creation uses browser history without exposing it and rejects malformed history", async () => {
+  const history = Object.fromEntries(FORMATION_PLAYERS.map((player) => {
+    const easy = player.questions.flatMap((question, index) => question.difficulty === "easy" ? [index] : []);
+    const medium = player.questions.flatMap((question, index) => question.difficulty === "medium" ? [index] : []);
+    return [player.id, [...easy.slice(0, -1), ...medium.slice(0, -2)]];
+  }));
+  const created = await api({ action: "create", comp: "general", questionHistory: history });
+  assert.equal(created.status, 200);
+  const state = JSON.parse(rows.get(created.code).state);
+  for (const slot of state.slots) assert.ok(slot.questionPicks.every((index) => !history[slot.playerId].includes(index)));
+  assert.ok(!JSON.stringify(created.view).includes('"questionHistory"'));
+  assert.ok(created.view.slots.every((slot) => slot.questionIndex === null));
+  const joined = await api({ action: "join", code: created.code });
+  const selected = await api({ action: "select", code: created.code, token: created.token, slot: 0, question: 0,
+    gameId: joined.view.gameId, revision: joined.view.revision });
+  assert.equal(selected.view.slots[0].questionIndex, state.slots[0].questionPicks[0]);
+  assert.ok(selected.view.slots.slice(1).every((slot) => slot.questionIndex === null));
+  for (const invalid of [null, [], { rooney: [0, 0] }, { rooney: ["0"] }, { rooney: [10000] }]) {
+    assert.equal((await api({ action: "create", comp: "general", questionHistory: invalid })).status, 400);
+    const current = JSON.parse(rows.get(created.code).state);
+    assert.equal((await api({ action: "rematch", code: created.code, token: created.token,
+      questionHistory: invalid, ...expected(current) })).status, 400);
+  }
+});
+
 test("Room API creates, joins, authenticates and validates all actions without leaking answers", async () => {
   const created = await api({ action: "create", comp: "superlig" });
   assert.equal(created.status, 200);
@@ -955,7 +1078,7 @@ const apiStanding = async () => {
   return { code: created.code, tokens, view: response.view };
 };
 
-test("Room API enforces three clues, mutual standing votes, private answers, seven-second turns and stale-action rejection", async (t) => {
+test("Room API enforces three clues, mutual standing votes, private answers, twelve-second turns and stale-action rejection", async (t) => {
   let now = 1000;
   t.mock.method(Date, "now", () => now);
   const room = await apiStanding();
@@ -967,17 +1090,17 @@ test("Room API enforces three clues, mutual standing votes, private answers, sev
   const payload = { action: "standing-answer", code: room.code, token, answer: goodAnswer,
     deadline: state.standing.deadline, ...expected(state) };
   assert.equal((await api({ ...payload, token: wrongToken })).status, 409);
-  assert.equal((await api({ ...payload, deadline: "8000" })).status, 400);
+  assert.equal((await api({ ...payload, deadline: "13000" })).status, 400);
   assert.equal((await api({ ...payload, action: "hint", slot: 0, question: 0, clue: "1" })).status, 400);
   assert.equal((await api({ ...payload, action: "standing-timeout" })).status, 409);
   assert.equal((await api({ ...payload, answer: "!" })).status, 409);
   assert.ok(!JSON.stringify(room.view.standing).includes(goodAnswer));
-  assert.equal(room.view.standing.deadline, 8000);
-  now = 7999;
+  assert.equal(room.view.standing.deadline, 13000);
+  now = 12999;
   const responses = await Promise.all([api(payload), api(payload)]);
   assert.deepEqual(responses.map((response) => response.status).sort(), [200, 409]);
   const saved = JSON.parse(rows.get(room.code).state);
-  assert.equal(saved.standing.deadline, 14999);
+  assert.equal(saved.standing.deadline, 24999);
   assert.deepEqual(saved.standing.used, [goodAnswer]);
   assert.equal(saved.slots[0].progress, 0);
   assert.equal((await api({ ...payload, action: "standing-timeout", ...expected(saved) })).status, 409);
@@ -992,7 +1115,7 @@ test("Concurrent polling or a late answer commits standing timeout exactly once 
     const state = JSON.parse(rows.get(room.code).state);
     const loser = state.standing.turn;
     const winner = loser === "p1" ? "p2" : "p1";
-    now = 8000;
+    now = 13000;
     if (trigger === "poll") {
       const responses = await Promise.all(room.tokens.map((token) => GET(new NextRequest(
         `http://localhost/api/game/formation-invasion?code=${room.code}&token=${token}`,

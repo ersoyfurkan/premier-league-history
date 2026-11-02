@@ -4,6 +4,7 @@ import {
   applyFormationAction, formationSideOf, formationView, isFormationComp,
   joinFormationGame, newFormationGame, isFormationRaceAnswer, expireFormationStanding, type FormationAction, type FormationState,
 } from "@/lib/formationInvasion";
+import { parseFormationQuestionHistory } from "@/lib/formationQuestionHistory";
 
 const ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 const json = (body: unknown, status = 200) =>
@@ -25,7 +26,11 @@ async function save(db: D1Database, code: string, state: FormationState, version
 }
 
 function parseAction(body: Record<string, unknown>): FormationAction | null {
-  if (body.action === "pass" || body.action === "rematch") return { action: body.action };
+  if (body.action === "pass") return { action: "pass" };
+  if (body.action === "rematch") {
+    const history = body.questionHistory === undefined ? {} : parseFormationQuestionHistory(body.questionHistory);
+    return history ? { action: "rematch", questionHistory: history } : null;
+  }
   if (body.action === "standing-answer" || body.action === "standing-timeout") {
     if (typeof body.deadline !== "number" || !Number.isSafeInteger(body.deadline)) return null;
     if (body.action === "standing-timeout") return { action: body.action, deadline: body.deadline };
@@ -74,10 +79,12 @@ async function post(request: NextRequest) {
   const db = env.DB;
   if (body.action === "create") {
     if (!isFormationComp(body.comp)) return json({ error: "Choose a supported competition." }, 400);
+    const history = body.questionHistory === undefined ? {} : parseFormationQuestionHistory(body.questionHistory);
+    if (!history) return json({ error: "Invalid Formation Invasion question history." }, 400);
     await db.prepare("DELETE FROM formation_invasion_rooms WHERE updated_at < ?")
       .bind(Date.now() - 24 * 60 * 60 * 1000).run();
     const token = crypto.randomUUID();
-    const state = newFormationGame(body.comp, "online", token);
+    const state = newFormationGame(body.comp, "online", token, history);
     for (let attempt = 0; attempt < 5; attempt += 1) {
       const code = Array.from(crypto.getRandomValues(new Uint8Array(6)), (byte) => ALPHABET[byte % ALPHABET.length]).join("");
       try {

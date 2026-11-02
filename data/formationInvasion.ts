@@ -5,6 +5,9 @@ import { formationClues } from "@/data/formationInvasionClues";
 import { ADDITIONAL_FORMATION_DEFENDERS } from "@/data/formationInvasionDefenders";
 import { ADDITIONAL_FORMATION_MIDFIELDERS } from "@/data/formationInvasionMidfielders";
 import { ADDITIONAL_FORMATION_FORWARDS } from "@/data/formationInvasionForwards";
+import { EXTRA_FORWARD_QUESTIONS } from "@/data/formationInvasionForwardsExtra";
+import { EXTRA_DEFENDER_QUESTIONS } from "@/data/formationInvasionDefendersExtra";
+import { EXTRA_MIDFIELDER_QUESTIONS } from "@/data/formationInvasionMidfieldersExtra";
 
 export type FormationPosition = "GK" | "LB" | "CB" | "RB" | "CM" | "DM" | "LW" | "ST" | "RW";
 export type FormationQuestion = { text: string; answers: string[]; hint: string; clues: [string, string, string]; difficulty: "easy" | "medium" | "hard" };
@@ -330,9 +333,15 @@ export const FORMATION_PLAYERS: FormationPlayer[] = [
     q("Which German club sold Haaland to Manchester City in 2022?", ["Borussia Dortmund", "Dortmund", "BVB"], "The Black and Yellows."),
     q("How many Premier League goals did Haaland score in 2022/23?", ["36", "thirty six", "thirty-six"], "Six squared."),
   ]),
-  ...ADDITIONAL_FORMATION_DEFENDERS,
-  ...ADDITIONAL_FORMATION_MIDFIELDERS,
-  ...ADDITIONAL_FORMATION_FORWARDS,
+  ...ADDITIONAL_FORMATION_DEFENDERS.map((player) => ({
+    ...player, questions: [...player.questions, ...EXTRA_DEFENDER_QUESTIONS[player.id]],
+  })),
+  ...ADDITIONAL_FORMATION_MIDFIELDERS.map((player) => ({
+    ...player, questions: [...player.questions, ...EXTRA_MIDFIELDER_QUESTIONS[player.id]],
+  })),
+  ...ADDITIONAL_FORMATION_FORWARDS.map((player) => ({
+    ...player, questions: [...player.questions, ...EXTRA_FORWARD_QUESTIONS[player.id]],
+  })),
 ];
 
 export const FORMATION_SLOTS: { position: FormationPosition; x: number; y: number }[] = [

@@ -2,6 +2,7 @@ import { formationLineup, formationPlayer, FORMATION_SLOTS } from "@/data/format
 import { COMPETITION_LABELS, type Competition } from "@/lib/competitions";
 import { normalizeFootballPlayerName } from "@/data/footballNames";
 import { formationStandingCategory, FORMATION_STANDING_CATEGORIES, pickFormationStandingCategory } from "@/data/formationStanding";
+import { mergeFormationQuestionHistory, pickFormationQuestions, type FormationQuestionHistory } from "@/lib/formationQuestionHistory";
 
 export type FormationSide = "p1" | "p2";
 export type FormationMode = "online" | "local" | "solo";
@@ -29,6 +30,7 @@ export type FormationState = {
   rematch: Votes;
   notice: string | null;
   selectedSlot?: number | null;
+  questionHistory?: FormationQuestionHistory;
   clueRace?: { slot: number; question: number; openedRevision: number; attempted: Votes } | null;
   standing?: {
     slot: number; question: number; categoryId: string; turn: FormationSide;
@@ -43,28 +45,14 @@ export type FormationAction =
   | { action: "standing-answer"; answer: string; deadline: number }
   | { action: "standing-timeout"; deadline: number }
   | { action: "pass" }
-  | { action: "rematch" };
+  | { action: "rematch"; questionHistory?: FormationQuestionHistory };
 
 const votes = (): Votes => ({ p1: false, p2: false });
-export const FORMATION_STANDING_TURN_MS = 7000;
+export const FORMATION_STANDING_TURN_MS = 12000;
 const other = (side: FormationSide): FormationSide => side === "p1" ? "p2" : "p1";
 export const formationSideLabel = (side: FormationSide) => side === "p1" ? "Player 1" : "Player 2";
 export const isFormationComp = (value: unknown): value is Competition =>
   typeof value === "string" && Object.hasOwn(COMPETITION_LABELS, value);
-
-function pickQuestions(playerId: string): [number, number, number] {
-  const questions = formationPlayer(playerId).questions;
-  const selected = new Set<number>();
-  const pick = (difficulty: "easy" | "medium") => {
-    const indices = questions.flatMap((question, index) =>
-      question.difficulty === difficulty && !selected.has(index) ? [index] : []);
-    if (!indices.length) throw new Error(`Missing ${difficulty} Formation Invasion questions for ${playerId}`);
-    const index = indices[Math.floor(Math.random() * indices.length)];
-    selected.add(index);
-    return index;
-  };
-  return [pick("easy"), pick("medium"), pick("medium")];
-}
 
 export function isFormationRaceAnswer(state: FormationState, side: FormationSide, action: FormationAction,
   expected: { gameId: string; revision: number }): boolean {
@@ -127,15 +115,18 @@ export function expireFormationStanding(state: FormationState, now = Date.now())
   return true;
 }
 
-export function newFormationGame(comp: Competition, mode: FormationMode, token: string | null = null): FormationState {
+export function newFormationGame(
+  comp: Competition, mode: FormationMode, token: string | null = null, history: FormationQuestionHistory = {},
+): FormationState {
+  const questionHistory = mergeFormationQuestionHistory(history);
   return {
     game: "formation-invasion", gameId: crypto.randomUUID(), revision: 0, comp, mode,
     phase: mode === "online" ? "waiting" : "playing", p1Token: token, p2Token: null,
     turn: "p1", slots: formationLineup(comp).map((playerId) => ({
-      playerId, questionPicks: pickQuestions(playerId), progress: 0, owner: null, hints: votes(), cluesRevealed: 0, standingVotes: votes(),
+      playerId, questionPicks: pickFormationQuestions(playerId, questionHistory), progress: 0, owner: null, hints: votes(), cluesRevealed: 0, standingVotes: votes(),
     })),
     winner: null, mistakes: { p1: 0, p2: 0 }, correct: { p1: 0, p2: 0 },
-    rematch: votes(), notice: null, selectedSlot: null, clueRace: null, standing: null,
+    rematch: votes(), notice: null, selectedSlot: null, clueRace: null, standing: null, questionHistory,
   };
 }
 
@@ -174,9 +165,14 @@ export function applyFormationAction(
   if (action.action === "rematch") {
     if (state.phase !== "finished") return "Finish this game before starting another.";
     if (state.rematch[side]) return "You already voted for a new game.";
+    const previousPicks: FormationQuestionHistory = Object.fromEntries(state.slots.map((slot) =>
+      [slot.playerId, slot.questionPicks ?? [0, 1, 2]]));
+    state.questionHistory = mergeFormationQuestionHistory(
+      action.questionHistory ?? {}, state.questionHistory ?? {}, previousPicks,
+    );
     state.rematch[side] = true;
     if (state.mode === "solo" || (state.rematch.p1 && state.rematch.p2)) {
-      const fresh = newFormationGame(state.comp, state.mode, state.p1Token);
+      const fresh = newFormationGame(state.comp, state.mode, state.p1Token, state.questionHistory);
       fresh.p2Token = state.p2Token;
       fresh.phase = "playing";
       fresh.revision = state.revision + 1;
@@ -216,7 +212,7 @@ export function applyFormationAction(
       standing.used = [];
       state.notice = `Category completed! New category: ${next.prompt} Answers reset for this new category.`;
     } else {
-      state.notice = `Accepted: ${entry.name}. ${formationSideLabel(standing.turn)} has seven seconds.`;
+      state.notice = `Accepted: ${entry.name}. ${formationSideLabel(standing.turn)} has ${FORMATION_STANDING_TURN_MS / 1000} seconds.`;
     }
     standing.deadline = now + FORMATION_STANDING_TURN_MS;
     state.revision += 1;
@@ -349,6 +345,7 @@ export function formationView(state: FormationState, you: FormationSide, now = D
         playerId: player.id, name: player.name, position: FORMATION_SLOTS[index].position,
         progress: slot.progress, owner: slot.owner, hints: { ...slot.hints },
         question: question?.text ?? null,
+        questionIndex: question ? slot.questionPicks?.[slot.progress] ?? slot.progress : null,
         hint: question && clueCount(state, slot) > 0 ? question.hint : null,
         clues: question ? question.clues.slice(0, clueCount(state, slot)) : [],
         cluesRevealed: slot.owner ? 0 : clueCount(state, slot),
