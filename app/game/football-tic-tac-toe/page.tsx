@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   FOOTBALL_TIC_TAC_TOE,
   footballTicTacToePlayerNames,
@@ -79,6 +79,7 @@ function ClueHeader({ clue }: { clue: FootballClue }) {
 }
 
 function FootballTicTacToeClient() {
+  const router = useRouter();
   const search = useSearchParams();
   const code = (search.get("code") ?? "").toUpperCase();
   const isLocal = search.get("local") === "1";
@@ -92,6 +93,7 @@ function FootballTicTacToeClient() {
   const [remoteView, setRemoteView] = useState<FootballTicTacToeRoomView | null>(null);
   const [localRoom, setLocalRoom] = useState<FootballTicTacToeRoomState | null>(null);
   const [localMode, setLocalMode] = useState<FootballTicTacToeMode>(() => search.get("rules") === "hidden-trap" ? "hidden-trap" : "normal");
+  const [creating, setCreating] = useState(false);
   const [selectedCell, setSelectedCell] = useState<number | null>(null);
   const [playerName, setPlayerName] = useState("");
   const [submittingAnswer, setSubmittingAnswer] = useState(false);
@@ -102,16 +104,36 @@ function FootballTicTacToeClient() {
   const view = isLocal && localRoom
     ? footballTicTacToeView(localRoom, localRoom.turn)
     : remoteView;
-  const fatal = serverFatal ?? (!isLocal && !code ? "No room code in this link." : null);
+  const fatal = serverFatal;
   const activeComp = view?.comp ?? comp;
   const puzzle = view?.puzzle ?? FOOTBALL_TIC_TAC_TOE[activeComp];
 
   const startLocal = (mode: FootballTicTacToeMode) => {
+    setError(null);
     const room = newFootballTicTacToeRoom("local-player-1", comp, mode);
     room.p2Token = "local-player-2";
     room.status = "playing";
     room.turnDeadline = Date.now() + TURN_MS;
     setLocalRoom(room);
+  };
+
+  const createOnline = async () => {
+    setCreating(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/game/football-tic-tac-toe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "create", comp, mode: localMode }),
+      });
+      const data = (await res.json()) as Api;
+      if (!res.ok || !data.code || !data.token) throw new Error(data.error ?? "Could not create game");
+      localStorage.setItem(`plttt:${data.code}`, data.token);
+      router.push(`/game/football-tic-tac-toe?code=${data.code}&comp=${comp}`);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Could not create game");
+      setCreating(false);
+    }
   };
 
   useEffect(() => {
@@ -350,13 +372,31 @@ function FootballTicTacToeClient() {
     );
   }
 
-  if (isLocal && !localRoom) {
+  if ((!code && !isLocal) || (isLocal && !localRoom)) {
     return (
       <Shell>
         <h2 className="mt-6 text-3xl">Tik Tak Toe</h2>
         <p className="mt-2 text-fore-muted">Choose the rules before starting. Both players use the same rules.</p>
-        <TicTacToeModePicker value={localMode} onChange={setLocalMode} />
-        <button type="button" className="btn-primary mt-4" onClick={() => startLocal(localMode)}>Start game</button>
+        <TicTacToeModePicker value={localMode} onChange={setLocalMode} disabled={creating} />
+        {error && <p role="alert" className="mt-3 text-sm text-warning">{error}</p>}
+        <div className="mt-4 flex flex-wrap gap-2">
+          {isLocal ? (
+            <button type="button" className="btn-primary" onClick={() => startLocal(localMode)}>Start game</button>
+          ) : (
+            <>
+              <button type="button" className="btn-primary disabled:opacity-60" onClick={createOnline} disabled={creating}>
+                {creating ? "Creating…" : "Invite a friend"}
+              </button>
+              <button type="button" className="btn-ghost disabled:opacity-60" disabled={creating}
+                onClick={() => {
+                  startLocal(localMode);
+                  router.push(`/game/football-tic-tac-toe?local=1&comp=${comp}&rules=${localMode}`);
+                }}>
+                Play on this device
+              </button>
+            </>
+          )}
+        </div>
       </Shell>
     );
   }

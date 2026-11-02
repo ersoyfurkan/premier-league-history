@@ -72,6 +72,8 @@ The same focused test command also checks stadium aliases/search, modern manager
 
 ## Mobile layouts
 
+Click **Tik Tak Toe** in any competition lobby or General to open its setup screen, then choose **Normal** or **Hidden Trap** and either invite a friend or play on the same device. Existing invite links open their room directly without asking the joining player to choose rules.
+
 Phone-specific layouts are scoped to `width < 768px` in [the shared styles](./app/globals.css); the existing laptop/desktop layout at 768px and above is unchanged. Mobile navigation accommodates device safe areas, forms use 16px inputs to avoid focus zoom, and controls have a 44px minimum touch height. Competition tabs swipe horizontally and wide tables retain every column in their own scroll region. Trivia Path answer panels stack on phones, Tic-Tac-Toe clues are larger, and Rondo puts the answer form below its letter ring so the keyboard does not crowd the question.
 
 ### Short, mixed-difficulty Rondo rounds

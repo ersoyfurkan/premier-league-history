@@ -8,17 +8,12 @@ import CompetitionMiniGames, { type MiniGameMode } from "@/components/Competitio
 import { LEAGUE_META, isEspnComp } from "@/lib/leagues";
 import { COMPETITION_LABELS, type TournamentComp } from "@/lib/competitions";
 import { TOURNAMENTS, isTournament } from "@/lib/tournaments";
-import TicTacToeModePicker from "@/components/TicTacToeModePicker";
-import type { FootballTicTacToeMode } from "@/lib/footballTicTacToe";
 
 export default function GameLobby({ comp }: { comp: Competition }) {
   const router = useRouter();
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [miniGame, setMiniGame] = useState<MiniGameMode | null>(null);
-  const [creatingGrid, setCreatingGrid] = useState(false);
-  const [gridError, setGridError] = useState<string | null>(null);
-  const [gridMode, setGridMode] = useState<FootballTicTacToeMode>("normal");
   const isUcl = comp === "ucl";
   const isGeneral = comp === "general";
   const tournament = isTournament(comp) ? TOURNAMENTS[comp] : null;
@@ -41,25 +36,6 @@ export default function GameLobby({ comp }: { comp: Competition }) {
     } catch (e) {
       setError(e instanceof Error ? e.message : "Could not create room");
       setCreating(false);
-    }
-  };
-
-  const createFootballTicTacToe = async () => {
-    setCreatingGrid(true);
-    setGridError(null);
-    try {
-      const res = await fetch("/api/game/football-tic-tac-toe", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "create", comp, mode: gridMode }),
-      });
-      const data = (await res.json()) as { error?: string; code?: string; token?: string };
-      if (!res.ok || !data.code || !data.token) throw new Error(data.error ?? "Could not create game");
-      localStorage.setItem(`plttt:${data.code}`, data.token);
-      router.push(`/game/football-tic-tac-toe?code=${data.code}&comp=${comp}`);
-    } catch (e) {
-      setGridError(e instanceof Error ? e.message : "Could not create game");
-      setCreatingGrid(false);
     }
   };
 
@@ -132,31 +108,19 @@ export default function GameLobby({ comp }: { comp: Competition }) {
                       </span>
                     </button>
                   ))}
-                  <div className="rounded-2xl border border-warning/25 bg-background/60 p-5 text-left transition hover:border-warning/60 hover:bg-warning/5">
+                  <Link
+                    href={`/game/football-tic-tac-toe?comp=${comp}`}
+                    className="rounded-2xl border border-warning/25 bg-background/60 p-5 text-left transition hover:border-warning/60 hover:bg-warning/5"
+                  >
                     <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-warning">Online · Invite a friend</p>
                     <h3 className="mt-2 text-xl font-bold">Tik Tak Toe</h3>
                     <p className="mt-2 text-sm leading-6 text-fore-muted">
                       Randomized clue grid, player portraits, and a one-minute timer for every turn.
                     </p>
-                    {gridError && <p className="mt-3 text-sm text-warning">{gridError}</p>}
-                    <TicTacToeModePicker value={gridMode} onChange={setGridMode} disabled={creatingGrid} />
-                    <div className="mt-4 flex flex-wrap gap-2">
-                      <button
-                        type="button"
-                        onClick={createFootballTicTacToe}
-                        disabled={creatingGrid}
-                        className="btn-primary disabled:opacity-60"
-                      >
-                        {creatingGrid ? "Creating…" : "Invite a friend"}
-                      </button>
-                      <Link
-                        href={`/game/football-tic-tac-toe?local=1&comp=${comp}&rules=${gridMode}`}
-                        className="btn-ghost"
-                      >
-                        Play on this device
-                      </Link>
-                    </div>
-                  </div>
+                    <span className="mt-4 inline-block font-mono text-[10px] uppercase tracking-[0.12em] text-warning">
+                      Play now →
+                    </span>
+                  </Link>
                   <Link
                     href={`/game/formation-invasion?comp=${comp}`}
                     className="rounded-2xl border border-primary/25 bg-background/60 p-5 text-left transition hover:border-primary/60 hover:bg-primary/5"
