@@ -1,5 +1,7 @@
-import type { Competition } from "@/lib/gameRoom";
+﻿import type { Competition } from "@/lib/gameRoom";
 import live from "@/data/liveFacts.generated.json";
+import wikiFacts from "@/data/wikiFacts.generated.json";
+import { normalizeFootballPlayerName } from "@/data/footballTicTacToe";
 
 type Entry = { name: string; aliases: string[] };
 export type LiveCategory = { id: string; short: string; noun: string; plural: string; entries: Entry[] };
@@ -112,6 +114,48 @@ export function liveTriviaCategories(comp: Competition): LiveCategory[] {
       plural: "players in this season's current top 20 for assists",
       entries: assists,
     });
+  }
+  return out;
+}
+
+type WikiLists = Record<string, string[]>;
+const wiki = wikiFacts.lists as unknown as WikiLists;
+export const WIKI_FACTS_UPDATED_AT: string = wikiFacts.updatedAt;
+
+// Adds names that Wikipedia lists but a hand-written list is missing (never removes anything).
+export function mergeWikiNames(target: Entry[], key: string, kind: "player" | "club") {
+  const known = new Set(target.flatMap((entry) => [entry.name, ...entry.aliases]).map(normalizeFootballPlayerName));
+  for (const name of wiki[key] ?? []) {
+    if (known.has(normalizeFootballPlayerName(name))) continue;
+    const entry = kind === "club" ? clubEntry(name) : playerEntry(name);
+    if ([entry.name, ...entry.aliases].some((n) => known.has(normalizeFootballPlayerName(n)))) continue;
+    target.push(entry);
+    [entry.name, ...entry.aliases].forEach((n) => known.add(normalizeFootballPlayerName(n)));
+  }
+}
+
+const TOP_SCORER_AWARDS: Partial<Record<Competition, { key: string; short: string; noun: string }>> = {
+  pl: { key: "plGoldenBoot", short: "Golden Boot", noun: "Premier League Golden Boot winner" },
+  laliga: { key: "laligaPichichi", short: "Pichichi", noun: "La Liga Pichichi Trophy winner" },
+  seriea: { key: "serieaCapocannoniere", short: "Capocannoniere", noun: "Serie A Capocannoniere (top scorer) winner" },
+  bundesliga: { key: "bundesligaTop", short: "Torjäger", noun: "Bundesliga top scorer (Torjägerkanone) winner" },
+  ligue1: { key: "ligue1Top", short: "Ligue 1 top scorer", noun: "Ligue 1 top scorer award winner" },
+  superlig: { key: "superligTop", short: "Gol Kralı", noun: "Süper Lig top scorer (Gol Kralı)" },
+};
+
+// Categories built from Wikipedia lists, refreshed by scripts/refresh-wiki-facts.mts
+export function wikiTriviaCategories(comp: Competition): LiveCategory[] {
+  const out: LiveCategory[] = [];
+  const award = TOP_SCORER_AWARDS[comp];
+  const winners = award ? unique((wiki[award.key] ?? []).map(playerEntry)) : [];
+  if (award && winners.length >= 12) {
+    out.push({ id: "s-wk-top", short: award.short, noun: award.noun, plural: `${award.noun.replace(/ winner$/, "")} winners`, entries: winners });
+  }
+  if (comp === "ucl") {
+    const runners = unique((wiki.uclRunnersUp ?? []).map(clubEntry));
+    if (runners.length >= 12) {
+      out.push({ id: "s-wk-uclfinal", short: "Lost a final", noun: "club that has lost a European Cup / Champions League final", plural: "clubs that have lost a European Cup / Champions League final", entries: runners });
+    }
   }
   return out;
 }

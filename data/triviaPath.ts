@@ -4,7 +4,7 @@ import { DUEL_CLUBS, playersForBoth, playersForClub, searchDuelPlayers } from "@
 import { BUNDESLIGA_TRIVIA } from "@/data/bundesligaContent";
 import { LIGUE1_TRIVIA } from "@/data/ligue1Content";
 import { SUPERLIG_TRIVIA } from "@/data/superligContent";
-import { liveTriviaCategories } from "@/data/liveTrivia";
+import { liveTriviaCategories, wikiTriviaCategories, mergeWikiNames } from "@/data/liveTrivia";
 
 export type TriviaEntry = { name: string; aliases: string[] };
 export type TriviaQuestion = { id: string; text: string; count: number; noun: string; plural: string; entries: TriviaEntry[]; short?: string };
@@ -22,12 +22,14 @@ const list = (raw: string): TriviaEntry[] =>
 const BALLON = list(
   "Lionel Messi|Cristiano Ronaldo|Luka Modrić/Modric|Karim Benzema|Rodri|Ousmane Dembélé/Dembele|Harry Kane/Kane|Kaká/Kaka|Ronaldinho|Fabio Cannavaro/Cannavaro|Zinedine Zidane/Zidane|Rivaldo|Michael Owen/Owen|Pavel Nedvěd/Nedved|Andriy Shevchenko/Shevchenko|Luís Figo/Luis Figo/Figo|George Weah/Weah|Hristo Stoichkov/Stoichkov|Roberto Baggio/Baggio|Johan Cruyff/Cruyff|Marco van Basten/Van Basten|Michel Platini/Platini|Franz Beckenbauer/Beckenbauer|George Best|Bobby Charlton|Ronaldo Nazário/Ronaldo|Lothar Matthäus/Matthaus|Kevin Keegan|Gerd Müller/Gerd Muller|Ruud Gullit/Gullit|Matthias Sammer/Sammer|Eusébio/Eusebio|Stanley Matthews",
 );
+mergeWikiNames(BALLON, "ballon", "player");
 const WC_NATIONS = list(
   "Brazil|Germany/West Germany|Italy|Argentina|France|Uruguay|England|Spain",
 );
 const CL_WINNERS = list(
   "Real Madrid|AC Milan/Milan|Liverpool|Bayern Munich/Bayern|Barcelona|Ajax|Inter Milan/Inter/Internazionale|Manchester United/Man United/Man Utd|Juventus|Benfica|Chelsea|Nottingham Forest/Forest|Porto|Celtic|Hamburg|Steaua Bucharest/Steaua|Marseille|Borussia Dortmund/Dortmund|Feyenoord|Aston Villa|PSV Eindhoven/PSV|Red Star Belgrade/Red Star|Manchester City/Man City|Paris Saint-Germain/PSG",
 );
+mergeWikiNames(CL_WINNERS, "uclWinners", "club");
 const PL_WINNING_MANAGERS = list(
   "Alex Ferguson/Ferguson|Arsène Wenger/Arsene Wenger/Wenger|José Mourinho/Jose Mourinho/Mourinho|Carlo Ancelotti/Ancelotti|Manuel Pellegrini/Pellegrini|Claudio Ranieri/Ranieri|Antonio Conte/Conte|Pep Guardiola/Guardiola|Jürgen Klopp/Jurgen Klopp/Klopp|Kenny Dalglish/Dalglish|Arne Slot/Slot|  Roberto Mancini/Mancini|Mikel Arteta/Arteta",
 );
@@ -145,8 +147,8 @@ for (const comp of ["pl", "laliga", "seriea", "ucl"] as const) {
   STATIC[comp].push(...LEAGUE_EXTRA[comp]);
 }
 const LIVE_SHORT: Record<string, string> = {};
-for (const comp of ["pl", "laliga", "seriea", "bundesliga", "ligue1", "superlig"] as const) {
-  for (const item of liveTriviaCategories(comp)) {
+for (const comp of ["pl", "laliga", "seriea", "bundesliga", "ligue1", "superlig", "ucl"] as const) {
+  for (const item of [...liveTriviaCategories(comp), ...wikiTriviaCategories(comp)]) {
     STATIC[comp].push({ id: item.id, noun: item.noun, plural: item.plural, entries: item.entries });
     LIVE_SHORT[item.id] = item.short;
   }

@@ -8,7 +8,7 @@
     "build": "pnpm cf-typegen && next build && opennextjs-cloudflare build --skipNextBuild",
     "deploy": "pnpm build && wrangler deploy",
     "start": "next start",
-    "live:refresh": "npx --yes tsx scripts/refresh-live-facts.mts",
+    "live:refresh": "npx --yes tsx scripts/refresh-live-facts.mts && npx --yes tsx scripts/refresh-wiki-facts.mts",
     "lint": "eslint",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
     "preview": "pnpm build && wrangler dev"
