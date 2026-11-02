@@ -5,14 +5,15 @@
   "packageManager": "pnpm@11.9.0",
   "scripts": {
     "dev": "next dev",
-    "build": "pnpm cf-typegen && next build && opennextjs-cloudflare build --skipNextBuild",
+    "build": "pnpm data:quiz && pnpm cf-typegen && next build && opennextjs-cloudflare build --skipNextBuild",
     "deploy": "pnpm build && wrangler deploy",
     "start": "next start",
     "live:refresh": "npx --yes tsx scripts/refresh-live-facts.mts && npx --yes tsx scripts/refresh-wiki-facts.mts && npx --yes tsx scripts/refresh-tournament-history.mts",
     "lint": "eslint",
-    "test:stat-games": "node --test scripts/check-stat-games.mjs",
+    "test:stat-games": "node scripts/prepare-quiz-data.mjs --check && node --test scripts/check-stat-games.mjs",
     "data:club-history": "node scripts/refresh-club-history.mjs",
     "data:individual-awards": "node scripts/refresh-individual-awards.mjs",
+    "data:quiz": "node scripts/prepare-quiz-data.mjs",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
     "preview": "pnpm build && wrangler dev"
   },

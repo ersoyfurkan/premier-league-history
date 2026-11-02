@@ -302,7 +302,16 @@ export const RONDO_SECONDS = 180;
 
 export type RondoQuestion = RondoClue & { index: number };
 
-const byLetter = (comp: Competition, letter: string) => RONDO_CLUES[comp].filter((clue) => clue.letter === letter);
+const letterCache = new Map<Competition, Map<string, RondoClue[]>>();
+const byLetter = (comp: Competition, letter: string) => {
+  let letters = letterCache.get(comp);
+  if (!letters) {
+    letters = new Map(RONDO_LETTERS.map((key) => [key, [] as RondoClue[]]));
+    for (const clue of RONDO_CLUES[comp]) letters.get(clue.letter)?.push(clue);
+    letterCache.set(comp, letters);
+  }
+  return letters.get(letter) ?? [];
+};
 
 // A game is one clue index per letter, so both players in a match get identical questions.
 // `avoid` is the previous game's picks, so back-to-back games never repeat a question.

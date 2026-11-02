@@ -11,6 +11,22 @@ export const KNOWLEDGE_TRIVIA_CATEGORIES = Object.fromEntries(competitions.map((
     .map((group) => ({ ...group, id: `s-knowledge-${group.id}`, short: group.label })),
 ])) as Record<Competition, (typeof FOOTBALL_KNOWLEDGE_GROUPS[number] & { short: string })[]>;
 
+const groupClues = FOOTBALL_KNOWLEDGE_GROUPS.map((group) => {
+  const letters = new Map<string, string[]>();
+  for (const { name, aliases } of group.entries) {
+    const letter = knowledgeNameKey(name)[0].toUpperCase();
+    const answers = letters.get(letter) ?? [];
+    answers.push(name, ...aliases);
+    letters.set(letter, answers);
+  }
+  return {
+    group,
+    clues: [...letters].map(([letter, answers]) => ({
+      letter, clue: `Name a ${group.noun} (answer starts with ${letter}).`, answers,
+    })),
+  };
+});
+
 export const KNOWLEDGE_RONDO_CLUES = Object.fromEntries(competitions.map((comp) => {
   const clues: RondoClue[] = [];
   for (const country of STADIUM_COUNTRIES.filter((country) => country.competitions.includes(comp))) {
@@ -22,16 +38,6 @@ export const KNOWLEDGE_RONDO_CLUES = Object.fromEntries(competitions.map((comp) 
       });
     }
   }
-  for (const group of FOOTBALL_KNOWLEDGE_GROUPS.filter((group) => group.competitions.includes(comp))) {
-    const letters = new Set(group.entries.map((entry) => knowledgeNameKey(entry.name)[0].toUpperCase()));
-    for (const letter of letters) {
-      clues.push({
-        letter,
-        clue: `Name a ${group.noun} (answer starts with ${letter}).`,
-        answers: group.entries.filter((entry) => knowledgeNameKey(entry.name)[0].toUpperCase() === letter)
-          .flatMap((entry) => [entry.name, ...entry.aliases]),
-      });
-    }
-  }
+  clues.push(...groupClues.filter(({ group }) => group.competitions.includes(comp)).flatMap(({ clues }) => clues));
   return [comp, clues];
 })) as Record<Competition, RondoClue[]>;

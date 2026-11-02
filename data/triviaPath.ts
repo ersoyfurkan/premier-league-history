@@ -18,6 +18,7 @@ import { KNOWLEDGE_TRIVIA_CATEGORIES } from "@/data/knowledgeTrivia";
 import { NATION_INFO } from "@/data/nations";
 import { STADIUM_COUNTRIES } from "@/data/stadiumTrivia";
 import { AWARD_TRIVIA_CATEGORIES } from "@/data/individualAwards";
+import preparedCandidates from "@/data/quizTrivia.generated.json";
 
 export type TriviaEntry = { name: string; aliases: string[] };
 export type TriviaAnswerType = "player" | "nation" | "club" | "stadium" | "manager" | "nickname" | "campaign" | "season";
@@ -438,7 +439,14 @@ function dynamicCategory(comp: Competition): Category | null {
 
 // Rebuilds a board tile from its id, so a server only needs to store the 16 ids.
 const tileCache = new Map<string, BoardTile>();
+const preparedTiles: Record<Competition, Record<string, Omit<BoardTile, "entries"> & { entries: number }>> = preparedCandidates.tiles;
 export function tileById(comp: Competition, id: string): BoardTile | null {
+  const stored = preparedTiles[comp][id];
+  if (stored) return { ...stored, entries: preparedCandidates.entries[stored.entries] };
+  return buildTriviaTile(comp, id);
+}
+
+function buildTriviaTile(comp: Competition, id: string): BoardTile | null {
   const cacheKey = `${comp}:${id}`;
   const cached = tileCache.get(cacheKey);
   if (cached) return cached;
@@ -473,29 +481,54 @@ export function tileById(comp: Competition, id: string): BoardTile | null {
 }
 
 type BoardCandidate = { id: string; score: number; count: number };
-const candidateCache = new Map<Competition, BoardCandidate[]>();
+export function prepareTriviaCandidates(comp: Competition): BoardCandidate[] {
+  const clubs = triviaClubs(comp);
+  const ids = new Set([...STATIC[comp].map((category) => category.id), "s-clubs", "m3", "m4", ...clubs.map((club) => `c-${club.key}`)]);
+  for (const [index, first] of clubs.entries()) {
+    for (const second of clubs.slice(index + 1)) ids.add(`p-${[first.key, second.key].sort().join("-")}`);
+    ids.add(`h-wc-${first.key}`);
+    for (const nat of Object.keys(NATIONS)) ids.add(`n-${nat}-${first.key}`);
+  }
+  for (const nat of Object.keys(NATIONS)) ids.add(`l-${nat}`);
+  for (const metric of Object.keys(STAT_STEPS) as StatMetric[]) {
+    for (const minimum of STAT_STEPS[metric]) ids.add(`st-${metric}-${minimum}`);
+  }
+  const candidates: BoardCandidate[] = [];
+  for (const id of ids) {
+    const tile = buildTriviaTile(comp, id);
+    if (!tile || tile.entries.length < FINAL_TILE_MIN_ANSWERS) continue;
+    candidates.push({ id, score: triviaDifficulty(tile), count: tile.entries.length });
+  }
+  return candidates.sort((a, b) => a.score - b.score);
+}
+
+export function prepareTriviaData() {
+  const entries: TriviaEntry[][] = [];
+  const entryIds = new Map<string, number>();
+  const candidates = {} as Record<Competition, BoardCandidate[]>;
+  const tiles = {} as Record<Competition, Record<string, Omit<BoardTile, "entries"> & { entries: number }>>;
+  for (const comp of ["general", ...REAL_COMPETITIONS, ...TOURNAMENT_COMPETITIONS] as const) {
+    candidates[comp] = prepareTriviaCandidates(comp);
+    tiles[comp] = {};
+    for (const { id } of candidates[comp]) {
+      const tile = buildTriviaTile(comp, id)!;
+      const key = JSON.stringify(tile.entries);
+      let index = entryIds.get(key);
+      if (index === undefined) {
+        index = entries.length;
+        entries.push(tile.entries);
+        entryIds.set(key, index);
+      }
+      tiles[comp][id] = { ...tile, entries: index };
+    }
+  }
+  return { candidates, tiles, entries };
+}
+
 // Reserve the highest-rated category for the finish, then order the other tiles by difficulty.
 export function generateBoardIds(comp: Competition): string[] {
-  let candidates = candidateCache.get(comp);
-  if (!candidates) {
-    const clubs = triviaClubs(comp);
-    const ids = new Set([...STATIC[comp].map((category) => category.id), "s-clubs", ...clubs.map((club) => `c-${club.key}`)]);
-    for (let attempt = 0; attempt < BOARD_SIZE * 3; attempt += 1) {
-      const category = dynamicCategory(comp);
-      if (category) ids.add(category.id);
-      const first = pick(clubs);
-      const second = pick(clubs);
-      if (first.key !== second.key) ids.add(`p-${[first.key, second.key].sort().join("-")}`);
-    }
-    candidates = [];
-    for (const id of ids) {
-      const tile = tileById(comp, id);
-      if (!tile || tile.entries.length < FINAL_TILE_MIN_ANSWERS) continue;
-      candidates.push({ id, score: triviaDifficulty(tile), count: tile.entries.length });
-    }
-    candidates.sort((a, b) => a.score - b.score);
-    candidateCache.set(comp, candidates);
-  }
+  const candidates = preparedCandidates.candidates[comp];
+  if (!candidates) throw new Error(`Missing prepared Trivia Path categories for ${comp}. Run pnpm data:quiz.`);
   if (candidates.length < BOARD_SIZE) throw new Error(`Not enough distinct Trivia Path categories for ${comp}.`);
   const hardest = candidates[candidates.length - 1].score;
   const finish = pick(candidates.filter((candidate) => candidate.score === hardest));
@@ -511,7 +544,8 @@ export function generateBoardIds(comp: Competition): string[] {
     const award = available.filter((candidate) => candidate.id.startsWith("s-award-"));
     if (award.length) board[Math.floor(Math.random() * board.length)] = pick(award).id;
   }
-  board.sort((a, b) => triviaDifficulty(tileById(comp, a)!) - triviaDifficulty(tileById(comp, b)!));
+  const scores = new Map(candidates.map(({ id, score }) => [id, score]));
+  board.sort((a, b) => scores.get(a)! - scores.get(b)!);
   return [...board, finish.id];
 }
 

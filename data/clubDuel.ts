@@ -1,6 +1,5 @@
 import { REAL_COMPETITIONS, TOURNAMENT_COMPETITIONS, type Competition, type RealCompetition } from "@/lib/competitions";
 import { footballCareers, normalizeFootballPlayerName, playerInComp } from "@/data/footballTicTacToe";
-import { CAREERS } from "@/data/clubDuelCareers";
 
 export type DuelClub = { key: string; label: string; badge: string };
 
@@ -196,19 +195,7 @@ let careers: Career[] | null = null;
 
 function allCareers() {
   if (careers) return careers;
-  const byName = new Map<string, Career>();
-  const add = (name: string, clubs: string[]) => {
-    const id = normalizeFootballPlayerName(name);
-    const existing = byName.get(id);
-    if (existing) clubs.forEach((club) => existing.clubs.add(club));
-    else byName.set(id, { name, clubs: new Set(clubs) });
-  };
-  for (const entry of footballCareers()) add(entry.name, entry.clubs);
-  for (const line of CAREERS.split("\n")) {
-    const [name, keys] = line.split(":");
-    if (name && keys) add(name.trim(), keys.trim().split(/\s+/));
-  }
-  careers = [...byName.values()];
+  careers = footballCareers().map(({ name, clubs }) => ({ name, clubs: new Set(clubs) }));
   return careers;
 }
 

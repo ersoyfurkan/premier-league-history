@@ -1,39 +1,15 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { registerHooks } from "node:module";
-import { fileURLToPath } from "node:url";
 import { test } from "node:test";
-import ts from "typescript";
+import "./register-data.mjs";
 
-const root = new URL("../", import.meta.url);
-registerHooks({
-  resolve(specifier, context, nextResolve) {
-    if (specifier.startsWith("@/")) return nextResolve(new URL(`${specifier.slice(2)}${specifier.endsWith(".json") ? "" : ".ts"}`, root).href, context);
-    return nextResolve(specifier, context);
-  },
-  load(url, context, nextLoad) {
-    if (url.startsWith(root.href) && url.endsWith(".json")) {
-      return { format: "module", shortCircuit: true, source: `export default ${readFileSync(fileURLToPath(url), "utf8")};` };
-    }
-    if (url.startsWith(root.href) && url.endsWith(".ts")) {
-      return {
-        format: "module",
-        shortCircuit: true,
-        source: ts.transpileModule(readFileSync(fileURLToPath(url), "utf8"), {
-          compilerOptions: { module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2022 },
-        }).outputText,
-      };
-    }
-    return nextLoad(url, context);
-  },
-});
 
 const { REAL_COMPETITIONS, TOURNAMENT_COMPETITIONS } = await import("../lib/competitions.ts");
 const { STAT_TRIVIA_CATEGORIES, STAT_RONDO_CLUES } = await import("../data/statTrivia.ts");
 const { AUTHORED_STAT_CATEGORIES, STAT_RECORDS } = await import("../data/statTriviaRecords.ts");
 const { STAT_SEASONS } = await import("../data/statTriviaSeasons.ts");
 const { BOARD_SIZE, NORMAL_TILE_MIN_ANSWERS, FINAL_TILE_MIN_ANSWERS, uniqueTriviaEntries, generateBoardIds, tileById, triviaDifficulty, answersFor, matchTriviaAnswer, suggestTrivia, triviaAnswerType, checkTriviaAnswer, REPEATED_TRIVIA_ANSWER, rollPathDice, pathTurnMovement } = await import("../data/triviaPath.ts");
-const { RONDO_CLUES, isRondoAnswer } = await import("../data/rondo.ts");
+const { RONDO_CLUES, RONDO_LETTERS, randomRondoPicks, rondoQuestions, isRondoAnswer } = await import("../data/rondo.ts");
 const { KNOWLEDGE_TRIVIA_CATEGORIES, KNOWLEDGE_RONDO_CLUES } = await import("../data/knowledgeTrivia.ts");
 const { FOOTBALL_KNOWLEDGE_GROUPS, MODERN_SQUADS, MODERN_MANAGER_GROUPS, TEAMMATE_GROUPS, knowledgeMatches } = await import("../data/footballKnowledge.ts");
 const { STADIUM_COUNTRIES } = await import("../data/stadiumTrivia.ts");
@@ -49,6 +25,26 @@ const { extractClubPlayers } = await import("./refresh-club-history.mjs");
 const { INDIVIDUAL_AWARDS, AWARD_GROUPS, AWARD_TRIVIA_CATEGORIES, AWARD_RONDO_CLUES, individualAward, awardPlayerKey, awardsInText } = await import("../data/individualAwards.ts");
 const { AWARD_SOURCES, awardTables, extractAwardWinners } = await import("./refresh-individual-awards.mjs");
 const comps = ["general", ...REAL_COMPETITIONS, ...TOURNAMENT_COMPETITIONS];
+
+test("prepared football facts and awards match their authored builders without changing Rondo indices", async () => {
+  const football = await import("./builders/footballTicTacToe.ts");
+  const awards = await import("./builders/individualAwards.ts");
+  const { AWARD_RONDO_CLUES } = await import("../data/individualAwards.ts");
+  assert.deepEqual(INDIVIDUAL_AWARDS, awards.INDIVIDUAL_AWARDS);
+  assert.deepEqual(AWARD_GROUPS, awards.AWARD_GROUPS);
+  assert.deepEqual(AWARD_RONDO_CLUES, awards.AWARD_RONDO_CLUES);
+  for (const comp of comps) {
+    assert.deepEqual(footballFacts(comp), football.footballFacts(comp), comp);
+    const previous = randomRondoPicks(comp);
+    const picks = randomRondoPicks(comp, previous);
+    const questions = rondoQuestions(comp, picks);
+    for (const [index, letter] of RONDO_LETTERS.entries()) {
+      const options = RONDO_CLUES[comp].filter((clue) => clue.letter === letter);
+      assert.deepEqual(questions[index], { ...options[picks[index]], index }, `${comp} ${letter}`);
+      if (options.length > 1) assert.notEqual(picks[index], previous[index], `${comp} ${letter}`);
+    }
+  }
+});
 
 test("nation visuals cover every historical tournament nation, aliases and combined hosts", () => {
   assert.deepEqual(nationCrests.missing, []);

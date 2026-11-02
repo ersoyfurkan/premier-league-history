@@ -74,6 +74,16 @@ The same focused test command also checks stadium aliases/search, modern manager
 
 Phone-specific layouts are scoped to `width < 768px` in [the shared styles](./app/globals.css); the existing laptop/desktop layout at 768px and above is unchanged. Mobile navigation accommodates device safe areas, forms use 16px inputs to avoid focus zoom, and controls have a 44px minimum touch height. Competition tabs swipe horizontally and wide tables retain every column in their own scroll region. Trivia Path answer panels stack on phones, Tic-Tac-Toe clues are larger, and Rondo puts the answer form below its letter ring so the keyboard does not crowd the question.
 
+## Cloudflare resource limits
+
+`pnpm build` runs `pnpm data:quiz` before compiling Next.js. The [quiz preparation script](./scripts/prepare-quiz-data.mjs) computes award combinations, the shared career/fact universe, Tic-Tac-Toe clue memberships, and Trivia Path tiles/candidate ratings offline. Generated quiz snapshots are committed; after changing source facts, awards, careers or categories, regenerate them with `pnpm data:quiz`. `pnpm test:stat-games` rejects stale snapshots.
+
+Runtime games still choose random boards. Tic-Tac-Toe intersects prepared memberships rather than scanning every player's history for every clue. Trivia Path samples the complete prepared category catalogue, rather than a small random subset rebuilt in each Worker; its answer-count, difficulty and concealed-final rules are unchanged. Rondo's letter index preserves clue order and saved picks.
+
+[OpenNext configuration](./open-next.config.ts) uses the read-only Static Assets incremental cache with cache interception, so prerendered pages do not rerender on every request. It does not provide persistent fetch caching or ISR; live feeds retain their existing freshness behavior. Private multiplayer APIs remain `no-store` and room state stays in D1.
+
+Error 1102 means the Worker exhausted a resource budget. External I/O waits do not count as CPU, but parsing, normalization, puzzle construction and rendering do. These changes remove deterministic request-time work; they do not increase the Free plan's CPU allowance. Local timings are not proof of production CPU usage: verify the deployed Worker with Workers Logs, including cold game-page loads and online create/join/play/rematch requests. Do not reduce password-hashing strength or cache authentication/private room responses to fit the budget.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
