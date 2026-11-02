@@ -84,6 +84,21 @@ Runtime games still choose random boards. Tic-Tac-Toe intersects prepared member
 
 Error 1102 means the Worker exhausted a resource budget. External I/O waits do not count as CPU, but parsing, normalization, puzzle construction and rendering do. These changes remove deterministic request-time work; they do not increase the Free plan's CPU allowance. Local timings are not proof of production CPU usage: verify the deployed Worker with Workers Logs, including cold game-page loads and online create/join/play/rematch requests. Do not reduce password-hashing strength or cache authentication/private room responses to fit the budget.
 
+### Production deployment
+
+[The deployment workflow](./.github/workflows/deploy.yml) builds on Linux and deploys pushes to `main`; it can also be started manually in GitHub Actions. This avoids Windows directory-link errors in Next.js/OpenNext's standalone output.
+
+Add these **repository Actions secrets** in GitHub Settings > Secrets and variables > Actions:
+
+- `CLOUDFLARE_API_TOKEN`: a Cloudflare token authorized to deploy Workers and upload assets to this account.
+- `CLOUDFLARE_ACCOUNT_ID`: the account that owns the existing Worker and D1 binding.
+
+Existing Worker secrets (such as `JWT_SECRET` and admin credentials) stay in Cloudflare; do not copy them into the workflow. Deployment uses `--keep-vars` to preserve dashboard variables. Missing deployment credentials fail explicitly before building.
+
+The workflow prepares fresh quiz snapshots, runs regression checks, builds, deploys, and [checks the game page URLs](./scripts/check-deployed-games.mjs). These HTTP smoke checks detect 1102/503 failures but do not replace browser interaction and multiplayer API validation. Run them manually with `node scripts/check-deployed-games.mjs` (optionally followed by a different deployment origin).
+
+Pushing code alone does not update the live site until this workflow completes successfully. The scheduled data-refresh workflow uses GitHub's built-in token, so its commits do not trigger another workflow; run deployment manually to publish those refreshes, or include them with the next normal push.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
