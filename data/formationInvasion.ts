@@ -1,9 +1,10 @@
 import type { Competition } from "@/lib/competitions";
 import { EXTRA_FORMATION_QUESTIONS } from "@/data/formationInvasionQuestions";
 import { ADDITIONAL_FORMATION_QUESTIONS, LEGACY_FORMATION_DIFFICULTIES } from "@/data/formationInvasionExpansion";
+import { formationClues } from "@/data/formationInvasionClues";
 
 export type FormationPosition = "GK" | "LB" | "CB" | "RB" | "CM" | "DM" | "LW" | "ST" | "RW";
-export type FormationQuestion = { text: string; answers: string[]; hint: string; difficulty: "easy" | "medium" | "hard" };
+export type FormationQuestion = { text: string; answers: string[]; hint: string; clues: [string, string, string]; difficulty: "easy" | "medium" | "hard" };
 export type FormationPlayer = {
   id: string;
   name: string;
@@ -13,10 +14,11 @@ export type FormationPlayer = {
   questions: FormationQuestion[];
 };
 
-const q = (text: string, answers: string[], hint: string): FormationQuestion => ({ text, answers, hint, difficulty: "easy" });
+type Fact = Omit<FormationQuestion, "clues">;
+const q = (text: string, answers: string[], hint: string): Fact => ({ text, answers, hint, difficulty: "easy" });
 const p = (
   id: string, name: string, positions: FormationPosition[], competitions: Competition[],
-  article: string, questions: [FormationQuestion, FormationQuestion, FormationQuestion],
+  article: string, questions: [Fact, Fact, Fact],
 ): FormationPlayer => ({
   id, name, positions, competitions,
   questions: [
@@ -24,7 +26,7 @@ const p = (
       ...question, difficulty: LEGACY_FORMATION_DIFFICULTIES[id][index],
     })),
     ...ADDITIONAL_FORMATION_QUESTIONS[id],
-  ],
+  ].map((question) => ({ ...question, clues: formationClues(question) })),
   source: `https://en.wikipedia.org/wiki/${article}`,
 });
 

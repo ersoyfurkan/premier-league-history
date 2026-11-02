@@ -1,9 +1,10 @@
 import type { FormationQuestion } from "@/data/formationInvasion";
 
-const q = (text: string, answers: string[], hint: string): FormationQuestion => ({ text, answers, hint, difficulty: "easy" });
+type Fact = Omit<FormationQuestion, "clues">;
+const q = (text: string, answers: string[], hint: string): Fact => ({ text, answers, hint, difficulty: "easy" });
 
 // Original career questions; each player's biography source is recorded in formationInvasion.ts.
-export const EXTRA_FORMATION_QUESTIONS: Record<string, [FormationQuestion, FormationQuestion, FormationQuestion]> = {
+export const EXTRA_FORMATION_QUESTIONS: Record<string, [Fact, Fact, Fact]> = {
   neuer: [
     q("Which shirt number did Neuer wear for Germany at the 2014 World Cup?", ["1", "one"], "The traditional starting goalkeeper's number."),
     q("Who coached Bayern when Neuer won the Champions League in 2013?", ["Jupp Heynckes", "Heynckes"], "A German coach who also won it with Real Madrid in 1998."),

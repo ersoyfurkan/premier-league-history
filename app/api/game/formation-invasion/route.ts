@@ -2,7 +2,7 @@ import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { NextRequest, NextResponse } from "next/server";
 import {
   applyFormationAction, formationSideOf, formationView, isFormationComp,
-  joinFormationGame, newFormationGame, isFormationRaceAnswer, type FormationAction, type FormationState,
+  joinFormationGame, newFormationGame, isFormationRaceAnswer, expireFormationStanding, type FormationAction, type FormationState,
 } from "@/lib/formationInvasion";
 
 const ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -26,10 +26,21 @@ async function save(db: D1Database, code: string, state: FormationState, version
 
 function parseAction(body: Record<string, unknown>): FormationAction | null {
   if (body.action === "pass" || body.action === "rematch") return { action: body.action };
-  if ((body.action !== "answer" && body.action !== "hint") ||
+  if (body.action === "standing-answer" || body.action === "standing-timeout") {
+    if (typeof body.deadline !== "number" || !Number.isSafeInteger(body.deadline)) return null;
+    if (body.action === "standing-timeout") return { action: body.action, deadline: body.deadline };
+    if (typeof body.answer !== "string" || !body.answer.trim() || body.answer.length > 150) return null;
+    return { action: body.action, answer: body.answer, deadline: body.deadline };
+  }
+  if ((body.action !== "answer" && body.action !== "hint" && body.action !== "standing-vote") ||
     !Number.isInteger(body.slot) || typeof body.slot !== "number" || body.slot < 0 || body.slot > 10 ||
     !Number.isInteger(body.question) || typeof body.question !== "number" || body.question < 0 || body.question > 2) return null;
-  if (body.action === "hint") return { action: "hint", slot: body.slot, question: body.question };
+  if (body.action === "standing-vote") return { action: body.action, slot: body.slot, question: body.question };
+  if (body.action === "hint") {
+    if (body.clue !== undefined && (typeof body.clue !== "number" || !Number.isInteger(body.clue) || body.clue < 0 || body.clue > 2)) return null;
+    return { action: "hint", slot: body.slot, question: body.question,
+      ...(typeof body.clue === "number" ? { clue: body.clue } : {}) };
+  }
   if (typeof body.answer !== "string" || !body.answer.trim() || body.answer.length > 150) return null;
   return { action: "answer", slot: body.slot, question: body.question, answer: body.answer };
 }
@@ -43,6 +54,13 @@ async function get(request: NextRequest) {
   if (!room) return json({ error: "Room not found or expired." }, 404);
   const side = formationSideOf(room.state, token);
   if (!side) return json({ error: "You are not in this room." }, 403);
+  if (expireFormationStanding(room.state)) {
+    if (!await save(env.DB, code, room.state, room.version)) {
+      const current = await load(env.DB, code);
+      if (!current) return json({ error: "Room not found or expired." }, 404);
+      return json({ view: formationView(current.state, side) });
+    }
+  }
   return json({ view: formationView(room.state, side) });
 }
 
@@ -88,6 +106,18 @@ async function post(request: NextRequest) {
   const action = parseAction(body);
   if (!action || typeof body.gameId !== "string" || typeof body.revision !== "number" || !Number.isInteger(body.revision)) {
     return json({ error: "Invalid game action." }, 400);
+  }
+  const timedOutDeadline = state.standing?.deadline;
+  if (expireFormationStanding(state)) {
+    if (!await save(db, code, state, version)) {
+      const current = await load(db, code);
+      return json({ error: "The game changed. Check the current question before trying again.",
+        ...(current ? { view: formationView(current.state, side) } : {}) }, 409);
+    }
+    const timeoutRequest = action.action === "standing-timeout" && action.deadline === timedOutDeadline &&
+      body.gameId === state.gameId && body.revision === state.revision - 1;
+    return json({ view: formationView(state, side),
+      ...(!timeoutRequest ? { error: "Time ran out. Your answer was not applied to the next question." } : {}) }, timeoutRequest ? 200 : 409);
   }
   const error = applyFormationAction(state, side, action, { gameId: body.gameId, revision: body.revision });
   if (error) return json({ error, view: formationView(state, side) }, 409);

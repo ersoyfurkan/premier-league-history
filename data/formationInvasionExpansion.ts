@@ -1,7 +1,7 @@
 import type { FormationQuestion } from "@/data/formationInvasion";
 
 type Difficulty = FormationQuestion["difficulty"];
-type Fact = Omit<FormationQuestion, "difficulty">;
+type Fact = Omit<FormationQuestion, "difficulty" | "clues">;
 type Legacy = [Difficulty, Difficulty, Difficulty, Difficulty, Difficulty, Difficulty];
 const q = (text: string, answers: string | string[], hint: string): Fact => ({
   text, answers: typeof answers === "string" ? [answers] : answers, hint,
@@ -987,6 +987,6 @@ const BANK = {
 export const LEGACY_FORMATION_DIFFICULTIES: Record<string, Legacy> = Object.fromEntries(
   Object.entries(BANK).map(([id, entry]) => [id, entry.legacy]),
 );
-export const ADDITIONAL_FORMATION_QUESTIONS: Record<string, FormationQuestion[]> = Object.fromEntries(
+export const ADDITIONAL_FORMATION_QUESTIONS: Record<string, Omit<FormationQuestion, "clues">[]> = Object.fromEntries(
   Object.entries(BANK).map(([id, entry]) => [id, entry.questions]),
 );

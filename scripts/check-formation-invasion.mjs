@@ -8,11 +8,14 @@ const { playerFaceUrl } = await import("../data/playerFaces.ts");
 const { COMPETITION_LABELS } = await import("../lib/competitions.ts");
 const {
   newFormationGame, joinFormationGame, applyFormationAction, formationView, formationSideOf, formationQuestionFor,
+  expireFormationStanding, FORMATION_STANDING_TURN_MS,
 } = await import("../lib/formationInvasion.ts");
+const { FORMATION_STANDING_CATEGORIES, formationStandingCategory } = await import("../data/formationStanding.ts");
+const { normalizeFootballPlayerName } = await import("../data/footballNames.ts");
 const { lobbyFor } = await import("../lib/gameNavigation.ts");
 
 const expected = (state) => ({ gameId: state.gameId, revision: state.revision });
-const play = (state, side, action) => applyFormationAction(state, side, action, expected(state));
+const play = (state, side, action, now) => applyFormationAction(state, side, action, expected(state), now);
 const answer = (state, index) => formationQuestionFor(state.slots[index]).answers[0];
 const solve = (state, index, side = state.turn) => play(state, side, {
   action: "answer", slot: index, question: state.slots[index].progress, answer: answer(state, index),
@@ -25,6 +28,24 @@ const playing = () => {
 const openRace = (state, slot = 0) => {
   for (const side of ["p1", "p2"]) {
     assert.equal(play(state, side, { action: "hint", slot, question: state.slots[slot].progress }), null);
+  }
+};
+const threeClues = (state, index = 0) => {
+  for (let clue = 0; clue < 3; clue += 1) {
+    for (const side of ["p1", "p2"]) {
+      assert.equal(play(state, side, { action: "hint", slot: index, question: state.slots[index].progress, clue }), null);
+    }
+    if (clue < 2) {
+      for (const side of ["p1", "p2"]) {
+        assert.equal(play(state, side, { action: "answer", slot: index, question: state.slots[index].progress, answer: "wrong" }), null);
+      }
+    }
+  }
+};
+const startStanding = (state, index = 0, now = 1000) => {
+  threeClues(state, index);
+  for (const side of ["p1", "p2"]) {
+    assert.equal(play(state, side, { action: "standing-vote", slot: index, question: state.slots[index].progress }, now), null);
   }
 };
 
@@ -61,6 +82,10 @@ test("Each footballer has eighteen specific questions, six per difficulty, with 
     for (const [index, question] of player.questions.entries()) {
       assert.ok(question.text.length > 30);
       assert.ok(question.hint.trim().length > 0);
+      assert.equal(question.clues.length, 3, `${player.name}: three clues`);
+      assert.equal(new Set(question.clues.map((clue) => clue.trim().toLowerCase())).size, 3);
+      assert.equal(question.clues[0], question.hint);
+      assert.ok(question.clues.every((clue) => clue.trim().length > 0));
       assert.ok(question.answers.length > 0);
       const state = newFormationGame("general", "solo");
       state.slots[0].playerId = player.id;
@@ -269,6 +294,182 @@ test("Winning question three in a clue race can claim the sixth footballer and f
   assert.match(solve(state, 6), /finished/);
 });
 
+test("Three sequential mutual clue votes reveal only approved clues; solo reveals one at a time without a race", () => {
+  const state = playing();
+  const question = formationQuestionFor(state.slots[0]);
+  assert.deepEqual(formationView(state, "p1").slots[0].clues, []);
+  assert.match(play(state, "p1", { action: "standing-vote", slot: 0, question: 0 }), /three clues/);
+  assert.match(play(state, "p1", { action: "hint", slot: 0, question: 0, clue: 1 }), /no longer active/);
+  for (let clue = 0; clue < 3; clue += 1) {
+    assert.equal(play(state, "p1", { action: "hint", slot: 0, question: 0, clue }), null);
+    assert.equal(formationView(state, "p2").slots[0].clues.length, clue);
+    assert.match(play(state, "p1", { action: "hint", slot: 0, question: 0, clue }), /already requested/);
+    assert.equal(play(state, "p2", { action: "hint", slot: 0, question: 0, clue }), null);
+    assert.deepEqual(formationView(state, "p1").slots[0].clues, question.clues.slice(0, clue + 1));
+    assert.equal(state.clueRace.question, 0);
+    assert.match(play(state, "p1", { action: "hint", slot: 0, question: 0, clue: clue + 1 }), /race/);
+    for (const side of ["p1", "p2"]) {
+      assert.equal(play(state, side, { action: "answer", slot: 0, question: 0, answer: "wrong" }), null);
+    }
+  }
+  assert.match(play(state, "p1", { action: "hint", slot: 0, question: 0, clue: 3 }), /All three/);
+  assert.equal(solve(state, 0), null);
+  assert.equal(formationView(state, "p1").slots[0].cluesRevealed, 0);
+  assert.deepEqual(formationView(state, "p1").slots[0].clues, []);
+  const solo = newFormationGame("general", "solo");
+  for (let clue = 0; clue < 3; clue += 1) {
+    assert.equal(play(solo, "p1", { action: "hint", slot: 0, question: 0, clue }), null);
+    assert.equal(formationView(solo, "p1").slots[0].clues.length, clue + 1);
+    assert.equal(solo.clueRace, null);
+  }
+  assert.match(play(solo, "p1", { action: "standing-vote", slot: 0, question: 0 }), /two players/);
+});
+
+test("Legacy revealed-clue rooms retain their first clue and can mutually unlock the second without losing a vote", () => {
+  const state = playing();
+  const slot = state.slots[0];
+  delete slot.cluesRevealed;
+  delete slot.standingVotes;
+  slot.hints = { p1: true, p2: true };
+  assert.equal(formationView(state, "p1").slots[0].clues.length, 1);
+  assert.equal(play(state, "p1", { action: "hint", slot: 0, question: 0, clue: 1 }), null);
+  assert.equal(slot.cluesRevealed, 1);
+  assert.deepEqual(slot.hints, { p1: true, p2: false });
+  assert.equal(play(state, "p2", { action: "hint", slot: 0, question: 0, clue: 1 }), null);
+  assert.equal(formationView(state, "p1").slots[0].clues.length, 2);
+  assert.equal(state.clueRace.slot, 0);
+});
+
+test("Last Man Standing requires three clues, matching votes, a random starter and an exact seven-second deadline", (t) => {
+  const state = playing();
+  threeClues(state);
+  assert.equal(state.slots[0].progress, 0);
+  assert.equal(state.standing, null);
+  assert.match(play(state, "p1", { action: "standing-vote", slot: 1, question: 0 }), /race/);
+  assert.equal(play(state, "p1", { action: "standing-vote", slot: 0, question: 0 }), null);
+  assert.equal(state.standing, null);
+  assert.match(play(state, "p1", { action: "standing-vote", slot: 0, question: 0 }), /already voted/);
+  t.mock.method(Math, "random", () => 0.9);
+  assert.equal(play(state, "p2", { action: "standing-vote", slot: 0, question: 0 }, 1000), null);
+  assert.equal(state.standing.turn, "p2");
+  assert.equal(state.standing.deadline, 1000 + FORMATION_STANDING_TURN_MS);
+  assert.equal(state.clueRace, null);
+  assert.match(play(state, "p2", { action: "pass" }, 1000), /Last Man Standing/);
+  assert.match(play(state, "p2", { action: "hint", slot: 0, question: 0 }, 1000), /Last Man Standing/);
+  const view = formationView(state, "p1", 1000);
+  assert.ok(view.standing.prompt);
+  assert.deepEqual(view.standing.used, []);
+  assert.equal(view.serverNow, 1000);
+  assert.ok(!JSON.stringify(view.standing).includes('"entries"'));
+  assert.ok(!JSON.stringify(view.standing).includes('"aliases"'));
+});
+
+test("Standing answer aliases alternate turns, reset seven seconds, and a repeated alias loses only the current question", () => {
+  const state = playing();
+  startStanding(state);
+  state.standing.categoryId = "world-cup-winners";
+  const first = state.standing.turn;
+  const second = first === "p1" ? "p2" : "p1";
+  const deadline = state.standing.deadline;
+  assert.match(play(state, second, { action: "standing-answer", answer: "Brazil", deadline }, 1001), /not your/);
+  assert.match(play(state, first, { action: "standing-answer", answer: "!", deadline }, 1001), /Enter/);
+  assert.match(play(state, first, { action: "standing-timeout", deadline }, 1001), /still time/);
+  assert.equal(play(state, first, { action: "standing-answer", answer: "  BRASIL  ", deadline }, 2000), null);
+  assert.deepEqual(state.standing.used, ["Brazil"]);
+  assert.equal(state.standing.turn, second);
+  assert.equal(state.standing.deadline, 9000);
+  assert.match(play(state, second, { action: "standing-answer", answer: "Italy", deadline }, 2001), /turn has ended/);
+  assert.equal(play(state, second, { action: "standing-answer", answer: "Brazil", deadline: 9000 }, 3000), null);
+  assert.equal(state.standing, null);
+  assert.equal(state.turn, first);
+  assert.equal(state.slots[0].progress, 1);
+  assert.equal(state.slots[0].owner, null);
+  assert.deepEqual(state.slots[0].standingVotes, { p1: false, p2: false });
+  assert.equal(state.slots[0].cluesRevealed, 0);
+  assert.match(state.notice, /repeated an answer/);
+});
+
+test("Standing timeout at exactly seven seconds is persisted once and cannot spill into a later question or rematch", () => {
+  for (const mode of ["online", "local"]) {
+    let state = mode === "online" ? playing() : newFormationGame("general", mode);
+    startStanding(state);
+    state = JSON.parse(JSON.stringify(state));
+    const loser = state.standing.turn;
+    const winner = loser === "p1" ? "p2" : "p1";
+    const old = expected(state);
+    const action = { action: "standing-answer", answer: "Brazil", deadline: state.standing.deadline };
+    assert.equal(expireFormationStanding(state, 7999), false);
+    assert.equal(applyFormationAction(state, loser, action, old, 8000), null);
+    assert.equal(state.turn, winner);
+    assert.equal(state.slots[0].progress, 1);
+    assert.match(state.notice, /ran out of time/);
+    assert.equal(expireFormationStanding(state, 10000), false);
+    assert.match(applyFormationAction(state, loser, action, old, 10000), /game changed/);
+    assert.equal(state.slots[0].progress, 1);
+  }
+});
+
+test("Standing wrong answers on question three award a permanent claim and can win the match", () => {
+  const state = playing();
+  for (let index = 0; index < 5; index += 1) {
+    for (let step = 0; step < 3; step += 1) solve(state, index);
+  }
+  solve(state, 5);
+  solve(state, 5);
+  startStanding(state, 5);
+  state.standing.turn = "p2";
+  const deadline = state.standing.deadline;
+  assert.equal(play(state, "p2", { action: "standing-answer", answer: "not a football answer", deadline }, 1001), null);
+  assert.equal(state.slots[5].owner, "p1");
+  assert.equal(state.phase, "finished");
+  assert.equal(state.winner, "p1");
+  assert.equal(state.turn, "p1");
+  assert.equal(state.standing, null);
+  assert.equal(formationView(state, "p1").scores.p1, 6);
+  const previous = { gameId: state.gameId, revision: state.revision - 1 };
+  assert.equal(play(state, "p1", { action: "rematch" }), null);
+  assert.equal(play(state, "p2", { action: "rematch" }), null);
+  assert.equal(state.standing, null);
+  assert.equal(state.clueRace, null);
+  assert.ok(state.slots.every((slot) => slot.cluesRevealed === 0 && !slot.standingVotes.p1 && !slot.standingVotes.p2));
+  assert.match(applyFormationAction(state, "p2", { action: "standing-timeout", deadline }, previous, deadline), /game changed/);
+});
+
+test("Standing categories accept all aliases and rotate without awarding progress if every answer is used", () => {
+  for (const category of FORMATION_STANDING_CATEGORIES) {
+    assert.ok(category.entries.length >= 7);
+    assert.ok(category.source.startsWith("https://"));
+    const aliases = new Map();
+    for (const entry of category.entries) {
+      for (const alias of [entry.name, ...entry.aliases]) {
+        const key = normalizeFootballPlayerName(alias);
+        assert.ok(!aliases.has(key) || aliases.get(key) === entry.name, `${category.id}: ambiguous ${alias}`);
+        aliases.set(key, entry.name);
+        const state = playing();
+        startStanding(state);
+        state.standing.categoryId = category.id;
+        const side = state.standing.turn;
+        assert.equal(play(state, side, { action: "standing-answer", answer: alias, deadline: state.standing.deadline }, 1001), null);
+        assert.deepEqual(state.standing.used, [entry.name]);
+        assert.equal(state.slots[0].progress, 0);
+      }
+    }
+    const state = playing();
+    startStanding(state);
+    state.standing.categoryId = category.id;
+    state.standing.categories = [category.id];
+    state.standing.used = category.entries.slice(0, -1).map((entry) => entry.name);
+    const first = state.standing.turn;
+    assert.equal(play(state, first, { action: "standing-answer",
+      answer: category.entries.at(-1).name, deadline: state.standing.deadline }, 1001), null);
+    assert.notEqual(state.standing.categoryId, category.id);
+    assert.equal(state.standing.turn, first === "p1" ? "p2" : "p1");
+    assert.equal(state.standing.deadline, 8001);
+    assert.deepEqual(state.standing.used, []);
+    assert.equal(state.slots[0].progress, 0);
+  }
+});
+
 test("Solo counts mistakes without an opponent and ends at exactly six claims; multiplayer rematches need both votes", () => {
   for (const mode of ["solo", "local", "online"]) {
     const state = mode === "online" ? playing() : newFormationGame("euros", mode);
@@ -468,5 +669,94 @@ test("Room API resolves both-side clue races atomically, retaining simultaneous 
     assert.equal(saved.mistakes.p1 + saved.mistakes.p2,
       scenario === "both-wrong" ? 2 : scenario === "first-wrong" ? 1 : 0);
     assert.equal((await api({ ...payload, token: joined.token, answer: answer(saved, 0) })).status, 409);
+  }
+});
+
+const apiStanding = async () => {
+  const created = await api({ action: "create", comp: "general" });
+  const joined = await api({ action: "join", code: created.code });
+  const tokens = [created.token, joined.token];
+  const send = async (side, action) => {
+    const state = JSON.parse(rows.get(created.code).state);
+    const response = await api({ code: created.code, token: tokens[side], ...expected(state), ...action });
+    assert.equal(response.status, 200, response.error);
+    return response;
+  };
+  for (let clue = 0; clue < 3; clue += 1) {
+    for (const side of [0, 1]) {
+      const response = await send(side, { action: "hint", slot: 0, question: 0, clue });
+      assert.equal(response.view.slots[0].clues.length, side === 0 ? clue : clue + 1);
+    }
+    if (clue < 2) {
+      for (const side of [0, 1]) await send(side, { action: "answer", slot: 0, question: 0, answer: "wrong" });
+    }
+  }
+  await send(0, { action: "standing-vote", slot: 0, question: 0 });
+  const response = await send(1, { action: "standing-vote", slot: 0, question: 0 });
+  return { code: created.code, tokens, view: response.view };
+};
+
+test("Room API enforces three clues, mutual standing votes, private answers, seven-second turns and stale-action rejection", async (t) => {
+  let now = 1000;
+  t.mock.method(Date, "now", () => now);
+  const room = await apiStanding();
+  const state = JSON.parse(rows.get(room.code).state);
+  const side = state.standing.turn;
+  const token = room.tokens[side === "p1" ? 0 : 1];
+  const wrongToken = room.tokens[side === "p1" ? 1 : 0];
+  const goodAnswer = formationStandingCategory(state.standing.categoryId).entries[0].name;
+  const payload = { action: "standing-answer", code: room.code, token, answer: goodAnswer,
+    deadline: state.standing.deadline, ...expected(state) };
+  assert.equal((await api({ ...payload, token: wrongToken })).status, 409);
+  assert.equal((await api({ ...payload, deadline: "8000" })).status, 400);
+  assert.equal((await api({ ...payload, action: "hint", slot: 0, question: 0, clue: "1" })).status, 400);
+  assert.equal((await api({ ...payload, action: "standing-timeout" })).status, 409);
+  assert.equal((await api({ ...payload, answer: "!" })).status, 409);
+  assert.ok(!JSON.stringify(room.view.standing).includes(goodAnswer));
+  assert.equal(room.view.standing.deadline, 8000);
+  now = 7999;
+  const responses = await Promise.all([api(payload), api(payload)]);
+  assert.deepEqual(responses.map((response) => response.status).sort(), [200, 409]);
+  const saved = JSON.parse(rows.get(room.code).state);
+  assert.equal(saved.standing.deadline, 14999);
+  assert.deepEqual(saved.standing.used, [goodAnswer]);
+  assert.equal(saved.slots[0].progress, 0);
+  assert.equal((await api({ ...payload, action: "standing-timeout", ...expected(saved) })).status, 409);
+});
+
+test("Concurrent polling or a late answer commits standing timeout exactly once without applying that answer to the next question", async (t) => {
+  let now = 1000;
+  t.mock.method(Date, "now", () => now);
+  for (const trigger of ["poll", "late-answer", "timeout-action"]) {
+    now = 1000;
+    const room = await apiStanding();
+    const state = JSON.parse(rows.get(room.code).state);
+    const loser = state.standing.turn;
+    const winner = loser === "p1" ? "p2" : "p1";
+    now = 8000;
+    if (trigger === "poll") {
+      const responses = await Promise.all(room.tokens.map((token) => GET(new NextRequest(
+        `http://localhost/api/game/formation-invasion?code=${room.code}&token=${token}`,
+      ))));
+      for (const response of responses) {
+        assert.equal(response.status, 200);
+        assert.equal((await response.json()).view.slots[0].progress, 1);
+      }
+    } else {
+      const payload = { action: trigger === "late-answer" ? "standing-answer" : "standing-timeout",
+        code: room.code, token: room.tokens[loser === "p1" ? 0 : 1], answer: answer(state, 0),
+        deadline: state.standing.deadline, ...expected(state) };
+      const response = await api(payload);
+      assert.equal(response.status, trigger === "late-answer" ? 409 : 200);
+      assert.equal(response.view.standing, null);
+      assert.equal(response.view.slots[0].progress, 1);
+      assert.equal((await api(payload)).status, 409);
+    }
+    const saved = JSON.parse(rows.get(room.code).state);
+    assert.equal(saved.turn, winner);
+    assert.equal(saved.correct[winner], 1);
+    assert.equal(saved.slots[0].progress, 1);
+    assert.equal(saved.mistakes[loser], state.mistakes[loser] + 1);
+    assert.equal(saved.standing, null);
   }
 });
