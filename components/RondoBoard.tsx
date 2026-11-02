@@ -82,7 +82,7 @@ export default function RondoBoard({
     if (over || !guess.trim()) return;
     const question = questions[current];
     const ok = isRondoAnswer(question, guess);
-    setFlash({ ok, text: ok ? "Correct!" : `Wrong — it was ${question.answers[0]}` });
+    setFlash({ ok, text: ok ? `${question.letter}: Correct!` : `${question.letter}: Wrong — it was ${question.answers[0]}` });
     resolve(ok ? "right" : "wrong");
   };
 
@@ -97,6 +97,7 @@ export default function RondoBoard({
   };
 
   const question = questions[current];
+  const prompt = question.prompt ?? question.clue;
   const mins = Math.floor(secondsLeft / 60);
 
   return (
@@ -133,7 +134,10 @@ export default function RondoBoard({
           <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-accent">
             {question.contains ? `Contains ${question.letter}` : `Starts with ${question.letter}`}
           </p>
-          <p className="max-w-full text-[clamp(11px,2.6vw,17px)] font-semibold leading-snug">{question.prompt ?? question.clue}</p>
+          <p className="rondo-clue-text max-w-full text-balance text-[clamp(11px,2.4vw,16px)] font-semibold leading-snug"
+            style={prompt.length > 110 ? { fontSize: prompt.length > 130 ? 13 : 14 } : undefined}>
+            {prompt}
+          </p>
           <input
             ref={inputRef}
             value={guess}
@@ -157,7 +161,7 @@ export default function RondoBoard({
           <p className={`h-4 text-xs ${flash?.ok ? "text-emerald-400" : "text-red-400"}`}>{flash?.text ?? ""}</p>
         </div>
       </div>
-      {question.prompt && (
+      {question.prompt && question.prompt !== question.clue && (
         <details key={current} className="mt-3 rounded-lg border border-border px-3 py-2 text-sm text-fore-muted">
           <summary className="cursor-pointer">Question scope</summary>
           <p className="mt-2">{question.clue.replace(/ \(answer starts with [A-Z]\)\.$/, ".")}</p>

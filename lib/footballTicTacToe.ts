@@ -139,9 +139,13 @@ export function applyFootballTicTacToeMove(
   cell: number,
   player: string,
   now: number,
+  expectedDeadline?: number | null,
 ): string | null {
   if (state.status !== "playing") return "The game is not in progress";
   if (expireFootballTicTacToeTurn(state, now)) return "Time ran out. The turn passed to your opponent.";
+  if (expectedDeadline !== undefined && expectedDeadline !== state.turnDeadline) {
+    return "The turn changed while you were entering an answer. Choose a square again.";
+  }
   if (state.turn !== side) return "It is your opponent's turn";
   if (!Number.isInteger(cell) || cell < 0 || cell > 8 || state.board[cell]) return "Choose an empty square";
   if (typeof player !== "string" || player.trim().length < 2 || player.trim().length > 80) {

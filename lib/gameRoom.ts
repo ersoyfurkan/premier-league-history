@@ -5,10 +5,10 @@ import { SERIEA_CARDS } from "@/data/serieACards";
 import { BUNDESLIGA_CARDS } from "@/data/bundesligaCards";
 import { LIGUE1_CARDS } from "@/data/ligue1Cards";
 import { SUPERLIG_CARDS } from "@/data/superligCards";
-import { LEAGUE_META, isEspnComp } from "@/lib/leagues";
 
-import { REAL_COMPETITIONS, TOURNAMENT_COMPETITIONS, isTournamentComp, type Competition, type RealCompetition, type TournamentComp } from "@/lib/competitions";
+import { REAL_COMPETITIONS, TOURNAMENT_COMPETITIONS, type Competition, type RealCompetition, type TournamentComp } from "@/lib/competitions";
 import { playerInComp } from "@/data/footballTicTacToe";
+export { lobbyFor, parseComp } from "@/lib/gameNavigation";
 export type { Competition, RealCompetition };
 const REAL_CARDS: Record<RealCompetition, PlayerCard[]> = {
   pl: PLAYERS,
@@ -28,16 +28,6 @@ const CARDS: Record<Competition, PlayerCard[]> = {
   general: ALL_CARDS,
 };
 export const poolFor = (comp: Competition | undefined): PlayerCard[] => CARDS[comp ?? "pl"];
-const TOURNAMENT_GAME: Record<TournamentComp, string> = { worldcup: "/world-cup/game", euros: "/euros/game", copa: "/copa-america/game" };
-export const lobbyFor = (comp: Competition | undefined) =>
-  comp === "general"
-    ? "/game/general"
-    : comp && isTournamentComp(comp)
-      ? `${TOURNAMENT_GAME[comp]}?mode=league`
-      : `${comp === "ucl" ? "/champions-league/game" : comp && isEspnComp(comp) ? LEAGUE_META[comp].game : "/game"}?mode=league`;
-export const parseComp = (value: unknown): Competition =>
-  value === "ucl" || value === "general" || isTournamentComp(value) || isEspnComp(value) ? value : "pl";
-
 export type Side = "p1" | "p2";
 export type StatKey = "appearances" | "goals" | "assists";
 export const STAT_KEYS: StatKey[] = ["goals", "assists", "appearances"];

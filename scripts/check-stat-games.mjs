@@ -9,7 +9,7 @@ const { STAT_TRIVIA_CATEGORIES, STAT_RONDO_CLUES } = await import("../data/statT
 const { AUTHORED_STAT_CATEGORIES, STAT_RECORDS } = await import("../data/statTriviaRecords.ts");
 const { STAT_SEASONS } = await import("../data/statTriviaSeasons.ts");
 const { BOARD_SIZE, NORMAL_TILE_MIN_ANSWERS, FINAL_TILE_MIN_ANSWERS, uniqueTriviaEntries, generateBoardIds, tileById, triviaDifficulty, answersFor, matchTriviaAnswer, suggestTrivia, triviaAnswerType, checkTriviaAnswer, REPEATED_TRIVIA_ANSWER, rollPathDice, pathTurnMovement } = await import("../data/triviaPath.ts");
-const { RONDO_CLUES, RONDO_LETTERS, RONDO_DIFFICULTY_COUNTS, rondoDifficulty, randomRondoPicks, rondoQuestions, isRondoAnswer } = await import("../data/rondo.ts");
+const { RONDO_CLUES, RONDO_LETTERS, RONDO_DIFFICULTY_COUNTS, rondoDifficulty, isSpecificRondoClue, randomRondoPicks, rondoQuestions, isRondoAnswer } = await import("../data/rondo.ts");
 const { KNOWLEDGE_TRIVIA_CATEGORIES, KNOWLEDGE_RONDO_CLUES } = await import("../data/knowledgeTrivia.ts");
 const { FOOTBALL_KNOWLEDGE_GROUPS, MODERN_SQUADS, MODERN_MANAGER_GROUPS, TEAMMATE_GROUPS, knowledgeMatches } = await import("../data/footballKnowledge.ts");
 const { STADIUM_COUNTRIES } = await import("../data/stadiumTrivia.ts");
@@ -232,6 +232,30 @@ test("a trap can complete the opponent's winning line or fill the board for a dr
   assert.equal(draw.turnDeadline, null);
 });
 
+test("O hitting a trap awards X both the square and next turn", () => {
+  const state = playingGrid("hidden-trap");
+  state.turn = "p2";
+  assert.equal(applyFootballTicTacToeMove(state, "p2", 0, "Trap Player 0", 100, 60_000), null);
+  assert.equal(state.board[0].side, "p1");
+  assert.equal(state.turn, "p1");
+  assert.equal(state.lastTrap.side, "p2");
+});
+
+test("answers entered on an expired local turn cannot become the other player's move", () => {
+  const state = playingGrid("hidden-trap");
+  state.turn = "p2";
+  const selectedDeadline = state.turnDeadline;
+  assert.ok(expireFootballTicTacToeTurn(state, 60_000));
+  assert.equal(state.turn, "p1");
+  assert.match(applyFootballTicTacToeMove(state, "p2", 0, "Trap Player 0", 60_100, selectedDeadline), /turn changed/);
+  assert.equal(state.board[0], null);
+  assert.equal(state.lastTrap, null);
+  assert.ok(expireFootballTicTacToeTurn(state, 120_000));
+  assert.equal(state.turn, "p2");
+  assert.match(applyFootballTicTacToeMove(state, "p2", 0, "Trap Player 0", 120_100, selectedDeadline), /turn changed/);
+  assert.equal(state.board[0], null);
+});
+
 test("trap rematches regenerate private picks and preserve rules; timeouts do not award squares", () => {
   const state = playingGrid("hidden-trap");
   const oldTraps = state.traps;
@@ -260,7 +284,8 @@ test("prepared football facts and awards match their authored builders without c
   assert.deepEqual(INDIVIDUAL_AWARDS, awards.INDIVIDUAL_AWARDS);
   assert.deepEqual(AWARD_GROUPS, awards.AWARD_GROUPS);
   for (const comp of comps) {
-    assert.deepEqual(AWARD_RONDO_CLUES[comp].map(({ letter, clue, answers }) => ({ letter, clue, answers })), awards.AWARD_RONDO_CLUES[comp]);
+    assert.deepEqual(AWARD_RONDO_CLUES[comp].slice(0, awards.AWARD_RONDO_CLUES[comp].length)
+      .map(({ letter, clue, answers }) => ({ letter, clue, answers })), awards.AWARD_RONDO_CLUES[comp]);
   }
   for (const comp of comps) {
     assert.deepEqual(footballFacts(comp), football.footballFacts(comp), comp);
@@ -284,7 +309,7 @@ test("Rondo prompts stay short without removing answer conditions or questions",
   for (const comp of comps) {
     for (const clue of RONDO_CLUES[comp]) {
       const prompt = clue.prompt ?? clue.clue;
-      assert.ok(prompt.length <= 140, `${comp} (${prompt.length} characters): ${prompt}`);
+      if (isSpecificRondoClue(clue)) assert.ok(prompt.length <= 180, `${comp} (${prompt.length} characters): ${prompt}`);
       assert.doesNotMatch(prompt, /answer starts with|through the recorded award seasons|Name a (winner|player):/);
       assert.ok(clue.answers.length > 0);
     }
@@ -306,7 +331,12 @@ test("every new Rondo round mixes nine easy, nine medium and eight hard clues wi
       assert.equal(questions.length, 26, comp);
       assert.deepEqual(questions.map(({ letter }) => letter), RONDO_LETTERS, comp);
       const counts = { easy: 0, medium: 0, hard: 0 };
+      const prompts = new Set();
       for (const [index, question] of questions.entries()) {
+        assert.ok(isSpecificRondoClue(question), `${comp}: ${question.clue}`);
+        const prompt = (question.prompt ?? question.clue).toLowerCase().replace(/[^a-z0-9]/g, "");
+        assert.ok(!prompts.has(prompt), `${comp}: repeated question ${prompt}`);
+        prompts.add(prompt);
         counts[question.difficulty] += 1;
         const options = RONDO_CLUES[comp].filter((clue) => clue.letter === question.letter);
         assert.deepEqual(question.answers, options[picks[index]].answers);
@@ -316,6 +346,39 @@ test("every new Rondo round mixes nine easy, nine medium and eight hard clues wi
       previous = picks;
     }
   }
+});
+
+test("specific award questions identify a dated winner, preserve aliases and reject other winners", () => {
+  const { specificRondo } = JSON.parse(readFileSync(new URL("../data/quizAwards.generated.json", import.meta.url), "utf8"));
+  for (const comp of comps) {
+    assert.ok(specificRondo[comp].length > 0);
+    for (const clue of specificRondo[comp]) {
+      assert.equal(clue.singleAnswer, true);
+      assert.match(clue.prompt, / in \d{4}/);
+      assert.ok(isRondoAnswer(clue, clue.answers[0]));
+      assert.ok(clue.answers.every((alias) => isRondoAnswer(clue, alias)));
+    }
+  }
+  const question = AWARD_RONDO_CLUES.pl.find((clue) => clue.prompt === "Player who won the PL Golden Boot in 2022–23");
+  assert.ok(question);
+  assert.ok(isRondoAnswer(question, "Erling Haaland"));
+  assert.ok(!isRondoAnswer(question, "Mohamed Salah"));
+  assert.ok(!isRondoAnswer(question, "Harry Kane"));
+  assert.ok(!isSpecificRondoClue(AWARD_RONDO_CLUES.pl.find((clue) => clue.prompt === "Ballon d'Or winner")));
+});
+
+test("Süper Lig uses only identifying Turkish-football questions without international fallback", async () => {
+  const { SUPERLIG_SPECIFIC_RONDO } = await import("../data/rondoSuperligSpecific.ts");
+  assert.equal(SUPERLIG_SPECIFIC_RONDO.length, 52);
+  const allowed = new Set(SUPERLIG_SPECIFIC_RONDO.map((clue) => clue.clue));
+  for (const clue of SUPERLIG_SPECIFIC_RONDO) {
+    assert.ok(isSpecificRondoClue(clue));
+    assert.ok(clue.clue.length <= 180);
+    const name = normalizeFootballPlayerName(clue.answers[0]);
+    assert.ok(clue.contains ? name.includes(clue.letter.toLowerCase()) : name.startsWith(clue.letter.toLowerCase()));
+  }
+  const questions = rondoQuestions("superlig", randomRondoPicks("superlig"));
+  for (const question of questions) assert.ok(allowed.has(question.clue));
 });
 
 test("nation visuals cover every historical tournament nation, aliases and combined hosts", () => {

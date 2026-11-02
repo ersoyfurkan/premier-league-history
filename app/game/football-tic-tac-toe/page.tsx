@@ -86,6 +86,7 @@ function FootballTicTacToeClient() {
   const storageKey = `plttt:${code}`;
   const joining = useRef(false);
   const playerInputRef = useRef<HTMLInputElement>(null);
+  const [selectedTurn, setSelectedTurn] = useState<{ side: "p1" | "p2"; deadline: number | null } | null>(null);
 
   const [token, setToken] = useState<string | null>(null);
   const [remoteView, setRemoteView] = useState<FootballTicTacToeRoomView | null>(null);
@@ -226,17 +227,29 @@ function FootballTicTacToeClient() {
     setError(null);
     setSubmittingAnswer(true);
     if (isLocal && localRoom) {
+      const selection = selectedTurn;
+      if (!selection) {
+        setError("Choose a square for the current player before answering.");
+        setSubmittingAnswer(false);
+        return;
+      }
       const next = { ...localRoom, board: [...localRoom.board] };
       const moveError = applyFootballTicTacToeMove(
         next,
-        next.turn,
+        selection.side,
         selectedCell,
         player,
         clockNow,
+        selection.deadline,
       );
       if (moveError) {
         setLocalRoom(next);
         setError(moveError);
+        if (next.turn !== selection.side || next.turnDeadline !== selection.deadline) {
+          setSelectedCell(null);
+          setPlayerName("");
+          setSelectedTurn(null);
+        }
         setSubmittingAnswer(false);
         return;
       }
@@ -410,7 +423,7 @@ function FootballTicTacToeClient() {
 
       {view.lastTrap && (
         <p role="status" className="mt-3 rounded-xl border border-warning/40 bg-warning/10 p-3 text-sm text-warning">
-          Trap! {view.lastTrap.player} was the hidden answer.
+          Trap! {isLocal ? `Player ${view.lastTrap.side === "p1" ? "1 (X)" : "2 (O)"}` : view.lastTrap.side === view.you ? "You" : "Your opponent"} hit the hidden answer: {view.lastTrap.player}.
           {" "}{isLocal ? `Player ${view.lastTrap.side === "p1" ? "2" : "1"}` : view.lastTrap.side === view.you ? "Your opponent" : "You"} won that square.
           {view.status === "playing" ? " The turn passes to the opponent of the player who hit the trap." : ""}
         </p>
@@ -463,6 +476,7 @@ function FootballTicTacToeClient() {
                       type="button"
                       disabled={!selectable}
                       onClick={() => {
+                        setSelectedTurn({ side: view.turn, deadline: view.turnDeadline });
                         setSelectedCell(index);
                         setPlayerName("");
                         setError(null);

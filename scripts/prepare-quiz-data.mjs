@@ -12,7 +12,10 @@ const output = (name, data) => {
 };
 
 const awards = await import("./builders/individualAwards.ts");
-output("quizAwards", { checkedAt: awards.AWARDS_CHECKED_AT, awards: awards.INDIVIDUAL_AWARDS, groups: awards.AWARD_GROUPS });
+output("quizAwards", {
+  checkedAt: awards.AWARDS_CHECKED_AT, awards: awards.INDIVIDUAL_AWARDS, groups: awards.AWARD_GROUPS,
+  specificRondo: awards.prepareSpecificAwardRondo(),
+});
 const football = await import("./builders/footballTicTacToe.ts");
 output("quizFootball", football.prepareFootballTicTacToe());
 const trivia = await import("../data/triviaPath.ts");

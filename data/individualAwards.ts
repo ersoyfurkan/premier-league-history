@@ -54,6 +54,7 @@ const groupClues = AWARD_GROUPS.map((group) => {
       letter, clue: `Name a ${group.noun} (answer starts with ${letter}).`, answers,
       prompt: awardPrompt(group),
       difficulty: group.difficulty >= 4 ? "hard" as const : "medium" as const,
+      singleAnswer: false,
     })),
   };
 });
@@ -61,6 +62,10 @@ const groupClues = AWARD_GROUPS.map((group) => {
 export const AWARD_RONDO_CLUES = Object.fromEntries(competitions.map((comp) => [
   comp, groupClues.filter(({ group }) => group.competitions.includes(comp)).flatMap(({ clues }) => clues),
 ])) as Record<Competition, RondoClue[]>;
+
+for (const comp of competitions) {
+  AWARD_RONDO_CLUES[comp].push(...prepared.specificRondo[comp] as RondoClue[]);
+}
 
 const normalize = (text: string) => text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 export function awardsInText(text: string): IndividualAward[] {

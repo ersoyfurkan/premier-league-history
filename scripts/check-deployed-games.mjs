@@ -10,6 +10,10 @@ const paths = [
   "/game/football-tic-tac-toe?local=1&comp=ucl",
   "/game/club-duel?comp=general",
   "/game/club-duel?comp=ucl",
+  "/game/formation-invasion?comp=general",
+  "/game/formation-invasion?comp=worldcup",
+  "/game/formation-invasion?comp=euros",
+  "/game/formation-invasion?comp=copa",
 ];
 
 const results = await Promise.allSettled(paths.map(async (path) => {

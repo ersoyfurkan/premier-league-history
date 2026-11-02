@@ -4,7 +4,7 @@ import { COMPETITION_LABELS, REAL_COMPETITIONS, TOURNAMENT_COMPETITIONS, type Co
 import { CAREERS } from "@/data/clubDuelCareers";
 import { FOOTBALL_KNOWLEDGE_GROUPS, knowledgeNameKey, type KnowledgeEntry } from "@/data/footballKnowledge";
 import type { RondoClue } from "@/data/rondo";
-import { awardPlayerKey } from "@/data/footballNames";
+import { awardPlayerKey, normalizeFootballPlayerName } from "@/data/footballNames";
 
 export type IndividualAward = {
   id: string;
@@ -158,6 +158,38 @@ for (const awardGroup of baseGroups.filter((group) => group.awardIds.length === 
 }
 
 export const AWARD_TRIVIA_CATEGORIES = Object.fromEntries(competitions.map((comp) => [comp, AWARD_GROUPS.filter((group) => group.competitions.includes(comp)).map((group) => ({ ...group, short: group.label }))])) as Record<Competition, (AwardGroup & { short: string })[]>;
+
+export function prepareSpecificAwardRondo(): Record<Competition, RondoClue[]> {
+  return Object.fromEntries(competitions.map((comp) => {
+    const clues: RondoClue[] = [];
+    const eligibleAwardIds = new Set(AWARD_GROUPS.filter((group) => group.competitions.includes(comp)).flatMap((group) => group.awardIds));
+    for (const award of INDIVIDUAL_AWARDS.filter((award) => eligibleAwardIds.has(award.id))) {
+      const seasons = new Map<string, typeof award.winners>();
+      for (const winner of award.winners) {
+        const winners = seasons.get(winner.season) ?? [];
+        winners.push(winner);
+        seasons.set(winner.season, winners);
+      }
+      for (const [season, winners] of seasons) {
+        for (const winner of winners) {
+          const letter = normalizeFootballPlayerName(winner.name)[0].toUpperCase();
+          if (winners.filter(({ name }) => normalizeFootballPlayerName(name)[0].toUpperCase() === letter).length !== 1) continue;
+          const entry = award.entries.find(({ name }) => awardPlayerKey(name) === awardPlayerKey(winner.name));
+          if (!entry) throw new Error(`Missing award entry for ${winner.name}: ${award.id}`);
+          const label = award.label.replaceAll("Premier League", "PL").replaceAll("UEFA Champions League", "UCL")
+            .replaceAll("European Championship", "Euros").replaceAll(" (including retrospective selections)", "");
+          const prompt = `Player who won the ${label} in ${season}${winners.length > 1 ? " (joint winner)" : ""}`;
+          clues.push({
+            letter, clue: prompt, prompt, answers: [entry.name, ...entry.aliases],
+            difficulty: Number(season.slice(0, 4)) < 2000 ? "hard" : "medium", singleAnswer: true,
+          });
+        }
+      }
+    }
+    return [comp, clues];
+  })) as Record<Competition, RondoClue[]>;
+}
+
 export const AWARD_RONDO_CLUES = Object.fromEntries(competitions.map((comp) => {
   const clues: RondoClue[] = [];
   for (const group of AWARD_GROUPS.filter((group) => group.competitions.includes(comp))) {

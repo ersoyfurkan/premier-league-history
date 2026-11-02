@@ -14,6 +14,7 @@ import { SUPERLIG_RONDO } from "@/data/superligContent";
 import { STAT_RONDO_CLUES } from "@/data/statTrivia";
 import { KNOWLEDGE_RONDO_CLUES } from "@/data/knowledgeTrivia";
 import { AWARD_RONDO_CLUES } from "@/data/individualAwards";
+import { SUPERLIG_SPECIFIC_RONDO } from "@/data/rondoSuperligSpecific";
 
 export type RondoClue = {
   letter: string;
@@ -22,6 +23,7 @@ export type RondoClue = {
   contains?: boolean; // the answer contains the letter instead of starting with it
   prompt?: string;
   difficulty?: RondoDifficulty;
+  singleAnswer?: boolean;
 };
 
 export type RondoDifficulty = "easy" | "medium" | "hard";
@@ -305,12 +307,17 @@ for (const comp of ["general", ...REAL_COMPETITIONS, ...TOURNAMENT_COMPETITIONS]
     return true;
   }));
 }
+RONDO_CLUES.superlig.push(...SUPERLIG_SPECIFIC_RONDO);
 export const RONDO_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 export const RONDO_SECONDS = 180;
 
 export type RondoQuestion = RondoClue & { index: number; difficulty: RondoDifficulty };
 export const RONDO_DIFFICULTY_COUNTS = { easy: 9, medium: 9, hard: 8 } as const;
 export const rondoDifficulty = (clue: RondoClue): RondoDifficulty => clue.difficulty ?? "medium";
+export const isSpecificRondoClue = (clue: RondoClue) =>
+  clue.singleAnswer !== false
+  && !/notable player, club or figure|^Name a /i.test(clue.clue)
+  && (clue.prompt ?? clue.clue).length <= 180;
 
 const letterCache = new Map<Competition, Map<string, RondoClue[]>>();
 const byLetter = (comp: Competition, letter: string) => {
@@ -326,10 +333,20 @@ const byLetter = (comp: Competition, letter: string) => {
 // A game is one clue index per letter, so both players in a match get identical questions.
 // `avoid` is the previous game's picks, so back-to-back games never repeat a question.
 export function randomRondoPicks(comp: Competition, avoid: number[] = []): number[] {
+  for (let attempt = 0; attempt < 32; attempt += 1) {
+    const picks = tryRondoPicks(comp, avoid);
+    if (picks) return picks;
+  }
+  throw new Error(`Not enough unique Rondo questions for ${comp}.`);
+}
+
+function tryRondoPicks(comp: Competition, avoid: number[]): number[] | null {
   const options = RONDO_LETTERS.map((letter, letterIndex) => {
     const clues = byLetter(comp, letter);
-    return clues.map((clue, index) => ({ index, difficulty: rondoDifficulty(clue) }))
-      .filter(({ index }) => clues.length === 1 || index !== avoid[letterIndex]);
+    const eligible = clues.map((clue, index) => ({ index, difficulty: rondoDifficulty(clue) }))
+      .filter(({ index }) => isSpecificRondoClue(clues[index])
+        && (comp !== "superlig" || SUPERLIG_SPECIFIC_RONDO.includes(clues[index])));
+    return eligible.filter(({ index }) => eligible.length === 1 || index !== avoid[letterIndex]);
   });
   const slots = (Object.keys(RONDO_DIFFICULTY_COUNTS) as RondoDifficulty[])
     .flatMap((difficulty) => Array<RondoDifficulty>(RONDO_DIFFICULTY_COUNTS[difficulty]).fill(difficulty));
@@ -355,11 +372,35 @@ export function randomRondoPicks(comp: Competition, avoid: number[] = []): numbe
   for (let slot = 0; slot < slots.length; slot += 1) {
     if (!assign(slot, new Set())) throw new Error(`Not enough ${slots[slot]} Rondo questions for ${comp}.`);
   }
-  return options.map((choices, letter) => {
+  const usedPrompts = new Set<string>();
+  const picks = Array<number>(RONDO_LETTERS.length);
+  const choicesByLetter = options.map((choices, letter) => {
     const difficulty = slots[assigned.get(letter)!];
     const eligible = choices.filter((choice) => choice.difficulty === difficulty);
-    return eligible[Math.floor(Math.random() * eligible.length)].index;
+    for (let index = eligible.length - 1; index > 0; index -= 1) {
+      const swap = Math.floor(Math.random() * (index + 1));
+      [eligible[index], eligible[swap]] = [eligible[swap], eligible[index]];
+    }
+    return eligible;
   });
+  const order = [...letters].sort((a, b) => choicesByLetter[a].length - choicesByLetter[b].length);
+  let visits = 0;
+  const choose = (position: number): boolean => {
+    if (++visits > 2000) return false;
+    if (position === order.length) return true;
+    const letter = order[position];
+    for (const choice of choicesByLetter[letter]) {
+      const clue = byLetter(comp, RONDO_LETTERS[letter])[choice.index];
+      const key = (clue.prompt ?? clue.clue).toLowerCase().replace(/[^a-z0-9]/g, "");
+      if (usedPrompts.has(key)) continue;
+      usedPrompts.add(key);
+      picks[letter] = choice.index;
+      if (choose(position + 1)) return true;
+      usedPrompts.delete(key);
+    }
+    return false;
+  };
+  return choose(0) ? picks : null;
 }
 
 export function rondoQuestions(comp: Competition, picks: number[]): RondoQuestion[] {
@@ -398,7 +439,9 @@ export function isRondoAnswer(question: RondoClue, guess: string) {
   const targets = new Set<string>();
   for (const answer of question.answers) {
     targets.add(normalize(answer));
-    for (const word of answer.split(/[\s-]+/)) if (normalize(word).length >= 4) targets.add(normalize(word));
+    if (question.singleAnswer !== true) {
+      for (const word of answer.split(/[\s-]+/)) if (normalize(word).length >= 4) targets.add(normalize(word));
+    }
   }
   for (const target of targets) {
     if (target === typed) return true;

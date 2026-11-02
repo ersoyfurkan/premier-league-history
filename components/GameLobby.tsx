@@ -158,6 +158,18 @@ export default function GameLobby({ comp }: { comp: Competition }) {
                     </div>
                   </div>
                   <Link
+                    href={`/game/formation-invasion?comp=${comp}`}
+                    className="rounded-2xl border border-primary/25 bg-background/60 p-5 text-left transition hover:border-primary/60 hover:bg-primary/5"
+                  >
+                    <h3 className="text-xl font-bold">Formation Invasion</h3>
+                    <p className="mt-2 text-sm leading-6 text-fore-muted">
+                      Eleven stars, three questions each. Answer the third to claim a player; first to six wins. Online, same-device or solo.
+                    </p>
+                    <span className="mt-4 inline-block font-mono text-[10px] uppercase tracking-[0.12em] text-primary">
+                      Invade the pitch →
+                    </span>
+                  </Link>
+                  <Link
                     href={`/game/rondo?comp=${comp}`}
                     className="rounded-2xl border border-warning/25 bg-background/60 p-5 text-left transition hover:border-warning/60 hover:bg-warning/5"
                   >

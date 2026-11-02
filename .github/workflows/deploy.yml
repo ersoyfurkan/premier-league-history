@@ -44,6 +44,8 @@ jobs:
           pnpm test:stat-games
       - name: Build Worker
         run: pnpm build
+      - name: Prepare Formation Invasion rooms
+        run: pnpm exec wrangler d1 execute DB --remote --file migrations/0004_formation_invasion.sql --yes
       - name: Deploy Worker
         run: pnpm exec wrangler deploy --keep-vars --message "GitHub ${GITHUB_SHA}"
       - name: Check deployed game routes
