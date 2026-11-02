@@ -1,6 +1,6 @@
 ﻿import { REAL_COMPETITIONS, TOURNAMENT_COMPETITIONS, isTournamentComp, type Competition, type RealCompetition, type TournamentComp } from "@/lib/competitions";
 import { NATION_INFO, natsAllowed } from "@/data/nations";
-import { nationFlagSrc } from "@/data/nationVisuals";
+import { nationLogoSrc } from "@/data/nationVisuals";
 import { CAREERS } from "@/data/clubDuelCareers";
 import { nationOf } from "@/data/playerNations";
 import { BUNDESLIGA_FACTS } from "@/data/bundesligaContent";
@@ -28,7 +28,7 @@ export type FootballTicTacToePuzzle = {
 type Fact = { name: string; nat: string[]; clubs: string[]; tags: string[] };
 type Def = { clue: FootballClue; test: (fact: Fact) => boolean };
 
-const flag = nationFlagSrc;
+const nationLogo = nationLogoSrc;
 
 // name | nationalities | clubs | tags. Stat tags are career totals in the competition
 // (every club combined), so a player counts for any club they played for.
@@ -880,7 +880,7 @@ const NAT_KEYS: Record<string, string> = {
     ci: "civ", ng: "nga", kr: "kor", jp: "jpn", eg: "egy", ro: "rou", cm: "cmr", gh: "gha", ml: "mli", hu: "hun",
   };
 const national = (label: string, country: string): Def => ({
-  clue: { label, badge: flag(country), badgeAlt: `${label.replace(" international", "")} flag` },
+  clue: { label, badge: nationLogo(country), badgeAlt: `${label.replace(" international", "")} national team crest` },
   test: (fact) => fact.nat.includes(NAT_KEYS[country] ?? country),
 });
 const stat = (label: string, tag: string): Def => ({
@@ -1340,7 +1340,7 @@ const tournamentNations = (comp: TournamentComp): Def[] =>
   Object.entries(NATION_INFO)
     .filter(([code]) => FACTS[comp].filter((fact) => fact.nat.includes(code)).length >= 6)
     .map(([code, [name, iso]]) => ({
-      clue: { label: `${name} international`, badge: flag(iso), badgeAlt: `${name} flag` },
+      clue: { label: `${name} international`, badge: nationLogo(iso), badgeAlt: `${name} national team crest` },
       test: (fact: Fact) => fact.nat.includes(code),
     }));
 const TOURNAMENT_NATIONS = Object.fromEntries(TOURNAMENT_COMPETITIONS.map((comp) => [comp, tournamentNations(comp)])) as Record<TournamentComp, Def[]>;

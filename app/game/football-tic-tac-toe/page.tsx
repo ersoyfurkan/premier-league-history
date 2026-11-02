@@ -7,10 +7,12 @@ import {
   FOOTBALL_TIC_TAC_TOE,
   footballTicTacToePlayerNames,
   normalizeFootballPlayerName,
+  type FootballClue,
 } from "@/data/footballTicTacToe";
 import PlayerPhoto from "@/components/PlayerPhoto";
 import UclImage from "@/components/UclImage";
 import { playerFaceUrl } from "@/data/playerFaces";
+import { nationMentions } from "@/data/nationVisuals";
 import { poolFor, lobbyFor, parseComp, type Competition } from "@/lib/gameRoom";
 import { COMPETITION_LABELS } from "@/lib/competitions";
 import {
@@ -35,6 +37,11 @@ const TURN_MS = 60_000;
 const faceSrc = (name: string, comp: Competition) =>
   poolFor(comp).find((card) => normalizeFootballPlayerName(card.name) === normalizeFootballPlayerName(name))?.photo ??
   playerFaceUrl(name);
+
+function ClueBadge({ clue }: { clue: FootballClue }) {
+  const nation = / international$/.test(clue.label) ? nationMentions(clue.label, true)[0] : undefined;
+  return <UclImage src={nation?.src ?? clue.badge} alt={nation ? `${nation.name} national team crest` : clue.badgeAlt ?? clue.label} className="h-5 w-5 sm:h-8 sm:w-8 lg:h-9 lg:w-9" />;
+}
 
 function FootballTicTacToeClient() {
   const search = useSearchParams();
@@ -387,7 +394,7 @@ function FootballTicTacToeClient() {
             {puzzle.columns.map((column) => (
               <div key={column.label} className="flex min-h-0 min-w-0 flex-col items-center justify-center gap-1 border border-emerald-950 bg-emerald-900 p-1 text-center text-[clamp(8px,2.8cqw,16px)] font-semibold leading-tight text-white sm:gap-2 sm:p-2">
                 {column.badge && (
-                  <UclImage src={column.badge} alt={column.badgeAlt ?? column.label} className="h-5 w-5 sm:h-8 sm:w-8 lg:h-9 lg:w-9" />
+                  <ClueBadge clue={column} />
                 )}
                 <span className="min-w-0 max-w-full [overflow-wrap:anywhere]">{column.label}</span>
               </div>
@@ -396,7 +403,7 @@ function FootballTicTacToeClient() {
               <div key={row.label} className="contents">
                 <div className="flex min-h-0 min-w-0 flex-col items-center justify-center gap-1 border border-emerald-950 bg-emerald-900 p-1 text-center text-[clamp(8px,2.8cqw,16px)] font-semibold leading-tight text-white sm:gap-2 sm:p-2">
                   {row.badge && (
-                    <UclImage src={row.badge} alt={row.badgeAlt ?? row.label} className="h-5 w-5 sm:h-8 sm:w-8 lg:h-9 lg:w-9" />
+                    <ClueBadge clue={row} />
                   )}
                   <span className="min-w-0 max-w-full [overflow-wrap:anywhere]">{row.label}</span>
                 </div>

@@ -12,6 +12,7 @@ import type { PlayerCard } from "@/data/players";
 import { poolFor, type Competition } from "@/lib/gameRoom";
 import { COMPETITION_LABELS, isTournamentComp } from "@/lib/competitions";
 import { espnHeadshot } from "@/lib/clubArt";
+import { nationLogoSrc } from "@/data/nationVisuals";
 
 export type MiniGameMode = "higher-lower" | "transfer-market";
 
@@ -294,8 +295,8 @@ function TransferMarketHigherLower({ comp, onBack }: { comp: Competition; onBack
                     </p>
                     <p className="mt-1 flex items-center gap-2 text-sm text-fore-muted">
                       <UclImage
-                        src={`https://flagcdn.com/w40/${player.countryCode}.png`}
-                        alt={`${player.nationality} flag`}
+                        src={nationLogoSrc(player.countryCode)}
+                        alt={`${player.nationality} national team crest`}
                         className="h-4 w-6"
                       />
                       {player.nationality}

@@ -109,7 +109,7 @@ function GroupTables({ groups }: { groups: Group[] }) {
                   <td className="px-3 py-2 text-fore-muted">{e.rank}</td>
                   <td className="px-3 py-2">
                     <span className="flex items-center gap-2">
-                      <UclImage src={e.team.logo} fallback={nationMentions(e.team.name)[0]?.src} alt={`${e.team.name} badge`} className="h-5 w-7" />
+                      <UclImage src={nationMentions(e.team.name)[0]?.src} alt={`${e.team.name} national team crest`} className="h-5 w-7" />
                       {e.team.name}
                     </span>
                   </td>
@@ -139,7 +139,7 @@ function MatchRow({ match, base }: { match: Match; base: string }) {
   const name = (side: Side, align: string) => (
     <span className={`flex flex-1 items-center gap-2 ${align} ${side.winner && match.state === "post" ? "font-semibold text-foreground" : ""}`}>
       {align.includes("end") && <span>{side.name}</span>}
-      <UclImage src={side.logo} fallback={nationMentions(side.name)[0]?.src} alt={`${side.name} badge`} className="h-6 w-7" />
+      <UclImage src={nationMentions(side.name)[0]?.src} alt={`${side.name} national team crest`} className="h-6 w-7" />
       {!align.includes("end") && <span>{side.name}</span>}
     </span>
   );

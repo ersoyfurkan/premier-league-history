@@ -7,6 +7,7 @@ import { clubLogoUrl } from "@/lib/uclPlayers";
 import { espnBadge } from "@/lib/clubArt";
 import { NATION_INFO } from "@/data/nations";
 import { natsOfPlayer } from "@/data/footballTicTacToe";
+import { nationLogoSrc } from "@/data/nationVisuals";
 
 type Face = { id?: string; name: string; photo?: string; club?: string; clubId?: string };
 
@@ -14,9 +15,9 @@ type Face = { id?: string; name: string; photo?: string; club?: string; clubId?:
 export default function CardFace({ card, nation = false }: { card: Face; nation?: boolean }) {
   const laLiga = (card.id && /^(ll|sa|bl|l1|sl)/.test(card.id)) ?? false;
   const country = nation ? NATION_INFO[natsOfPlayer(card.name)[0] ?? ""] : undefined;
-  const flag = country && (
+  const crest = country && (
     <span className="flex items-center gap-2 text-sm text-fore-muted md:text-base">
-      <UclImage src={`https://flagcdn.com/w80/${country[1]}.png`} alt={`${country[0]} flag`} className="h-5 w-8" />
+      <UclImage src={nationLogoSrc(country[0])} alt={`${country[0]} national team crest`} className="h-5 w-8" />
       {country[0]}
     </span>
   );
@@ -24,7 +25,7 @@ export default function CardFace({ card, nation = false }: { card: Face; nation?
     return (
       <div className="flex flex-col items-start gap-2">
         <PlayerPhoto id={card.id} name={card.name} size="lg" />
-        {flag}
+        {crest}
       </div>
     );
   }
@@ -39,7 +40,7 @@ export default function CardFace({ card, nation = false }: { card: Face; nation?
             {card.club}
           </span>
         )}
-        {flag}
+        {crest}
       </div>
     </div>
   );

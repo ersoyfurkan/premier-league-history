@@ -40,17 +40,28 @@ const { STADIUM_COUNTRIES } = await import("../data/stadiumTrivia.ts");
 const { FOOTBALL_TIC_TAC_TOE, footballFacts, randomFootballTicTacToePuzzle, isFootballTicTacToeAnswer } = await import("../data/footballTicTacToe.ts");
 const { triviaTileVisuals, triviaBoardPresentation } = await import("../data/triviaPathVisuals.ts");
 const { NATION_INFO } = await import("../data/nations.ts");
-const { nationFlagSrc, nationMentions } = await import("../data/nationVisuals.ts");
+const { MARKET_VALUE_PLAYERS } = await import("../data/marketValues.ts");
+const { nationLogoSrc, nationMentions } = await import("../data/nationVisuals.ts");
+const { default: nationCrests } = await import("../data/nationCrests.generated.json");
 const { default: tournamentHistory } = await import("../data/tournamentHistory.generated.json");
 const { freshState, pathView, startPlay } = await import("../lib/triviaPathState.ts");
 const { extractClubPlayers } = await import("./refresh-club-history.mjs");
 const comps = ["general", ...REAL_COMPETITIONS, ...TOURNAMENT_COMPETITIONS];
 
 test("nation visuals cover every historical tournament nation, aliases and combined hosts", () => {
+  assert.deepEqual(nationCrests.missing, []);
+  for (const [name, crest] of Object.entries(nationCrests.crests)) {
+    assert.ok(crest.source.startsWith("https://en.wikipedia.org/wiki/"), name);
+    assert.ok(crest.src.startsWith("https://"), name);
+    assert.doesNotMatch(crest.src, /flagcdn|flag_of|teamlogos\/countries/i, name);
+  }
   for (const [code, [name, iso]] of Object.entries(NATION_INFO)) {
-    assert.equal(nationFlagSrc(code), nationFlagSrc(iso), name);
-    assert.equal(nationFlagSrc(name), nationFlagSrc(code), name);
+    assert.equal(nationLogoSrc(code), nationLogoSrc(iso), name);
+    assert.equal(nationLogoSrc(name), nationLogoSrc(code), name);
     assert.equal(nationMentions(name)[0]?.name, name);
+  }
+  for (const players of Object.values(MARKET_VALUE_PLAYERS)) {
+    for (const player of players) assert.equal(nationLogoSrc(player.countryCode), nationLogoSrc(player.nationality), player.name);
   }
   for (const [comp, tables] of Object.entries(tournamentHistory.tournaments)) {
     for (const [kind, table] of Object.entries(tables)) {
@@ -78,8 +89,8 @@ test("nation visuals cover every historical tournament nation, aliases and combi
   assert.deepEqual(nationMentions("Canada, Mexico, United States").map((nation) => nation.name), ["Canada", "Mexico", "United States"]);
   assert.deepEqual(nationMentions("West Germany, Germany").map((nation) => nation.name), ["West Germany", "Germany"]);
   assert.deepEqual(nationMentions("FR Yugoslavia").map((nation) => nation.name), ["FR Yugoslavia"]);
-  assert.notEqual(nationFlagSrc("Soviet Union"), nationFlagSrc("Russia"));
-  assert.notEqual(nationFlagSrc("East Germany"), nationFlagSrc("Germany"));
+  assert.notEqual(nationLogoSrc("Soviet Union"), nationLogoSrc("Russia"));
+  assert.notEqual(nationLogoSrc("East Germany"), nationLogoSrc("Germany"));
   for (const text of ["Argentinian", "Finnish", "Ivorian", "Nigerian", "South African", "Northern Irish", "Uruguayan"]) {
     assert.equal(nationMentions(`${text} players`, true).length, 1, text);
   }
@@ -90,14 +101,14 @@ test("nation visuals cover every historical tournament nation, aliases and combi
   assert.deepEqual(nationMentions("International totals (10 entries)"), []);
   assert.deepEqual(nationMentions("South American nations", true), []);
   assert.deepEqual(nationMentions("North American players", true), []);
-  assert.throws(() => nationFlagSrc("not a nation"), /Unknown nation visual/);
+  assert.throws(() => nationLogoSrc("not a nation"), /Unknown nation visual/);
 });
 
 test("Trivia Path and Tic-Tac-Toe share nation assets without ambiguous partial matches", () => {
   const base = tileById("general", "s-clubs");
   for (const [word, name] of [["Uruguayan", "Uruguay"], ["Nigerian", "Nigeria"], ["Finnish", "Finland"], ["South African", "South Africa"], ["Bolivia", "Bolivia"]]) {
     const visuals = triviaTileVisuals({ ...base, id: "test-nation", noun: `${word} players`, short: word, logos: [] });
-    assert.ok(visuals.some((visual) => visual.kind === "image" && visual.label === name && visual.src === nationFlagSrc(name)), word);
+    assert.ok(visuals.some((visual) => visual.kind === "image" && visual.label === name && visual.src === nationLogoSrc(name)), word);
   }
   for (const comp of comps) {
     const puzzles = [FOOTBALL_TIC_TAC_TOE[comp], randomFootballTicTacToePuzzle(comp)];
@@ -187,7 +198,7 @@ test("Origi is accepted for Forest and other senior clubs, including loans", () 
   }
 });
 
-test("tile visual clues encode combined stats, trophies, flags and teammates without question prose", () => {
+test("tile visual clues encode combined stats, trophies, nation crests and teammates without question prose", () => {
   const tile = (noun) => ({ id: "visual-test", short: "", noun, plural: noun, entries: [], logos: [] });
   const goals = triviaTileVisuals(tile("player who scored 100+ goals for Barcelona"));
   assert.ok(goals.some((visual) => visual.kind === "image" && visual.label === "Barcelona"));
