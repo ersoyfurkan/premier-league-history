@@ -1,0 +1,3152 @@
+{
+ "updatedAt": "2026-11-02T00:53:24.410Z",
+ "comps": {
+  "pl": {
+   "seasons": [
+    {
+     "season": 2002,
+     "champion": "Manchester United",
+     "top4": [
+      "Manchester United",
+      "Arsenal",
+      "Newcastle United",
+      "Chelsea"
+     ],
+     "relegated": [
+      "West Ham United",
+      "West Bromwich Albion",
+      "Sunderland"
+     ]
+    },
+    {
+     "season": 2003,
+     "champion": "Arsenal",
+     "top4": [
+      "Arsenal",
+      "Chelsea",
+      "Manchester United",
+      "Liverpool"
+     ],
+     "relegated": [
+      "Leicester City",
+      "Leeds United",
+      "Wolverhampton Wanderers"
+     ]
+    },
+    {
+     "season": 2004,
+     "champion": "Chelsea",
+     "top4": [
+      "Chelsea",
+      "Arsenal",
+      "Manchester United",
+      "Everton"
+     ],
+     "relegated": [
+      "Crystal Palace",
+      "Norwich City",
+      "Southampton"
+     ]
+    },
+    {
+     "season": 2005,
+     "champion": "Chelsea",
+     "top4": [
+      "Chelsea",
+      "Manchester United",
+      "Liverpool",
+      "Arsenal"
+     ],
+     "relegated": [
+      "Birmingham City",
+      "West Bromwich Albion",
+      "Sunderland"
+     ]
+    },
+    {
+     "season": 2006,
+     "champion": "Manchester United",
+     "top4": [
+      "Manchester United",
+      "Chelsea",
+      "Liverpool",
+      "Arsenal"
+     ],
+     "relegated": [
+      "Sheffield United",
+      "Charlton Athletic",
+      "Watford"
+     ]
+    },
+    {
+     "season": 2007,
+     "champion": "Manchester United",
+     "top4": [
+      "Manchester United",
+      "Chelsea",
+      "Arsenal",
+      "Liverpool"
+     ],
+     "relegated": [
+      "Reading",
+      "Birmingham City",
+      "Derby County"
+     ]
+    },
+    {
+     "season": 2008,
+     "champion": "Manchester United",
+     "top4": [
+      "Manchester United",
+      "Liverpool",
+      "Chelsea",
+      "Arsenal"
+     ],
+     "relegated": [
+      "Newcastle United",
+      "Middlesbrough",
+      "West Bromwich Albion"
+     ]
+    },
+    {
+     "season": 2009,
+     "champion": "Chelsea",
+     "top4": [
+      "Chelsea",
+      "Manchester United",
+      "Arsenal",
+      "Tottenham Hotspur"
+     ],
+     "relegated": [
+      "Burnley",
+      "Hull City",
+      "Portsmouth"
+     ]
+    },
+    {
+     "season": 2010,
+     "champion": "Manchester United",
+     "top4": [
+      "Manchester United",
+      "Chelsea",
+      "Manchester City",
+      "Arsenal"
+     ],
+     "relegated": [
+      "Birmingham City",
+      "Blackpool",
+      "West Ham United"
+     ]
+    },
+    {
+     "season": 2011,
+     "champion": "Manchester City",
+     "top4": [
+      "Manchester City",
+      "Manchester United",
+      "Arsenal",
+      "Tottenham Hotspur"
+     ],
+     "relegated": [
+      "Bolton Wanderers",
+      "Blackburn Rovers",
+      "Wolverhampton Wanderers"
+     ]
+    },
+    {
+     "season": 2012,
+     "champion": "Manchester United",
+     "top4": [
+      "Manchester United",
+      "Manchester City",
+      "Chelsea",
+      "Arsenal"
+     ],
+     "relegated": [
+      "Wigan Athletic",
+      "Reading",
+      "Queens Park Rangers"
+     ]
+    },
+    {
+     "season": 2013,
+     "champion": "Manchester City",
+     "top4": [
+      "Manchester City",
+      "Liverpool",
+      "Chelsea",
+      "Arsenal"
+     ],
+     "relegated": [
+      "Norwich City",
+      "Fulham",
+      "Cardiff City"
+     ]
+    },
+    {
+     "season": 2014,
+     "champion": "Chelsea",
+     "top4": [
+      "Chelsea",
+      "Manchester City",
+      "Arsenal",
+      "Manchester United"
+     ],
+     "relegated": [
+      "Hull City",
+      "Burnley",
+      "Queens Park Rangers"
+     ]
+    },
+    {
+     "season": 2015,
+     "champion": "Leicester City",
+     "top4": [
+      "Leicester City",
+      "Arsenal",
+      "Tottenham Hotspur",
+      "Manchester City"
+     ],
+     "relegated": [
+      "Newcastle United",
+      "Norwich City",
+      "Aston Villa"
+     ]
+    },
+    {
+     "season": 2016,
+     "champion": "Chelsea",
+     "top4": [
+      "Chelsea",
+      "Tottenham Hotspur",
+      "Manchester City",
+      "Liverpool"
+     ],
+     "relegated": [
+      "Hull City",
+      "Middlesbrough",
+      "Sunderland"
+     ]
+    },
+    {
+     "season": 2017,
+     "champion": "Manchester City",
+     "top4": [
+      "Manchester City",
+      "Manchester United",
+      "Tottenham Hotspur",
+      "Liverpool"
+     ],
+     "relegated": [
+      "Swansea City",
+      "Stoke City",
+      "West Bromwich Albion"
+     ]
+    },
+    {
+     "season": 2018,
+     "champion": "Manchester City",
+     "top4": [
+      "Manchester City",
+      "Liverpool",
+      "Chelsea",
+      "Tottenham Hotspur"
+     ],
+     "relegated": [
+      "Cardiff City",
+      "Fulham",
+      "Huddersfield Town"
+     ]
+    },
+    {
+     "season": 2019,
+     "champion": "Liverpool",
+     "top4": [
+      "Liverpool",
+      "Manchester City",
+      "Manchester United",
+      "Chelsea"
+     ],
+     "relegated": [
+      "AFC Bournemouth",
+      "Watford",
+      "Norwich City"
+     ]
+    },
+    {
+     "season": 2020,
+     "champion": "Manchester City",
+     "top4": [
+      "Manchester City",
+      "Manchester United",
+      "Liverpool",
+      "Chelsea"
+     ],
+     "relegated": [
+      "Fulham",
+      "West Bromwich Albion",
+      "Sheffield United"
+     ]
+    },
+    {
+     "season": 2021,
+     "champion": "Manchester City",
+     "top4": [
+      "Manchester City",
+      "Liverpool",
+      "Chelsea",
+      "Tottenham Hotspur"
+     ],
+     "relegated": [
+      "Burnley",
+      "Watford",
+      "Norwich City"
+     ]
+    },
+    {
+     "season": 2022,
+     "champion": "Manchester City",
+     "top4": [
+      "Manchester City",
+      "Arsenal",
+      "Manchester United",
+      "Newcastle United"
+     ],
+     "relegated": [
+      "Leicester City",
+      "Leeds United",
+      "Southampton"
+     ]
+    },
+    {
+     "season": 2023,
+     "champion": "Manchester City",
+     "top4": [
+      "Manchester City",
+      "Arsenal",
+      "Liverpool",
+      "Aston Villa"
+     ],
+     "relegated": [
+      "Luton Town",
+      "Burnley",
+      "Sheffield United"
+     ]
+    },
+    {
+     "season": 2024,
+     "champion": "Liverpool",
+     "top4": [
+      "Liverpool",
+      "Arsenal",
+      "Manchester City",
+      "Chelsea"
+     ],
+     "relegated": [
+      "Leicester City",
+      "Ipswich Town",
+      "Southampton"
+     ]
+    },
+    {
+     "season": 2025,
+     "champion": "Arsenal",
+     "top4": [
+      "Arsenal",
+      "Manchester City",
+      "Manchester United",
+      "Aston Villa"
+     ],
+     "relegated": [
+      "West Ham United",
+      "Burnley",
+      "Wolverhampton Wanderers"
+     ]
+    }
+   ],
+   "currentTable": [
+    "Arsenal",
+    "Manchester City",
+    "Brighton & Hove Albion",
+    "Chelsea",
+    "Liverpool",
+    "Brentford",
+    "AFC Bournemouth",
+    "Tottenham Hotspur",
+    "Aston Villa",
+    "Hull City",
+    "Leeds United",
+    "Newcastle United",
+    "Ipswich Town",
+    "Everton",
+    "Fulham",
+    "Coventry City",
+    "Manchester United",
+    "Crystal Palace",
+    "Nottingham Forest",
+    "Sunderland"
+   ],
+   "scorers": [
+    {
+     "name": "Erling Haaland",
+     "club": "Manchester City",
+     "value": 9
+    },
+    {
+     "name": "Alexander Isak",
+     "club": "Liverpool",
+     "value": 6
+    },
+    {
+     "name": "Morgan Rogers",
+     "club": "Chelsea",
+     "value": 5
+    },
+    {
+     "name": "Marcus Tavernier",
+     "club": "AFC Bournemouth",
+     "value": 5
+    },
+    {
+     "name": "Nicolas Jackson",
+     "club": "Aston Villa",
+     "value": 5
+    },
+    {
+     "name": "João Pedro",
+     "club": "Chelsea",
+     "value": 5
+    },
+    {
+     "name": "Bryan Mbeumo",
+     "club": "Manchester United",
+     "value": 4
+    },
+    {
+     "name": "Evanilson",
+     "club": "AFC Bournemouth",
+     "value": 4
+    },
+    {
+     "name": "Rayan Cherki",
+     "club": "Manchester City",
+     "value": 4
+    },
+    {
+     "name": "Pascal Gross",
+     "club": "Brighton & Hove Albion",
+     "value": 3
+    },
+    {
+     "name": "Cole Palmer",
+     "club": "Chelsea",
+     "value": 3
+    },
+    {
+     "name": "Dominic Calvert-Lewin",
+     "club": "Leeds United",
+     "value": 3
+    },
+    {
+     "name": "Kevin Schade",
+     "club": "Brentford",
+     "value": 3
+    },
+    {
+     "name": "Mohamed Belloumi",
+     "club": "Hull City",
+     "value": 3
+    },
+    {
+     "name": "Pedro Neto",
+     "club": "Chelsea",
+     "value": 3
+    },
+    {
+     "name": "Jack Rudoni",
+     "club": "Coventry City",
+     "value": 3
+    },
+    {
+     "name": "Charalambos Kostoulas",
+     "club": "Brighton & Hove Albion",
+     "value": 3
+    },
+    {
+     "name": "Bruno Fernandes",
+     "club": "Manchester United",
+     "value": 3
+    },
+    {
+     "name": "Thierno Barry",
+     "club": "Everton",
+     "value": 3
+    },
+    {
+     "name": "Yasin Ayari",
+     "club": "Brighton & Hove Albion",
+     "value": 3
+    }
+   ],
+   "assists": [
+    {
+     "name": "Pascal Gross",
+     "club": "Brighton & Hove Albion",
+     "value": 4
+    },
+    {
+     "name": "Evanilson",
+     "club": "AFC Bournemouth",
+     "value": 4
+    },
+    {
+     "name": "Declan Rice",
+     "club": "Arsenal",
+     "value": 4
+    },
+    {
+     "name": "Daichi Kamada",
+     "club": "Crystal Palace",
+     "value": 3
+    },
+    {
+     "name": "Cole Palmer",
+     "club": "Chelsea",
+     "value": 3
+    },
+    {
+     "name": "Maxim De Cuyper",
+     "club": "Brighton & Hove Albion",
+     "value": 3
+    },
+    {
+     "name": "John McGinn",
+     "club": "Aston Villa",
+     "value": 3
+    },
+    {
+     "name": "Josko Gvardiol",
+     "club": "Manchester City",
+     "value": 3
+    },
+    {
+     "name": "Mohammed Kudus",
+     "club": "Tottenham Hotspur",
+     "value": 3
+    },
+    {
+     "name": "Antoine Semenyo",
+     "club": "Manchester City",
+     "value": 3
+    },
+    {
+     "name": "Ben White",
+     "club": "Arsenal",
+     "value": 3
+    },
+    {
+     "name": "João Pedro",
+     "club": "Chelsea",
+     "value": 3
+    },
+    {
+     "name": "Cody Gakpo",
+     "club": "Liverpool",
+     "value": 3
+    },
+    {
+     "name": "Johan Manzambi",
+     "club": "Aston Villa",
+     "value": 3
+    },
+    {
+     "name": "Tarik Muharemovic",
+     "club": "Leeds United",
+     "value": 2
+    },
+    {
+     "name": "Igor Thiago",
+     "club": "Brentford",
+     "value": 2
+    },
+    {
+     "name": "Oliver McBurnie",
+     "club": "Hull City",
+     "value": 2
+    },
+    {
+     "name": "Diego Gómez",
+     "club": "Brighton & Hove Albion",
+     "value": 2
+    },
+    {
+     "name": "Julio Enciso",
+     "club": "Ipswich Town",
+     "value": 2
+    },
+    {
+     "name": "Mohamed Belloumi",
+     "club": "Hull City",
+     "value": 2
+    }
+   ]
+  },
+  "laliga": {
+   "seasons": [
+    {
+     "season": 2002,
+     "champion": "Real Madrid",
+     "top4": [
+      "Real Madrid",
+      "Real Sociedad",
+      "Deportivo",
+      "Celta Vigo"
+     ],
+     "relegated": [
+      "Recreativo Huelva",
+      "Alavés",
+      "Rayo Vallecano"
+     ]
+    },
+    {
+     "season": 2003,
+     "champion": "Valencia",
+     "top4": [
+      "Valencia",
+      "Barcelona",
+      "Deportivo",
+      "Real Madrid"
+     ],
+     "relegated": [
+      "Real Valladolid",
+      "Celta Vigo",
+      "Real Murcia"
+     ]
+    },
+    {
+     "season": 2004,
+     "champion": "Barcelona",
+     "top4": [
+      "Barcelona",
+      "Real Madrid",
+      "Villarreal",
+      "Real Betis"
+     ],
+     "relegated": [
+      "Levante",
+      "Numancia",
+      "Albacete"
+     ]
+    },
+    {
+     "season": 2005,
+     "champion": "Barcelona",
+     "top4": [
+      "Barcelona",
+      "Real Madrid",
+      "Valencia",
+      "Osasuna"
+     ],
+     "relegated": [
+      "Alavés",
+      "Cádiz",
+      "Málaga"
+     ]
+    },
+    {
+     "season": 2006,
+     "champion": "Real Madrid",
+     "top4": [
+      "Real Madrid",
+      "Barcelona",
+      "Sevilla",
+      "Valencia"
+     ],
+     "relegated": [
+      "Celta Vigo",
+      "Real Sociedad",
+      "Gimnàstic de Tarragona"
+     ]
+    },
+    {
+     "season": 2007,
+     "champion": "Real Madrid",
+     "top4": [
+      "Real Madrid",
+      "Villarreal",
+      "Barcelona",
+      "Atlético Madrid"
+     ],
+     "relegated": [
+      "Real Zaragoza",
+      "Real Murcia",
+      "Levante"
+     ]
+    },
+    {
+     "season": 2008,
+     "champion": "Barcelona",
+     "top4": [
+      "Barcelona",
+      "Real Madrid",
+      "Sevilla",
+      "Atlético Madrid"
+     ],
+     "relegated": [
+      "Real Betis",
+      "Numancia",
+      "Recreativo Huelva"
+     ]
+    },
+    {
+     "season": 2009,
+     "champion": "Barcelona",
+     "top4": [
+      "Barcelona",
+      "Real Madrid",
+      "Valencia",
+      "Sevilla"
+     ],
+     "relegated": [
+      "Real Valladolid",
+      "Tenerife",
+      "Xerez"
+     ]
+    },
+    {
+     "season": 2010,
+     "champion": "Barcelona",
+     "top4": [
+      "Barcelona",
+      "Real Madrid",
+      "Valencia",
+      "Villarreal"
+     ],
+     "relegated": [
+      "Deportivo",
+      "Hercules",
+      "Almería"
+     ]
+    },
+    {
+     "season": 2011,
+     "champion": "Real Madrid",
+     "top4": [
+      "Real Madrid",
+      "Barcelona",
+      "Valencia",
+      "Málaga"
+     ],
+     "relegated": [
+      "Villarreal",
+      "Sporting Gijón",
+      "Racing Santander"
+     ]
+    },
+    {
+     "season": 2012,
+     "champion": "Barcelona",
+     "top4": [
+      "Barcelona",
+      "Real Madrid",
+      "Atlético Madrid",
+      "Real Sociedad"
+     ],
+     "relegated": [
+      "Mallorca",
+      "Deportivo",
+      "Real Zaragoza"
+     ]
+    },
+    {
+     "season": 2013,
+     "champion": "Atlético Madrid",
+     "top4": [
+      "Atlético Madrid",
+      "Barcelona",
+      "Real Madrid",
+      "Athletic Club"
+     ],
+     "relegated": [
+      "Osasuna",
+      "Real Valladolid",
+      "Real Betis"
+     ]
+    },
+    {
+     "season": 2014,
+     "champion": "Barcelona",
+     "top4": [
+      "Barcelona",
+      "Real Madrid",
+      "Atlético Madrid",
+      "Valencia"
+     ],
+     "relegated": [
+      "Eibar",
+      "Almería",
+      "Córdoba"
+     ]
+    },
+    {
+     "season": 2015,
+     "champion": "Barcelona",
+     "top4": [
+      "Barcelona",
+      "Real Madrid",
+      "Atlético Madrid",
+      "Villarreal"
+     ],
+     "relegated": [
+      "Rayo Vallecano",
+      "Getafe",
+      "Levante"
+     ]
+    },
+    {
+     "season": 2016,
+     "champion": "Real Madrid",
+     "top4": [
+      "Real Madrid",
+      "Barcelona",
+      "Atlético Madrid",
+      "Sevilla"
+     ],
+     "relegated": [
+      "Sporting Gijón",
+      "Osasuna",
+      "Granada"
+     ]
+    },
+    {
+     "season": 2017,
+     "champion": "Barcelona",
+     "top4": [
+      "Barcelona",
+      "Atlético Madrid",
+      "Real Madrid",
+      "Valencia"
+     ],
+     "relegated": [
+      "Deportivo",
+      "Las Palmas",
+      "Málaga"
+     ]
+    },
+    {
+     "season": 2018,
+     "champion": "Barcelona",
+     "top4": [
+      "Barcelona",
+      "Atlético Madrid",
+      "Real Madrid",
+      "Valencia"
+     ],
+     "relegated": [
+      "Girona",
+      "Huesca",
+      "Rayo Vallecano"
+     ]
+    },
+    {
+     "season": 2019,
+     "champion": "Real Madrid",
+     "top4": [
+      "Real Madrid",
+      "Barcelona",
+      "Atlético Madrid",
+      "Sevilla"
+     ],
+     "relegated": [
+      "Leganés",
+      "Mallorca",
+      "Espanyol"
+     ]
+    },
+    {
+     "season": 2020,
+     "champion": "Atlético Madrid",
+     "top4": [
+      "Atlético Madrid",
+      "Real Madrid",
+      "Barcelona",
+      "Sevilla"
+     ],
+     "relegated": [
+      "Huesca",
+      "Real Valladolid",
+      "Eibar"
+     ]
+    },
+    {
+     "season": 2021,
+     "champion": "Real Madrid",
+     "top4": [
+      "Real Madrid",
+      "Barcelona",
+      "Atlético Madrid",
+      "Sevilla"
+     ],
+     "relegated": [
+      "Granada",
+      "Levante",
+      "Alavés"
+     ]
+    },
+    {
+     "season": 2022,
+     "champion": "Barcelona",
+     "top4": [
+      "Barcelona",
+      "Real Madrid",
+      "Atlético Madrid",
+      "Real Sociedad"
+     ],
+     "relegated": [
+      "Real Valladolid",
+      "Espanyol",
+      "Elche"
+     ]
+    },
+    {
+     "season": 2023,
+     "champion": "Real Madrid",
+     "top4": [
+      "Real Madrid",
+      "Barcelona",
+      "Girona",
+      "Atlético Madrid"
+     ],
+     "relegated": [
+      "Cádiz",
+      "Almería",
+      "Granada"
+     ]
+    },
+    {
+     "season": 2024,
+     "champion": "Barcelona",
+     "top4": [
+      "Barcelona",
+      "Real Madrid",
+      "Atlético Madrid",
+      "Athletic Club"
+     ],
+     "relegated": [
+      "Leganés",
+      "Las Palmas",
+      "Real Valladolid"
+     ]
+    },
+    {
+     "season": 2025,
+     "champion": "Barcelona",
+     "top4": [
+      "Barcelona",
+      "Real Madrid",
+      "Villarreal",
+      "Atlético Madrid"
+     ],
+     "relegated": [
+      "Mallorca",
+      "Girona",
+      "Real Oviedo"
+     ]
+    }
+   ],
+   "currentTable": [
+    "Barcelona",
+    "Atlético Madrid",
+    "Real Madrid",
+    "Real Betis",
+    "Real Sociedad",
+    "Sevilla",
+    "Athletic Club",
+    "Villarreal",
+    "Celta Vigo",
+    "Alavés",
+    "Rayo Vallecano",
+    "Getafe",
+    "Deportivo",
+    "Espanyol",
+    "Osasuna",
+    "Racing Santander",
+    "Elche",
+    "Levante",
+    "Valencia",
+    "Málaga"
+   ],
+   "scorers": [
+    {
+     "name": "Raphinha",
+     "club": "Barcelona",
+     "value": 15
+    },
+    {
+     "name": "Kylian Mbappé",
+     "club": "Real Madrid",
+     "value": 11
+    },
+    {
+     "name": "Lamine Yamal",
+     "club": "Barcelona",
+     "value": 10
+    },
+    {
+     "name": "Yassir Zabiri",
+     "club": "Racing Santander",
+     "value": 8
+    },
+    {
+     "name": "Sergio Camello",
+     "club": "Rayo Vallecano",
+     "value": 7
+    },
+    {
+     "name": "Ante Budimir",
+     "club": "Osasuna",
+     "value": 7
+    },
+    {
+     "name": "Roberto Fernández",
+     "club": "Espanyol",
+     "value": 6
+    },
+    {
+     "name": "Fer Niño",
+     "club": "Elche",
+     "value": 6
+    },
+    {
+     "name": "Álex Baena",
+     "club": "Atlético Madrid",
+     "value": 5
+    },
+    {
+     "name": "Roger Brugué",
+     "club": "Levante",
+     "value": 5
+    },
+    {
+     "name": "Lucas Boyé",
+     "club": "Alavés",
+     "value": 5
+    },
+    {
+     "name": "Fermín López",
+     "club": "Barcelona",
+     "value": 5
+    },
+    {
+     "name": "Pierre-Emerick Aubameyang",
+     "club": "Deportivo",
+     "value": 5
+    },
+    {
+     "name": "Adrián Niño",
+     "club": "Málaga",
+     "value": 5
+    },
+    {
+     "name": "Mariano Díaz",
+     "club": "Alavés",
+     "value": 4
+    },
+    {
+     "name": "Alejandro Grimaldo",
+     "club": "Atlético Madrid",
+     "value": 4
+    },
+    {
+     "name": "Iván Romero",
+     "club": "Levante",
+     "value": 3
+    },
+    {
+     "name": "Giuliano Simeone",
+     "club": "Atlético Madrid",
+     "value": 3
+    },
+    {
+     "name": "Álvaro García",
+     "club": "Rayo Vallecano",
+     "value": 3
+    },
+    {
+     "name": "Georges Mikautadze",
+     "club": "Villarreal",
+     "value": 3
+    }
+   ],
+   "assists": [
+    {
+     "name": "Lamine Yamal",
+     "club": "Barcelona",
+     "value": 7
+    },
+    {
+     "name": "Javi Hernandez",
+     "club": "Espanyol",
+     "value": 6
+    },
+    {
+     "name": "Fermín López",
+     "club": "Barcelona",
+     "value": 5
+    },
+    {
+     "name": "Alberto Moleiro",
+     "club": "Villarreal",
+     "value": 4
+    },
+    {
+     "name": "Mariano Díaz",
+     "club": "Alavés",
+     "value": 4
+    },
+    {
+     "name": "Anthony Gordon",
+     "club": "Barcelona",
+     "value": 4
+    },
+    {
+     "name": "Álex Berenguer",
+     "club": "Athletic Club",
+     "value": 4
+    },
+    {
+     "name": "Unai López",
+     "club": "Rayo Vallecano",
+     "value": 3
+    },
+    {
+     "name": "Álex Baena",
+     "club": "Atlético Madrid",
+     "value": 3
+    },
+    {
+     "name": "Iñigo Vicente",
+     "club": "Racing Santander",
+     "value": 3
+    },
+    {
+     "name": "Jude Bellingham",
+     "club": "Real Madrid",
+     "value": 3
+    },
+    {
+     "name": "Raphinha",
+     "club": "Barcelona",
+     "value": 3
+    },
+    {
+     "name": "Ángel Pérez",
+     "club": "Alavés",
+     "value": 3
+    },
+    {
+     "name": "José Antonio Morente",
+     "club": "Elche",
+     "value": 3
+    },
+    {
+     "name": "Carlos Soler",
+     "club": "Real Sociedad",
+     "value": 3
+    },
+    {
+     "name": "Dani Olmo",
+     "club": "Barcelona",
+     "value": 3
+    },
+    {
+     "name": "Vinícius Júnior",
+     "club": "Real Madrid",
+     "value": 3
+    },
+    {
+     "name": "Youssouf Fofana",
+     "club": "Sevilla",
+     "value": 3
+    },
+    {
+     "name": "Job Ochieng",
+     "club": "Real Sociedad",
+     "value": 3
+    },
+    {
+     "name": "Dávid Hancko",
+     "club": "Atlético Madrid",
+     "value": 2
+    }
+   ]
+  },
+  "seriea": {
+   "seasons": [
+    {
+     "season": 2002,
+     "champion": "Juventus",
+     "top4": [
+      "Juventus",
+      "Internazionale",
+      "AC Milan",
+      "Lazio"
+     ],
+     "relegated": [
+      "Piacenza",
+      "Como",
+      "Torino"
+     ]
+    },
+    {
+     "season": 2003,
+     "champion": "AC Milan",
+     "top4": [
+      "AC Milan",
+      "AS Roma",
+      "Juventus",
+      "Internazionale"
+     ],
+     "relegated": [
+      "Modena",
+      "Empoli",
+      "Ancona"
+     ]
+    },
+    {
+     "season": 2004,
+     "champion": "Juventus",
+     "top4": [
+      "Juventus",
+      "AC Milan",
+      "Internazionale",
+      "Udinese"
+     ],
+     "relegated": [
+      "Parma",
+      "Brescia",
+      "Atalanta"
+     ]
+    },
+    {
+     "season": 2005,
+     "champion": "Internazionale",
+     "top4": [
+      "Internazionale",
+      "AS Roma",
+      "AC Milan",
+      "Chievo Verona"
+     ],
+     "relegated": [
+      "Lecce",
+      "Treviso",
+      "Juventus"
+     ]
+    },
+    {
+     "season": 2006,
+     "champion": "Internazionale",
+     "top4": [
+      "Internazionale",
+      "AS Roma",
+      "Lazio",
+      "AC Milan"
+     ],
+     "relegated": [
+      "Chievo Verona",
+      "Ascoli",
+      "Messina"
+     ]
+    },
+    {
+     "season": 2007,
+     "champion": "Internazionale",
+     "top4": [
+      "Internazionale",
+      "AS Roma",
+      "Juventus",
+      "Fiorentina"
+     ],
+     "relegated": [
+      "Empoli",
+      "Parma",
+      "Livorno"
+     ]
+    },
+    {
+     "season": 2008,
+     "champion": "Internazionale",
+     "top4": [
+      "Internazionale",
+      "Juventus",
+      "AC Milan",
+      "Fiorentina"
+     ],
+     "relegated": [
+      "Torino",
+      "Reggina",
+      "Lecce"
+     ]
+    },
+    {
+     "season": 2009,
+     "champion": "Internazionale",
+     "top4": [
+      "Internazionale",
+      "AS Roma",
+      "AC Milan",
+      "Sampdoria"
+     ],
+     "relegated": [
+      "Atalanta",
+      "Siena",
+      "Livorno"
+     ]
+    },
+    {
+     "season": 2010,
+     "champion": "AC Milan",
+     "top4": [
+      "AC Milan",
+      "Internazionale",
+      "Napoli",
+      "Udinese"
+     ],
+     "relegated": [
+      "Sampdoria",
+      "Brescia",
+      "Bari"
+     ]
+    },
+    {
+     "season": 2011,
+     "champion": "Juventus",
+     "top4": [
+      "Juventus",
+      "AC Milan",
+      "Udinese",
+      "Lazio"
+     ],
+     "relegated": [
+      "Lecce",
+      "Novara",
+      "Cesena"
+     ]
+    },
+    {
+     "season": 2012,
+     "champion": "Juventus",
+     "top4": [
+      "Juventus",
+      "Napoli",
+      "AC Milan",
+      "Fiorentina"
+     ],
+     "relegated": [
+      "Palermo",
+      "Siena",
+      "Pescara"
+     ]
+    },
+    {
+     "season": 2013,
+     "champion": "Juventus",
+     "top4": [
+      "Juventus",
+      "AS Roma",
+      "Napoli",
+      "Fiorentina"
+     ],
+     "relegated": [
+      "Catania",
+      "Bologna",
+      "Livorno"
+     ]
+    },
+    {
+     "season": 2014,
+     "champion": "Juventus",
+     "top4": [
+      "Juventus",
+      "AS Roma",
+      "Lazio",
+      "Fiorentina"
+     ],
+     "relegated": [
+      "Cagliari",
+      "Cesena",
+      "Parma"
+     ]
+    },
+    {
+     "season": 2015,
+     "champion": "Juventus",
+     "top4": [
+      "Juventus",
+      "Napoli",
+      "AS Roma",
+      "Internazionale"
+     ],
+     "relegated": [
+      "Carpi",
+      "Frosinone",
+      "Hellas Verona"
+     ]
+    },
+    {
+     "season": 2016,
+     "champion": "Juventus",
+     "top4": [
+      "Juventus",
+      "AS Roma",
+      "Napoli",
+      "Atalanta"
+     ],
+     "relegated": [
+      "Empoli",
+      "Palermo",
+      "Pescara"
+     ]
+    },
+    {
+     "season": 2017,
+     "champion": "Juventus",
+     "top4": [
+      "Juventus",
+      "Napoli",
+      "AS Roma",
+      "Internazionale"
+     ],
+     "relegated": [
+      "Crotone",
+      "Hellas Verona",
+      "Benevento"
+     ]
+    },
+    {
+     "season": 2018,
+     "champion": "Juventus",
+     "top4": [
+      "Juventus",
+      "Napoli",
+      "Atalanta",
+      "Internazionale"
+     ],
+     "relegated": [
+      "Empoli",
+      "Frosinone",
+      "Chievo Verona"
+     ]
+    },
+    {
+     "season": 2019,
+     "champion": "Juventus",
+     "top4": [
+      "Juventus",
+      "Internazionale",
+      "Atalanta",
+      "Lazio"
+     ],
+     "relegated": [
+      "Lecce",
+      "Brescia",
+      "SPAL"
+     ]
+    },
+    {
+     "season": 2020,
+     "champion": "Internazionale",
+     "top4": [
+      "Internazionale",
+      "AC Milan",
+      "Atalanta",
+      "Juventus"
+     ],
+     "relegated": [
+      "Benevento",
+      "Crotone",
+      "Parma"
+     ]
+    },
+    {
+     "season": 2021,
+     "champion": "AC Milan",
+     "top4": [
+      "AC Milan",
+      "Internazionale",
+      "Napoli",
+      "Juventus"
+     ],
+     "relegated": [
+      "Cagliari",
+      "Genoa",
+      "Venezia"
+     ]
+    },
+    {
+     "season": 2022,
+     "champion": "Napoli",
+     "top4": [
+      "Napoli",
+      "Lazio",
+      "Internazionale",
+      "AC Milan"
+     ],
+     "relegated": [
+      "Hellas Verona",
+      "Cremonese",
+      "Sampdoria"
+     ]
+    },
+    {
+     "season": 2023,
+     "champion": "Internazionale",
+     "top4": [
+      "Internazionale",
+      "AC Milan",
+      "Juventus",
+      "Atalanta"
+     ],
+     "relegated": [
+      "Frosinone",
+      "Sassuolo",
+      "Salernitana"
+     ]
+    },
+    {
+     "season": 2024,
+     "champion": "Napoli",
+     "top4": [
+      "Napoli",
+      "Internazionale",
+      "Atalanta",
+      "Juventus"
+     ],
+     "relegated": [
+      "Empoli",
+      "Venezia",
+      "Monza"
+     ]
+    },
+    {
+     "season": 2025,
+     "champion": "Internazionale",
+     "top4": [
+      "Internazionale",
+      "Napoli",
+      "AS Roma",
+      "Como"
+     ],
+     "relegated": [
+      "Cremonese",
+      "Hellas Verona",
+      "Pisa"
+     ]
+    }
+   ],
+   "currentTable": [
+    "Lazio",
+    "Internazionale",
+    "AS Roma",
+    "Como",
+    "AC Milan",
+    "Frosinone",
+    "Juventus",
+    "Napoli",
+    "Bologna",
+    "Torino",
+    "Genoa",
+    "Cagliari",
+    "Atalanta",
+    "Lecce",
+    "Sassuolo",
+    "Monza",
+    "Fiorentina",
+    "Parma",
+    "Udinese",
+    "Venezia"
+   ],
+   "scorers": [
+    {
+     "name": "Gustavo Varela",
+     "club": "Monza",
+     "value": 9
+    },
+    {
+     "name": "Antonio Raimondo",
+     "club": "Frosinone",
+     "value": 8
+    },
+    {
+     "name": "Donyell Malen",
+     "club": "AS Roma",
+     "value": 8
+    },
+    {
+     "name": "Nikola Krstovic",
+     "club": "Atalanta",
+     "value": 6
+    },
+    {
+     "name": "Anastasios Douvikas",
+     "club": "Como",
+     "value": 5
+    },
+    {
+     "name": "Marcus Thuram",
+     "club": "Internazionale",
+     "value": 5
+    },
+    {
+     "name": "Daniel Maldini",
+     "club": "Cagliari",
+     "value": 5
+    },
+    {
+     "name": "Adrien Rabiot",
+     "club": "AC Milan",
+     "value": 5
+    },
+    {
+     "name": "Giacomo Calo",
+     "club": "Frosinone",
+     "value": 4
+    },
+    {
+     "name": "Kevin De Bruyne",
+     "club": "Napoli",
+     "value": 4
+    },
+    {
+     "name": "Tijjani Noslin",
+     "club": "Lazio",
+     "value": 4
+    },
+    {
+     "name": "Alphadjo Cissè",
+     "club": "AC Milan",
+     "value": 4
+    },
+    {
+     "name": "Ché Adams",
+     "club": "Torino",
+     "value": 4
+    },
+    {
+     "name": "Diego Moreira",
+     "club": "AC Milan",
+     "value": 4
+    },
+    {
+     "name": "Lautaro Martínez",
+     "club": "Internazionale",
+     "value": 4
+    },
+    {
+     "name": "Jurgen Ekkelenkamp",
+     "club": "Udinese",
+     "value": 3
+    },
+    {
+     "name": "Federico Bernardeschi",
+     "club": "Bologna",
+     "value": 3
+    },
+    {
+     "name": "Matìas Soulè",
+     "club": "AS Roma",
+     "value": 3
+    },
+    {
+     "name": "Giorgi Kvernadze",
+     "club": "Frosinone",
+     "value": 3
+    },
+    {
+     "name": "Davide Frattesi",
+     "club": "Lazio",
+     "value": 3
+    }
+   ],
+   "assists": [
+    {
+     "name": "Mattia Zaccagni",
+     "club": "Lazio",
+     "value": 5
+    },
+    {
+     "name": "Juan Miranda",
+     "club": "Bologna",
+     "value": 5
+    },
+    {
+     "name": "Romano Schmid",
+     "club": "Frosinone",
+     "value": 4
+    },
+    {
+     "name": "Andy Diouf",
+     "club": "Internazionale",
+     "value": 4
+    },
+    {
+     "name": "Farès Ghedjemis",
+     "club": "Frosinone",
+     "value": 4
+    },
+    {
+     "name": "Paulo Dybala",
+     "club": "AS Roma",
+     "value": 4
+    },
+    {
+     "name": "Matìas Soulè",
+     "club": "AS Roma",
+     "value": 3
+    },
+    {
+     "name": "Giorgi Kvernadze",
+     "club": "Frosinone",
+     "value": 3
+    },
+    {
+     "name": "Charles De Ketelaere",
+     "club": "Atalanta",
+     "value": 3
+    },
+    {
+     "name": "Nuno Tavares",
+     "club": "Lazio",
+     "value": 3
+    },
+    {
+     "name": "Wesley",
+     "club": "AS Roma",
+     "value": 3
+    },
+    {
+     "name": "Matteo Politano",
+     "club": "Napoli",
+     "value": 3
+    },
+    {
+     "name": "Nico Paz",
+     "club": "Como",
+     "value": 3
+    },
+    {
+     "name": "Adrien Rabiot",
+     "club": "AC Milan",
+     "value": 3
+    },
+    {
+     "name": "Rafik Belghali",
+     "club": "Torino",
+     "value": 3
+    },
+    {
+     "name": "Nicola Zalewski",
+     "club": "Atalanta",
+     "value": 3
+    },
+    {
+     "name": "Diego Moreira",
+     "club": "AC Milan",
+     "value": 3
+    },
+    {
+     "name": "Samuele Birindelli",
+     "club": "Monza",
+     "value": 2
+    },
+    {
+     "name": "Ricardo Mangas",
+     "club": "Monza",
+     "value": 2
+    },
+    {
+     "name": "Hassane Kamara",
+     "club": "Udinese",
+     "value": 2
+    }
+   ]
+  },
+  "bundesliga": {
+   "seasons": [
+    {
+     "season": 2002,
+     "champion": "Bayern Munich",
+     "top4": [
+      "Bayern Munich",
+      "VfB Stuttgart",
+      "Borussia Dortmund",
+      "Hamburg SV"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2003,
+     "champion": "Werder Bremen",
+     "top4": [
+      "Werder Bremen",
+      "Bayern Munich",
+      "Bayer Leverkusen",
+      "VfB Stuttgart"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2004,
+     "champion": "Bayern Munich",
+     "top4": [
+      "Bayern Munich",
+      "Schalke 04",
+      "Werder Bremen",
+      "Hertha Berlin"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2005,
+     "champion": "Bayern Munich",
+     "top4": [
+      "Bayern Munich",
+      "Werder Bremen",
+      "Hamburg SV",
+      "Schalke 04"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2006,
+     "champion": "VfB Stuttgart",
+     "top4": [
+      "VfB Stuttgart",
+      "Schalke 04",
+      "Werder Bremen",
+      "Bayern Munich"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2007,
+     "champion": "Bayern Munich",
+     "top4": [
+      "Bayern Munich",
+      "Werder Bremen",
+      "Schalke 04",
+      "Hamburg SV"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2008,
+     "champion": "VfL Wolfsburg",
+     "top4": [
+      "VfL Wolfsburg",
+      "Bayern Munich",
+      "VfB Stuttgart",
+      "Hertha Berlin"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2009,
+     "champion": "Bayern Munich",
+     "top4": [
+      "Bayern Munich",
+      "Schalke 04",
+      "Werder Bremen",
+      "Bayer Leverkusen"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2010,
+     "champion": "Borussia Dortmund",
+     "top4": [
+      "Borussia Dortmund",
+      "Bayer Leverkusen",
+      "Bayern Munich",
+      "Hannover 96"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2011,
+     "champion": "Borussia Dortmund",
+     "top4": [
+      "Borussia Dortmund",
+      "Bayern Munich",
+      "Schalke 04",
+      "Borussia Mönchengladbach"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2012,
+     "champion": "Bayern Munich",
+     "top4": [
+      "Bayern Munich",
+      "Borussia Dortmund",
+      "Bayer Leverkusen",
+      "Schalke 04"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2013,
+     "champion": "Bayern Munich",
+     "top4": [
+      "Bayern Munich",
+      "Borussia Dortmund",
+      "Schalke 04",
+      "Bayer Leverkusen"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2014,
+     "champion": "Bayern Munich",
+     "top4": [
+      "Bayern Munich",
+      "VfL Wolfsburg",
+      "Borussia Mönchengladbach",
+      "Bayer Leverkusen"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2015,
+     "champion": "Bayern Munich",
+     "top4": [
+      "Bayern Munich",
+      "Borussia Dortmund",
+      "Bayer Leverkusen",
+      "Borussia Mönchengladbach"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2016,
+     "champion": "Bayern Munich",
+     "top4": [
+      "Bayern Munich",
+      "RB Leipzig",
+      "Borussia Dortmund",
+      "TSG Hoffenheim"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2017,
+     "champion": "Bayern Munich",
+     "top4": [
+      "Bayern Munich",
+      "Schalke 04",
+      "TSG Hoffenheim",
+      "Borussia Dortmund"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2018,
+     "champion": "Bayern Munich",
+     "top4": [
+      "Bayern Munich",
+      "Borussia Dortmund",
+      "RB Leipzig",
+      "Bayer Leverkusen"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2019,
+     "champion": "Bayern Munich",
+     "top4": [
+      "Bayern Munich",
+      "Borussia Dortmund",
+      "RB Leipzig",
+      "Borussia Mönchengladbach"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2020,
+     "champion": "Bayern Munich",
+     "top4": [
+      "Bayern Munich",
+      "RB Leipzig",
+      "Borussia Dortmund",
+      "VfL Wolfsburg"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2021,
+     "champion": "Bayern Munich",
+     "top4": [
+      "Bayern Munich",
+      "Borussia Dortmund",
+      "Bayer Leverkusen",
+      "RB Leipzig"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2022,
+     "champion": "Bayern Munich",
+     "top4": [
+      "Bayern Munich",
+      "Borussia Dortmund",
+      "RB Leipzig",
+      "1. FC Union Berlin"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2023,
+     "champion": "Bayer Leverkusen",
+     "top4": [
+      "Bayer Leverkusen",
+      "VfB Stuttgart",
+      "Bayern Munich",
+      "RB Leipzig"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2024,
+     "champion": "Bayern Munich",
+     "top4": [
+      "Bayern Munich",
+      "Bayer Leverkusen",
+      "Eintracht Frankfurt",
+      "Borussia Dortmund"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2025,
+     "champion": "Bayern Munich",
+     "top4": [
+      "Bayern Munich",
+      "Borussia Dortmund",
+      "RB Leipzig",
+      "VfB Stuttgart"
+     ],
+     "relegated": []
+    }
+   ],
+   "currentTable": [
+    "Bayern Munich",
+    "Borussia Dortmund",
+    "SC Freiburg",
+    "RB Leipzig",
+    "Werder Bremen",
+    "Bayer Leverkusen",
+    "SV Elversberg",
+    "Eintracht Frankfurt",
+    "Mainz",
+    "FC Augsburg",
+    "VfB Stuttgart",
+    "TSG Hoffenheim",
+    "FC Cologne",
+    "SC Paderborn 07",
+    "Hamburg SV",
+    "1. FC Union Berlin",
+    "Schalke 04",
+    "Borussia Mönchengladbach"
+   ],
+   "scorers": [
+    {
+     "name": "Niclas Füllkrug",
+     "club": "Werder Bremen",
+     "value": 9
+    },
+    {
+     "name": "Patrik Schick",
+     "club": "Bayer Leverkusen",
+     "value": 7
+    },
+    {
+     "name": "Michael Olise",
+     "club": "Bayern Munich",
+     "value": 6
+    },
+    {
+     "name": "Phillip Tietz",
+     "club": "Mainz",
+     "value": 5
+    },
+    {
+     "name": "Ermedin Demirovic",
+     "club": "VfB Stuttgart",
+     "value": 5
+    },
+    {
+     "name": "Michael Gregoritsch",
+     "club": "FC Augsburg",
+     "value": 5
+    },
+    {
+     "name": "Younes Ebnoutalib",
+     "club": "Eintracht Frankfurt",
+     "value": 5
+    },
+    {
+     "name": "Antonio Nusa",
+     "club": "RB Leipzig",
+     "value": 4
+    },
+    {
+     "name": "Harry Kane",
+     "club": "Bayern Munich",
+     "value": 4
+    },
+    {
+     "name": "Igor Matanovic",
+     "club": "SC Freiburg",
+     "value": 4
+    },
+    {
+     "name": "Maurice Krattenmacher",
+     "club": "SV Elversberg",
+     "value": 4
+    },
+    {
+     "name": "Yuito Suzuki",
+     "club": "SC Freiburg",
+     "value": 4
+    },
+    {
+     "name": "Luis Díaz",
+     "club": "Bayern Munich",
+     "value": 4
+    },
+    {
+     "name": "Christopher Nkunku",
+     "club": "RB Leipzig",
+     "value": 4
+    },
+    {
+     "name": "Rômulo",
+     "club": "RB Leipzig",
+     "value": 4
+    },
+    {
+     "name": "Maximilian Eggestein",
+     "club": "SC Freiburg",
+     "value": 3
+    },
+    {
+     "name": "Serhou Guirassy",
+     "club": "Borussia Dortmund",
+     "value": 3
+    },
+    {
+     "name": "Ibrahim Maza",
+     "club": "Bayer Leverkusen",
+     "value": 3
+    },
+    {
+     "name": "Dayot Upamecano",
+     "club": "Bayern Munich",
+     "value": 3
+    },
+    {
+     "name": "Anthony Caci",
+     "club": "Mainz",
+     "value": 3
+    }
+   ],
+   "assists": [
+    {
+     "name": "Marco Grüll",
+     "club": "Werder Bremen",
+     "value": 6
+    },
+    {
+     "name": "Antonio Nusa",
+     "club": "RB Leipzig",
+     "value": 6
+    },
+    {
+     "name": "Harry Kane",
+     "club": "Bayern Munich",
+     "value": 6
+    },
+    {
+     "name": "Fabian Rieder",
+     "club": "FC Augsburg",
+     "value": 4
+    },
+    {
+     "name": "Miguel Gutiérrez",
+     "club": "Bayer Leverkusen",
+     "value": 4
+    },
+    {
+     "name": "Sheraldo Becker",
+     "club": "Mainz",
+     "value": 4
+    },
+    {
+     "name": "Matthias Ginter",
+     "club": "SC Freiburg",
+     "value": 3
+    },
+    {
+     "name": "Michael Olise",
+     "club": "Bayern Munich",
+     "value": 3
+    },
+    {
+     "name": "Anthony Caci",
+     "club": "Mainz",
+     "value": 3
+    },
+    {
+     "name": "Joshua Kimmich",
+     "club": "Bayern Munich",
+     "value": 3
+    },
+    {
+     "name": "Hennes Behrens",
+     "club": "FC Augsburg",
+     "value": 2
+    },
+    {
+     "name": "Jordy Makengo",
+     "club": "SC Freiburg",
+     "value": 2
+    },
+    {
+     "name": "Lukas Petkov",
+     "club": "SV Elversberg",
+     "value": 2
+    },
+    {
+     "name": "Aleix García",
+     "club": "Bayer Leverkusen",
+     "value": 2
+    },
+    {
+     "name": "Kaishu Sano",
+     "club": "Mainz",
+     "value": 2
+    },
+    {
+     "name": "Serhou Guirassy",
+     "club": "Borussia Dortmund",
+     "value": 2
+    },
+    {
+     "name": "Ibrahim Maza",
+     "club": "Bayer Leverkusen",
+     "value": 2
+    },
+    {
+     "name": "Chuki",
+     "club": "Werder Bremen",
+     "value": 2
+    },
+    {
+     "name": "Adam Daghim",
+     "club": "TSG Hoffenheim",
+     "value": 2
+    },
+    {
+     "name": "Patrik Schick",
+     "club": "Bayer Leverkusen",
+     "value": 2
+    }
+   ]
+  },
+  "ligue1": {
+   "seasons": [
+    {
+     "season": 2002,
+     "champion": "Lyon",
+     "top4": [
+      "Lyon",
+      "AS Monaco",
+      "Marseille",
+      "Bordeaux"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2003,
+     "champion": "Lyon",
+     "top4": [
+      "Lyon",
+      "Paris Saint-Germain",
+      "AS Monaco",
+      "AJ Auxerre"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2004,
+     "champion": "Lyon",
+     "top4": [
+      "Lyon",
+      "Lille",
+      "AS Monaco",
+      "Stade Rennais"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2005,
+     "champion": "Lyon",
+     "top4": [
+      "Lyon",
+      "Bordeaux",
+      "Lille",
+      "Lens"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2006,
+     "champion": "Lyon",
+     "top4": [
+      "Lyon",
+      "Marseille",
+      "Toulouse",
+      "Stade Rennais"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2007,
+     "champion": "Lyon",
+     "top4": [
+      "Lyon",
+      "Bordeaux",
+      "Marseille",
+      "AS Nancy Lorraine"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2008,
+     "champion": "Bordeaux",
+     "top4": [
+      "Bordeaux",
+      "Marseille",
+      "Lyon",
+      "Toulouse"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2009,
+     "champion": "Marseille",
+     "top4": [
+      "Marseille",
+      "Lyon",
+      "AJ Auxerre",
+      "Lille"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2010,
+     "champion": "Lille",
+     "top4": [
+      "Lille",
+      "Marseille",
+      "Lyon",
+      "Paris Saint-Germain"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2011,
+     "champion": "Montpellier",
+     "top4": [
+      "Montpellier",
+      "Paris Saint-Germain",
+      "Lille",
+      "Lyon"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2012,
+     "champion": "Paris Saint-Germain",
+     "top4": [
+      "Paris Saint-Germain",
+      "Marseille",
+      "Lyon",
+      "Nice"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2013,
+     "champion": "Paris Saint-Germain",
+     "top4": [
+      "Paris Saint-Germain",
+      "AS Monaco",
+      "Lille",
+      "Saint-Étienne"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2014,
+     "champion": "Paris Saint-Germain",
+     "top4": [
+      "Paris Saint-Germain",
+      "Lyon",
+      "AS Monaco",
+      "Marseille"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2015,
+     "champion": "Paris Saint-Germain",
+     "top4": [
+      "Paris Saint-Germain",
+      "Lyon",
+      "AS Monaco",
+      "Nice"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2016,
+     "champion": "AS Monaco",
+     "top4": [
+      "AS Monaco",
+      "Paris Saint-Germain",
+      "Nice",
+      "Lyon"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2017,
+     "champion": "Paris Saint-Germain",
+     "top4": [
+      "Paris Saint-Germain",
+      "AS Monaco",
+      "Lyon",
+      "Marseille"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2018,
+     "champion": "Paris Saint-Germain",
+     "top4": [
+      "Paris Saint-Germain",
+      "Lille",
+      "Lyon",
+      "Saint-Étienne"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2020,
+     "champion": "Lille",
+     "top4": [
+      "Lille",
+      "Paris Saint-Germain",
+      "AS Monaco",
+      "Lyon"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2021,
+     "champion": "Paris Saint-Germain",
+     "top4": [
+      "Paris Saint-Germain",
+      "Marseille",
+      "AS Monaco",
+      "Stade Rennais"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2022,
+     "champion": "Paris Saint-Germain",
+     "top4": [
+      "Paris Saint-Germain",
+      "Lens",
+      "Marseille",
+      "Stade Rennais"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2023,
+     "champion": "Paris Saint-Germain",
+     "top4": [
+      "Paris Saint-Germain",
+      "AS Monaco",
+      "Brest",
+      "Lille"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2024,
+     "champion": "Paris Saint-Germain",
+     "top4": [
+      "Paris Saint-Germain",
+      "Marseille",
+      "AS Monaco",
+      "Nice"
+     ],
+     "relegated": []
+    }
+   ],
+   "currentTable": [
+    "Paris Saint-Germain",
+    "Lille",
+    "Lyon",
+    "Paris FC",
+    "Stade Rennais",
+    "Marseille",
+    "AS Monaco",
+    "Nice",
+    "Lens",
+    "Lorient",
+    "Toulouse",
+    "Strasbourg",
+    "AJ Auxerre",
+    "Brest",
+    "Angers",
+    "Troyes",
+    "Le Mans",
+    "Le Havre AC"
+   ],
+   "scorers": [
+    {
+     "name": "Esteban Lepaul",
+     "club": "Stade Rennais",
+     "value": 7
+    },
+    {
+     "name": "Lassine Sinayoko",
+     "club": "Paris FC",
+     "value": 6
+    },
+    {
+     "name": "Elye Wahi",
+     "club": "Nice",
+     "value": 6
+    },
+    {
+     "name": "Amine Gouiri",
+     "club": "Marseille",
+     "value": 5
+    },
+    {
+     "name": "Cameron Archer",
+     "club": "AJ Auxerre",
+     "value": 5
+    },
+    {
+     "name": "Casper Tengstedt",
+     "club": "Toulouse",
+     "value": 5
+    },
+    {
+     "name": "Florian Thauvin",
+     "club": "Lens",
+     "value": 4
+    },
+    {
+     "name": "Louis Mafouta",
+     "club": "Le Mans",
+     "value": 4
+    },
+    {
+     "name": "Ferran Torres",
+     "club": "Paris Saint-Germain",
+     "value": 4
+    },
+    {
+     "name": "Josh Maja",
+     "club": "Le Havre AC",
+     "value": 4
+    },
+    {
+     "name": "Kamory Doumbia",
+     "club": "Brest",
+     "value": 4
+    },
+    {
+     "name": "Sebastian Szymanski",
+     "club": "Stade Rennais",
+     "value": 4
+    },
+    {
+     "name": "Boulaye Dia",
+     "club": "Stade Rennais",
+     "value": 4
+    },
+    {
+     "name": "Paris Brunner",
+     "club": "AS Monaco",
+     "value": 4
+    },
+    {
+     "name": "Ludovic Ajorque",
+     "club": "Brest",
+     "value": 3
+    },
+    {
+     "name": "Danny Namaso",
+     "club": "AJ Auxerre",
+     "value": 3
+    },
+    {
+     "name": "Himad Abdelli",
+     "club": "Marseille",
+     "value": 3
+    },
+    {
+     "name": "Achraf Hakimi",
+     "club": "Paris Saint-Germain",
+     "value": 3
+    },
+    {
+     "name": "Olivier Giroud",
+     "club": "Lille",
+     "value": 3
+    },
+    {
+     "name": "Ernest Nuamah",
+     "club": "Lyon",
+     "value": 3
+    }
+   ],
+   "assists": [
+    {
+     "name": "Florian Thauvin",
+     "club": "Lens",
+     "value": 7
+    },
+    {
+     "name": "Cristian Cásseres Jr.",
+     "club": "Toulouse",
+     "value": 5
+    },
+    {
+     "name": "Lassine Sinayoko",
+     "club": "Paris FC",
+     "value": 4
+    },
+    {
+     "name": "Sofiane Diop",
+     "club": "Nice",
+     "value": 3
+    },
+    {
+     "name": "Zachary Athekame",
+     "club": "Lyon",
+     "value": 3
+    },
+    {
+     "name": "Emerson",
+     "club": "Marseille",
+     "value": 3
+    },
+    {
+     "name": "Aleksandr Golovin",
+     "club": "AS Monaco",
+     "value": 3
+    },
+    {
+     "name": "Pavel Sulc",
+     "club": "Lyon",
+     "value": 3
+    },
+    {
+     "name": "Panos Katseris",
+     "club": "Lorient",
+     "value": 3
+    },
+    {
+     "name": "Gauthier Hein",
+     "club": "Nice",
+     "value": 2
+    },
+    {
+     "name": "Przemyslaw Frankowski",
+     "club": "Stade Rennais",
+     "value": 2
+    },
+    {
+     "name": "Adrien Thomasson",
+     "club": "Stade Rennais",
+     "value": 2
+    },
+    {
+     "name": "Lucas Calodat",
+     "club": "Le Mans",
+     "value": 2
+    },
+    {
+     "name": "Mahamadou Nagida",
+     "club": "Stade Rennais",
+     "value": 2
+    },
+    {
+     "name": "Joris Chotard",
+     "club": "Brest",
+     "value": 2
+    },
+    {
+     "name": "Amine Gouiri",
+     "club": "Marseille",
+     "value": 2
+    },
+    {
+     "name": "Gessime Yassine",
+     "club": "Strasbourg",
+     "value": 2
+    },
+    {
+     "name": "Danny Namaso",
+     "club": "AJ Auxerre",
+     "value": 2
+    },
+    {
+     "name": "Elye Wahi",
+     "club": "Nice",
+     "value": 2
+    },
+    {
+     "name": "Lucas Bretelle",
+     "club": "Le Mans",
+     "value": 2
+    }
+   ]
+  },
+  "superlig": {
+   "seasons": [
+    {
+     "season": 2007,
+     "champion": "Galatasaray",
+     "top4": [
+      "Galatasaray",
+      "Fenerbahce",
+      "Sivasspor",
+      "Besiktas"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2008,
+     "champion": "Besiktas",
+     "top4": [
+      "Besiktas",
+      "Sivasspor",
+      "Trabzonspor",
+      "Fenerbahce"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2009,
+     "champion": "Bursaspor",
+     "top4": [
+      "Bursaspor",
+      "Fenerbahce",
+      "Galatasaray",
+      "Besiktas"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2012,
+     "champion": "Galatasaray",
+     "top4": [
+      "Galatasaray",
+      "Fenerbahce",
+      "Besiktas",
+      "Bursaspor"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2013,
+     "champion": "Fenerbahce",
+     "top4": [
+      "Fenerbahce",
+      "Galatasaray",
+      "Besiktas",
+      "Trabzonspor"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2014,
+     "champion": "Galatasaray",
+     "top4": [
+      "Galatasaray",
+      "Fenerbahce",
+      "Besiktas",
+      "Istanbul Basaksehir"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2015,
+     "champion": "Besiktas",
+     "top4": [
+      "Besiktas",
+      "Fenerbahce",
+      "Konyaspor",
+      "Istanbul Basaksehir"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2016,
+     "champion": "Besiktas",
+     "top4": [
+      "Besiktas",
+      "Istanbul Basaksehir",
+      "Fenerbahce",
+      "Galatasaray"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2017,
+     "champion": "Galatasaray",
+     "top4": [
+      "Galatasaray",
+      "Fenerbahce",
+      "Istanbul Basaksehir",
+      "Besiktas"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2018,
+     "champion": "Galatasaray",
+     "top4": [
+      "Galatasaray",
+      "Istanbul Basaksehir",
+      "Besiktas",
+      "Trabzonspor"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2019,
+     "champion": "Istanbul Basaksehir",
+     "top4": [
+      "Istanbul Basaksehir",
+      "Trabzonspor",
+      "Besiktas",
+      "Sivasspor"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2020,
+     "champion": "Besiktas",
+     "top4": [
+      "Besiktas",
+      "Galatasaray",
+      "Fenerbahce",
+      "Trabzonspor"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2021,
+     "champion": "Trabzonspor",
+     "top4": [
+      "Trabzonspor",
+      "Fenerbahce",
+      "Konyaspor",
+      "Istanbul Basaksehir"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2022,
+     "champion": "Galatasaray",
+     "top4": [
+      "Galatasaray",
+      "Fenerbahce",
+      "Besiktas",
+      "Adana Demirspor"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2023,
+     "champion": "Galatasaray",
+     "top4": [
+      "Galatasaray",
+      "Fenerbahce",
+      "Trabzonspor",
+      "Istanbul Basaksehir"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2024,
+     "champion": "Galatasaray",
+     "top4": [
+      "Galatasaray",
+      "Fenerbahce",
+      "Samsunspor",
+      "Besiktas"
+     ],
+     "relegated": []
+    },
+    {
+     "season": 2025,
+     "champion": "Galatasaray",
+     "top4": [
+      "Galatasaray",
+      "Fenerbahce",
+      "Trabzonspor",
+      "Besiktas"
+     ],
+     "relegated": []
+    }
+   ],
+   "currentTable": [
+    "Galatasaray",
+    "Amed SFK",
+    "Trabzonspor",
+    "Besiktas",
+    "Kasimpasa",
+    "Fenerbahce",
+    "Çorum FK",
+    "Kocaelispor",
+    "Goztepe",
+    "Istanbul Basaksehir",
+    "Erzurum BB",
+    "Alanyaspor",
+    "Caykur Rizespor",
+    "Konyaspor",
+    "Gaziantep FK",
+    "Genclerbirligi",
+    "Samsunspor",
+    "Eyupspor"
+   ],
+   "scorers": [
+    {
+     "name": "Victor Osimhen",
+     "club": "Galatasaray",
+     "value": 9
+    },
+    {
+     "name": "Mohamed Salah",
+     "club": "Trabzonspor",
+     "value": 8
+    },
+    {
+     "name": "Gift Orban",
+     "club": "Amed SFK",
+     "value": 8
+    },
+    {
+     "name": "Vedat Muriqi",
+     "club": "Fenerbahce",
+     "value": 7
+    },
+    {
+     "name": "Eldor Shomurodov",
+     "club": "Istanbul Basaksehir",
+     "value": 7
+    },
+    {
+     "name": "Jesús Ramírez",
+     "club": "Çorum FK",
+     "value": 6
+    },
+    {
+     "name": "Juan",
+     "club": "Goztepe",
+     "value": 6
+    },
+    {
+     "name": "Adrian Benedyczak",
+     "club": "Kasimpasa",
+     "value": 6
+    },
+    {
+     "name": "Dusan Vlahovic",
+     "club": "Besiktas",
+     "value": 6
+    },
+    {
+     "name": "Dia Saba",
+     "club": "Amed SFK",
+     "value": 5
+    },
+    {
+     "name": "Berkan Kutlu",
+     "club": "Kocaelispor",
+     "value": 4
+    },
+    {
+     "name": "André Henrique",
+     "club": "Goztepe",
+     "value": 4
+    },
+    {
+     "name": "Mason Greenwood",
+     "club": "Fenerbahce",
+     "value": 4
+    },
+    {
+     "name": "Alexandros Kyziridis",
+     "club": "Çorum FK",
+     "value": 4
+    },
+    {
+     "name": "Cengiz Ünder",
+     "club": "Çorum FK",
+     "value": 4
+    },
+    {
+     "name": "Franculino Djú",
+     "club": "Trabzonspor",
+     "value": 4
+    },
+    {
+     "name": "Qazim Laçi",
+     "club": "Caykur Rizespor",
+     "value": 3
+    },
+    {
+     "name": "Eren Tozlu",
+     "club": "Erzurum BB",
+     "value": 3
+    },
+    {
+     "name": "Irfan Can Kahveci",
+     "club": "Fenerbahce",
+     "value": 3
+    },
+    {
+     "name": "Miguel Cardoso",
+     "club": "Erzurum BB",
+     "value": 3
+    }
+   ],
+   "assists": [
+    {
+     "name": "Ernest Muçi",
+     "club": "Trabzonspor",
+     "value": 5
+    },
+    {
+     "name": "Gabriel Gomes",
+     "club": "Galatasaray",
+     "value": 4
+    },
+    {
+     "name": "Oguz Aydin",
+     "club": "Fenerbahce",
+     "value": 4
+    },
+    {
+     "name": "Alexandros Kyziridis",
+     "club": "Çorum FK",
+     "value": 4
+    },
+    {
+     "name": "Mohamed Salah",
+     "club": "Trabzonspor",
+     "value": 3
+    },
+    {
+     "name": "Gift Orban",
+     "club": "Amed SFK",
+     "value": 3
+    },
+    {
+     "name": "Irfan Can Kahveci",
+     "club": "Fenerbahce",
+     "value": 3
+    },
+    {
+     "name": "Kerem Aktürkoglu",
+     "club": "Fenerbahce",
+     "value": 3
+    },
+    {
+     "name": "Victor Osimhen",
+     "club": "Galatasaray",
+     "value": 3
+    },
+    {
+     "name": "Alexey Batrakov",
+     "club": "Galatasaray",
+     "value": 3
+    },
+    {
+     "name": "Mithat Pala",
+     "club": "Caykur Rizespor",
+     "value": 2
+    },
+    {
+     "name": "Gokhan Sazdagi",
+     "club": "Çorum FK",
+     "value": 2
+    },
+    {
+     "name": "Mohammed Diomande",
+     "club": "Çorum FK",
+     "value": 2
+    },
+    {
+     "name": "Janderson",
+     "club": "Goztepe",
+     "value": 2
+    },
+    {
+     "name": "Florent Hadergjonaj",
+     "club": "Alanyaspor",
+     "value": 2
+    },
+    {
+     "name": "Cláudio Winck",
+     "club": "Kasimpasa",
+     "value": 2
+    },
+    {
+     "name": "Rayan Raveloson",
+     "club": "Amed SFK",
+     "value": 2
+    },
+    {
+     "name": "Ermal Krasniqi",
+     "club": "Amed SFK",
+     "value": 2
+    },
+    {
+     "name": "Adrian Benedyczak",
+     "club": "Kasimpasa",
+     "value": 2
+    },
+    {
+     "name": "Lucas Torreira",
+     "club": "Galatasaray",
+     "value": 2
+    }
+   ]
+  }
+ }
+}

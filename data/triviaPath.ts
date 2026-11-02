@@ -4,6 +4,7 @@ import { DUEL_CLUBS, playersForBoth, playersForClub, searchDuelPlayers } from "@
 import { BUNDESLIGA_TRIVIA } from "@/data/bundesligaContent";
 import { LIGUE1_TRIVIA } from "@/data/ligue1Content";
 import { SUPERLIG_TRIVIA } from "@/data/superligContent";
+import { liveTriviaCategories } from "@/data/liveTrivia";
 
 export type TriviaEntry = { name: string; aliases: string[] };
 export type TriviaQuestion = { id: string; text: string; count: number; noun: string; plural: string; entries: TriviaEntry[]; short?: string };
@@ -143,6 +144,13 @@ STATIC.superlig = newLeagueStatic(SUPERLIG_TRIVIA);
 for (const comp of ["pl", "laliga", "seriea", "ucl"] as const) {
   STATIC[comp].push(...LEAGUE_EXTRA[comp]);
 }
+const LIVE_SHORT: Record<string, string> = {};
+for (const comp of ["pl", "laliga", "seriea", "bundesliga", "ligue1", "superlig"] as const) {
+  for (const item of liveTriviaCategories(comp)) {
+    STATIC[comp].push({ id: item.id, noun: item.noun, plural: item.plural, entries: item.entries });
+    LIVE_SHORT[item.id] = item.short;
+  }
+}
 // General football / international trivia belongs to the Champions League; domestic leagues keep their own content.
 const GENERAL_IDS = new Set(["s-ballon", "s-wc", "s-clwin", "s-scotstad", ...SHARED_EXTRA.map((item) => item.id)]);
 const KEEP_FOR: Record<string, Competition[]> = { "s-ballonfw": ["laliga", "ucl"] };
@@ -203,6 +211,7 @@ export const tileQuestion = (tile: BoardTile, count: number) =>
 export const answersFor = (tile: BoardTile, roll: number) => Math.max(1, Math.min(roll, tile.entries.length - 2));
 
 const SHORT: Record<string, string> = {
+  ...LIVE_SHORT,
   "s-ballon": "Ballon d'Or",
   "s-wc": "World Cup nations",
   "s-plmgr": "PL managers",
