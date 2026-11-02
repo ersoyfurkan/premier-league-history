@@ -19,6 +19,7 @@ import { NATION_INFO } from "@/data/nations";
 import { STADIUM_COUNTRIES } from "@/data/stadiumTrivia";
 import { AWARD_TRIVIA_CATEGORIES } from "@/data/individualAwards";
 import preparedCandidates from "@/data/quizTrivia.generated.json";
+import { triviaClueTeams } from "@/data/triviaTeams";
 
 export type TriviaEntry = { name: string; aliases: string[] };
 export type TriviaAnswerType = "player" | "nation" | "club" | "stadium" | "manager" | "nickname" | "campaign" | "season";
@@ -439,7 +440,8 @@ function dynamicCategory(comp: Competition): Category | null {
 
 // Rebuilds a board tile from its id, so a server only needs to store the 16 ids.
 const tileCache = new Map<string, BoardTile>();
-const preparedTiles: Record<Competition, Record<string, Omit<BoardTile, "entries"> & { entries: number }>> = preparedCandidates.tiles;
+type PreparedTile = Omit<BoardTile, "entries"> & { entries: number; teamKeys?: string[] };
+const preparedTiles: Record<Competition, Record<string, PreparedTile>> = preparedCandidates.tiles;
 export function tileById(comp: Competition, id: string): BoardTile | null {
   const stored = preparedTiles[comp][id];
   if (stored) return { ...stored, entries: preparedCandidates.entries[stored.entries] };
@@ -506,7 +508,7 @@ export function prepareTriviaData() {
   const entries: TriviaEntry[][] = [];
   const entryIds = new Map<string, number>();
   const candidates = {} as Record<Competition, BoardCandidate[]>;
-  const tiles = {} as Record<Competition, Record<string, Omit<BoardTile, "entries"> & { entries: number }>>;
+  const tiles = {} as Record<Competition, Record<string, PreparedTile>>;
   for (const comp of ["general", ...REAL_COMPETITIONS, ...TOURNAMENT_COMPETITIONS] as const) {
     candidates[comp] = prepareTriviaCandidates(comp);
     tiles[comp] = {};
@@ -519,7 +521,7 @@ export function prepareTriviaData() {
         entries.push(tile.entries);
         entryIds.set(key, index);
       }
-      tiles[comp][id] = { ...tile, entries: index };
+      tiles[comp][id] = { ...tile, entries: index, teamKeys: triviaClueTeams(tile).keys };
     }
   }
   return { candidates, tiles, entries };
@@ -534,15 +536,31 @@ export function generateBoardIds(comp: Competition): string[] {
   const finish = pick(candidates.filter((candidate) => candidate.score === hardest));
   const available = candidates.filter((candidate) => candidate.score < hardest && candidate.count >= NORMAL_TILE_MIN_ANSWERS);
   if (available.length < BOARD_SIZE - 1) throw new Error(`Not enough easier Trivia Path categories for ${comp}.`);
+  const teamsFor = (id: string) => {
+    const keys = preparedTiles[comp][id].teamKeys;
+    if (!keys) throw new Error(`Missing Trivia Path team identities for ${comp}:${id}. Run pnpm data:quiz.`);
+    return keys;
+  };
+  const usedTeams = new Set(teamsFor(finish.id));
+  const board: string[] = [];
+  const compatible = (candidate: BoardCandidate) => !board.includes(candidate.id) &&
+    teamsFor(candidate.id).every((key) => !usedTeams.has(key));
+  const add = (candidate: BoardCandidate) => {
+    board.push(candidate.id);
+    teamsFor(candidate.id).forEach((key) => usedTeams.add(key));
+  };
+  if (!finish.id.startsWith("s-award-")) {
+    const awards = available.filter((candidate) => candidate.id.startsWith("s-award-") && compatible(candidate));
+    if (awards.length) add(pick(awards));
+  }
   const chunk = available.length / (BOARD_SIZE - 1);
-  const board = Array.from({ length: BOARD_SIZE - 1 }, (_, i) => {
+  for (let i = 0; board.length < BOARD_SIZE - 1; i += 1) {
     const start = Math.floor(i * chunk);
     const end = Math.floor((i + 1) * chunk);
-    return pick(available.slice(start, end)).id;
-  });
-  if (!board.some((id) => id.startsWith("s-award-")) && !finish.id.startsWith("s-award-")) {
-    const award = available.filter((candidate) => candidate.id.startsWith("s-award-"));
-    if (award.length) board[Math.floor(Math.random() * board.length)] = pick(award).id;
+    const preferred = available.slice(start, end).filter(compatible);
+    const options = preferred.length ? preferred : available.filter(compatible);
+    if (!options.length) throw new Error(`Not enough team-distinct Trivia Path categories for ${comp}.`);
+    add(pick(options));
   }
   const scores = new Map(candidates.map(({ id, score }) => [id, score]));
   board.sort((a, b) => scores.get(a)! - scores.get(b)!);

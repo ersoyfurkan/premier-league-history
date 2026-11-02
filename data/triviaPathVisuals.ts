@@ -1,5 +1,4 @@
-import { DUEL_CLUBS } from "@/data/clubDuel";
-import { nationMentions } from "@/data/nationVisuals";
+import { triviaClueTeams } from "@/data/triviaTeams";
 import { playerFaceUrl } from "@/data/playerFaces";
 import { FOOTBALL_KNOWLEDGE_GROUPS, MODERN_SQUADS } from "@/data/footballKnowledge";
 import type { BoardTile } from "@/data/triviaPath";
@@ -35,8 +34,6 @@ const LEAGUES = [
   ["Champions League", 2], ["World Cup", 4], ["European Championship", 74], ["Copa America", 83],
 ] as const;
 const normal = (text: string) => text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-const mentions = (text: string, name: string) =>
-  new RegExp(`\\b${normal(name).replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`).test(text);
 
 export function triviaTileVisuals(tile: BoardTile): TriviaVisual[] {
   const text = normal(`${tile.noun} ${tile.short}`);
@@ -62,12 +59,11 @@ export function triviaTileVisuals(tile: BoardTile): TriviaVisual[] {
     const season = squad.id === "che2021" ? "01-05/21" : squad.id === "bay1920" ? "11/19-08/20" : squad.season;
     add(badge(season, "Club season"));
   }
-  for (const club of DUEL_CLUBS.general) {
-    const aliases = [club.label, ...(club.key === "psg" ? ["Paris Saint-Germain"] : []),
-      ...(club.key === "bar" ? ["Barca"] : []), ...(club.key === "dor" ? ["Borussia Dortmund"] : [])];
-    if (club.badge && aliases.some((label) => mentions(text, label))) add(image(club.badge, club.label));
+  const teams = triviaClueTeams(tile);
+  for (const club of teams.clubs) {
+    if (club.badge) add(image(club.badge, club.label));
   }
-  for (const nation of nationMentions(text, true)) add(image(nation.src, nation.name));
+  for (const nation of teams.nations) add(image(nation.src, nation.name));
   for (const [name, id] of LEAGUES) {
     if (awards.length <= 3 && text.includes(normal(name))) add(image(`https://a.espncdn.com/i/leaguelogos/soccer/500/${id}.png`, name));
   }

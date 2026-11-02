@@ -59,6 +59,8 @@ The same focused test command also checks stadium aliases/search, modern manager
 
 ### Trivia Path board clues and answer coverage
 
+- New boards use each named team only once across all 16 spaces, including the hidden finish. Single-team, two-team, nationality, manager/teammate and award-combination clues share the same club/national-team identities used for their visuals. Both clubs in a paired clue are reserved; generic competition logos do not count as teams. Selection retains answer-pool minimums, ascending difficulty and the hardest finish. Team identities are prepared offline with `pnpm data:quiz`; saved boards keep their original tiles.
+
 - [Shared nation visuals](./data/nationVisuals.ts) provide national football team/association crests (not country flags) for tournament quiz answers, all-time stats, finals/hosts and rivalry cards, plus Trivia Path, Tic-Tac-Toe and player cards. Name aliases and nationality adjectives resolve to the same asset; historical teams retain their historical identity. Combined country cells show each nation's crest and preserve their original text. Unknown/non-nation cells are left as text. The [crest catalogue](./data/nationCrests.generated.json) records source pages; refresh it with `node scripts/refresh-nation-crests.mjs`. The refresh reports missing crests rather than substituting flags.
 
 - Spaces show club badges, national team crests, competition/trophy imagery, player/manager portraits, and metric icons: a ball for goals, boot for assists, gloves for saves, and numeric threshold or title-count badges. Full question text appears only in the active-question panel.

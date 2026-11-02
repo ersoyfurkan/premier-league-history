@@ -9,6 +9,7 @@ const { STAT_TRIVIA_CATEGORIES, STAT_RONDO_CLUES } = await import("../data/statT
 const { AUTHORED_STAT_CATEGORIES, STAT_RECORDS } = await import("../data/statTriviaRecords.ts");
 const { STAT_SEASONS } = await import("../data/statTriviaSeasons.ts");
 const { BOARD_SIZE, NORMAL_TILE_MIN_ANSWERS, FINAL_TILE_MIN_ANSWERS, uniqueTriviaEntries, generateBoardIds, tileById, triviaDifficulty, answersFor, matchTriviaAnswer, suggestTrivia, triviaAnswerType, checkTriviaAnswer, REPEATED_TRIVIA_ANSWER, rollPathDice, pathTurnMovement } = await import("../data/triviaPath.ts");
+const { triviaClueTeams } = await import("../data/triviaTeams.ts");
 const { RONDO_CLUES, RONDO_LETTERS, RONDO_DIFFICULTY_COUNTS, rondoDifficulty, isSpecificRondoClue, randomRondoPicks, rondoQuestions, isRondoAnswer } = await import("../data/rondo.ts");
 const { KNOWLEDGE_TRIVIA_CATEGORIES, KNOWLEDGE_RONDO_CLUES } = await import("../data/knowledgeTrivia.ts");
 const { FOOTBALL_KNOWLEDGE_GROUPS, MODERN_SQUADS, MODERN_MANAGER_GROUPS, TEAMMATE_GROUPS, knowledgeMatches } = await import("../data/footballKnowledge.ts");
@@ -513,6 +514,30 @@ test("boards are unique, reconstructible and nondecreasing, with the bank's high
         assert.equal(tiles[index].entries.length, uniqueTriviaEntries(tiles[index].entries).length);
       }
     }
+  }
+});
+
+test("Trivia Path never repeats a team across single-club, paired-club, nation and combined clues, including the hidden finish", () => {
+  const keys = (noun) => triviaClueTeams({ noun, short: noun }).keys;
+  assert.deepEqual(keys("players who played for both Everton and Manchester City"), ["club:eve", "club:mci"]);
+  assert.ok(keys("players managed by Pep Guardiola at Manchester City in 2022/23").includes("club:mci"));
+  assert.deepEqual(keys("French players who played for PSG"), keys("France internationals who played for Paris Saint-Germain"));
+  for (const comp of comps) {
+    const boards = new Set();
+    for (let run = 0; run < 100; run += 1) {
+      const ids = generateBoardIds(comp);
+      boards.add(ids.join(","));
+      const seen = new Set();
+      for (const id of ids) {
+        for (const key of triviaClueTeams(tileById(comp, id)).keys) {
+          assert.ok(!seen.has(key), `${comp}: ${key} repeated by ${id}`);
+          seen.add(key);
+        }
+      }
+      assert.equal(ids.length, BOARD_SIZE);
+      assert.ok(ids.some((id) => id.startsWith("s-award-")), comp);
+    }
+    assert.ok(boards.size > 1, `${comp}: boards still vary`);
   }
 });
 
