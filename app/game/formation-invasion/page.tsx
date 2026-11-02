@@ -47,7 +47,7 @@ function Rules() {
         <li>Both players must request a clue for that same question. This starts a race: one attempt each, and the first correct answer advances progress and takes the turn. Question 3 still claims the footballer.</li>
         <li>During a clue race, finish that question before switching or passing. If both answers are wrong, normal turns resume with the original player and the clue remains visible.</li>
         <li>Each question has three progressively stronger clues. Both players agree to each clue, one at a time; each revealed clue starts a new answer race.</li>
-        <li>After clue 3, both can vote for Last Man Standing. A random player starts a basic football category. Alternate unique answers, with seven seconds per turn. Wrong, repeated or late answers lose.</li>
+        <li>After clue 3, both can vote for Last Man Standing. Both get the same football category, such as South American Premier League winners. A random player starts. Alternate unique answers, with seven seconds per turn. Wrong, repeated or late answers lose.</li>
         <li>The Last Man Standing winner completes the current question and keeps the turn. Only question 3 claims the footballer. If a category runs out of answers, a new category starts.</li>
         <li>You can pass your turn. In solo practice, mistakes are counted; claim six without an opponent and reveal clues immediately.</li>
         <li>Lineups use well-known players active this century with senior appearances in this competition. Questions cover their wider careers.</li>
@@ -165,7 +165,9 @@ function StandingPanel({ view, now, busy, act }: {
     <div className="rounded-2xl border border-warning bg-surface p-5 md:p-6" data-testid="formation-standing">
       <h2 className="text-2xl font-bold">Last Man Standing</h2>
       <p className="mt-2 text-sm text-fore-muted">For {view.slots[standing.slot].name}, question {standing.question + 1}. One new answer per turn. Wrong or repeated answers lose.</p>
-      <p className="mt-4 text-lg font-bold" data-testid="standing-prompt">{standing.prompt}</p>
+      <p className="mt-4 text-sm font-bold text-warning">Shared category for both players</p>
+      <p className="mt-2 text-lg font-bold" data-testid="standing-prompt">{standing.prompt}</p>
+      <p className="mt-2 text-sm text-fore-muted">Take turns giving different answers to this same category.</p>
       <p className={`mt-4 font-bold ${sideColor(standing.turn)}`}>{formationSideLabel(standing.turn)}&apos;s turn</p>
       <p role="timer" className="mt-2 font-mono text-3xl" aria-label="Seconds remaining">{seconds}s</p>
       <form className="mt-4 space-y-3" onSubmit={(event) => {

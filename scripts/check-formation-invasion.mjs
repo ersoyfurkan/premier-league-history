@@ -510,6 +510,56 @@ test("Standing wrong answers on question three award a permanent claim and can w
   assert.match(applyFormationAction(state, "p2", { action: "standing-timeout", deadline }, previous, deadline), /game changed/);
 });
 
+test("Both players share the same standing category across turns and reconnects", () => {
+  for (const category of FORMATION_STANDING_CATEGORIES) {
+    const state = playing();
+    startStanding(state);
+    state.standing.categoryId = category.id;
+    const first = state.standing.turn;
+    for (let index = 0; index < 2; index++) {
+      const before = formationView(state, "p1", 1001 + index);
+      assert.deepEqual(before.standing, formationView(state, "p2", 1001 + index).standing);
+      assert.equal(before.standing.prompt, category.prompt);
+      assert.equal(play(state, state.standing.turn, {
+        action: "standing-answer", answer: category.entries[index].name, deadline: state.standing.deadline,
+      }, 1001 + index), null);
+      const reloaded = JSON.parse(JSON.stringify(state));
+      for (const side of ["p1", "p2"]) {
+        const view = formationView(reloaded, side, 1002 + index);
+        assert.equal(view.standing.prompt, category.prompt);
+        assert.deepEqual(view.standing.used, category.entries.slice(0, index + 1).map((entry) => entry.name));
+        assert.equal(view.standing.turn, index === 0 ? (first === "p1" ? "p2" : "p1") : first);
+      }
+    }
+  }
+});
+
+test("South American Premier League winners use the stated medal and season limits", () => {
+  const category = formationStandingCategory("south-american-premier-league-winners");
+  assert.match(category.prompt, /South American.*Premier League.*1992\/93.*2022\/23/);
+  for (const answer of ["Aguero", "Forlan", "Cuadrado", "Bravo", "Valencia", "Firmino", "Alvarez"]) {
+    const state = playing();
+    startStanding(state);
+    state.standing.categoryId = category.id;
+    assert.equal(play(state, state.standing.turn, {
+      action: "standing-answer", answer, deadline: state.standing.deadline,
+    }, 1001), null);
+    assert.equal(state.standing.used.length, 1, answer);
+  }
+  for (const answer of ["Lionel Messi", "Luis Suarez", "Riyad Mahrez", "Alexis Mac Allister", "Luis Diaz"]) {
+    const state = playing();
+    startStanding(state);
+    state.standing.categoryId = category.id;
+    const loser = state.standing.turn;
+    assert.equal(play(state, loser, {
+      action: "standing-answer", answer, deadline: state.standing.deadline,
+    }, 1001), null);
+    assert.equal(state.standing, null, answer);
+    assert.notEqual(state.turn, loser, answer);
+    assert.equal(state.slots[0].progress, 1, answer);
+  }
+});
+
 test("Standing categories accept all aliases and rotate without awarding progress if every answer is used", () => {
   for (const category of FORMATION_STANDING_CATEGORIES) {
     assert.ok(category.entries.length >= 7);

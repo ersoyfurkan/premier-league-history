@@ -56,6 +56,12 @@ export const FORMATION_STANDING_CATEGORIES: StandingCategory[] = [
     source: "https://en.wikipedia.org/wiki/2022_FIFA_World_Cup_final",
     entries: entries("Emiliano Martinez/Emi Martinez/Dibu Martinez|Nahuel Molina/Molina|Cristian Romero/Cuti Romero/Romero|Nicolas Otamendi/Otamendi|Nicolas Tagliafico/Tagliafico|Rodrigo De Paul/De Paul|Enzo Fernandez/Enzo|Alexis Mac Allister/Mac Allister|Angel Di Maria/Di Maria|Lionel Messi/Messi|Julian Alvarez/Alvarez"),
   },
+  {
+    id: "south-american-premier-league-winners",
+    prompt: "Name a South American player who won a Premier League winner's medal between 1992/93 and 2022/23.",
+    source: "https://en.wikipedia.org/wiki/List_of_Premier_League_winning_players",
+    entries: entries("Ederson/Ederson Moraes|Sergio Aguero/Aguero/Kun Aguero|Fernandinho|Gabriel Jesus/Jesus|Anderson|Carlos Tevez/Tevez|Rafael/Rafael da Silva|Edu/Edu Gaspar|Antonio Valencia/Valencia|Pablo Zabaleta/Zabaleta|Oscar|Willian|Danilo|Nicolas Otamendi/Otamendi|Alisson/Alisson Becker|Julian Alvarez/Alvarez|Diego Forlan/Forlan|Juan Sebastian Veron/Veron|Gilberto Silva/Gilberto|Hernan Crespo/Crespo|Gabriel Heinze/Heinze|Alex/Alex Rodrigo Dias da Costa|Juliano Belletti/Belletti|Fabio/Fabio da Silva|Martin Demichelis/Demichelis|Juan Cuadrado/Cuadrado|Filipe Luis|Ramires|Leonardo Ulloa/Ulloa|David Luiz|Claudio Bravo/Bravo|Fabinho|Roberto Firmino/Firmino"),
+  },
 ];
 
 export function formationStandingCategory(id: string) {
