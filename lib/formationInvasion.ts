@@ -339,8 +339,7 @@ export function formationView(state: FormationState, you: FormationSide, now = D
     slots: state.slots.map((slot, index) => {
       const player = formationPlayer(slot.playerId);
       const shared = state.clueRace?.slot === index || state.standing?.slot === index;
-      const visible = state.phase === "playing" && (shared ||
-        (state.selectedSlot === index && (state.mode !== "online" || state.turn === you)));
+      const visible = state.phase === "playing" && (shared || state.selectedSlot === index);
       const question = slot.owner || !visible ? null : formationQuestionFor(slot);
       return {
         playerId: player.id, name: player.name, position: FORMATION_SLOTS[index].position,

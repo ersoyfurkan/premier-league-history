@@ -41,7 +41,7 @@ function Rules() {
       <ul className="mt-3 list-disc space-y-2 pl-5 text-fore-muted">
         <li>Pick any unlocked footballer in the 4-3-3. Their three career questions progress from easy to medium to hard, randomly chosen and fixed for this match.</li>
         <li>Choosing a footballer commits you to their current question. You cannot browse other questions or pass after choosing. A correct answer keeps your turn and lets you choose that footballer again or someone else.</li>
-        <li>Online questions and clues are private to the turn-holder until both agree to a shared-clue race. Same-device play keeps the shared screen visible.</li>
+        <li>Once a footballer is chosen, both players see the same question and any revealed clues. Only the turn-holder can answer unless a shared-clue race is active.</li>
         <li>A wrong answer passes the turn without resetting progress. Your opponent can finish your work.</li>
         <li>Whoever answers question 3 claims the footballer permanently. Own six of the eleven to win.</li>
         <li>Both players must request a clue for that same question. This starts a race: one attempt each, and the first correct answer advances progress and takes the turn. Question 3 still claims the footballer.</li>
@@ -83,7 +83,7 @@ function QuestionPanel({ view, index, busy, act }: {
         <p className={`mt-4 font-bold ${sideColor(slot.owner)}`}>Claimed by {formationSideLabel(slot.owner)}. Choose another player.</p>
       ) : !slot.question ? (
         <p className="mt-4 text-fore-muted">{view.mode === "online" && view.you !== view.turn
-          ? "Question hidden while your opponent takes their turn. You can still agree to their clue request."
+          ? "Waiting for your opponent to choose a footballer. Their selected question will appear here."
           : "Choose this footballer on the pitch to reveal and commit to the question."}</p>
       ) : (
         <>

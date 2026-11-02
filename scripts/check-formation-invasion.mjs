@@ -225,16 +225,21 @@ test("Selecting commits the turn to one question across reloads; correct unlocks
   }
 });
 
-test("Online views hide every unchosen or off-turn question and clue, with only the shared race/standing question visible to both", () => {
+test("Online views share the chosen question with both players but hide unchosen questions and restrict normal answers to the turn-holder", () => {
   const state = playing();
   for (const side of ["p1", "p2"]) assert.ok(formationView(state, side).slots.every((slot) => slot.question === null && slot.hint === null && !slot.clues.length));
   assert.match(play(state, "p2", { action: "select", slot: 0, question: 0 }), /not your turn/);
   assert.equal(play(state, "p1", { action: "select", slot: 0, question: 0 }), null);
   assert.equal(formationView(state, "p1").slots[0].question, formationQuestionFor(state.slots[0]).text);
   assert.ok(formationView(state, "p1").slots.slice(1).every((slot) => slot.question === null));
-  assert.ok(formationView(state, "p2").slots.every((slot) => slot.question === null));
+  assert.equal(formationView(state, "p2").slots[0].question, formationQuestionFor(state.slots[0]).text);
+  assert.ok(formationView(state, "p2").slots.slice(1).every((slot) => slot.question === null));
+  const before = JSON.stringify(state);
+  assert.match(play(state, "p2", { action: "answer", slot: 0, question: 0, answer: answer(state, 0) }), /not your turn/);
+  assert.equal(JSON.stringify(state), before);
   assert.equal(play(state, "p1", { action: "hint", slot: 0, question: 0, clue: 0 }), null);
-  assert.equal(formationView(state, "p2").slots[0].question, null);
+  assert.equal(formationView(state, "p2").slots[0].question, formationQuestionFor(state.slots[0]).text);
+  assert.deepEqual(formationView(state, "p2").slots[0].clues, []);
   assert.equal(formationView(state, "p2").slots[0].hints.p1, true);
   assert.equal(play(state, "p2", { action: "hint", slot: 0, question: 0, clue: 0 }), null);
   for (const side of ["p1", "p2"]) {
@@ -247,9 +252,9 @@ test("Online views hide every unchosen or off-turn question and clue, with only 
     assert.equal(play(state, side, { action: "answer", slot: 0, question: 0, answer: "wrong" }), null);
   }
   assert.equal(formationView(state, "p1").slots[0].clues.length, 1);
-  assert.equal(formationView(state, "p2").slots[0].question, null);
-  assert.equal(formationView(state, "p2").slots[0].hint, null);
-  assert.deepEqual(formationView(state, "p2").slots[0].clues, []);
+  assert.equal(formationView(state, "p2").slots[0].question, formationQuestionFor(state.slots[0]).text);
+  assert.equal(formationView(state, "p2").slots[0].hint, formationQuestionFor(state.slots[0]).hint);
+  assert.deepEqual(formationView(state, "p2").slots[0].clues, formationView(state, "p1").slots[0].clues);
   for (let clue = 1; clue < 3; clue += 1) {
     for (const side of ["p1", "p2"]) play(state, side, { action: "hint", slot: 0, question: 0, clue });
     if (clue === 1) for (const side of ["p1", "p2"]) play(state, side, { action: "answer", slot: 0, question: 0, answer: "wrong" });
@@ -375,7 +380,7 @@ test("Three sequential mutual clue votes reveal only approved clues; solo reveal
   assert.match(play(state, "p1", { action: "hint", slot: 0, question: 0, clue: 1 }), /no longer active/);
   for (let clue = 0; clue < 3; clue += 1) {
     assert.equal(play(state, "p1", { action: "hint", slot: 0, question: 0, clue }), null);
-    assert.equal(formationView(state, "p2").slots[0].clues.length, 0);
+    assert.deepEqual(formationView(state, "p2").slots[0].clues, question.clues.slice(0, clue));
     assert.match(play(state, "p1", { action: "hint", slot: 0, question: 0, clue }), /already requested/);
     assert.equal(play(state, "p2", { action: "hint", slot: 0, question: 0, clue }), null);
     assert.deepEqual(formationView(state, "p1").slots[0].clues, question.clues.slice(0, clue + 1));
@@ -767,7 +772,7 @@ test("Concurrent answers and stale requests can advance a shared online question
   assert.equal((await api({ ...payload, token: joined.token, revision: saved.revision, question: 1, answer: answer(saved, 0) })).status, 409);
 });
 
-test("Room API commits one selection atomically, enforces locks, and never sends the waiting player private questions", async () => {
+test("Room API commits one selection atomically, shares only that question with the opponent and enforces turn locks", async () => {
   const created = await api({ action: "create", comp: "general" });
   const joined = await api({ action: "join", code: created.code });
   const payload = { action: "select", code: created.code, token: created.token, question: 0,
@@ -781,7 +786,11 @@ test("Room API commits one selection atomically, enforces locks, and never sends
   const waiting = await GET(new NextRequest(`http://localhost/api/game/formation-invasion?code=${created.code}&token=${joined.token}`));
   const view = (await waiting.json()).view;
   assert.equal(view.selectedSlot, chosen);
-  assert.ok(view.slots.every((slot) => slot.question === null && slot.hint === null && slot.clues.length === 0));
+  assert.equal(view.slots[chosen].question, formationQuestionFor(state.slots[chosen]).text);
+  assert.ok(view.slots.every((slot, index) => (index === chosen || slot.question === null) && slot.hint === null && slot.clues.length === 0));
+  assert.equal((await api({ ...payload, token: joined.token, action: "answer",
+    slot: chosen, answer: answer(state, chosen), ...expected(state) })).status, 409);
+  assert.equal(JSON.parse(rows.get(created.code).state).revision, state.revision);
   assert.equal((await api({ ...payload, slot: chosen === 0 ? 1 : 0, ...expected(state) })).status, 409);
   assert.equal((await api({ ...payload, action: "pass", ...expected(state) })).status, 409);
   const wrong = await api({ ...payload, action: "answer", slot: chosen, answer: "wrong", ...expected(state) });
