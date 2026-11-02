@@ -1,4 +1,4 @@
-import type { Competition } from "@/lib/gameRoom";
+﻿import { REAL_COMPETITIONS, type Competition, type RealCompetition } from "@/lib/competitions";
 import { CAREERS } from "@/data/clubDuelCareers";
 import { nationOf } from "@/data/playerNations";
 import { BUNDESLIGA_FACTS } from "@/data/bundesligaContent";
@@ -841,7 +841,7 @@ const parseFacts = (text: string): Fact[] =>
     return f(name.trim(), nat.trim(), clubs.trim(), tags.trim());
   });
 
-const RAW_FACTS: Record<Competition, Fact[]> = {
+const RAW_FACTS: Record<RealCompetition, Fact[]> = {
   bundesliga: merge(parseFacts(BUNDESLIGA_FACTS), {}, []),
   ligue1: merge(parseFacts(LIGUE1_FACTS), {}, []),
   superlig: merge(parseFacts(SUPERLIG_FACTS), {}, []),
@@ -850,25 +850,43 @@ const RAW_FACTS: Record<Competition, Fact[]> = {
   ucl: merge(UCL_FACTS, UCL_ALSO, UCL_EXTRA),
   seriea: merge(SA_FACTS, SA_ALSO, []),
 };
-const FACTS = Object.fromEntries(
-  (Object.keys(RAW_FACTS) as Competition[]).map((comp) => [
+const REAL_FACTS = Object.fromEntries(
+  REAL_COMPETITIONS.map((comp) => [
     comp,
     enrich(
       withUniverse(
         RAW_FACTS[comp],
-        (Object.keys(RAW_FACTS) as Competition[]).filter((other) => other !== comp).map((other) => RAW_FACTS[other]),
+        REAL_COMPETITIONS.filter((other) => other !== comp).map((other) => RAW_FACTS[other]),
       ),
     ),
   ]),
-) as Record<Competition, Fact[]>;
+) as Record<RealCompetition, Fact[]>;
+
+// Only tags that mean the same thing in every competition survive in the general pool.
+const GENERAL_TAG = /^(bd|wc|final|m_.+)$/;
+function generalFacts(): Fact[] {
+  const map = new Map<string, Fact>();
+  for (const comp of REAL_COMPETITIONS) {
+    for (const fact of REAL_FACTS[comp]) {
+      const key = normalizeFootballPlayerName(fact.name);
+      const copy = map.get(key) ?? { name: fact.name, nat: [], clubs: [], tags: [] };
+      map.set(key, copy);
+      for (const nat of fact.nat) if (!copy.nat.includes(nat)) copy.nat.push(nat);
+      for (const club of fact.clubs) if (!copy.clubs.includes(club)) copy.clubs.push(club);
+      for (const tag of fact.tags) if (GENERAL_TAG.test(tag) && !copy.tags.includes(tag)) copy.tags.push(tag);
+    }
+  }
+  return [...map.values()];
+}
+const FACTS: Record<Competition, Fact[]> = { ...REAL_FACTS, general: generalFacts() };
 
 export function footballTicTacToePlayerNames(comp: Competition) {
   return FACTS[comp].map((fact) => fact.name);
 }
 
 export function footballCareers(): { name: string; clubs: string[] }[] {
-  return (Object.keys(FACTS) as Competition[]).flatMap((comp) =>
-    FACTS[comp].map((fact) => ({ name: fact.name, clubs: fact.clubs })),
+  return REAL_COMPETITIONS.flatMap((comp) =>
+    REAL_FACTS[comp].map((fact) => ({ name: fact.name, clubs: fact.clubs })),
   );
 }
 
@@ -958,7 +976,7 @@ const BL = { bay: pc("Bayern Munich", 132, "bay"), dor: pc("Dortmund", 124, "dor
 const L1 = { psg: pc("PSG", 160, "psg"), mar: pc("Marseille", 176, "mar"), lyon: pc("Lyon", 167, "lyon"), mon: pc("Monaco", 174, "mon"), lil: pc("Lille", 166, "lil"), ren: pc("Rennes", 169, "ren") };
 const SL = { gal: pc("Galatasaray", 432, "gal"), fen: pc("Fenerbahçe", 436, "fen"), bes: pc("Beşiktaş", 1895, "bes"), tra: pc("Trabzonspor", 997, "tra"), ibf: pc("Başakşehir", 7914, "ibf"), ala: pc("Alanyaspor", 9078, "ala") };
 
-export const FOOTBALL_TIC_TAC_TOE_VARIANTS: Record<Competition, FootballTicTacToePuzzle[]> = {
+const REAL_VARIANTS: Record<RealCompetition, FootballTicTacToePuzzle[]> = {
   bundesliga: [
     build(
       "bundesliga",
@@ -1065,14 +1083,40 @@ export const FOOTBALL_TIC_TAC_TOE_VARIANTS: Record<Competition, FootballTicTacTo
   ],
 };
 
+const REAL_PUZZLES: Record<RealCompetition, FootballTicTacToePuzzle> = {
+  bundesliga: REAL_VARIANTS.bundesliga[0],
+  ligue1: REAL_VARIANTS.ligue1[0],
+  superlig: REAL_VARIANTS.superlig[0],
+  pl: REAL_VARIANTS.pl[0],
+  laliga: REAL_VARIANTS.laliga[0],
+  ucl: REAL_VARIANTS.ucl[0],
+  seriea: REAL_VARIANTS.seriea[0],
+};
+
+const GENERAL_NATIONS = [
+  national("France international", "fr"), national("Brazil international", "br"), national("Argentina international", "ar"),
+  national("Spain international", "es"), national("Portugal international", "pt"), national("Germany international", "de"),
+] as const;
+const GENERAL_CLUBS = {
+  rma: club(`${P}Real Madrid`, "https://a.espncdn.com/i/teamlogos/soccer/500/86.png", "rma", "Real Madrid"),
+  mun: club(`${P}Manchester United`, "https://a.espncdn.com/i/teamlogos/soccer/500/360.png", "mun", "Manchester United"),
+  juv: club(`${P}Juventus`, "https://a.espncdn.com/i/teamlogos/soccer/500/111.png", "juv", "Juventus"),
+  bay: club(`${P}Bayern Munich`, "https://a.espncdn.com/i/teamlogos/soccer/500/132.png", "bay", "Bayern Munich"),
+  psg: club(`${P}PSG`, "https://a.espncdn.com/i/teamlogos/soccer/500/160.png", "psg", "PSG"),
+  gal: club(`${P}Galatasaray`, "https://a.espncdn.com/i/teamlogos/soccer/500/432.png", "gal", "Galatasaray"),
+};
+
+export const FOOTBALL_TIC_TAC_TOE_VARIANTS: Record<Competition, FootballTicTacToePuzzle[]> = {
+  ...REAL_VARIANTS,
+  general: [
+    build("general", [GENERAL_NATIONS[0], GENERAL_NATIONS[1], GENERAL_NATIONS[2]], [GENERAL_CLUBS.rma, GENERAL_CLUBS.mun, GENERAL_CLUBS.juv]),
+    build("general", [GENERAL_NATIONS[3], GENERAL_NATIONS[4], GENERAL_NATIONS[5]], [GENERAL_CLUBS.bay, GENERAL_CLUBS.psg, GENERAL_CLUBS.gal]),
+  ],
+};
+
 export const FOOTBALL_TIC_TAC_TOE: Record<Competition, FootballTicTacToePuzzle> = {
-  bundesliga: FOOTBALL_TIC_TAC_TOE_VARIANTS.bundesliga[0],
-  ligue1: FOOTBALL_TIC_TAC_TOE_VARIANTS.ligue1[0],
-  superlig: FOOTBALL_TIC_TAC_TOE_VARIANTS.superlig[0],
-  pl: FOOTBALL_TIC_TAC_TOE_VARIANTS.pl[0],
-  laliga: FOOTBALL_TIC_TAC_TOE_VARIANTS.laliga[0],
-  ucl: FOOTBALL_TIC_TAC_TOE_VARIANTS.ucl[0],
-  seriea: FOOTBALL_TIC_TAC_TOE_VARIANTS.seriea[0],
+  ...REAL_PUZZLES,
+  general: FOOTBALL_TIC_TAC_TOE_VARIANTS.general[0],
 };
 
 function shuffledIndexes() {
@@ -1085,7 +1129,7 @@ function shuffledIndexes() {
 }
 
 const espn = (id: number) => `https://a.espncdn.com/i/teamlogos/soccer/500/${id}.png`;
-const POOL_CLUBS: Record<Competition, Def[]> = {
+const POOL_CLUBS: Record<RealCompetition, Def[]> = {
   bundesliga: [
     ...Object.values(BL),
     club(`${P}RB Leipzig`, espn(11420), "rbl", "RB Leipzig"),
@@ -1164,7 +1208,7 @@ const POOL_CLUBS: Record<Competition, Def[]> = {
     club(`${P}Atlético Madrid`, espn(1068), "atm", "Atlético Madrid"),
   ],
 };
-const POOL_ROWS: Record<Competition, Def[]> = {
+const POOL_ROWS: Record<RealCompetition, Def[]> = {
   bundesliga: [
     national("Germany international", "de"), national("Poland international", "pl"),
     national("Austria international", "at"), national("Switzerland international", "ch"),
@@ -1229,7 +1273,7 @@ const EXTRA_CLUB_BADGES: Record<string, [string, number]> = {
   rom: ["Roma", 104], nap: ["Napoli", 114], laz: ["Lazio", 112], val: ["Valencia", 94], sev: ["Sevilla", 243],
   wham: ["West Ham", 371], new: ["Newcastle", 361], eve: ["Everton", 368], avl: ["Aston Villa", 362],
 };
-const EXTRA_CLUB_CODES: Record<Competition, string> = {
+const EXTRA_CLUB_CODES: Record<RealCompetition, string> = {
   bundesliga: "",
   ligue1: "",
   superlig: "",
@@ -1238,13 +1282,13 @@ const EXTRA_CLUB_CODES: Record<Competition, string> = {
   seriea: "",
   ucl: "tot nap rom laz val sev",
 };
-const EXTRA_CLUB_DEFS = (comp: Competition): Def[] =>
+const EXTRA_CLUB_DEFS = (comp: RealCompetition): Def[] =>
   EXTRA_CLUB_CODES[comp].split(" ").filter(Boolean).map((code) => {
     const [label, id] = EXTRA_CLUB_BADGES[code];
     return club(`${P}${label}`, espn(id), code, label);
   });
 
-const EXTRA_ROWS: Record<Competition, Def[]> = {
+const EXTRA_ROWS: Record<RealCompetition, Def[]> = {
   bundesliga: [national("Netherlands international", "nl"), stat("Ballon d'Or winner", "bd"), stat("World Cup winner", "wc")],
   ligue1: [national("Spain international", "es"), national("Argentina international", "ar"), stat("Ballon d'Or winner", "bd"), stat("World Cup winner", "wc")],
   superlig: [national("Germany international", "de"), national("France international", "fr"), stat("World Cup winner", "wc")],
@@ -1272,7 +1316,7 @@ const EXTRA_ROWS: Record<Competition, Def[]> = {
     stat("Ballon d'Or winner", "bd"), stat("World Cup winner", "wc"),
   ],
 };
-const MANAGER_KEYS: Record<Competition, string> = {
+const MANAGER_KEYS: Record<RealCompetition, string> = {
   bundesliga: "klopp tuchel guardiola ancelotti flick heynckes",
   ligue1: "ancelotti emery pochettino tuchel",
   superlig: "mourinho",
@@ -1285,13 +1329,31 @@ const MANAGER_KEYS: Record<Competition, string> = {
 // Global honours are only used in the Champions League; domestic leagues stick to their own clubs and stats.
 const GLOBAL_ROW_LABELS = new Set(["Ballon d'Or winner", "World Cup winner"]);
 
-const poolFor = (comp: Competition): Def[] => [
+const realPool = (comp: RealCompetition): Def[] => [
   ...POOL_CLUBS[comp],
   ...EXTRA_CLUB_DEFS(comp).filter((def) => !POOL_CLUBS[comp].some((c) => c.clue.label === def.clue.label)),
   ...POOL_ROWS[comp],
   ...EXTRA_ROWS[comp].filter((def) => comp === "ucl" || !GLOBAL_ROW_LABELS.has(def.clue.label)),
   ...MANAGER_KEYS[comp].split(" ").map(managed),
 ];
+
+// Cross-league pool: every club and nationality, plus the honours and managers that mean the same everywhere.
+const generalPool = (): Def[] => {
+  const seen = new Set<string>();
+  return REAL_COMPETITIONS.flatMap((comp) =>
+    [...POOL_CLUBS[comp], ...EXTRA_CLUB_DEFS(comp), ...POOL_ROWS[comp], ...EXTRA_ROWS[comp], ...MANAGER_KEYS[comp].split(" ").map(managed)].filter(
+      (def) => {
+        const label = def.clue.label;
+        const domestic = /(Premier League|La Liga|Serie A|Bundesliga|Ligue 1|Süper Lig|Champions League)/.test(label) && label !== "Scored in a Champions League final";
+        if (domestic || seen.has(label)) return false;
+        seen.add(label);
+        return true;
+      },
+    ),
+  );
+};
+const GENERAL_POOL = generalPool();
+const poolFor = (comp: Competition): Def[] => (comp === "general" ? GENERAL_POOL : realPool(comp));
 
 function pick<T>(items: T[], count: number): T[] {
   const copy = [...items];

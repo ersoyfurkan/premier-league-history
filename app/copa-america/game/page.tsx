@@ -1,5 +1,10 @@
 import TournamentQuiz from "@/components/TournamentQuiz";
+import GameModeChooser from "@/components/GameModeChooser";
 
 export default function CopaGamePage() {
-  return <TournamentQuiz tk="copa" />;
+  return (
+    <GameModeChooser label="Copa América" leagueHref="/copa-america/game">
+      <TournamentQuiz tk="copa" />
+    </GameModeChooser>
+  );
 }

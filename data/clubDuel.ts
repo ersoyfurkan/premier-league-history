@@ -1,4 +1,4 @@
-import type { Competition } from "@/lib/gameRoom";
+import { REAL_COMPETITIONS, type Competition, type RealCompetition } from "@/lib/competitions";
 import { footballCareers, normalizeFootballPlayerName } from "@/data/footballTicTacToe";
 import { CAREERS } from "@/data/clubDuelCareers";
 
@@ -9,7 +9,7 @@ const local = (file: string) => `/club-logos/${file}.svg`;
 const c = (key: string, label: string, badge = ""): DuelClub => ({ key, label, badge });
 
 // Clubs in each competition for the 2026-27 season. An empty badge shows initials instead.
-export const DUEL_CLUBS: Record<Competition, DuelClub[]> = {
+const REAL_DUEL_CLUBS: Record<RealCompetition, DuelClub[]> = {
   pl: [
     c("ars", "Arsenal", local("arsenal")),
     c("avl", "Aston Villa", local("aston-villa")),
@@ -174,6 +174,12 @@ export const DUEL_CLUBS: Record<Competition, DuelClub[]> = {
     c("tra", "Trabzonspor", espn(997)),
     c("cor", "Çorum FK", espn(132334)),
   ],
+};
+
+// General mode: any club from any league, de-duplicated by key.
+export const DUEL_CLUBS: Record<Competition, DuelClub[]> = {
+  ...REAL_DUEL_CLUBS,
+  general: [...new Map(REAL_COMPETITIONS.flatMap((comp) => REAL_DUEL_CLUBS[comp]).map((club) => [club.key, club])).values()],
 };
 
 export const clubByKey = (comp: Competition, key: string) => DUEL_CLUBS[comp].find((club) => club.key === key);

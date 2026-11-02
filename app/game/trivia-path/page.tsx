@@ -7,6 +7,7 @@ import UclImage from "@/components/UclImage";
 import TriviaPathOnline from "@/components/TriviaPathOnline";
 import { playerFaceUrl } from "@/data/playerFaces";
 import { lobbyFor, parseComp } from "@/lib/gameRoom";
+import { COMPETITION_LABELS } from "@/lib/competitions";
 import {
   BOARD_SIZE,
   answersFor,
@@ -20,15 +21,7 @@ import {
   type TriviaEntry,
 } from "@/data/triviaPath";
 
-const LABELS = {
-  pl: "Premier League",
-  laliga: "La Liga",
-  seriea: "Serie A",
-  ucl: "Champions League",
-  bundesliga: "Bundesliga",
-  ligue1: "Ligue 1 McDonald's",
-  superlig: "Süper Lig",
-} as const;
+const LABELS = COMPETITION_LABELS;
 const DOTS = ["bg-accent", "bg-warning"];
 
 type Phase = "setup" | "roll" | "play" | "result" | "over";

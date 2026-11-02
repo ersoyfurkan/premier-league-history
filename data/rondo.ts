@@ -1,4 +1,5 @@
-﻿import type { Competition } from "@/lib/gameRoom";
+import { REAL_COMPETITIONS, type Competition, type RealCompetition } from "@/lib/competitions";
+import { RONDO_TOURNAMENTS } from "@/data/rondoTournaments";
 import { RONDO_MORE } from "@/data/rondoMore";
 import { RONDO_EXTRA } from "@/data/rondoExtra";
 import { RONDO_BONUS } from "@/data/rondoBonus";
@@ -255,7 +256,7 @@ function mergeUnique(base: RondoClue[], ...extras: RondoClue[][]): RondoClue[] {
   return out;
 }
 
-export const RONDO_CLUES: Record<Competition, RondoClue[]> = {
+const REAL_RONDO: Record<RealCompetition, RondoClue[]> = {
   pl: mergeUnique([...PL, ...RONDO_MORE.pl, ...RONDO_EXTRA.pl], RONDO_BONUS.pl, RONDO_BONUS2.pl, RONDO_BONUS3.pl, RONDO_BONUS4.pl),
   laliga: mergeUnique([...LL, ...RONDO_MORE.laliga, ...RONDO_EXTRA.laliga], RONDO_BONUS.laliga, RONDO_BONUS2.laliga, RONDO_BONUS3.laliga, RONDO_BONUS4.laliga),
   seriea: mergeUnique([...SA, ...RONDO_MORE.seriea, ...RONDO_EXTRA.seriea], RONDO_BONUS.seriea, RONDO_BONUS2.seriea, RONDO_BONUS3.seriea, RONDO_BONUS4.seriea),
@@ -263,6 +264,11 @@ export const RONDO_CLUES: Record<Competition, RondoClue[]> = {
   bundesliga: mergeUnique(BUNDESLIGA_RONDO, RONDO_BONUS4.bundesliga),
   ligue1: mergeUnique(LIGUE1_RONDO, RONDO_BONUS4.ligue1),
   superlig: mergeUnique(SUPERLIG_RONDO, RONDO_BONUS4.superlig),
+};
+// General mode: every league, the Champions League and the international tournaments in one pool.
+export const RONDO_CLUES: Record<Competition, RondoClue[]> = {
+  ...REAL_RONDO,
+  general: mergeUnique(RONDO_TOURNAMENTS, ...REAL_COMPETITIONS.map((comp) => REAL_RONDO[comp])),
 };
 export const RONDO_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 export const RONDO_SECONDS = 180;

@@ -1,4 +1,4 @@
-import type { Competition } from "@/lib/gameRoom";
+import type { RealCompetition } from "@/lib/competitions";
 import type { RondoClue } from "@/data/rondo";
 
 const r = (letter: string, clue: string, answers: string, contains = false): RondoClue => ({
@@ -79,7 +79,7 @@ const SUPERLIG: RondoClue[] = [
   r("O", "Nigerian striker who shared the 2025/26 Gol Kralı with Shomurodov on 22 goals", "Onuachu|Paul Onuachu"),
 ];
 
-export const RONDO_BONUS4: Record<Competition, RondoClue[]> = {
+export const RONDO_BONUS4: Record<RealCompetition, RondoClue[]> = {
   pl: PL,
   laliga: LL,
   seriea: SA,

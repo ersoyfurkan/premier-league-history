@@ -10,7 +10,7 @@ import { MARKET_VALUE_PLAYERS, type MarketValuePlayer, type MarketValueSnapshot 
 import { normalizeFootballPlayerName } from "@/data/footballTicTacToe";
 import type { PlayerCard } from "@/data/players";
 import { poolFor, type Competition } from "@/lib/gameRoom";
-import { LEAGUE_META } from "@/lib/leagues";
+import { COMPETITION_LABELS } from "@/lib/competitions";
 import { espnHeadshot } from "@/lib/clubArt";
 
 export type MiniGameMode = "higher-lower" | "transfer-market";
@@ -327,7 +327,7 @@ function TransferMarketHigherLower({ comp, onBack }: { comp: Competition; onBack
         </div>
       ) : (
         <div className="mt-6 rounded-xl border border-border bg-background/50 p-8 text-center">
-          <p className="text-fore-muted">Can you beat your best streak using {comp === "pl" ? "Premier League" : comp === "ucl" ? "Champions League" : LEAGUE_META[comp].label} stars?</p>
+          <p className="text-fore-muted">Can you beat your best streak using {COMPETITION_LABELS[comp]} stars?</p>
           <button type="button" onClick={start} className="btn-primary mt-5">Open the market</button>
         </div>
       )}

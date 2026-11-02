@@ -1,4 +1,5 @@
-import type { Competition } from "@/lib/gameRoom";
+import { REAL_COMPETITIONS, COMPETITION_LABELS, type Competition } from "@/lib/competitions";
+import { tournamentTriviaCategories } from "@/data/tournamentTrivia";
 import { footballFacts, normalizeFootballPlayerName } from "@/data/footballTicTacToe";
 import { DUEL_CLUBS, playersForBoth, playersForClub, searchDuelPlayers } from "@/data/clubDuel";
 import { BUNDESLIGA_TRIVIA } from "@/data/bundesligaContent";
@@ -50,6 +51,7 @@ const UCL_STADIUMS = list(
 );
 
 const STATIC: Record<Competition, Category[]> = {
+  general: [],
   bundesliga: [],
   ligue1: [],
   superlig: [],
@@ -156,7 +158,7 @@ for (const comp of ["pl", "laliga", "seriea", "bundesliga", "ligue1", "superlig"
 // General football / international trivia belongs to the Champions League; domestic leagues keep their own content.
 const GENERAL_IDS = new Set(["s-ballon", "s-wc", "s-clwin", "s-scotstad", ...SHARED_EXTRA.map((item) => item.id)]);
 const KEEP_FOR: Record<string, Competition[]> = { "s-ballonfw": ["laliga", "ucl"] };
-for (const comp of Object.keys(STATIC) as Competition[]) {
+for (const comp of REAL_COMPETITIONS) {
   if (comp === "ucl") {
     STATIC.ucl.push(...SHARED_EXTRA);
     continue;
@@ -164,6 +166,11 @@ for (const comp of Object.keys(STATIC) as Competition[]) {
   STATIC[comp] = STATIC[comp].filter((item) => !GENERAL_IDS.has(item.id));
   if (comp === "laliga") STATIC.laliga.push(...SHARED_EXTRA.filter((item) => KEEP_FOR[item.id]?.includes(comp)));
 }
+
+// General mode: every competition's categories (de-duplicated) plus the international tournaments.
+const TOURNAMENT_CATEGORIES = tournamentTriviaCategories();
+for (const item of TOURNAMENT_CATEGORIES) LIVE_SHORT[item.id] = item.short;
+STATIC.general = [...new Map([...REAL_COMPETITIONS.flatMap((comp) => STATIC[comp]), ...TOURNAMENT_CATEGORIES].map((item) => [item.id, item])).values()];
 
 const CLUB_ALIASES: Record<string, string[]> = {
   mun: ["Man United", "Man Utd", "Manchester Utd"],
@@ -183,10 +190,7 @@ const CLUB_ALIASES: Record<string, string[]> = {
 };
 
 function leagueClubCategory(comp: Competition): Category {
-  const names = {
-    pl: "Premier League", laliga: "La Liga", seriea: "Serie A", ucl: "Champions League",
-    bundesliga: "Bundesliga", ligue1: "Ligue 1", superlig: "Süper Lig",
-  }[comp];
+  const names = comp === "general" ? "top European leagues" : COMPETITION_LABELS[comp].replace(" McDonald's", "");
   return {
     id: "s-clubs",
     noun: `club in the ${names} this season`,

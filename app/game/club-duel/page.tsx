@@ -8,6 +8,7 @@ import UclImage from "@/components/UclImage";
 import { playerFaceUrl } from "@/data/playerFaces";
 import { DUEL_CLUBS, clubByKey, searchDuelPlayers } from "@/data/clubDuel";
 import { lobbyFor, parseComp, type Competition } from "@/lib/gameRoom";
+import { COMPETITION_LABELS } from "@/lib/competitions";
 
 type Side = "p1" | "p2";
 type DuelView = {
@@ -35,15 +36,7 @@ type DuelView = {
 type Api = { error?: string; code?: string; token?: string; view?: DuelView; correct?: boolean; message?: string };
 
 const POLL_MS = 1000;
-const LABELS: Record<Competition, string> = {
-  pl: "Premier League",
-  laliga: "La Liga",
-  seriea: "Serie A",
-  ucl: "Champions League",
-  bundesliga: "Bundesliga",
-  ligue1: "Ligue 1 McDonald's",
-  superlig: "Süper Lig",
-};
+const LABELS = COMPETITION_LABELS;
 
 function Shell({ comp, children }: { comp: Competition; children: React.ReactNode }) {
   return (

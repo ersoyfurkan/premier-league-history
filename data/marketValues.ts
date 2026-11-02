@@ -1,4 +1,4 @@
-import type { Competition } from "@/lib/gameRoom";
+import { REAL_COMPETITIONS, type Competition, type RealCompetition } from "@/lib/competitions";
 
 import { player, type MarketValuePlayer, type MarketValueSnapshot } from "@/data/marketPlayer";
 import { BUNDESLIGA_MARKET } from "@/data/bundesligaContent";
@@ -8,7 +8,7 @@ import { SUPERLIG_MARKET } from "@/data/superligContent";
 export { player };
 export type { MarketValuePlayer, MarketValueSnapshot };
 
-export const MARKET_VALUE_PLAYERS: Record<Competition, MarketValuePlayer[]> = {
+const REAL_MARKET_VALUES: Record<RealCompetition, MarketValuePlayer[]> = {
   pl: [
     player("Erling Haaland", "Norway", "no", "418560", [
       { value: 8, year: 2020, club: "Red Bull Salzburg" },
@@ -460,4 +460,10 @@ export const MARKET_VALUE_PLAYERS: Record<Competition, MarketValuePlayer[]> = {
   bundesliga: BUNDESLIGA_MARKET,
   ligue1: LIGUE1_MARKET,
   superlig: SUPERLIG_MARKET,
+};
+
+// General mode: every player from every league, one snapshot history each.
+export const MARKET_VALUE_PLAYERS: Record<Competition, MarketValuePlayer[]> = {
+  ...REAL_MARKET_VALUES,
+  general: [...new Map(REAL_COMPETITIONS.flatMap((comp) => REAL_MARKET_VALUES[comp]).map((p) => [p.name, p])).values()],
 };

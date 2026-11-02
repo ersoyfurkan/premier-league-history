@@ -1,5 +1,10 @@
 import GameLobby from "@/components/GameLobby";
+import GameModeChooser from "@/components/GameModeChooser";
 
 export default function SerieAGamePage() {
-  return <GameLobby comp="seriea" />;
+  return (
+    <GameModeChooser label="Serie A" leagueHref="/serie-a/game">
+      <GameLobby comp="seriea" />
+    </GameModeChooser>
+  );
 }

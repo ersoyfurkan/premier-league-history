@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import RondoBoard, { type RondoScore } from "@/components/RondoBoard";
 import { randomRondoPicks, rondoQuestions } from "@/data/rondo";
 import { lobbyFor, parseComp, type Competition } from "@/lib/gameRoom";
+import { COMPETITION_LABELS } from "@/lib/competitions";
 
 type RemoteView = {
   comp: Competition;
@@ -19,15 +20,7 @@ type RemoteView = {
 type Api = { error?: string; code?: string; token?: string; view?: RemoteView };
 
 const POLL_MS = 1500;
-const LABELS: Record<Competition, string> = {
-  pl: "Premier League",
-  laliga: "La Liga",
-  seriea: "Serie A",
-  ucl: "Champions League",
-  bundesliga: "Bundesliga",
-  ligue1: "Ligue 1 McDonald's",
-  superlig: "Süper Lig",
-};
+const LABELS = COMPETITION_LABELS;
 
 // 1 = first beats second, -1 = second beats first, 0 = draw
 function compare(a: RondoScore, b: RondoScore) {

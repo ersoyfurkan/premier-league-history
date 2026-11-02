@@ -15,8 +15,9 @@ export default function GameLobby({ comp }: { comp: Competition }) {
   const [creatingGrid, setCreatingGrid] = useState(false);
   const [gridError, setGridError] = useState<string | null>(null);
   const isUcl = comp === "ucl";
-  const label = isUcl ? "Champions League" : isEspnComp(comp) ? LEAGUE_META[comp].label : "Premier League";
-  const home = isUcl ? "/champions-league" : isEspnComp(comp) ? LEAGUE_META[comp].home : "/premier-league";
+  const isGeneral = comp === "general";
+  const label = isGeneral ? "All Competitions" : isUcl ? "Champions League" : isEspnComp(comp) ? LEAGUE_META[comp].label : "Premier League";
+  const home = isGeneral ? "/game" : isUcl ? "/champions-league" : isEspnComp(comp) ? LEAGUE_META[comp].home : "/premier-league";
 
   const createRoom = async () => {
     setCreating(true);
