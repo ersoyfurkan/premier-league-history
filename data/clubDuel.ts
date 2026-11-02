@@ -1,5 +1,5 @@
-import { REAL_COMPETITIONS, type Competition, type RealCompetition } from "@/lib/competitions";
-import { footballCareers, normalizeFootballPlayerName } from "@/data/footballTicTacToe";
+import { REAL_COMPETITIONS, TOURNAMENT_COMPETITIONS, type Competition, type RealCompetition } from "@/lib/competitions";
+import { footballCareers, normalizeFootballPlayerName, playerInComp } from "@/data/footballTicTacToe";
 import { CAREERS } from "@/data/clubDuelCareers";
 
 export type DuelClub = { key: string; label: string; badge: string };
@@ -177,9 +177,11 @@ const REAL_DUEL_CLUBS: Record<RealCompetition, DuelClub[]> = {
 };
 
 // General mode: any club from any league, de-duplicated by key.
+const ALL_CLUBS = [...new Map(REAL_COMPETITIONS.flatMap((comp) => REAL_DUEL_CLUBS[comp]).map((club) => [club.key, club])).values()];
 export const DUEL_CLUBS: Record<Competition, DuelClub[]> = {
   ...REAL_DUEL_CLUBS,
-  general: [...new Map(REAL_COMPETITIONS.flatMap((comp) => REAL_DUEL_CLUBS[comp]).map((club) => [club.key, club])).values()],
+  ...(Object.fromEntries(TOURNAMENT_COMPETITIONS.map((comp) => [comp, ALL_CLUBS])) as Record<(typeof TOURNAMENT_COMPETITIONS)[number], DuelClub[]>),
+  general: ALL_CLUBS,
 };
 
 export const clubByKey = (comp: Competition, key: string) => DUEL_CLUBS[comp].find((club) => club.key === key);
@@ -210,11 +212,12 @@ function allCareers() {
   return careers;
 }
 
-export const playersForClub = (key: string) =>
-  allCareers().filter((player) => player.clubs.has(key)).map((player) => player.name);
+// For the international tournaments only players of the competing nations count.
+export const playersForClub = (key: string, comp?: Competition) =>
+  allCareers().filter((player) => player.clubs.has(key) && (!comp || playerInComp(comp, player.name))).map((player) => player.name);
 
-export const playersForBoth = (a: string, b: string) =>
-  allCareers().filter((player) => player.clubs.has(a) && player.clubs.has(b)).map((player) => player.name);
+export const playersForBoth = (a: string, b: string, comp?: Competition) =>
+  allCareers().filter((player) => player.clubs.has(a) && player.clubs.has(b) && (!comp || playerInComp(comp, player.name))).map((player) => player.name);
 
 // Autocomplete over every known player from the league's clubs, so suggestions never reveal the answer.
 export function searchDuelPlayers(comp: Competition, query: string, limit = 8): string[] {
@@ -222,7 +225,7 @@ export function searchDuelPlayers(comp: Competition, query: string, limit = 8): 
   if (q.length < 2) return [];
   const keys = new Set(DUEL_CLUBS[comp].map((club) => club.key));
   const hits = allCareers().filter(
-    (player) => [...player.clubs].some((club) => keys.has(club)) && normalizeFootballPlayerName(player.name).includes(q),
+    (player) => [...player.clubs].some((club) => keys.has(club)) && playerInComp(comp, player.name) && normalizeFootballPlayerName(player.name).includes(q),
   );
   const starts = (name: string) => {
     const n = normalizeFootballPlayerName(name);
@@ -235,10 +238,10 @@ export function searchDuelPlayers(comp: Competition, query: string, limit = 8): 
 }
 
 // Returns the canonical player name if the guess is a full name, or a surname that is unique among the shared players.
-export function matchSharedPlayer(a: string, b: string, guess: string): string | null {
+export function matchSharedPlayer(a: string, b: string, guess: string, comp?: Competition): string | null {
   const normalized = normalizeFootballPlayerName(guess);
   if (normalized.length < 3) return null;
-  const players = playersForBoth(a, b);
+  const players = playersForBoth(a, b, comp);
   const exact = players.find((name) => normalizeFootballPlayerName(name) === normalized);
   if (exact) return exact;
   const bySurname = players.filter((name) => {

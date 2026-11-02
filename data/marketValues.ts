@@ -1,4 +1,5 @@
-import { REAL_COMPETITIONS, type Competition, type RealCompetition } from "@/lib/competitions";
+import { REAL_COMPETITIONS, TOURNAMENT_COMPETITIONS, type Competition, type RealCompetition, type TournamentComp } from "@/lib/competitions";
+import { natsAllowedByCountry } from "@/data/nations";
 
 import { player, type MarketValuePlayer, type MarketValueSnapshot } from "@/data/marketPlayer";
 import { BUNDESLIGA_MARKET } from "@/data/bundesligaContent";
@@ -462,8 +463,12 @@ const REAL_MARKET_VALUES: Record<RealCompetition, MarketValuePlayer[]> = {
   superlig: SUPERLIG_MARKET,
 };
 
-// General mode: every player from every league, one snapshot history each.
+const ALL_MARKET_PLAYERS = [...new Map(REAL_COMPETITIONS.flatMap((comp) => REAL_MARKET_VALUES[comp]).map((p) => [p.name, p])).values()];
+// General mode: every player from every league; tournaments: only the nations that play in them.
 export const MARKET_VALUE_PLAYERS: Record<Competition, MarketValuePlayer[]> = {
   ...REAL_MARKET_VALUES,
-  general: [...new Map(REAL_COMPETITIONS.flatMap((comp) => REAL_MARKET_VALUES[comp]).map((p) => [p.name, p])).values()],
+  ...(Object.fromEntries(
+    TOURNAMENT_COMPETITIONS.map((comp) => [comp, ALL_MARKET_PLAYERS.filter((p) => natsAllowedByCountry(comp, p.nationality))]),
+  ) as Record<TournamentComp, MarketValuePlayer[]>),
+  general: ALL_MARKET_PLAYERS,
 };

@@ -1,10 +1,10 @@
-import TournamentQuiz from "@/components/TournamentQuiz";
+import GameLobby from "@/components/GameLobby";
 import GameModeChooser from "@/components/GameModeChooser";
 
 export default function WorldCupGamePage() {
   return (
     <GameModeChooser label="World Cup" leagueHref="/world-cup/game">
-      <TournamentQuiz tk="worldcup" />
+      <GameLobby comp="worldcup" />
     </GameModeChooser>
   );
 }

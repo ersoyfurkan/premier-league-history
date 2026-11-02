@@ -1,4 +1,5 @@
-﻿import { REAL_COMPETITIONS, type Competition, type RealCompetition } from "@/lib/competitions";
+﻿import { REAL_COMPETITIONS, TOURNAMENT_COMPETITIONS, isTournamentComp, type Competition, type RealCompetition, type TournamentComp } from "@/lib/competitions";
+import { NATION_INFO, natsAllowed } from "@/data/nations";
 import { CAREERS } from "@/data/clubDuelCareers";
 import { nationOf } from "@/data/playerNations";
 import { BUNDESLIGA_FACTS } from "@/data/bundesligaContent";
@@ -878,7 +879,17 @@ function generalFacts(): Fact[] {
   }
   return [...map.values()];
 }
-const FACTS: Record<Competition, Fact[]> = { ...REAL_FACTS, general: generalFacts() };
+const GENERAL_FACTS = generalFacts();
+const TOURNAMENT_FACTS = Object.fromEntries(
+  TOURNAMENT_COMPETITIONS.map((comp) => [comp, GENERAL_FACTS.filter((fact) => natsAllowed(comp, fact.nat))]),
+) as Record<TournamentComp, Fact[]>;
+const FACTS: Record<Competition, Fact[]> = { ...REAL_FACTS, ...TOURNAMENT_FACTS, general: GENERAL_FACTS };
+
+const NATS_BY_NAME = new Map(GENERAL_FACTS.map((fact) => [normalizeFootballPlayerName(fact.name), fact.nat]));
+// Nationality codes of a known player, used to filter every game's player pool for the international tournaments.
+export const natsOfPlayer = (name: string): string[] => NATS_BY_NAME.get(normalizeFootballPlayerName(name)) ?? [];
+export const playerInComp = (comp: Competition, name: string) =>
+  !isTournamentComp(comp) || natsAllowed(comp, natsOfPlayer(name));
 
 export function footballTicTacToePlayerNames(comp: Competition) {
   return FACTS[comp].map((fact) => fact.name);
@@ -1106,8 +1117,23 @@ const GENERAL_CLUBS = {
   gal: club(`${P}Galatasaray`, "https://a.espncdn.com/i/teamlogos/soccer/500/432.png", "gal", "Galatasaray"),
 };
 
+const tournamentVariant = (comp: Competition, nations: readonly [string, string, string], clubs: [Def, Def, Def]) =>
+  build(comp, nations.map((code) => national(`${NATION_INFO[code][0]} international`, NATION_INFO[code][1])) as [Def, Def, Def], clubs);
+
 export const FOOTBALL_TIC_TAC_TOE_VARIANTS: Record<Competition, FootballTicTacToePuzzle[]> = {
   ...REAL_VARIANTS,
+  worldcup: [
+    tournamentVariant("worldcup", ["fra", "bra", "arg"], [GENERAL_CLUBS.rma, GENERAL_CLUBS.mun, GENERAL_CLUBS.bay]),
+    tournamentVariant("worldcup", ["esp", "ger", "por"], [GENERAL_CLUBS.rma, GENERAL_CLUBS.juv, GENERAL_CLUBS.psg]),
+  ],
+  euros: [
+    tournamentVariant("euros", ["eng", "esp", "ger"], [GENERAL_CLUBS.rma, GENERAL_CLUBS.mun, GENERAL_CLUBS.bay]),
+    tournamentVariant("euros", ["fra", "por", "ita"], [GENERAL_CLUBS.rma, GENERAL_CLUBS.juv, GENERAL_CLUBS.psg]),
+  ],
+  copa: [
+    tournamentVariant("copa", ["bra", "arg", "uru"], [GENERAL_CLUBS.rma, GENERAL_CLUBS.mun, GENERAL_CLUBS.juv]),
+    tournamentVariant("copa", ["bra", "arg", "col"], [GENERAL_CLUBS.rma, GENERAL_CLUBS.psg, GENERAL_CLUBS.bay]),
+  ],
   general: [
     build("general", [GENERAL_NATIONS[0], GENERAL_NATIONS[1], GENERAL_NATIONS[2]], [GENERAL_CLUBS.rma, GENERAL_CLUBS.mun, GENERAL_CLUBS.juv]),
     build("general", [GENERAL_NATIONS[3], GENERAL_NATIONS[4], GENERAL_NATIONS[5]], [GENERAL_CLUBS.bay, GENERAL_CLUBS.psg, GENERAL_CLUBS.gal]),
@@ -1116,6 +1142,9 @@ export const FOOTBALL_TIC_TAC_TOE_VARIANTS: Record<Competition, FootballTicTacTo
 
 export const FOOTBALL_TIC_TAC_TOE: Record<Competition, FootballTicTacToePuzzle> = {
   ...REAL_PUZZLES,
+  worldcup: FOOTBALL_TIC_TAC_TOE_VARIANTS.worldcup[0],
+  euros: FOOTBALL_TIC_TAC_TOE_VARIANTS.euros[0],
+  copa: FOOTBALL_TIC_TAC_TOE_VARIANTS.copa[0],
   general: FOOTBALL_TIC_TAC_TOE_VARIANTS.general[0],
 };
 
@@ -1353,7 +1382,19 @@ const generalPool = (): Def[] => {
   );
 };
 const GENERAL_POOL = generalPool();
-const poolFor = (comp: Competition): Def[] => (comp === "general" ? GENERAL_POOL : realPool(comp));
+
+// International tournaments: nations on one axis, clubs / honours / managers on the other.
+const tournamentNations = (comp: TournamentComp): Def[] =>
+  Object.entries(NATION_INFO)
+    .filter(([code]) => FACTS[comp].filter((fact) => fact.nat.includes(code)).length >= 6)
+    .map(([code, [name, iso]]) => ({
+      clue: { label: `${name} international`, badge: flag(iso), badgeAlt: `${name} flag` },
+      test: (fact: Fact) => fact.nat.includes(code),
+    }));
+const TOURNAMENT_NATIONS = Object.fromEntries(TOURNAMENT_COMPETITIONS.map((comp) => [comp, tournamentNations(comp)])) as Record<TournamentComp, Def[]>;
+const TOURNAMENT_COLUMNS = GENERAL_POOL.filter((def) => !/international/i.test(def.clue.label));
+
+const poolFor = (comp: Competition): Def[] => (comp === "general" ? GENERAL_POOL : isTournamentComp(comp) ? TOURNAMENT_COLUMNS : realPool(comp));
 
 function pick<T>(items: T[], count: number): T[] {
   const copy = [...items];
@@ -1368,12 +1409,14 @@ function pick<T>(items: T[], count: number): T[] {
 function generatePuzzle(comp: Competition): FootballTicTacToePuzzle | null {
   const pool = poolFor(comp);
   for (let attempt = 0; attempt < 1500; attempt += 1) {
-    const six = pick(pool, 6);
+    const six = isTournamentComp(comp)
+      ? [...pick(TOURNAMENT_NATIONS[comp], 3), ...pick(pool, 3)]
+      : pick(pool, 6);
     const puzzle = build(comp, six.slice(0, 3) as [Def, Def, Def], six.slice(3) as [Def, Def, Def]);
     if (puzzle.answers.every((row) => row.every((answers) => answers.length >= (attempt < 1000 ? 3 : 2)))) return puzzle;
-      }
-      return null;
-    }
+  }
+  return null;
+}
 
 export function randomFootballTicTacToePuzzle(comp: Competition): FootballTicTacToePuzzle {
   const generated = generatePuzzle(comp);

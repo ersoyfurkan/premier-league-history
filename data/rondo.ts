@@ -1,5 +1,7 @@
-import { REAL_COMPETITIONS, type Competition, type RealCompetition } from "@/lib/competitions";
+import { REAL_COMPETITIONS, TOURNAMENT_COMPETITIONS, type Competition, type RealCompetition, type TournamentComp } from "@/lib/competitions";
 import { RONDO_TOURNAMENTS } from "@/data/rondoTournaments";
+import { RONDO_TOURNAMENT_BANK } from "@/data/rondoTournamentBank";
+import { RONDO_TOURNAMENT_LIVE } from "@/data/rondoTournamentLive";
 import { RONDO_MORE } from "@/data/rondoMore";
 import { RONDO_EXTRA } from "@/data/rondoExtra";
 import { RONDO_BONUS } from "@/data/rondoBonus";
@@ -265,10 +267,20 @@ const REAL_RONDO: Record<RealCompetition, RondoClue[]> = {
   ligue1: mergeUnique(LIGUE1_RONDO, RONDO_BONUS4.ligue1),
   superlig: mergeUnique(SUPERLIG_RONDO, RONDO_BONUS4.superlig),
 };
+const TOURNAMENT_ALL = TOURNAMENT_COMPETITIONS.flatMap((comp) => [...RONDO_TOURNAMENT_BANK[comp], ...RONDO_TOURNAMENT_LIVE[comp]]);
+
+// Each tournament uses its own hand-written and live-generated clues; a letter it can't cover borrows from the other tournaments.
+function tournamentClues(comp: TournamentComp): RondoClue[] {
+  const own = [...RONDO_TOURNAMENT_BANK[comp], ...RONDO_TOURNAMENT_LIVE[comp]];
+  const missing = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").filter((letter) => !own.some((clue) => clue.letter === letter));
+  return [...own, ...[...RONDO_TOURNAMENTS, ...TOURNAMENT_ALL].filter((clue) => missing.includes(clue.letter))];
+}
+
 // General mode: every league, the Champions League and the international tournaments in one pool.
 export const RONDO_CLUES: Record<Competition, RondoClue[]> = {
   ...REAL_RONDO,
-  general: mergeUnique(RONDO_TOURNAMENTS, ...REAL_COMPETITIONS.map((comp) => REAL_RONDO[comp])),
+  ...(Object.fromEntries(TOURNAMENT_COMPETITIONS.map((comp) => [comp, tournamentClues(comp)])) as Record<TournamentComp, RondoClue[]>),
+  general: mergeUnique([...RONDO_TOURNAMENTS, ...TOURNAMENT_ALL], ...REAL_COMPETITIONS.map((comp) => REAL_RONDO[comp])),
 };
 export const RONDO_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 export const RONDO_SECONDS = 180;

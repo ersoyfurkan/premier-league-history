@@ -1,10 +1,10 @@
-import TournamentQuiz from "@/components/TournamentQuiz";
+import GameLobby from "@/components/GameLobby";
 import GameModeChooser from "@/components/GameModeChooser";
 
 export default function EurosGamePage() {
   return (
     <GameModeChooser label="Euros" leagueHref="/euros/game">
-      <TournamentQuiz tk="euros" />
+      <GameLobby comp="euros" />
     </GameModeChooser>
   );
 }

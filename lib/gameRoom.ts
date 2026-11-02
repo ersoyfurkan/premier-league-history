@@ -7,7 +7,8 @@ import { LIGUE1_CARDS } from "@/data/ligue1Cards";
 import { SUPERLIG_CARDS } from "@/data/superligCards";
 import { LEAGUE_META, isEspnComp } from "@/lib/leagues";
 
-import { REAL_COMPETITIONS, type Competition, type RealCompetition } from "@/lib/competitions";
+import { REAL_COMPETITIONS, TOURNAMENT_COMPETITIONS, isTournamentComp, type Competition, type RealCompetition, type TournamentComp } from "@/lib/competitions";
+import { playerInComp } from "@/data/footballTicTacToe";
 export type { Competition, RealCompetition };
 const REAL_CARDS: Record<RealCompetition, PlayerCard[]> = {
   pl: PLAYERS,
@@ -18,15 +19,24 @@ const REAL_CARDS: Record<RealCompetition, PlayerCard[]> = {
   ligue1: LIGUE1_CARDS,
   superlig: SUPERLIG_CARDS,
 };
+const ALL_CARDS = [...new Map(REAL_COMPETITIONS.flatMap((comp) => REAL_CARDS[comp]).map((card) => [card.name, card])).values()];
 const CARDS: Record<Competition, PlayerCard[]> = {
   ...REAL_CARDS,
-  general: [...new Map(REAL_COMPETITIONS.flatMap((comp) => REAL_CARDS[comp]).map((card) => [card.name, card])).values()],
+  ...(Object.fromEntries(
+    TOURNAMENT_COMPETITIONS.map((comp) => [comp, ALL_CARDS.filter((card) => playerInComp(comp, card.name))]),
+  ) as Record<TournamentComp, PlayerCard[]>),
+  general: ALL_CARDS,
 };
 export const poolFor = (comp: Competition | undefined): PlayerCard[] => CARDS[comp ?? "pl"];
+const TOURNAMENT_GAME: Record<TournamentComp, string> = { worldcup: "/world-cup/game", euros: "/euros/game", copa: "/copa-america/game" };
 export const lobbyFor = (comp: Competition | undefined) =>
-  comp === "general" ? "/game/general" : `${comp === "ucl" ? "/champions-league/game" : comp && isEspnComp(comp) ? LEAGUE_META[comp].game : "/game"}?mode=league`;
+  comp === "general"
+    ? "/game/general"
+    : comp && isTournamentComp(comp)
+      ? `${TOURNAMENT_GAME[comp]}?mode=league`
+      : `${comp === "ucl" ? "/champions-league/game" : comp && isEspnComp(comp) ? LEAGUE_META[comp].game : "/game"}?mode=league`;
 export const parseComp = (value: unknown): Competition =>
-  value === "ucl" || value === "general" || isEspnComp(value) ? value : "pl";
+  value === "ucl" || value === "general" || isTournamentComp(value) || isEspnComp(value) ? value : "pl";
 
 export type Side = "p1" | "p2";
 export type StatKey = "appearances" | "goals" | "assists";

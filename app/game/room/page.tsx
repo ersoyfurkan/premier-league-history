@@ -7,6 +7,7 @@ import CardFace from "@/components/CardFace";
 import MatchResult from "@/components/MatchResult";
 import { lobbyFor } from "@/lib/gameRoom";
 import { isEspnComp } from "@/lib/leagues";
+import { isTournamentComp } from "@/lib/competitions";
 import type { RoomView, StatKey } from "@/lib/gameRoom";
 
 const STATS: StatKey[] = ["goals", "assists", "appearances"];
@@ -129,7 +130,7 @@ function RoomClient() {
 
   const shareUrl =
     typeof window !== "undefined"
-      ? `${window.location.origin}/game/room?code=${code}${compParam === "ucl" || isEspnComp(compParam) ? `&comp=${compParam}` : ""}`
+      ? `${window.location.origin}/game/room?code=${code}${compParam === "ucl" || isEspnComp(compParam) || isTournamentComp(compParam) ? `&comp=${compParam}` : ""}`
       : "";
 
   const copyLink = async () => {

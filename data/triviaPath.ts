@@ -1,5 +1,5 @@
-import { REAL_COMPETITIONS, COMPETITION_LABELS, type Competition } from "@/lib/competitions";
-import { tournamentTriviaCategories } from "@/data/tournamentTrivia";
+import { REAL_COMPETITIONS, TOURNAMENT_COMPETITIONS, COMPETITION_LABELS, isTournamentComp, type Competition } from "@/lib/competitions";
+import { tournamentTriviaCategories, tournamentTeamsCategory, TOURNAMENT_TRIVIA } from "@/data/tournamentTrivia";
 import { footballFacts, normalizeFootballPlayerName } from "@/data/footballTicTacToe";
 import { DUEL_CLUBS, playersForBoth, playersForClub, searchDuelPlayers } from "@/data/clubDuel";
 import { BUNDESLIGA_TRIVIA } from "@/data/bundesligaContent";
@@ -52,6 +52,9 @@ const UCL_STADIUMS = list(
 
 const STATIC: Record<Competition, Category[]> = {
   general: [],
+  worldcup: [],
+  euros: [],
+  copa: [],
   bundesliga: [],
   ligue1: [],
   superlig: [],
@@ -170,6 +173,13 @@ for (const comp of REAL_COMPETITIONS) {
 // General mode: every competition's categories (de-duplicated) plus the international tournaments.
 const TOURNAMENT_CATEGORIES = tournamentTriviaCategories();
 for (const item of TOURNAMENT_CATEGORIES) LIVE_SHORT[item.id] = item.short;
+for (const comp of TOURNAMENT_COMPETITIONS) {
+  STATIC[comp] = [
+    ...TOURNAMENT_TRIVIA[comp],
+    { id: "s-ballon", noun: "Ballon d'Or winner", plural: "Ballon d'Or winners", entries: BALLON },
+    ...(comp === "worldcup" ? [{ id: "s-wc", noun: "nation that has won the World Cup", plural: "nations that have won the World Cup", entries: WC_NATIONS }] : []),
+  ];
+}
 STATIC.general = [...new Map([...REAL_COMPETITIONS.flatMap((comp) => STATIC[comp]), ...TOURNAMENT_CATEGORIES].map((item) => [item.id, item])).values()];
 
 const CLUB_ALIASES: Record<string, string[]> = {
@@ -190,6 +200,7 @@ const CLUB_ALIASES: Record<string, string[]> = {
 };
 
 function leagueClubCategory(comp: Competition): Category {
+  if (isTournamentComp(comp)) return tournamentTeamsCategory(comp);
   const names = comp === "general" ? "top European leagues" : COMPETITION_LABELS[comp].replace(" McDonald's", "");
   return {
     id: "s-clubs",
@@ -265,7 +276,8 @@ const SHORT: Record<string, string> = {
 const NATIONS: Record<string, string> = {
   esp: "Spanish", fra: "French", bra: "Brazilian", arg: "Argentine", por: "Portuguese", eng: "English", ned: "Dutch",
   bel: "Belgian", ger: "German", ita: "Italian", uru: "Uruguayan", mex: "Mexican", cro: "Croatian", wal: "Welsh",
-  sen: "Senegalese", srb: "Serbian",
+  sen: "Senegalese", srb: "Serbian", col: "Colombian", chi: "Chilean", par: "Paraguayan", per: "Peruvian", ecu: "Ecuadorian",
+  usa: "American", sui: "Swiss", den: "Danish", pol: "Polish", tur: "Turkish", aut: "Austrian", sco: "Scottish", nor: "Norwegian", swe: "Swedish",
 };
 
 // Questions built from the career dataset, so any player in it is a valid answer.
@@ -347,7 +359,7 @@ export function tileById(comp: Competition, id: string): BoardTile | null {
   if (id.startsWith("c-")) {
     const club = clubs.find((item) => item.key === id.slice(2));
     if (club) {
-      category = { id, noun: `player who played for ${club.label}`, plural: `players who played for ${club.label}`, entries: playerEntries(playersForClub(club.key)) };
+      category = { id, noun: `player who played for ${club.label}`, plural: `players who played for ${club.label}`, entries: playerEntries(playersForClub(club.key, comp)) };
       short = club.label;
     }
   } else if (id.startsWith("p-")) {
@@ -359,7 +371,7 @@ export function tileById(comp: Competition, id: string): BoardTile | null {
         id,
         noun: `player who played for both ${ca.label} and ${cb.label}`,
         plural: `players who played for both ${ca.label} and ${cb.label}`,
-        entries: playerEntries(playersForBoth(a, b)),
+        entries: playerEntries(playersForBoth(a, b, comp)),
       };
       short = `${clubLabel(a)} + ${clubLabel(b)}`;
     }
@@ -437,7 +449,7 @@ export function pickTriviaQuestion(comp: Competition, count: number, used: Set<s
       const club = pick(clubs);
       const id = `c-${club.key}`;
       if (used.has(id)) continue;
-      const names = playersForClub(club.key);
+      const names = playersForClub(club.key, comp);
       if (names.length < Math.max(need, count * 3)) continue;
       return build(id, {
         id,
@@ -452,7 +464,7 @@ export function pickTriviaQuestion(comp: Competition, count: number, used: Set<s
       if (a.key >= b.key) continue;
       const id = `p-${a.key}-${b.key}`;
       if (used.has(id)) continue;
-      const names = playersForBoth(a.key, b.key);
+      const names = playersForBoth(a.key, b.key, comp);
       if (names.length < need) continue;
       return build(id, {
         id,

@@ -88,7 +88,7 @@ function startGuess(state: DuelState, now: number) {
     state.notice = `Both picked ${label(p1)}. Pick different clubs.`;
     return;
   }
-  if (playersForBoth(p1, p2).length === 0) {
+  if (playersForBoth(p1, p2, state.comp).length === 0) {
     startPick(state, now);
     state.notice = `No known player has played for both ${label(p1)} and ${label(p2)}. Pick again.`;
     return;
@@ -266,7 +266,7 @@ async function handlePost(request: NextRequest) {
     const guess = typeof body.guess === "string" ? body.guess.slice(0, 60) : "";
     return mutate(db, code, token, (state, side, now) => {
       if (state.phase !== "guess" || !state.clubs) return { extra: { correct: false, message: "Too late" } };
-      const player = matchSharedPlayer(state.clubs.p1, state.clubs.p2, guess);
+      const player = matchSharedPlayer(state.clubs.p1, state.clubs.p2, guess, state.comp);
       if (!player) return { extra: { correct: false, message: "Not a player we know who played for both clubs" } };
       if (state.used.includes(normalizeFootballPlayerName(player))) {
         return { extra: { correct: false, message: `${player} was already used` } };
