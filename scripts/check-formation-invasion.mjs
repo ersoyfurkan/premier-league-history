@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { registerHooks } from "node:module";
 import { test } from "node:test";
+import { createHash } from "node:crypto";
 import "./register-data.mjs";
 
 const { FORMATION_PLAYERS, FORMATION_SLOTS, formationLineup, formationPlayer, formationPortrait } = await import("../data/formationInvasion.ts");
@@ -69,8 +70,8 @@ test("Formation Invasion has eleven unique position-correct players in every sco
 });
 
 test("Each footballer has eighteen specific questions, six per difficulty, with aliases, clues, portraits and provenance", () => {
-  assert.equal(FORMATION_PLAYERS.length, 59);
-  assert.equal(FORMATION_PLAYERS.reduce((total, player) => total + player.questions.length, 0), 1062);
+  assert.equal(FORMATION_PLAYERS.length, 125);
+  assert.equal(FORMATION_PLAYERS.reduce((total, player) => total + player.questions.length, 0), 2250);
   for (const player of FORMATION_PLAYERS) {
     assert.match(player.source, /^https:\/\/en.wikipedia.org\/wiki\//);
     assert.ok(playerFaceUrl(player.name) || formationPortrait(player.id), `${player.name} needs a portrait`);
@@ -97,6 +98,29 @@ test("Each footballer has eighteen specific questions, six per difficulty, with 
       }
       for (let step = 0; step < 3; step += 1) assert.equal(solve(state, 0), null);
       assert.equal(state.slots[0].owner, "p1");
+    }
+  }
+});
+
+test("The 66-player expansion preserves the original bank and adds top-five-league players with non-revealing clues", () => {
+  const words = (value) => value.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/['\u2019]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+  assert.equal(createHash("sha256").update(JSON.stringify(FORMATION_PLAYERS.slice(0, 59))).digest("hex"),
+    "dfd5b96f7ca6f6a5413728cffd9415bcf98e29505b8db7c350e9e7e51c75ae7a");
+  const added = FORMATION_PLAYERS.slice(59);
+  assert.equal(added.length, 66);
+  assert.equal(new Set(FORMATION_PLAYERS.map((player) => normalizeFootballPlayerName(player.name))).size, 125);
+  for (const player of added) {
+    assert.ok(player.competitions.some((comp) => ["pl", "laliga", "seriea", "bundesliga", "ligue1"].includes(comp)), player.name);
+    for (const question of player.questions) {
+      for (const clue of question.clues) {
+        const text = ` ${words(clue)} `;
+        for (const alias of question.answers) {
+          const normalized = words(alias);
+          if (normalized.length < 3) continue;
+          assert.ok(!text.includes(` ${normalized} `), `${player.name}: clue reveals ${alias}: ${clue}`);
+        }
+      }
     }
   }
 });

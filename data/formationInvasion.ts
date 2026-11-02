@@ -2,6 +2,9 @@ import type { Competition } from "@/lib/competitions";
 import { EXTRA_FORMATION_QUESTIONS } from "@/data/formationInvasionQuestions";
 import { ADDITIONAL_FORMATION_QUESTIONS, LEGACY_FORMATION_DIFFICULTIES } from "@/data/formationInvasionExpansion";
 import { formationClues } from "@/data/formationInvasionClues";
+import { ADDITIONAL_FORMATION_DEFENDERS } from "@/data/formationInvasionDefenders";
+import { ADDITIONAL_FORMATION_MIDFIELDERS } from "@/data/formationInvasionMidfielders";
+import { ADDITIONAL_FORMATION_FORWARDS } from "@/data/formationInvasionForwards";
 
 export type FormationPosition = "GK" | "LB" | "CB" | "RB" | "CM" | "DM" | "LW" | "ST" | "RW";
 export type FormationQuestion = { text: string; answers: string[]; hint: string; clues: [string, string, string]; difficulty: "easy" | "medium" | "hard" };
@@ -327,6 +330,9 @@ export const FORMATION_PLAYERS: FormationPlayer[] = [
     q("Which German club sold Haaland to Manchester City in 2022?", ["Borussia Dortmund", "Dortmund", "BVB"], "The Black and Yellows."),
     q("How many Premier League goals did Haaland score in 2022/23?", ["36", "thirty six", "thirty-six"], "Six squared."),
   ]),
+  ...ADDITIONAL_FORMATION_DEFENDERS,
+  ...ADDITIONAL_FORMATION_MIDFIELDERS,
+  ...ADDITIONAL_FORMATION_FORWARDS,
 ];
 
 export const FORMATION_SLOTS: { position: FormationPosition; x: number; y: number }[] = [
@@ -337,6 +343,13 @@ export const FORMATION_SLOTS: { position: FormationPosition; x: number; y: numbe
 ];
 
 const PORTRAITS: Record<string, string> = {
+  alisson: "4/4f/Alisson_Becker_Brazil_V_Morocco_13_June_2026-117_%28cropped%29.jpg/960px-Alisson_Becker_Brazil_V_Morocco_13_June_2026-117_%28cropped%29.jpg",
+  degea: "6/68/David_de_Gea_2017.jpg/330px-David_de_Gea_2017.jpg",
+  donnarumma: "2/2d/Norway_Italy_-_June_2025_A_17_%28Gianluigi_Donnarumma%29.jpg/960px-Norway_Italy_-_June_2025_A_17_%28Gianluigi_Donnarumma%29.jpg",
+  ballack: "5/5d/10._Tag_der_Legenden_2014_69.jpg/960px-10._Tag_der_Legenden_2014_69.jpg",
+  schweinsteiger: "a/ac/Re-publica_23_-_Tag_3_%2852957826298%29_%28cropped%29.jpg/1280px-Re-publica_23_-_Tag_3_%2852957826298%29_%28cropped%29.jpg",
+  ronaldonazario: "3/36/12.12.2025_%E2%80%93_Cerim%C3%B4nia_de_lan%C3%A7amento_do_SBT_News_-_54980664160_%28cropped2%29.jpg/960px-12.12.2025_%E2%80%93_Cerim%C3%B4nia_de_lan%C3%A7amento_do_SBT_News_-_54980664160_%28cropped2%29.jpg",
+  sane: "0/0a/Leroy_Sane_Ecuador_v_Germany_25_June_2026-119_%28cropped%29.jpg/960px-Leroy_Sane_Ecuador_v_Germany_25_June_2026-119_%28cropped%29.jpg",
   navas: "d/dc/Keylor_Navas_2018_%28cropped%29.jpg/330px-Keylor_Navas_2018_%28cropped%29.jpg",
   boateng: "2/22/Jerome_Boateng_Training_2019-04-10_FC_Bayern_Muenchen-2_%28cropped%29.jpg/330px-Jerome_Boateng_Training_2019-04-10_FC_Bayern_Muenchen-2_%28cropped%29.jpg",
   evra: "c/cd/Patrice_Evra_%2852472689279%29_%28cropped%29.jpg/330px-Patrice_Evra_%2852472689279%29_%28cropped%29.jpg",
