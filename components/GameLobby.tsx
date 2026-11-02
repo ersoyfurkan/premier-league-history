@@ -122,6 +122,19 @@ export default function GameLobby({ comp }: { comp: Competition }) {
                     </span>
                   </Link>
                   <Link
+                    href={`/game/football-battleship?comp=${comp}`}
+                    className="rounded-2xl border border-primary/25 bg-background/60 p-5 text-left transition hover:border-primary/60 hover:bg-primary/5"
+                  >
+                    <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-primary">Online 1v1</p>
+                    <h3 className="mt-2 text-xl font-bold">Football Battleship</h3>
+                    <p className="mt-2 text-sm leading-6 text-fore-muted">
+                      Hide ships of 2, 3 and 4 squares. Name a player matching the row and column to fire; sink the enemy fleet to win.
+                    </p>
+                    <span className="mt-4 inline-block font-mono text-[10px] uppercase tracking-[0.12em] text-primary">
+                      Battle a friend →
+                    </span>
+                  </Link>
+                  <Link
                     href={`/game/formation-invasion?comp=${comp}`}
                     className="rounded-2xl border border-primary/25 bg-background/60 p-5 text-left transition hover:border-primary/60 hover:bg-primary/5"
                   >

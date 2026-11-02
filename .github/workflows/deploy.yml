@@ -46,6 +46,8 @@ jobs:
         run: pnpm build
       - name: Prepare Formation Invasion rooms
         run: pnpm exec wrangler d1 execute DB --remote --file migrations/0004_formation_invasion.sql --yes
+      - name: Prepare Football Battleship rooms
+        run: pnpm exec wrangler d1 execute DB --remote --file migrations/0005_football_battleship.sql --yes
       - name: Deploy Worker
         run: pnpm exec wrangler deploy --keep-vars --message "GitHub ${GITHUB_SHA}"
       - name: Check deployed game routes

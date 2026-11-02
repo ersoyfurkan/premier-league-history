@@ -14,6 +14,9 @@ const paths = [
   "/game/formation-invasion?comp=worldcup",
   "/game/formation-invasion?comp=euros",
   "/game/formation-invasion?comp=copa",
+  "/game/football-battleship?comp=general",
+  "/game/football-battleship?comp=worldcup",
+  "/game/football-battleship?comp=ucl",
 ];
 
 const results = await Promise.allSettled(paths.map(async (path) => {

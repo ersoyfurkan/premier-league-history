@@ -124,6 +124,20 @@ Online picks remain private in the stored room state, and public room views omit
 
 Each player gets **one guess per round**. A wrong or already-used player consumes that guess; the opponent can still answer. Two wrong guesses give zero points each. The first correct guess accepted by the server wins the round's single point, with optimistic version retries preventing simultaneous correct requests from scoring twice. Skipping gives up that player's guess; if neither player can answer, the round ends with no points. The existing timer and first-to-five match target remain unchanged.
 
+## Football Battleship
+
+[Football Battleship](./app/game/football-battleship/page.tsx) is online 1v1, available from every competition lobby and General. Create a room and share its invite link; each player needs their own browser/device so fleets remain secret. Player tokens are kept in browser storage for reconnecting.
+
+- Each player secretly places three straight ships on an **8 by 8 board**: one of length **2**, one of length **3**, and one of length **4**. Ships cannot overlap but may touch. Positions lock when submitted; both players must be ready before a randomly chosen first turn.
+- The attack board has shared football row and column criteria. Choose a square and name a footballer satisfying **both** criteria to fire at that coordinate.
+- A correct hit keeps the turn. A correct miss or wrong answer passes the turn. Wrong answers do not reveal occupancy or consume the square. Previously fired squares cannot be targeted again; footballers may be reused at different intersections.
+- The first player to hit all **nine** occupied enemy squares wins. Enemy positions stay hidden until the match finishes. Rematches require both players' votes and restart ship placement.
+- Matching uses a curated historical answer bank, not a live or exhaustive career database.
+
+The [offline board builder](./scripts/prepare-football-battleship.mjs) prepares four variants per competition, each with at least three accepted footballers in every square. Tournament boards restrict their player pools to the selected competition rather than falling back to General. Runtime board creation only shuffles prepared axes; accepted-answer lists never reach the browser. `pnpm data:quiz` refreshes the source facts and Battleship snapshot in order; `pnpm data:battleship` rebuilds only the latter.
+
+Run `pnpm test:battleship` for snapshot freshness and focused core/API checks, or `pnpm test:stat-games` for all quiz regressions. The room API uses D1 and revision-checked writes; private responses are not cached. Before deploying outside the normal workflow, apply [the idempotent room schema](./migrations/0005_football_battleship.sql) to the target database. The deployment workflow applies it before publishing the Worker. Local development with a `remote: true` D1 binding accesses the real database; use mocked APIs/in-memory D1 for isolated tests rather than creating production test rooms.
+
 ## Cloudflare resource limits
 
 `pnpm build` runs `pnpm data:quiz` before compiling Next.js. The [quiz preparation script](./scripts/prepare-quiz-data.mjs) computes award combinations, the shared career/fact universe, Tic-Tac-Toe clue memberships, and Trivia Path tiles/candidate ratings offline. Generated quiz snapshots are committed; after changing source facts, awards, careers or categories, regenerate them with `pnpm data:quiz`. `pnpm test:stat-games` rejects stale snapshots.
