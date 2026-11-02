@@ -11,7 +11,7 @@ const {
   newFormationGame, joinFormationGame, applyFormationAction, formationView, formationSideOf, formationQuestionFor,
   expireFormationStanding, FORMATION_STANDING_TURN_MS,
 } = await import("../lib/formationInvasion.ts");
-const { FORMATION_STANDING_CATEGORIES, formationStandingCategory } = await import("../data/formationStanding.ts");
+const { FORMATION_STANDING_CATEGORIES, formationStandingCategory, pickFormationStandingCategory } = await import("../data/formationStanding.ts");
 const { normalizeFootballPlayerName } = await import("../data/footballNames.ts");
 const { lobbyFor } = await import("../lib/gameNavigation.ts");
 
@@ -125,7 +125,7 @@ test("The 66-player expansion preserves the original bank and adds top-five-leag
   }
 });
 
-test("Easy-medium-hard question picks persist through JSON, wrong answers, passes and clue votes", () => {
+test("Easier easy-medium-medium question picks are distinct and persist through JSON, wrong answers, passes and clue votes", () => {
   for (const mode of ["online", "local", "solo"]) {
     const seen = new Set();
     for (let round = 0; round < 50; round += 1) {
@@ -136,7 +136,7 @@ test("Easy-medium-hard question picks persist through JSON, wrong answers, passe
         assert.equal(new Set(slot.questionPicks).size, 3);
         assert.ok(slot.questionPicks.every((index) => Number.isInteger(index) && index >= 0 && index < 18));
         assert.deepEqual(slot.questionPicks.map((index) => formationPlayer(slot.playerId).questions[index].difficulty),
-          ["easy", "medium", "hard"]);
+          ["easy", "medium", "medium"]);
       }
       seen.add(state.slots[10].questionPicks.join(","));
       const originalPicks = state.slots.map((slot) => [...slot.questionPicks]);
@@ -174,7 +174,7 @@ test("Legacy saved rooms without question picks retain their original questions 
   assert.equal(state.slots[0].owner, "p1");
 });
 
-test("Existing six-question room picks are not reordered when new games switch to difficulty tiers", () => {
+test("Existing six-question room picks are not reordered when new games become easier", () => {
   const state = newFormationGame("general", "local");
   state.slots[0].questionPicks = [5, 0, 3];
   const player = formationPlayer(state.slots[0].playerId);
@@ -183,6 +183,19 @@ test("Existing six-question room picks are not reordered when new games switch t
     assert.equal(solve(state, 0), null);
   }
   assert.equal(state.slots[0].owner, "p1");
+});
+
+test("Previously saved easy-medium-hard matches keep their hard final question", () => {
+  const state = newFormationGame("general", "local");
+  const player = formationPlayer(state.slots[0].playerId);
+  state.slots[0].questionPicks = ["easy", "medium", "hard"].map((tier) =>
+    player.questions.findIndex((question) => question.difficulty === tier));
+  const restored = JSON.parse(JSON.stringify(state));
+  for (const tier of ["easy", "medium", "hard"]) {
+    assert.equal(formationQuestionFor(restored.slots[0]).difficulty, tier);
+    assert.equal(solve(restored, 0), null);
+  }
+  assert.equal(restored.slots[0].owner, "p1");
 });
 
 test("Shared progress lets the opponent claim question three; correct keeps turn, wrong passes without revealing answer", () => {
@@ -586,6 +599,67 @@ test("South American Premier League winners use the stated medal and season limi
     assert.equal(state.standing, null, answer);
     assert.notEqual(state.turn, loser, answer);
     assert.equal(state.slots[0].progress, 1, answer);
+  }
+});
+
+test("The expanded standing bank has 31 distinct categorical prompts and can select every category without repeats", () => {
+  assert.equal(FORMATION_STANDING_CATEGORIES.length, 31);
+  assert.equal(new Set(FORMATION_STANDING_CATEGORIES.map((category) => category.id)).size, 31);
+  assert.equal(new Set(FORMATION_STANDING_CATEGORIES.map((category) => category.prompt)).size, 31);
+  const selected = [];
+  for (let index = 0; index < FORMATION_STANDING_CATEGORIES.length; index++) {
+    const category = pickFormationStandingCategory(selected);
+    assert.ok(!selected.includes(category.id));
+    assert.match(category.prompt, /^Name a (player|club|country|South American player|men's Ballon d'Or winner) /);
+    selected.push(category.id);
+  }
+  assert.throws(() => pickFormationStandingCategory(selected), /No unused/);
+});
+
+test("New standing categories enforce historical cutoffs, shared awards and starting-lineup boundaries", () => {
+  const cases = [
+    ["premier-league-golden-boot-1992-2023", "Dion Dublin", "Wayne Rooney", 26],
+    ["world-cup-golden-boot-1982-2022", "Salenko", "David Villa", 12],
+    ["world-cup-golden-ball-1982-2022", "Kahn", "Kylian Mbappe", 10],
+    ["la-liga-champions-through-2023", "Betis", "Villarreal", 9],
+    ["bundesliga-champions-through-2023", "Wolfsburg", "Bayer Leverkusen", 12],
+    ["serie-a-champions-1929-2023", "Sampdoria", "Genoa", 12],
+    ["french-league-champions-1932-2023", "Olympique Lillois", "Rennes", 19],
+    ["premier-league-clubs-2015-16", "Swansea", "Burnley", 20],
+    ["world-cup-quarter-finalists-2022", "Morocco", "Spain", 8],
+    ["world-cup-runners-up-through-2022", "Sweden", "England", 10],
+    ["brazil-2002-starters", "Kleberson", "Juninho Paulista", 11],
+    ["italy-2006-starters", "Perrotta", "Daniele De Rossi", 11],
+    ["germany-2014-starters", "Kramer", "Mario Gotze", 11],
+    ["france-1998-starters", "Guivarc'h", "Laurent Blanc", 11],
+    ["portugal-2016-starters", "Renato Sanches", "Eder", 11],
+    ["italy-euro-2020-starters", "Emerson", "Leonardo Spinazzola", 11],
+    ["arsenal-2006-final-starters", "Lehmann", "Manuel Almunia", 11],
+    ["liverpool-2005-final-starters", "Kewell", "Dietmar Hamann", 11],
+    ["barcelona-2009-final-starters", "Sylvinho", "Dani Alves", 11],
+    ["man-city-2023-final-starters", "De Bruyne", "Phil Foden", 11],
+  ];
+  for (const [id, valid, invalid, count] of cases) {
+    const category = formationStandingCategory(id);
+    assert.equal(category.entries.length, count, id);
+    for (const [candidate, accepted] of [[valid, true], [invalid, false]]) {
+      const state = playing();
+      startStanding(state);
+      state.standing.categoryId = id;
+      const side = state.standing.turn;
+      assert.equal(play(state, side, {
+        action: "standing-answer", answer: candidate, deadline: state.standing.deadline,
+      }, 1001), null);
+      if (accepted) {
+        assert.ok(state.standing, `${id}: accepts ${candidate}`);
+        assert.equal(state.standing.used.length, 1);
+        assert.equal(state.slots[0].progress, 0);
+      } else {
+        assert.equal(state.standing, null, `${id}: rejects ${candidate}`);
+        assert.notEqual(state.turn, side);
+        assert.equal(state.slots[0].progress, 1);
+      }
+    }
   }
 });
 

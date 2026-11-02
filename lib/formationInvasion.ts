@@ -54,12 +54,16 @@ export const isFormationComp = (value: unknown): value is Competition =>
 
 function pickQuestions(playerId: string): [number, number, number] {
   const questions = formationPlayer(playerId).questions;
-  const pick = (difficulty: "easy" | "medium" | "hard") => {
-    const indices = questions.flatMap((question, index) => question.difficulty === difficulty ? [index] : []);
+  const selected = new Set<number>();
+  const pick = (difficulty: "easy" | "medium") => {
+    const indices = questions.flatMap((question, index) =>
+      question.difficulty === difficulty && !selected.has(index) ? [index] : []);
     if (!indices.length) throw new Error(`Missing ${difficulty} Formation Invasion questions for ${playerId}`);
-    return indices[Math.floor(Math.random() * indices.length)];
+    const index = indices[Math.floor(Math.random() * indices.length)];
+    selected.add(index);
+    return index;
   };
-  return [pick("easy"), pick("medium"), pick("hard")];
+  return [pick("easy"), pick("medium"), pick("medium")];
 }
 
 export function isFormationRaceAnswer(state: FormationState, side: FormationSide, action: FormationAction,

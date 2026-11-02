@@ -39,7 +39,7 @@ function Rules() {
     <details className="mt-5 rounded-xl border border-border bg-surface/80 p-4 text-sm">
       <summary className="cursor-pointer font-bold">How to play</summary>
       <ul className="mt-3 list-disc space-y-2 pl-5 text-fore-muted">
-        <li>Pick any unlocked footballer in the 4-3-3. Their three career questions progress from easy to medium to hard, randomly chosen and fixed for this match.</li>
+        <li>Pick any unlocked footballer in the 4-3-3. New games use one easy and two different medium career questions per footballer, randomly chosen and fixed for this match.</li>
         <li>Choosing a footballer commits you to their current question. You cannot browse other questions or pass after choosing. A correct answer keeps your turn and lets you choose that footballer again or someone else.</li>
         <li>Once a footballer is chosen, both players see the same question and any revealed clues. Only the turn-holder can answer unless a shared-clue race is active.</li>
         <li>A wrong answer passes the turn without resetting progress. Your opponent can finish your work.</li>
