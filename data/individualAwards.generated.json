@@ -1,0 +1,7456 @@
+{
+  "checkedAt": "2026-11-02T12:40:05.600Z",
+  "awards": [
+    {
+      "id": "ballon",
+      "label": "Ballon d'Or",
+      "comp": "general",
+      "page": "Ballon d'Or",
+      "section": "Winners",
+      "image": "ballon",
+      "source": "https://en.wikipedia.org/wiki/Ballon_d'Or",
+      "winners": [
+        {
+          "name": "Stanley Matthews",
+          "season": "1956"
+        },
+        {
+          "name": "Alfredo Di Stéfano",
+          "season": "1957"
+        },
+        {
+          "name": "Raymond Kopa",
+          "season": "1958"
+        },
+        {
+          "name": "Alfredo Di Stéfano",
+          "season": "1959"
+        },
+        {
+          "name": "Luis Suarez Miramontes",
+          "season": "1960"
+        },
+        {
+          "name": "Omar Sívori",
+          "season": "1961"
+        },
+        {
+          "name": "Josef Masopust",
+          "season": "1962"
+        },
+        {
+          "name": "Lev Yashin",
+          "season": "1963"
+        },
+        {
+          "name": "Denis Law",
+          "season": "1964"
+        },
+        {
+          "name": "Eusébio",
+          "season": "1965"
+        },
+        {
+          "name": "Bobby Charlton",
+          "season": "1966"
+        },
+        {
+          "name": "Flórián Albert",
+          "season": "1967"
+        },
+        {
+          "name": "George Best",
+          "season": "1968"
+        },
+        {
+          "name": "Gianni Rivera",
+          "season": "1969"
+        },
+        {
+          "name": "Gerd Müller",
+          "season": "1970"
+        },
+        {
+          "name": "Johan Cruyff",
+          "season": "1971"
+        },
+        {
+          "name": "Franz Beckenbauer",
+          "season": "1972"
+        },
+        {
+          "name": "Johan Cruyff",
+          "season": "1973"
+        },
+        {
+          "name": "Johan Cruyff",
+          "season": "1974"
+        },
+        {
+          "name": "Oleg Blokhin",
+          "season": "1975"
+        },
+        {
+          "name": "Franz Beckenbauer",
+          "season": "1976"
+        },
+        {
+          "name": "Allan Simonsen",
+          "season": "1977"
+        },
+        {
+          "name": "Kevin Keegan",
+          "season": "1978"
+        },
+        {
+          "name": "Kevin Keegan",
+          "season": "1979"
+        },
+        {
+          "name": "Karl-Heinz Rummenigge",
+          "season": "1980"
+        },
+        {
+          "name": "Karl-Heinz Rummenigge",
+          "season": "1981"
+        },
+        {
+          "name": "Paolo Rossi",
+          "season": "1982"
+        },
+        {
+          "name": "Michel Platini",
+          "season": "1983"
+        },
+        {
+          "name": "Michel Platini",
+          "season": "1984"
+        },
+        {
+          "name": "Michel Platini",
+          "season": "1985"
+        },
+        {
+          "name": "Igor Belanov",
+          "season": "1986"
+        },
+        {
+          "name": "Ruud Gullit",
+          "season": "1987"
+        },
+        {
+          "name": "Marco van Basten",
+          "season": "1988"
+        },
+        {
+          "name": "Marco van Basten",
+          "season": "1989"
+        },
+        {
+          "name": "Lothar Matthäus",
+          "season": "1990"
+        },
+        {
+          "name": "Jean-Pierre Papin",
+          "season": "1991"
+        },
+        {
+          "name": "Marco van Basten",
+          "season": "1992"
+        },
+        {
+          "name": "Roberto Baggio",
+          "season": "1993"
+        },
+        {
+          "name": "Hristo Stoichkov",
+          "season": "1994"
+        },
+        {
+          "name": "George Weah",
+          "season": "1995"
+        },
+        {
+          "name": "Matthias Sammer",
+          "season": "1996"
+        },
+        {
+          "name": "Ronaldo",
+          "season": "1997"
+        },
+        {
+          "name": "Zinedine Zidane",
+          "season": "1998"
+        },
+        {
+          "name": "Rivaldo",
+          "season": "1999"
+        },
+        {
+          "name": "Luís Figo",
+          "season": "2000"
+        },
+        {
+          "name": "Michael Owen",
+          "season": "2001"
+        },
+        {
+          "name": "Ronaldo",
+          "season": "2002"
+        },
+        {
+          "name": "Pavel Nedvěd",
+          "season": "2003"
+        },
+        {
+          "name": "Andriy Shevchenko",
+          "season": "2004"
+        },
+        {
+          "name": "Ronaldinho",
+          "season": "2005"
+        },
+        {
+          "name": "Fabio Cannavaro",
+          "season": "2006"
+        },
+        {
+          "name": "Kaká",
+          "season": "2007"
+        },
+        {
+          "name": "Cristiano Ronaldo",
+          "season": "2008"
+        },
+        {
+          "name": "Lionel Messi",
+          "season": "2009"
+        },
+        {
+          "name": "Lionel Messi",
+          "season": "2010"
+        },
+        {
+          "name": "Lionel Messi",
+          "season": "2011"
+        },
+        {
+          "name": "Lionel Messi",
+          "season": "2012"
+        },
+        {
+          "name": "Cristiano Ronaldo",
+          "season": "2013"
+        },
+        {
+          "name": "Cristiano Ronaldo",
+          "season": "2014"
+        },
+        {
+          "name": "Lionel Messi",
+          "season": "2015"
+        },
+        {
+          "name": "Cristiano Ronaldo",
+          "season": "2016"
+        },
+        {
+          "name": "Cristiano Ronaldo",
+          "season": "2017"
+        },
+        {
+          "name": "Luka Modrić",
+          "season": "2018"
+        },
+        {
+          "name": "Lionel Messi",
+          "season": "2019"
+        },
+        {
+          "name": "Lionel Messi",
+          "season": "2021"
+        },
+        {
+          "name": "Karim Benzema",
+          "season": "2022"
+        },
+        {
+          "name": "Lionel Messi",
+          "season": "2023"
+        },
+        {
+          "name": "Rodri",
+          "season": "2024"
+        },
+        {
+          "name": "Ousmane Dembélé",
+          "season": "2025"
+        },
+        {
+          "name": "Harry Kane",
+          "season": "2026"
+        }
+      ],
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/04/2016_Ballon_dOr_CR7Museum.jpg/250px-2016_Ballon_dOr_CR7Museum.jpg",
+      "fallback": "/awards/ballon.svg",
+      "imageKind": "trophy-photo"
+    },
+    {
+      "id": "fifa-best",
+      "label": "The Best FIFA Men's Player",
+      "comp": "general",
+      "page": "The Best FIFA Men's Player",
+      "section": "Winners",
+      "image": "player",
+      "source": "https://en.wikipedia.org/wiki/The_Best_FIFA_Men's_Player",
+      "winners": [
+        {
+          "name": "Cristiano Ronaldo",
+          "season": "2016"
+        },
+        {
+          "name": "Cristiano Ronaldo",
+          "season": "2017"
+        },
+        {
+          "name": "Luka Modrić",
+          "season": "2018"
+        },
+        {
+          "name": "Lionel Messi",
+          "season": "2019"
+        },
+        {
+          "name": "Robert Lewandowski",
+          "season": "2020"
+        },
+        {
+          "name": "Robert Lewandowski",
+          "season": "2021"
+        },
+        {
+          "name": "Lionel Messi",
+          "season": "2022"
+        },
+        {
+          "name": "Lionel Messi",
+          "season": "2023"
+        },
+        {
+          "name": "Vinícius Júnior",
+          "season": "2024"
+        },
+        {
+          "name": "Ousmane Dembélé",
+          "season": "2025"
+        }
+      ],
+      "src": "/awards/fifa-best.svg",
+      "fallback": "/awards/fifa-best.svg",
+      "imageKind": "labelled-illustration"
+    },
+    {
+      "id": "fifa-world",
+      "label": "FIFA World Player of the Year",
+      "comp": "general",
+      "page": "FIFA World Player of the Year",
+      "section": "Winners",
+      "image": "player",
+      "source": "https://en.wikipedia.org/wiki/FIFA_World_Player_of_the_Year",
+      "winners": [
+        {
+          "name": "Lothar Matthäus",
+          "season": "1991"
+        },
+        {
+          "name": "Marco van Basten",
+          "season": "1992"
+        },
+        {
+          "name": "Roberto Baggio",
+          "season": "1993"
+        },
+        {
+          "name": "Romário",
+          "season": "1994"
+        },
+        {
+          "name": "George Weah",
+          "season": "1995"
+        },
+        {
+          "name": "Ronaldo",
+          "season": "1996"
+        },
+        {
+          "name": "Ronaldo",
+          "season": "1997"
+        },
+        {
+          "name": "Zinedine Zidane",
+          "season": "1998"
+        },
+        {
+          "name": "Rivaldo",
+          "season": "1999"
+        },
+        {
+          "name": "Zinedine Zidane",
+          "season": "2000"
+        },
+        {
+          "name": "Luís Figo",
+          "season": "2001"
+        },
+        {
+          "name": "Ronaldo",
+          "season": "2002"
+        },
+        {
+          "name": "Zinedine Zidane",
+          "season": "2003"
+        },
+        {
+          "name": "Ronaldinho",
+          "season": "2004"
+        },
+        {
+          "name": "Ronaldinho",
+          "season": "2005"
+        },
+        {
+          "name": "Fabio Cannavaro",
+          "season": "2006"
+        },
+        {
+          "name": "Kaká",
+          "season": "2007"
+        },
+        {
+          "name": "Cristiano Ronaldo",
+          "season": "2008"
+        },
+        {
+          "name": "Lionel Messi",
+          "season": "2009"
+        }
+      ],
+      "src": "/awards/fifa-world.svg",
+      "fallback": "/awards/fifa-world.svg",
+      "imageKind": "labelled-illustration"
+    },
+    {
+      "id": "fifa-keeper",
+      "label": "The Best FIFA Men's Goalkeeper",
+      "comp": "general",
+      "page": "The Best FIFA Goalkeeper",
+      "section": "Men's winners",
+      "image": "glove",
+      "source": "https://en.wikipedia.org/wiki/The_Best_FIFA_Goalkeeper",
+      "winners": [
+        {
+          "name": "Gianluigi Buffon",
+          "season": "2017"
+        },
+        {
+          "name": "Thibaut Courtois",
+          "season": "2018"
+        },
+        {
+          "name": "Alisson",
+          "season": "2019"
+        },
+        {
+          "name": "Manuel Neuer",
+          "season": "2020"
+        },
+        {
+          "name": "Édouard Mendy",
+          "season": "2021"
+        },
+        {
+          "name": "Emiliano Martínez",
+          "season": "2022"
+        },
+        {
+          "name": "Ederson",
+          "season": "2023"
+        },
+        {
+          "name": "Emiliano Martínez",
+          "season": "2024"
+        },
+        {
+          "name": "Gianluigi Donnarumma",
+          "season": "2025"
+        }
+      ],
+      "src": "/awards/fifa-keeper.svg",
+      "fallback": "/awards/fifa-keeper.svg",
+      "imageKind": "labelled-illustration"
+    },
+    {
+      "id": "puskas",
+      "label": "FIFA Puskas Award",
+      "comp": "general",
+      "page": "FIFA Puskás Award",
+      "section": "Winners",
+      "image": "puskas",
+      "source": "https://en.wikipedia.org/wiki/FIFA_Pusk%C3%A1s_Award",
+      "winners": [
+        {
+          "name": "Cristiano Ronaldo",
+          "season": "2009"
+        },
+        {
+          "name": "Hamit Altıntop",
+          "season": "2010"
+        },
+        {
+          "name": "Neymar",
+          "season": "2011"
+        },
+        {
+          "name": "Miroslav Stoch",
+          "season": "2012"
+        },
+        {
+          "name": "Zlatan Ibrahimović",
+          "season": "2013"
+        },
+        {
+          "name": "James Rodríguez",
+          "season": "2014"
+        },
+        {
+          "name": "Wendell Lira",
+          "season": "2015"
+        },
+        {
+          "name": "Mohd Faiz Subri",
+          "season": "2016"
+        },
+        {
+          "name": "Olivier Giroud",
+          "season": "2017"
+        },
+        {
+          "name": "Mohamed Salah",
+          "season": "2018"
+        },
+        {
+          "name": "Dániel Zsóri",
+          "season": "2019"
+        },
+        {
+          "name": "Son Heung-min",
+          "season": "2020"
+        },
+        {
+          "name": "Erik Lamela",
+          "season": "2021"
+        },
+        {
+          "name": "Marcin Oleksy",
+          "season": "2022"
+        },
+        {
+          "name": "Guilherme Madruga",
+          "season": "2023"
+        },
+        {
+          "name": "Alejandro Garnacho",
+          "season": "2024"
+        },
+        {
+          "name": "Santiago Montiel",
+          "season": "2025"
+        }
+      ],
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/da/FIFA_Puskas_Award_2009_CR7_Museum.jpg/250px-FIFA_Puskas_Award_2009_CR7_Museum.jpg",
+      "fallback": "/awards/puskas.svg",
+      "imageKind": "trophy-photo"
+    },
+    {
+      "id": "golden-boy",
+      "label": "Golden Boy",
+      "comp": "general",
+      "page": "Golden Boy (award)",
+      "section": "Winners",
+      "image": "young",
+      "source": "https://en.wikipedia.org/wiki/Golden_Boy_(award)",
+      "winners": [
+        {
+          "name": "Rafael van der Vaart",
+          "season": "2003"
+        },
+        {
+          "name": "Wayne Rooney",
+          "season": "2004"
+        },
+        {
+          "name": "Lionel Messi",
+          "season": "2005"
+        },
+        {
+          "name": "Cesc Fàbregas",
+          "season": "2006"
+        },
+        {
+          "name": "Sergio Agüero",
+          "season": "2007"
+        },
+        {
+          "name": "Anderson",
+          "season": "2008"
+        },
+        {
+          "name": "Alexandre Pato",
+          "season": "2009"
+        },
+        {
+          "name": "Mario Balotelli",
+          "season": "2010"
+        },
+        {
+          "name": "Mario Götze",
+          "season": "2011"
+        },
+        {
+          "name": "Isco",
+          "season": "2012"
+        },
+        {
+          "name": "Paul Pogba",
+          "season": "2013"
+        },
+        {
+          "name": "Raheem Sterling",
+          "season": "2014"
+        },
+        {
+          "name": "Anthony Martial",
+          "season": "2015"
+        },
+        {
+          "name": "Renato Sanches",
+          "season": "2016"
+        },
+        {
+          "name": "Kylian Mbappé",
+          "season": "2017"
+        },
+        {
+          "name": "Matthijs de Ligt",
+          "season": "2018"
+        },
+        {
+          "name": "João Félix",
+          "season": "2019"
+        },
+        {
+          "name": "Erling Haaland",
+          "season": "2020"
+        },
+        {
+          "name": "Pedri",
+          "season": "2021"
+        },
+        {
+          "name": "Gavi",
+          "season": "2022"
+        },
+        {
+          "name": "Jude Bellingham",
+          "season": "2023"
+        },
+        {
+          "name": "Lamine Yamal",
+          "season": "2024"
+        },
+        {
+          "name": "Désiré Doué",
+          "season": "2025"
+        }
+      ],
+      "src": "/awards/golden-boy.svg",
+      "fallback": "/awards/golden-boy.svg",
+      "imageKind": "labelled-illustration"
+    },
+    {
+      "id": "kopa",
+      "label": "Kopa Trophy",
+      "comp": "general",
+      "page": "Kopa Trophy",
+      "section": "Winners",
+      "image": "young",
+      "source": "https://en.wikipedia.org/wiki/Kopa_Trophy",
+      "winners": [
+        {
+          "name": "Kylian Mbappé",
+          "season": "2018"
+        },
+        {
+          "name": "Matthijs de Ligt",
+          "season": "2019"
+        },
+        {
+          "name": "Pedri",
+          "season": "2021"
+        },
+        {
+          "name": "Gavi",
+          "season": "2022"
+        },
+        {
+          "name": "Jude Bellingham",
+          "season": "2023"
+        },
+        {
+          "name": "Lamine Yamal",
+          "season": "2024"
+        },
+        {
+          "name": "Lamine Yamal",
+          "season": "2025"
+        },
+        {
+          "name": "Lamine Yamal",
+          "season": "2026"
+        }
+      ],
+      "src": "/awards/kopa.svg",
+      "fallback": "/awards/kopa.svg",
+      "imageKind": "labelled-illustration"
+    },
+    {
+      "id": "yashin",
+      "label": "Yashin Trophy",
+      "comp": "general",
+      "page": "Yashin Trophy",
+      "section": "Winners",
+      "image": "glove",
+      "source": "https://en.wikipedia.org/wiki/Yashin_Trophy",
+      "winners": [
+        {
+          "name": "Alisson",
+          "season": "2019"
+        },
+        {
+          "name": "Gianluigi Donnarumma",
+          "season": "2021"
+        },
+        {
+          "name": "Thibaut Courtois",
+          "season": "2022"
+        },
+        {
+          "name": "Emiliano Martínez",
+          "season": "2023"
+        },
+        {
+          "name": "Emiliano Martínez",
+          "season": "2024"
+        },
+        {
+          "name": "Gianluigi Donnarumma",
+          "season": "2025"
+        },
+        {
+          "name": "Unai Simón",
+          "season": "2026"
+        }
+      ],
+      "src": "/awards/yashin.svg",
+      "fallback": "/awards/yashin.svg",
+      "imageKind": "labelled-illustration"
+    },
+    {
+      "id": "european-shoe",
+      "label": "European Golden Shoe",
+      "comp": "general",
+      "page": "European Golden Shoe",
+      "section": "Winners",
+      "image": "boot",
+      "source": "https://en.wikipedia.org/wiki/European_Golden_Shoe",
+      "winners": [
+        {
+          "name": "Eusébio",
+          "season": "1967–68"
+        },
+        {
+          "name": "Petar Zhekov",
+          "season": "1968–69"
+        },
+        {
+          "name": "Gerd Müller",
+          "season": "1969–70"
+        },
+        {
+          "name": "Josip Skoblar",
+          "season": "1970–71"
+        },
+        {
+          "name": "Gerd Müller",
+          "season": "1971–72"
+        },
+        {
+          "name": "Eusébio",
+          "season": "1972–73"
+        },
+        {
+          "name": "Héctor Yazalde",
+          "season": "1973–74"
+        },
+        {
+          "name": "Dudu Georgescu",
+          "season": "1974–75"
+        },
+        {
+          "name": "Sotiris Kaiafas",
+          "season": "1975–76"
+        },
+        {
+          "name": "Dudu Georgescu",
+          "season": "1976–77"
+        },
+        {
+          "name": "Hans Krankl",
+          "season": "1977–78"
+        },
+        {
+          "name": "Kees Kist",
+          "season": "1978–79"
+        },
+        {
+          "name": "Erwin Vandenbergh",
+          "season": "1979–80"
+        },
+        {
+          "name": "Georgi Slavkov",
+          "season": "1980–81"
+        },
+        {
+          "name": "Wim Kieft",
+          "season": "1981–82"
+        },
+        {
+          "name": "Fernando Gomes",
+          "season": "1982–83"
+        },
+        {
+          "name": "Ian Rush",
+          "season": "1983–84"
+        },
+        {
+          "name": "Fernando Gomes",
+          "season": "1984–85"
+        },
+        {
+          "name": "Marco van Basten",
+          "season": "1985–86"
+        },
+        {
+          "name": "Toni Polster",
+          "season": "1986–87"
+        },
+        {
+          "name": "Tanju Çolak",
+          "season": "1987–88"
+        },
+        {
+          "name": "Dorin Mateuț",
+          "season": "1988–89"
+        },
+        {
+          "name": "Hristo Stoichkov",
+          "season": "1989–90"
+        },
+        {
+          "name": "Hugo Sánchez",
+          "season": "1989–90"
+        },
+        {
+          "name": "Darko Pančev",
+          "season": "1990–91"
+        },
+        {
+          "name": "Ronaldo",
+          "season": "1996–97"
+        },
+        {
+          "name": "Nikos Machlas",
+          "season": "1997–98"
+        },
+        {
+          "name": "Mário Jardel",
+          "season": "1998–99"
+        },
+        {
+          "name": "Kevin Phillips",
+          "season": "1999–2000"
+        },
+        {
+          "name": "Henrik Larsson",
+          "season": "2000–01"
+        },
+        {
+          "name": "Mário Jardel",
+          "season": "2001–02"
+        },
+        {
+          "name": "Roy Makaay",
+          "season": "2002–03"
+        },
+        {
+          "name": "Thierry Henry",
+          "season": "2003–04"
+        },
+        {
+          "name": "Thierry Henry",
+          "season": "2004–05"
+        },
+        {
+          "name": "Diego Forlán",
+          "season": "2004–05"
+        },
+        {
+          "name": "Luca Toni",
+          "season": "2005–06"
+        },
+        {
+          "name": "Francesco Totti",
+          "season": "2006–07"
+        },
+        {
+          "name": "Cristiano Ronaldo",
+          "season": "2007–08"
+        },
+        {
+          "name": "Diego Forlán",
+          "season": "2008–09"
+        },
+        {
+          "name": "Lionel Messi",
+          "season": "2009–10"
+        },
+        {
+          "name": "Cristiano Ronaldo",
+          "season": "2010–11"
+        },
+        {
+          "name": "Lionel Messi",
+          "season": "2011–12"
+        },
+        {
+          "name": "Lionel Messi",
+          "season": "2012–13"
+        },
+        {
+          "name": "Luis Suárez",
+          "season": "2013–14"
+        },
+        {
+          "name": "Cristiano Ronaldo",
+          "season": "2013–14"
+        },
+        {
+          "name": "Cristiano Ronaldo",
+          "season": "2014–15"
+        },
+        {
+          "name": "Luis Suárez",
+          "season": "2015–16"
+        },
+        {
+          "name": "Lionel Messi",
+          "season": "2016–17"
+        },
+        {
+          "name": "Lionel Messi",
+          "season": "2017–18"
+        },
+        {
+          "name": "Lionel Messi",
+          "season": "2018–19"
+        },
+        {
+          "name": "Ciro Immobile",
+          "season": "2019–20"
+        },
+        {
+          "name": "Robert Lewandowski",
+          "season": "2020–21"
+        },
+        {
+          "name": "Robert Lewandowski",
+          "season": "2021–22"
+        },
+        {
+          "name": "Erling Haaland",
+          "season": "2022–23"
+        },
+        {
+          "name": "Harry Kane",
+          "season": "2023–24"
+        },
+        {
+          "name": "Kylian Mbappé",
+          "season": "2024–25"
+        },
+        {
+          "name": "Harry Kane",
+          "season": "2025–26"
+        }
+      ],
+      "src": "/awards/european-shoe.svg",
+      "fallback": "/awards/european-shoe.svg",
+      "imageKind": "labelled-illustration"
+    },
+    {
+      "id": "pfa-player",
+      "label": "PFA Players' Player of the Year",
+      "comp": "pl",
+      "page": "PFA Players' Player of the Year",
+      "section": "Winners",
+      "image": "player",
+      "source": "https://en.wikipedia.org/wiki/PFA_Players'_Player_of_the_Year",
+      "winners": [
+        {
+          "name": "Norman Hunter",
+          "season": "1973–74"
+        },
+        {
+          "name": "Colin Todd",
+          "season": "1974–75"
+        },
+        {
+          "name": "Pat Jennings",
+          "season": "1975–76"
+        },
+        {
+          "name": "Andy Gray",
+          "season": "1976–77"
+        },
+        {
+          "name": "Peter Shilton",
+          "season": "1977–78"
+        },
+        {
+          "name": "Liam Brady",
+          "season": "1978–79"
+        },
+        {
+          "name": "Terry McDermott",
+          "season": "1979–80"
+        },
+        {
+          "name": "John Wark",
+          "season": "1980–81"
+        },
+        {
+          "name": "Kevin Keegan",
+          "season": "1981–82"
+        },
+        {
+          "name": "Kenny Dalglish",
+          "season": "1982–83"
+        },
+        {
+          "name": "Ian Rush",
+          "season": "1983–84"
+        },
+        {
+          "name": "Peter Reid",
+          "season": "1984–85"
+        },
+        {
+          "name": "Gary Lineker",
+          "season": "1985–86"
+        },
+        {
+          "name": "Clive Allen",
+          "season": "1986–87"
+        },
+        {
+          "name": "John Barnes",
+          "season": "1987–88"
+        },
+        {
+          "name": "Mark Hughes",
+          "season": "1988–89"
+        },
+        {
+          "name": "David Platt",
+          "season": "1989–90"
+        },
+        {
+          "name": "Mark Hughes",
+          "season": "1990–91"
+        },
+        {
+          "name": "Gary Pallister",
+          "season": "1991–92"
+        },
+        {
+          "name": "Paul McGrath",
+          "season": "1992–93"
+        },
+        {
+          "name": "Eric Cantona",
+          "season": "1993–94"
+        },
+        {
+          "name": "Alan Shearer",
+          "season": "1994–95"
+        },
+        {
+          "name": "Les Ferdinand",
+          "season": "1995–96"
+        },
+        {
+          "name": "Alan Shearer",
+          "season": "1996–97"
+        },
+        {
+          "name": "Dennis Bergkamp",
+          "season": "1997–98"
+        },
+        {
+          "name": "David Ginola",
+          "season": "1998–99"
+        },
+        {
+          "name": "Roy Keane",
+          "season": "1999–2000"
+        },
+        {
+          "name": "Teddy Sheringham",
+          "season": "2000–01"
+        },
+        {
+          "name": "Ruud van Nistelrooy",
+          "season": "2001–02"
+        },
+        {
+          "name": "Thierry Henry",
+          "season": "2002–03"
+        },
+        {
+          "name": "Thierry Henry",
+          "season": "2003–04"
+        },
+        {
+          "name": "John Terry",
+          "season": "2004–05"
+        },
+        {
+          "name": "Steven Gerrard",
+          "season": "2005–06"
+        },
+        {
+          "name": "Cristiano Ronaldo",
+          "season": "2006–07"
+        },
+        {
+          "name": "Cristiano Ronaldo",
+          "season": "2007–08"
+        },
+        {
+          "name": "Ryan Giggs",
+          "season": "2008–09"
+        },
+        {
+          "name": "Wayne Rooney",
+          "season": "2009–10"
+        },
+        {
+          "name": "Gareth Bale",
+          "season": "2010–11"
+        },
+        {
+          "name": "Robin van Persie",
+          "season": "2011–12"
+        },
+        {
+          "name": "Gareth Bale",
+          "season": "2012–13"
+        },
+        {
+          "name": "Luis Suárez",
+          "season": "2013–14"
+        },
+        {
+          "name": "Eden Hazard",
+          "season": "2014–15"
+        },
+        {
+          "name": "Riyad Mahrez",
+          "season": "2015–16"
+        },
+        {
+          "name": "N'Golo Kanté",
+          "season": "2016–17"
+        },
+        {
+          "name": "Mohamed Salah",
+          "season": "2017–18"
+        },
+        {
+          "name": "Virgil van Dijk",
+          "season": "2018–19"
+        },
+        {
+          "name": "Kevin De Bruyne",
+          "season": "2019–20"
+        },
+        {
+          "name": "Kevin De Bruyne",
+          "season": "2020–21"
+        },
+        {
+          "name": "Mohamed Salah",
+          "season": "2021–22"
+        },
+        {
+          "name": "Erling Haaland",
+          "season": "2022–23"
+        },
+        {
+          "name": "Phil Foden",
+          "season": "2023–24"
+        },
+        {
+          "name": "Mohamed Salah",
+          "season": "2024–25"
+        },
+        {
+          "name": "Bruno Fernandes",
+          "season": "2025–26"
+        }
+      ],
+      "src": "/awards/pfa-player.svg",
+      "fallback": "/awards/pfa-player.svg",
+      "imageKind": "labelled-illustration"
+    },
+    {
+      "id": "pfa-young",
+      "label": "PFA Young Player of the Year",
+      "comp": "pl",
+      "page": "PFA Young Player of the Year",
+      "section": "Winners",
+      "image": "young",
+      "source": "https://en.wikipedia.org/wiki/PFA_Young_Player_of_the_Year",
+      "winners": [
+        {
+          "name": "Kevin Beattie",
+          "season": "1973–74"
+        },
+        {
+          "name": "Mervyn Day",
+          "season": "1974–75"
+        },
+        {
+          "name": "Peter Barnes",
+          "season": "1975–76"
+        },
+        {
+          "name": "Andy Gray",
+          "season": "1976–77"
+        },
+        {
+          "name": "Tony Woodcock",
+          "season": "1977–78"
+        },
+        {
+          "name": "Cyrille Regis",
+          "season": "1978–79"
+        },
+        {
+          "name": "Glenn Hoddle",
+          "season": "1979–80"
+        },
+        {
+          "name": "Gary Shaw",
+          "season": "1980–81"
+        },
+        {
+          "name": "Steve Moran",
+          "season": "1981–82"
+        },
+        {
+          "name": "Ian Rush",
+          "season": "1982–83"
+        },
+        {
+          "name": "Paul Walsh",
+          "season": "1983–84"
+        },
+        {
+          "name": "Mark Hughes",
+          "season": "1984–85"
+        },
+        {
+          "name": "Tony Cottee",
+          "season": "1985–86"
+        },
+        {
+          "name": "Tony Adams",
+          "season": "1986–87"
+        },
+        {
+          "name": "Paul Gascoigne",
+          "season": "1987–88"
+        },
+        {
+          "name": "Paul Merson",
+          "season": "1988–89"
+        },
+        {
+          "name": "Matthew Le Tissier",
+          "season": "1989–90"
+        },
+        {
+          "name": "Lee Sharpe",
+          "season": "1990–91"
+        },
+        {
+          "name": "Ryan Giggs",
+          "season": "1991–92"
+        },
+        {
+          "name": "Ryan Giggs",
+          "season": "1992–93"
+        },
+        {
+          "name": "Andy Cole",
+          "season": "1993–94"
+        },
+        {
+          "name": "Robbie Fowler",
+          "season": "1994–95"
+        },
+        {
+          "name": "Robbie Fowler",
+          "season": "1995–96"
+        },
+        {
+          "name": "David Beckham",
+          "season": "1996–97"
+        },
+        {
+          "name": "Michael Owen",
+          "season": "1997–98"
+        },
+        {
+          "name": "Nicolas Anelka",
+          "season": "1998–99"
+        },
+        {
+          "name": "Harry Kewell",
+          "season": "1999–2000"
+        },
+        {
+          "name": "Steven Gerrard",
+          "season": "2000–01"
+        },
+        {
+          "name": "Craig Bellamy",
+          "season": "2001–02"
+        },
+        {
+          "name": "Jermaine Jenas",
+          "season": "2002–03"
+        },
+        {
+          "name": "Scott Parker",
+          "season": "2003–04"
+        },
+        {
+          "name": "Wayne Rooney",
+          "season": "2004–05"
+        },
+        {
+          "name": "Wayne Rooney",
+          "season": "2005–06"
+        },
+        {
+          "name": "Cristiano Ronaldo",
+          "season": "2006–07"
+        },
+        {
+          "name": "Cesc Fàbregas",
+          "season": "2007–08"
+        },
+        {
+          "name": "Ashley Young",
+          "season": "2008–09"
+        },
+        {
+          "name": "James Milner",
+          "season": "2009–10"
+        },
+        {
+          "name": "Jack Wilshere",
+          "season": "2010–11"
+        },
+        {
+          "name": "Kyle Walker",
+          "season": "2011–12"
+        },
+        {
+          "name": "Gareth Bale",
+          "season": "2012–13"
+        },
+        {
+          "name": "Eden Hazard",
+          "season": "2013–14"
+        },
+        {
+          "name": "Harry Kane",
+          "season": "2014–15"
+        },
+        {
+          "name": "Dele Alli",
+          "season": "2015–16"
+        },
+        {
+          "name": "Dele Alli",
+          "season": "2016–17"
+        },
+        {
+          "name": "Leroy Sané",
+          "season": "2017–18"
+        },
+        {
+          "name": "Raheem Sterling",
+          "season": "2018–19"
+        },
+        {
+          "name": "Trent Alexander-Arnold",
+          "season": "2019–20"
+        },
+        {
+          "name": "Phil Foden",
+          "season": "2020–21"
+        },
+        {
+          "name": "Phil Foden",
+          "season": "2021–22"
+        },
+        {
+          "name": "Bukayo Saka",
+          "season": "2022–23"
+        },
+        {
+          "name": "Cole Palmer",
+          "season": "2023–24"
+        },
+        {
+          "name": "Morgan Rogers",
+          "season": "2024–25"
+        },
+        {
+          "name": "Nico O'Reilly",
+          "season": "2025–26"
+        }
+      ],
+      "src": "/awards/pfa-young.svg",
+      "fallback": "/awards/pfa-young.svg",
+      "imageKind": "labelled-illustration"
+    },
+    {
+      "id": "fwa",
+      "label": "FWA Footballer of the Year",
+      "comp": "pl",
+      "page": "FWA Footballer of the Year",
+      "section": "Winners",
+      "image": "player",
+      "source": "https://en.wikipedia.org/wiki/FWA_Footballer_of_the_Year",
+      "winners": [
+        {
+          "name": "Stanley Matthews",
+          "season": "1947–48"
+        },
+        {
+          "name": "Johnny Carey",
+          "season": "1948–49"
+        },
+        {
+          "name": "Joe Mercer",
+          "season": "1949–50"
+        },
+        {
+          "name": "Harry Johnston",
+          "season": "1950–51"
+        },
+        {
+          "name": "Billy Wright",
+          "season": "1951–52"
+        },
+        {
+          "name": "Nat Lofthouse",
+          "season": "1952–53"
+        },
+        {
+          "name": "Tom Finney",
+          "season": "1953–54"
+        },
+        {
+          "name": "Don Revie",
+          "season": "1954–55"
+        },
+        {
+          "name": "Bert Trautmann",
+          "season": "1955–56"
+        },
+        {
+          "name": "Tom Finney",
+          "season": "1956–57"
+        },
+        {
+          "name": "Danny Blanchflower",
+          "season": "1957–58"
+        },
+        {
+          "name": "Syd Owen",
+          "season": "1958–59"
+        },
+        {
+          "name": "Bill Slater",
+          "season": "1959–60"
+        },
+        {
+          "name": "Danny Blanchflower",
+          "season": "1960–61"
+        },
+        {
+          "name": "Jimmy Adamson",
+          "season": "1961–62"
+        },
+        {
+          "name": "Stanley Matthews",
+          "season": "1962–63"
+        },
+        {
+          "name": "Bobby Moore",
+          "season": "1963–64"
+        },
+        {
+          "name": "Bobby Collins",
+          "season": "1964–65"
+        },
+        {
+          "name": "Bobby Charlton",
+          "season": "1965–66"
+        },
+        {
+          "name": "Jack Charlton",
+          "season": "1966–67"
+        },
+        {
+          "name": "George Best",
+          "season": "1967–68"
+        },
+        {
+          "name": "Tony Book",
+          "season": "1968–69"
+        },
+        {
+          "name": "Dave Mackay",
+          "season": "1968–69"
+        },
+        {
+          "name": "Billy Bremner",
+          "season": "1969–70"
+        },
+        {
+          "name": "Frank McLintock",
+          "season": "1970–71"
+        },
+        {
+          "name": "Gordon Banks",
+          "season": "1971–72"
+        },
+        {
+          "name": "Pat Jennings",
+          "season": "1972–73"
+        },
+        {
+          "name": "Ian Callaghan",
+          "season": "1973–74"
+        },
+        {
+          "name": "Alan Mullery",
+          "season": "1974–75"
+        },
+        {
+          "name": "Kevin Keegan",
+          "season": "1975–76"
+        },
+        {
+          "name": "Emlyn Hughes",
+          "season": "1976–77"
+        },
+        {
+          "name": "Kenny Burns",
+          "season": "1977–78"
+        },
+        {
+          "name": "Kenny Dalglish",
+          "season": "1978–79"
+        },
+        {
+          "name": "Terry McDermott",
+          "season": "1979–80"
+        },
+        {
+          "name": "Frans Thijssen",
+          "season": "1980–81"
+        },
+        {
+          "name": "Steve Perryman",
+          "season": "1981–82"
+        },
+        {
+          "name": "Kenny Dalglish",
+          "season": "1982–83"
+        },
+        {
+          "name": "Ian Rush",
+          "season": "1983–84"
+        },
+        {
+          "name": "Neville Southall",
+          "season": "1984–85"
+        },
+        {
+          "name": "Gary Lineker",
+          "season": "1985–86"
+        },
+        {
+          "name": "Clive Allen",
+          "season": "1986–87"
+        },
+        {
+          "name": "John Barnes",
+          "season": "1987–88"
+        },
+        {
+          "name": "Steve Nicol",
+          "season": "1988–89"
+        },
+        {
+          "name": "John Barnes",
+          "season": "1989–90"
+        },
+        {
+          "name": "Gordon Strachan",
+          "season": "1990–91"
+        },
+        {
+          "name": "Gary Lineker",
+          "season": "1991–92"
+        },
+        {
+          "name": "Chris Waddle",
+          "season": "1992–93"
+        },
+        {
+          "name": "Alan Shearer",
+          "season": "1993–94"
+        },
+        {
+          "name": "Jürgen Klinsmann",
+          "season": "1994–95"
+        },
+        {
+          "name": "Eric Cantona",
+          "season": "1995–96"
+        },
+        {
+          "name": "Gianfranco Zola",
+          "season": "1996–97"
+        },
+        {
+          "name": "Dennis Bergkamp",
+          "season": "1997–98"
+        },
+        {
+          "name": "David Ginola",
+          "season": "1998–99"
+        },
+        {
+          "name": "Roy Keane",
+          "season": "1999–2000"
+        },
+        {
+          "name": "Teddy Sheringham",
+          "season": "2000–01"
+        },
+        {
+          "name": "Robert Pires",
+          "season": "2001–02"
+        },
+        {
+          "name": "Thierry Henry",
+          "season": "2002–03"
+        },
+        {
+          "name": "Thierry Henry",
+          "season": "2003–04"
+        },
+        {
+          "name": "Frank Lampard",
+          "season": "2004–05"
+        },
+        {
+          "name": "Thierry Henry",
+          "season": "2005–06"
+        },
+        {
+          "name": "Cristiano Ronaldo",
+          "season": "2006–07"
+        },
+        {
+          "name": "Cristiano Ronaldo",
+          "season": "2007–08"
+        },
+        {
+          "name": "Steven Gerrard",
+          "season": "2008–09"
+        },
+        {
+          "name": "Wayne Rooney",
+          "season": "2009–10"
+        },
+        {
+          "name": "Scott Parker",
+          "season": "2010–11"
+        },
+        {
+          "name": "Robin van Persie",
+          "season": "2011–12"
+        },
+        {
+          "name": "Gareth Bale",
+          "season": "2012–13"
+        },
+        {
+          "name": "Luis Suárez",
+          "season": "2013–14"
+        },
+        {
+          "name": "Eden Hazard",
+          "season": "2014–15"
+        },
+        {
+          "name": "Jamie Vardy",
+          "season": "2015–16"
+        },
+        {
+          "name": "N'Golo Kanté",
+          "season": "2016–17"
+        },
+        {
+          "name": "Mohamed Salah",
+          "season": "2017–18"
+        },
+        {
+          "name": "Raheem Sterling",
+          "season": "2018–19"
+        },
+        {
+          "name": "Jordan Henderson",
+          "season": "2019–20"
+        },
+        {
+          "name": "Rúben Dias",
+          "season": "2020–21"
+        },
+        {
+          "name": "Mohamed Salah",
+          "season": "2021–22"
+        },
+        {
+          "name": "Erling Haaland",
+          "season": "2022–23"
+        },
+        {
+          "name": "Phil Foden",
+          "season": "2023–24"
+        },
+        {
+          "name": "Mohamed Salah",
+          "season": "2024–25"
+        },
+        {
+          "name": "Bruno Fernandes",
+          "season": "2025–26"
+        }
+      ],
+      "src": "/awards/fwa.svg",
+      "fallback": "/awards/fwa.svg",
+      "imageKind": "labelled-illustration"
+    },
+    {
+      "id": "pl-player",
+      "label": "Premier League Player of the Season",
+      "comp": "pl",
+      "page": "Premier League Player of the Season",
+      "section": "Winners",
+      "image": "player",
+      "source": "https://en.wikipedia.org/wiki/Premier_League_Player_of_the_Season",
+      "winners": [
+        {
+          "name": "Alan Shearer",
+          "season": "1994–95"
+        },
+        {
+          "name": "Peter Schmeichel",
+          "season": "1995–96"
+        },
+        {
+          "name": "Juninho Paulista",
+          "season": "1996–97"
+        },
+        {
+          "name": "Michael Owen",
+          "season": "1997–98"
+        },
+        {
+          "name": "Dwight Yorke",
+          "season": "1998–99"
+        },
+        {
+          "name": "Kevin Phillips",
+          "season": "1999–2000"
+        },
+        {
+          "name": "Patrick Vieira",
+          "season": "2000–01"
+        },
+        {
+          "name": "Freddie Ljungberg",
+          "season": "2001–02"
+        },
+        {
+          "name": "Ruud van Nistelrooy",
+          "season": "2002–03"
+        },
+        {
+          "name": "Thierry Henry",
+          "season": "2003–04"
+        },
+        {
+          "name": "Frank Lampard",
+          "season": "2004–05"
+        },
+        {
+          "name": "Thierry Henry",
+          "season": "2005–06"
+        },
+        {
+          "name": "Cristiano Ronaldo",
+          "season": "2006–07"
+        },
+        {
+          "name": "Cristiano Ronaldo",
+          "season": "2007–08"
+        },
+        {
+          "name": "Nemanja Vidić",
+          "season": "2008–09"
+        },
+        {
+          "name": "Wayne Rooney",
+          "season": "2009–10"
+        },
+        {
+          "name": "Nemanja Vidić",
+          "season": "2010–11"
+        },
+        {
+          "name": "Vincent Kompany",
+          "season": "2011–12"
+        },
+        {
+          "name": "Gareth Bale",
+          "season": "2012–13"
+        },
+        {
+          "name": "Luis Suárez",
+          "season": "2013–14"
+        },
+        {
+          "name": "Eden Hazard",
+          "season": "2014–15"
+        },
+        {
+          "name": "Jamie Vardy",
+          "season": "2015–16"
+        },
+        {
+          "name": "N'Golo Kanté",
+          "season": "2016–17"
+        },
+        {
+          "name": "Mohamed Salah",
+          "season": "2017–18"
+        },
+        {
+          "name": "Virgil van Dijk",
+          "season": "2018–19"
+        },
+        {
+          "name": "Kevin De Bruyne",
+          "season": "2019–20"
+        },
+        {
+          "name": "Rúben Dias",
+          "season": "2020–21"
+        },
+        {
+          "name": "Kevin De Bruyne",
+          "season": "2021–22"
+        },
+        {
+          "name": "Erling Haaland",
+          "season": "2022–23"
+        },
+        {
+          "name": "Phil Foden",
+          "season": "2023–24"
+        },
+        {
+          "name": "Mohamed Salah",
+          "season": "2024–25"
+        },
+        {
+          "name": "Bruno Fernandes",
+          "season": "2025–26"
+        }
+      ],
+      "src": "/awards/pl-player.svg",
+      "fallback": "/awards/pl-player.svg",
+      "imageKind": "labelled-illustration"
+    },
+    {
+      "id": "pl-young",
+      "label": "Premier League Young Player of the Season",
+      "comp": "pl",
+      "page": "Premier League Young Player of the Season",
+      "section": "Winners",
+      "image": "young",
+      "source": "https://en.wikipedia.org/wiki/Premier_League_Young_Player_of_the_Season",
+      "winners": [
+        {
+          "name": "Trent Alexander-Arnold",
+          "season": "2019–20"
+        },
+        {
+          "name": "Phil Foden",
+          "season": "2020–21"
+        },
+        {
+          "name": "Phil Foden",
+          "season": "2021–22"
+        },
+        {
+          "name": "Erling Haaland",
+          "season": "2022–23"
+        },
+        {
+          "name": "Cole Palmer",
+          "season": "2023–24"
+        },
+        {
+          "name": "Ryan Gravenberch",
+          "season": "2024–25"
+        },
+        {
+          "name": "Nico O'Reilly",
+          "season": "2025–26"
+        }
+      ],
+      "src": "/awards/pl-young.svg",
+      "fallback": "/awards/pl-young.svg",
+      "imageKind": "labelled-illustration"
+    },
+    {
+      "id": "pl-boot",
+      "label": "Premier League Golden Boot",
+      "comp": "pl",
+      "page": "Premier League Golden Boot",
+      "section": "Winners",
+      "image": "boot",
+      "source": "https://en.wikipedia.org/wiki/Premier_League_Golden_Boot",
+      "winners": [
+        {
+          "name": "Teddy Sheringham",
+          "season": "1992–93"
+        },
+        {
+          "name": "Andy Cole",
+          "season": "1993–94"
+        },
+        {
+          "name": "Alan Shearer",
+          "season": "1994–95"
+        },
+        {
+          "name": "Alan Shearer",
+          "season": "1995–96"
+        },
+        {
+          "name": "Alan Shearer",
+          "season": "1996–97"
+        },
+        {
+          "name": "Chris Sutton",
+          "season": "1997–98"
+        },
+        {
+          "name": "Dion Dublin",
+          "season": "1997–98"
+        },
+        {
+          "name": "Michael Owen",
+          "season": "1997–98"
+        },
+        {
+          "name": "Michael Owen",
+          "season": "1998–99"
+        },
+        {
+          "name": "Dwight Yorke",
+          "season": "1998–99"
+        },
+        {
+          "name": "Jimmy Floyd Hasselbaink",
+          "season": "1998–99"
+        },
+        {
+          "name": "Kevin Phillips",
+          "season": "1999–2000"
+        },
+        {
+          "name": "Jimmy Floyd Hasselbaink",
+          "season": "2000–01"
+        },
+        {
+          "name": "Thierry Henry",
+          "season": "2001–02"
+        },
+        {
+          "name": "Ruud van Nistelrooy",
+          "season": "2002–03"
+        },
+        {
+          "name": "Thierry Henry",
+          "season": "2003–04"
+        },
+        {
+          "name": "Thierry Henry",
+          "season": "2004–05"
+        },
+        {
+          "name": "Thierry Henry",
+          "season": "2005–06"
+        },
+        {
+          "name": "Didier Drogba",
+          "season": "2006–07"
+        },
+        {
+          "name": "Cristiano Ronaldo",
+          "season": "2007–08"
+        },
+        {
+          "name": "Nicolas Anelka",
+          "season": "2008–09"
+        },
+        {
+          "name": "Didier Drogba",
+          "season": "2009–10"
+        },
+        {
+          "name": "Carlos Tevez",
+          "season": "2010–11"
+        },
+        {
+          "name": "Dimitar Berbatov",
+          "season": "2010–11"
+        },
+        {
+          "name": "Robin van Persie",
+          "season": "2011–12"
+        },
+        {
+          "name": "Robin van Persie",
+          "season": "2012–13"
+        },
+        {
+          "name": "Luis Suárez",
+          "season": "2013–14"
+        },
+        {
+          "name": "Sergio Agüero",
+          "season": "2014–15"
+        },
+        {
+          "name": "Harry Kane",
+          "season": "2015–16"
+        },
+        {
+          "name": "Harry Kane",
+          "season": "2016–17"
+        },
+        {
+          "name": "Mohamed Salah",
+          "season": "2017–18"
+        },
+        {
+          "name": "Pierre-Emerick Aubameyang",
+          "season": "2018–19"
+        },
+        {
+          "name": "Sadio Mané",
+          "season": "2018–19"
+        },
+        {
+          "name": "Mohamed Salah",
+          "season": "2018–19"
+        },
+        {
+          "name": "Jamie Vardy",
+          "season": "2019–20"
+        },
+        {
+          "name": "Harry Kane",
+          "season": "2020–21"
+        },
+        {
+          "name": "Mohamed Salah",
+          "season": "2021–22"
+        },
+        {
+          "name": "Son Heung-min",
+          "season": "2021–22"
+        },
+        {
+          "name": "Erling Haaland",
+          "season": "2022–23"
+        },
+        {
+          "name": "Erling Haaland",
+          "season": "2023–24"
+        },
+        {
+          "name": "Mohamed Salah",
+          "season": "2024–25"
+        },
+        {
+          "name": "Erling Haaland",
+          "season": "2025–26"
+        }
+      ],
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/88/2008_Premier_League_GoldenBoot_CR7Museum.jpg/250px-2008_Premier_League_GoldenBoot_CR7Museum.jpg",
+      "fallback": "/awards/pl-boot.svg",
+      "imageKind": "trophy-photo"
+    },
+    {
+      "id": "pl-glove",
+      "label": "Premier League Golden Glove",
+      "comp": "pl",
+      "page": "Premier League Golden Glove",
+      "section": "Winners",
+      "image": "glove",
+      "source": "https://en.wikipedia.org/wiki/Premier_League_Golden_Glove",
+      "winners": [
+        {
+          "name": "Petr Čech",
+          "season": "2004–05"
+        },
+        {
+          "name": "Pepe Reina",
+          "season": "2005–06"
+        },
+        {
+          "name": "Pepe Reina",
+          "season": "2006–07"
+        },
+        {
+          "name": "Pepe Reina",
+          "season": "2007–08"
+        },
+        {
+          "name": "Edwin van der Sar",
+          "season": "2008–09"
+        },
+        {
+          "name": "Petr Čech",
+          "season": "2009–10"
+        },
+        {
+          "name": "Joe Hart",
+          "season": "2010–11"
+        },
+        {
+          "name": "Joe Hart",
+          "season": "2011–12"
+        },
+        {
+          "name": "Joe Hart",
+          "season": "2012–13"
+        },
+        {
+          "name": "Petr Čech",
+          "season": "2013–14"
+        },
+        {
+          "name": "Wojciech Szczęsny",
+          "season": "2013–14"
+        },
+        {
+          "name": "Joe Hart",
+          "season": "2014–15"
+        },
+        {
+          "name": "Petr Čech",
+          "season": "2015–16"
+        },
+        {
+          "name": "Thibaut Courtois",
+          "season": "2016–17"
+        },
+        {
+          "name": "David de Gea",
+          "season": "2017–18"
+        },
+        {
+          "name": "Alisson",
+          "season": "2018–19"
+        },
+        {
+          "name": "Ederson",
+          "season": "2019–20"
+        },
+        {
+          "name": "Ederson",
+          "season": "2020–21"
+        },
+        {
+          "name": "Alisson",
+          "season": "2021–22"
+        },
+        {
+          "name": "Ederson",
+          "season": "2021–22"
+        },
+        {
+          "name": "David de Gea",
+          "season": "2022–23"
+        },
+        {
+          "name": "David Raya",
+          "season": "2023–24"
+        },
+        {
+          "name": "David Raya",
+          "season": "2024–25"
+        },
+        {
+          "name": "Matz Sels",
+          "season": "2024–25"
+        },
+        {
+          "name": "David Raya",
+          "season": "2025–26"
+        }
+      ],
+      "src": "/awards/pl-glove.svg",
+      "fallback": "/awards/pl-glove.svg",
+      "imageKind": "labelled-illustration"
+    },
+    {
+      "id": "pl-playmaker",
+      "label": "Premier League Playmaker of the Season",
+      "comp": "pl",
+      "page": "Premier League Playmaker of the Season",
+      "section": "Winners",
+      "image": "player",
+      "source": "https://en.wikipedia.org/wiki/Premier_League_Playmaker_of_the_Season",
+      "winners": [
+        {
+          "name": "Kevin De Bruyne",
+          "season": "2017–18"
+        },
+        {
+          "name": "Eden Hazard",
+          "season": "2018–19"
+        },
+        {
+          "name": "Kevin De Bruyne",
+          "season": "2019–20"
+        },
+        {
+          "name": "Harry Kane",
+          "season": "2020–21"
+        },
+        {
+          "name": "Mohamed Salah",
+          "season": "2021–22"
+        },
+        {
+          "name": "Kevin De Bruyne",
+          "season": "2022–23"
+        },
+        {
+          "name": "Ollie Watkins",
+          "season": "2023–24"
+        },
+        {
+          "name": "Mohamed Salah",
+          "season": "2024–25"
+        },
+        {
+          "name": "Bruno Fernandes",
+          "season": "2025–26"
+        }
+      ],
+      "src": "/awards/pl-playmaker.svg",
+      "fallback": "/awards/pl-playmaker.svg",
+      "imageKind": "labelled-illustration"
+    },
+    {
+      "id": "pichichi",
+      "label": "Pichichi Trophy",
+      "comp": "laliga",
+      "page": "Pichichi Trophy",
+      "section": "Winners",
+      "image": "boot",
+      "source": "https://en.wikipedia.org/wiki/Pichichi_Trophy",
+      "winners": [
+        {
+          "name": "Paco Bienzobas",
+          "season": "1929"
+        },
+        {
+          "name": "Guillermo Gorostiza",
+          "season": "1929–30"
+        },
+        {
+          "name": "Bata",
+          "season": "1930–31"
+        },
+        {
+          "name": "Guillermo Gorostiza",
+          "season": "1931–32"
+        },
+        {
+          "name": "Manuel Olivares",
+          "season": "1932–33"
+        },
+        {
+          "name": "Isidro Lángara",
+          "season": "1933–34"
+        },
+        {
+          "name": "Isidro Lángara",
+          "season": "1934–35"
+        },
+        {
+          "name": "Isidro Lángara",
+          "season": "1935–36"
+        },
+        {
+          "name": "Victorio Unamuno",
+          "season": "1939–40"
+        },
+        {
+          "name": "Pruden",
+          "season": "1940–41"
+        },
+        {
+          "name": "Mundo",
+          "season": "1941–42"
+        },
+        {
+          "name": "Mariano Martín",
+          "season": "1942–43"
+        },
+        {
+          "name": "Mundo",
+          "season": "1943–44"
+        },
+        {
+          "name": "Telmo Zarra",
+          "season": "1944–45"
+        },
+        {
+          "name": "Telmo Zarra",
+          "season": "1945–46"
+        },
+        {
+          "name": "Telmo Zarra",
+          "season": "1946–47"
+        },
+        {
+          "name": "Pahiño",
+          "season": "1947–48"
+        },
+        {
+          "name": "César",
+          "season": "1948–49"
+        },
+        {
+          "name": "Telmo Zarra",
+          "season": "1949–50"
+        },
+        {
+          "name": "Telmo Zarra",
+          "season": "1950–51"
+        },
+        {
+          "name": "Pahiño",
+          "season": "1951–52"
+        },
+        {
+          "name": "Telmo Zarra",
+          "season": "1952–53"
+        },
+        {
+          "name": "Alfredo Di Stéfano",
+          "season": "1953–54"
+        },
+        {
+          "name": "Juan Arza",
+          "season": "1954–55"
+        },
+        {
+          "name": "Alfredo Di Stéfano",
+          "season": "1955–56"
+        },
+        {
+          "name": "Alfredo Di Stéfano",
+          "season": "1956–57"
+        },
+        {
+          "name": "Ricardo Alós",
+          "season": "1957–58"
+        },
+        {
+          "name": "Manuel Badenes",
+          "season": "1957–58"
+        },
+        {
+          "name": "Alfredo Di Stéfano",
+          "season": "1957–58"
+        },
+        {
+          "name": "Alfredo Di Stéfano",
+          "season": "1958–59"
+        },
+        {
+          "name": "Ferenc Puskás",
+          "season": "1959–60"
+        },
+        {
+          "name": "Ferenc Puskás",
+          "season": "1960–61"
+        },
+        {
+          "name": "Juan Seminario",
+          "season": "1961–62"
+        },
+        {
+          "name": "Ferenc Puskás",
+          "season": "1962–63"
+        },
+        {
+          "name": "Ferenc Puskás",
+          "season": "1963–64"
+        },
+        {
+          "name": "Cayetano Ré",
+          "season": "1964–65"
+        },
+        {
+          "name": "Vavá II",
+          "season": "1965–66"
+        },
+        {
+          "name": "Waldo",
+          "season": "1966–67"
+        },
+        {
+          "name": "Fidel Uriarte",
+          "season": "1967–68"
+        },
+        {
+          "name": "Amancio",
+          "season": "1968–69"
+        },
+        {
+          "name": "José Eulogio Gárate",
+          "season": "1968–69"
+        },
+        {
+          "name": "Amancio",
+          "season": "1969–70"
+        },
+        {
+          "name": "Luis Aragonés",
+          "season": "1969–70"
+        },
+        {
+          "name": "José Eulogio Gárate",
+          "season": "1969–70"
+        },
+        {
+          "name": "José Eulogio Gárate",
+          "season": "1970–71"
+        },
+        {
+          "name": "Carles Rexach",
+          "season": "1970–71"
+        },
+        {
+          "name": "Enrique Porta",
+          "season": "1971–72"
+        },
+        {
+          "name": "Marianín",
+          "season": "1972–73"
+        },
+        {
+          "name": "Quini",
+          "season": "1973–74"
+        },
+        {
+          "name": "Carlos",
+          "season": "1974–75"
+        },
+        {
+          "name": "Quini",
+          "season": "1975–76"
+        },
+        {
+          "name": "Mario Kempes",
+          "season": "1976–77"
+        },
+        {
+          "name": "Mario Kempes",
+          "season": "1977–78"
+        },
+        {
+          "name": "Hans Krankl",
+          "season": "1978–79"
+        },
+        {
+          "name": "Quini",
+          "season": "1979–80"
+        },
+        {
+          "name": "Quini",
+          "season": "1980–81"
+        },
+        {
+          "name": "Quini",
+          "season": "1981–82"
+        },
+        {
+          "name": "Poli Rincón",
+          "season": "1982–83"
+        },
+        {
+          "name": "Jorge da Silva",
+          "season": "1983–84"
+        },
+        {
+          "name": "Juanito",
+          "season": "1983–84"
+        },
+        {
+          "name": "Hugo Sánchez",
+          "season": "1984–85"
+        },
+        {
+          "name": "Hugo Sánchez",
+          "season": "1985–86"
+        },
+        {
+          "name": "Hugo Sánchez",
+          "season": "1986–87"
+        },
+        {
+          "name": "Hugo Sánchez",
+          "season": "1987–88"
+        },
+        {
+          "name": "Baltazar",
+          "season": "1988–89"
+        },
+        {
+          "name": "Hugo Sánchez",
+          "season": "1989–90"
+        },
+        {
+          "name": "Emilio Butragueño",
+          "season": "1990–91"
+        },
+        {
+          "name": "Manolo",
+          "season": "1991–92"
+        },
+        {
+          "name": "Bebeto",
+          "season": "1992–93"
+        },
+        {
+          "name": "Romário",
+          "season": "1993–94"
+        },
+        {
+          "name": "Iván Zamorano",
+          "season": "1994–95"
+        },
+        {
+          "name": "Juan Antonio Pizzi",
+          "season": "1995–96"
+        },
+        {
+          "name": "Ronaldo",
+          "season": "1996–97"
+        },
+        {
+          "name": "Christian Vieri",
+          "season": "1997–98"
+        },
+        {
+          "name": "Raúl",
+          "season": "1998–99"
+        },
+        {
+          "name": "Salva",
+          "season": "1999–2000"
+        },
+        {
+          "name": "Raúl",
+          "season": "2000–01"
+        },
+        {
+          "name": "Diego Tristán",
+          "season": "2001–02"
+        },
+        {
+          "name": "Roy Makaay",
+          "season": "2002–03"
+        },
+        {
+          "name": "Ronaldo",
+          "season": "2003–04"
+        },
+        {
+          "name": "Diego Forlán",
+          "season": "2004–05"
+        },
+        {
+          "name": "Samuel Eto'o",
+          "season": "2005–06"
+        },
+        {
+          "name": "Ruud van Nistelrooy",
+          "season": "2006–07"
+        },
+        {
+          "name": "Dani Güiza",
+          "season": "2007–08"
+        },
+        {
+          "name": "Diego Forlán",
+          "season": "2008–09"
+        },
+        {
+          "name": "Lionel Messi",
+          "season": "2009–10"
+        },
+        {
+          "name": "Cristiano Ronaldo",
+          "season": "2010–11"
+        },
+        {
+          "name": "Lionel Messi",
+          "season": "2011–12"
+        },
+        {
+          "name": "Lionel Messi",
+          "season": "2012–13"
+        },
+        {
+          "name": "Cristiano Ronaldo",
+          "season": "2013–14"
+        },
+        {
+          "name": "Cristiano Ronaldo",
+          "season": "2014–15"
+        },
+        {
+          "name": "Luis Suárez",
+          "season": "2015–16"
+        },
+        {
+          "name": "Lionel Messi",
+          "season": "2016–17"
+        },
+        {
+          "name": "Lionel Messi",
+          "season": "2017–18"
+        },
+        {
+          "name": "Lionel Messi",
+          "season": "2018–19"
+        },
+        {
+          "name": "Lionel Messi",
+          "season": "2019–20"
+        },
+        {
+          "name": "Lionel Messi",
+          "season": "2020–21"
+        },
+        {
+          "name": "Karim Benzema",
+          "season": "2021–22"
+        },
+        {
+          "name": "Robert Lewandowski",
+          "season": "2022–23"
+        },
+        {
+          "name": "Artem Dovbyk",
+          "season": "2023–24"
+        },
+        {
+          "name": "Kylian Mbappé",
+          "season": "2024–25"
+        },
+        {
+          "name": "Kylian Mbappé",
+          "season": "2025–26"
+        }
+      ],
+      "src": "/awards/pichichi.svg",
+      "fallback": "/awards/pichichi.svg",
+      "imageKind": "labelled-illustration"
+    },
+    {
+      "id": "zamora",
+      "label": "Zamora Trophy",
+      "comp": "laliga",
+      "page": "Ricardo Zamora Trophy",
+      "section": "Winners",
+      "image": "glove",
+      "source": "https://en.wikipedia.org/wiki/Ricardo_Zamora_Trophy",
+      "winners": [
+        {
+          "name": "Ricardo Zamora",
+          "season": "1929"
+        },
+        {
+          "name": "Gregorio Blasco",
+          "season": "1929–30"
+        },
+        {
+          "name": "Tomás Zarraonaindia",
+          "season": "1930–31"
+        },
+        {
+          "name": "Ricardo Zamora",
+          "season": "1931–32"
+        },
+        {
+          "name": "Ricardo Zamora",
+          "season": "1932–33"
+        },
+        {
+          "name": "Gregorio Blasco",
+          "season": "1933–34"
+        },
+        {
+          "name": "Joaquín Urquiaga",
+          "season": "1934–35"
+        },
+        {
+          "name": "Gregorio Blasco",
+          "season": "1935–36"
+        },
+        {
+          "name": "Fernando Tabales",
+          "season": "1939–40"
+        },
+        {
+          "name": "José María Echevarría",
+          "season": "1940–41"
+        },
+        {
+          "name": "Juan Acuña",
+          "season": "1941–42"
+        },
+        {
+          "name": "Juan Acuña",
+          "season": "1942–43"
+        },
+        {
+          "name": "Ignacio Eizaguirre",
+          "season": "1943–44"
+        },
+        {
+          "name": "Ignacio Eizaguirre",
+          "season": "1944–45"
+        },
+        {
+          "name": "José Bañón",
+          "season": "1945–46"
+        },
+        {
+          "name": "Raimundo Lezama",
+          "season": "1946–47"
+        },
+        {
+          "name": "Juan Velasco",
+          "season": "1947–48"
+        },
+        {
+          "name": "Marcel Domingo",
+          "season": "1948–49"
+        },
+        {
+          "name": "Juan Acuña",
+          "season": "1949–50"
+        },
+        {
+          "name": "Juan Acuña",
+          "season": "1950–51"
+        },
+        {
+          "name": "Antoni Ramallets",
+          "season": "1951–52"
+        },
+        {
+          "name": "Marcel Domingo",
+          "season": "1952–53"
+        },
+        {
+          "name": "Luis Menéndez Sánchez",
+          "season": "1953–54"
+        },
+        {
+          "name": "Juan Alonso",
+          "season": "1954–55"
+        },
+        {
+          "name": "Antoni Ramallets",
+          "season": "1955–56"
+        },
+        {
+          "name": "Antoni Ramallets",
+          "season": "1956–57"
+        },
+        {
+          "name": "Gregorio Vergel",
+          "season": "1957–58"
+        },
+        {
+          "name": "Antoni Ramallets",
+          "season": "1958–59"
+        },
+        {
+          "name": "Antoni Ramallets",
+          "season": "1959–60"
+        },
+        {
+          "name": "José Vicente Train",
+          "season": "1960–61"
+        },
+        {
+          "name": "José Araquistáin",
+          "season": "1961–62"
+        },
+        {
+          "name": "José Vicente Train",
+          "season": "1962–63"
+        },
+        {
+          "name": "José Vicente Train",
+          "season": "1963–64"
+        },
+        {
+          "name": "Antonio Betancort",
+          "season": "1964–65"
+        },
+        {
+          "name": "José Manuel Pesudo",
+          "season": "1965–66"
+        },
+        {
+          "name": "Antonio Betancort",
+          "season": "1966–67"
+        },
+        {
+          "name": "Antonio Betancort",
+          "season": "1967–68"
+        },
+        {
+          "name": "Salvador Sadurní",
+          "season": "1968–69"
+        },
+        {
+          "name": "José Ángel Iribar",
+          "season": "1969–70"
+        },
+        {
+          "name": "Abelardo González",
+          "season": "1970–71"
+        },
+        {
+          "name": "Roberto Rodríguez Aguirre",
+          "season": "1970–71"
+        },
+        {
+          "name": "Juan Antonio Deusto",
+          "season": "1971–72"
+        },
+        {
+          "name": "Mariano García Remón",
+          "season": "1972–73"
+        },
+        {
+          "name": "Miguel Reina",
+          "season": "1972–73"
+        },
+        {
+          "name": "Salvador Sadurni",
+          "season": "1973–74"
+        },
+        {
+          "name": "Salvador Sadurni",
+          "season": "1974–75"
+        },
+        {
+          "name": "Jorge D'Alessandro",
+          "season": "1974–75"
+        },
+        {
+          "name": "Miguel Ángel González",
+          "season": "1975–76"
+        },
+        {
+          "name": "Miguel Reina",
+          "season": "1976–77"
+        },
+        {
+          "name": "Jorge D'Alessandro",
+          "season": "1976–77"
+        },
+        {
+          "name": "Pedro María Artola",
+          "season": "1977–78"
+        },
+        {
+          "name": "José Luis Manzanedo",
+          "season": "1978–79"
+        },
+        {
+          "name": "Luis Arconada",
+          "season": "1979–80"
+        },
+        {
+          "name": "Luis Arconada",
+          "season": "1980–81"
+        },
+        {
+          "name": "Luis Arconada",
+          "season": "1981–82"
+        },
+        {
+          "name": "Agustín Rodríguez",
+          "season": "1982–83"
+        },
+        {
+          "name": "Javier Urruticoechea",
+          "season": "1983–84"
+        },
+        {
+          "name": "Juan Carlos Ablanedo",
+          "season": "1984–85"
+        },
+        {
+          "name": "Juan Carlos Ablanedo",
+          "season": "1985–86"
+        },
+        {
+          "name": "Andoni Zubizarreta",
+          "season": "1986–87"
+        },
+        {
+          "name": "Francisco Buyo",
+          "season": "1987–88"
+        },
+        {
+          "name": "José Manuel Ochotorena",
+          "season": "1988–89"
+        },
+        {
+          "name": "Juan Carlos Ablanedo",
+          "season": "1989–90"
+        },
+        {
+          "name": "Abel Resino",
+          "season": "1990–91"
+        },
+        {
+          "name": "Francisco Buyo",
+          "season": "1991–92"
+        },
+        {
+          "name": "Francisco Liaño",
+          "season": "1992–93"
+        },
+        {
+          "name": "Santiago Cañizares",
+          "season": "1992–93"
+        },
+        {
+          "name": "Francisco Liaño",
+          "season": "1993–94"
+        },
+        {
+          "name": "Pedro Jaro",
+          "season": "1994–95"
+        },
+        {
+          "name": "José Francisco Molina",
+          "season": "1995–96"
+        },
+        {
+          "name": "Jacques Songo'o",
+          "season": "1996–97"
+        },
+        {
+          "name": "Toni Jiménez",
+          "season": "1997–98"
+        },
+        {
+          "name": "Carlos Roa",
+          "season": "1998–99"
+        },
+        {
+          "name": "Martín Herrera",
+          "season": "1999–2000"
+        },
+        {
+          "name": "Santiago Cañizares",
+          "season": "2000–01"
+        },
+        {
+          "name": "Santiago Cañizares",
+          "season": "2001–02"
+        },
+        {
+          "name": "Pablo Cavallero",
+          "season": "2002–03"
+        },
+        {
+          "name": "Santiago Cañizares",
+          "season": "2003–04"
+        },
+        {
+          "name": "Víctor Valdés",
+          "season": "2004–05"
+        },
+        {
+          "name": "José Manuel Pinto",
+          "season": "2005–06"
+        },
+        {
+          "name": "Roberto Abbondanzieri",
+          "season": "2006–07"
+        },
+        {
+          "name": "Iker Casillas",
+          "season": "2007–08"
+        },
+        {
+          "name": "Víctor Valdés",
+          "season": "2008–09"
+        },
+        {
+          "name": "Víctor Valdés",
+          "season": "2009–10"
+        },
+        {
+          "name": "Víctor Valdés",
+          "season": "2010–11"
+        },
+        {
+          "name": "Víctor Valdés",
+          "season": "2011–12"
+        },
+        {
+          "name": "Thibaut Courtois",
+          "season": "2012–13"
+        },
+        {
+          "name": "Thibaut Courtois",
+          "season": "2013–14"
+        },
+        {
+          "name": "Claudio Bravo",
+          "season": "2014–15"
+        },
+        {
+          "name": "Jan Oblak",
+          "season": "2015–16"
+        },
+        {
+          "name": "Jan Oblak",
+          "season": "2016–17"
+        },
+        {
+          "name": "Jan Oblak",
+          "season": "2017–18"
+        },
+        {
+          "name": "Jan Oblak",
+          "season": "2018–19"
+        },
+        {
+          "name": "Thibaut Courtois",
+          "season": "2019–20"
+        },
+        {
+          "name": "Jan Oblak",
+          "season": "2020–21"
+        },
+        {
+          "name": "Yassine Bounou",
+          "season": "2021–22"
+        },
+        {
+          "name": "Marc-André ter Stegen",
+          "season": "2022–23"
+        },
+        {
+          "name": "Unai Simón",
+          "season": "2023–24"
+        },
+        {
+          "name": "Jan Oblak",
+          "season": "2024–25"
+        },
+        {
+          "name": "Joan Garcia",
+          "season": "2025–26"
+        }
+      ],
+      "src": "/awards/zamora.svg",
+      "fallback": "/awards/zamora.svg",
+      "imageKind": "labelled-illustration"
+    },
+    {
+      "id": "laliga-player",
+      "label": "La Liga Best Player",
+      "comp": "laliga",
+      "page": "La Liga Awards",
+      "section": "Best Player",
+      "image": "player",
+      "source": "https://en.wikipedia.org/wiki/La_Liga_Awards",
+      "winners": [
+        {
+          "name": "Lionel Messi",
+          "season": "2008–09"
+        },
+        {
+          "name": "Lionel Messi",
+          "season": "2009–10"
+        },
+        {
+          "name": "Lionel Messi",
+          "season": "2010–11"
+        },
+        {
+          "name": "Lionel Messi",
+          "season": "2011–12"
+        },
+        {
+          "name": "Lionel Messi",
+          "season": "2012–13"
+        },
+        {
+          "name": "Cristiano Ronaldo",
+          "season": "2013–14"
+        },
+        {
+          "name": "Lionel Messi",
+          "season": "2014–15"
+        },
+        {
+          "name": "Antoine Griezmann",
+          "season": "2015–16"
+        },
+        {
+          "name": "Jude Bellingham",
+          "season": "2023–24"
+        },
+        {
+          "name": "Raphinha",
+          "season": "2024–25"
+        },
+        {
+          "name": "Lamine Yamal",
+          "season": "2025–26"
+        }
+      ],
+      "src": "/awards/laliga-player.svg",
+      "fallback": "/awards/laliga-player.svg",
+      "imageKind": "labelled-illustration"
+    },
+    {
+      "id": "laliga-young",
+      "label": "La Liga U23 Player of the Season",
+      "comp": "laliga",
+      "page": "La Liga Awards",
+      "section": "U23 Player of the season",
+      "image": "young",
+      "source": "https://en.wikipedia.org/wiki/La_Liga_Awards",
+      "winners": [
+        {
+          "name": "Lamine Yamal",
+          "season": "2023–24"
+        },
+        {
+          "name": "Lamine Yamal",
+          "season": "2024–25"
+        },
+        {
+          "name": "Carlos Espí",
+          "season": "2025–26"
+        }
+      ],
+      "src": "/awards/laliga-young.svg",
+      "fallback": "/awards/laliga-young.svg",
+      "imageKind": "labelled-illustration"
+    },
+    {
+      "id": "laliga-breakthrough",
+      "label": "La Liga Breakthrough Player",
+      "comp": "laliga",
+      "page": "La Liga Awards",
+      "section": "Breakthrough Player",
+      "image": "young",
+      "source": "https://en.wikipedia.org/wiki/La_Liga_Awards",
+      "winners": [
+        {
+          "name": "Sergio Busquets",
+          "season": "2008–09"
+        },
+        {
+          "name": "Pedro",
+          "season": "2009–10"
+        },
+        {
+          "name": "Iker Muniain",
+          "season": "2010–11"
+        },
+        {
+          "name": "Isco",
+          "season": "2011–12"
+        },
+        {
+          "name": "Asier Illarramendi",
+          "season": "2012–13"
+        },
+        {
+          "name": "Rafinha",
+          "season": "2013–14"
+        },
+        {
+          "name": "Marco Asensio",
+          "season": "2015–16"
+        }
+      ],
+      "src": "/awards/laliga-breakthrough.svg",
+      "fallback": "/awards/laliga-breakthrough.svg",
+      "imageKind": "labelled-illustration"
+    },
+    {
+      "id": "laliga-keeper",
+      "label": "La Liga Goalkeeper of the Season",
+      "comp": "laliga",
+      "page": "La Liga Awards",
+      "section": "Goalkeeper of the season",
+      "image": "glove",
+      "source": "https://en.wikipedia.org/wiki/La_Liga_Awards",
+      "winners": [
+        {
+          "name": "Iker Casillas",
+          "season": "2008–09"
+        },
+        {
+          "name": "Víctor Valdés",
+          "season": "2009–10"
+        },
+        {
+          "name": "Víctor Valdés",
+          "season": "2010–11"
+        },
+        {
+          "name": "Iker Casillas",
+          "season": "2011–12"
+        },
+        {
+          "name": "Thibaut Courtois",
+          "season": "2012–13"
+        },
+        {
+          "name": "Keylor Navas",
+          "season": "2013–14"
+        },
+        {
+          "name": "Claudio Bravo",
+          "season": "2014–15"
+        },
+        {
+          "name": "Jan Oblak",
+          "season": "2015–16"
+        }
+      ],
+      "src": "/awards/laliga-keeper.svg",
+      "fallback": "/awards/laliga-keeper.svg",
+      "imageKind": "labelled-illustration"
+    },
+    {
+      "id": "seriea-player",
+      "label": "Serie A Footballer of the Year",
+      "comp": "seriea",
+      "page": "Serie A Footballer of the Year",
+      "section": "Winners",
+      "image": "player",
+      "source": "https://en.wikipedia.org/wiki/Serie_A_Footballer_of_the_Year",
+      "winners": [
+        {
+          "name": "Roberto Mancini",
+          "season": "1996–97"
+        },
+        {
+          "name": "Ronaldo",
+          "season": "1997–98"
+        },
+        {
+          "name": "Christian Vieri",
+          "season": "1998–99"
+        },
+        {
+          "name": "Francesco Totti",
+          "season": "1999–2000"
+        },
+        {
+          "name": "Zinedine Zidane",
+          "season": "2000–01"
+        },
+        {
+          "name": "David Trezeguet",
+          "season": "2001–02"
+        },
+        {
+          "name": "Pavel Nedvěd",
+          "season": "2002–03"
+        },
+        {
+          "name": "Francesco Totti",
+          "season": "2002–03"
+        },
+        {
+          "name": "Kaká",
+          "season": "2003–04"
+        },
+        {
+          "name": "Alberto Gilardino",
+          "season": "2004–05"
+        },
+        {
+          "name": "Fabio Cannavaro",
+          "season": "2005–06"
+        },
+        {
+          "name": "Kaká",
+          "season": "2006–07"
+        },
+        {
+          "name": "Zlatan Ibrahimović",
+          "season": "2007–08"
+        },
+        {
+          "name": "Zlatan Ibrahimović",
+          "season": "2008–09"
+        },
+        {
+          "name": "Diego Milito",
+          "season": "2009–10"
+        },
+        {
+          "name": "Zlatan Ibrahimović",
+          "season": "2010–11"
+        },
+        {
+          "name": "Andrea Pirlo",
+          "season": "2011–12"
+        },
+        {
+          "name": "Andrea Pirlo",
+          "season": "2012–13"
+        },
+        {
+          "name": "Andrea Pirlo",
+          "season": "2013–14"
+        },
+        {
+          "name": "Carlos Tevez",
+          "season": "2014–15"
+        },
+        {
+          "name": "Leonardo Bonucci",
+          "season": "2015–16"
+        },
+        {
+          "name": "Gianluigi Buffon",
+          "season": "2016–17"
+        },
+        {
+          "name": "Mauro Icardi",
+          "season": "2017–18"
+        },
+        {
+          "name": "Cristiano Ronaldo",
+          "season": "2018–19"
+        },
+        {
+          "name": "Cristiano Ronaldo",
+          "season": "2019–20"
+        },
+        {
+          "name": "Romelu Lukaku",
+          "season": "2020–21"
+        },
+        {
+          "name": "Rafael Leão",
+          "season": "2021–22"
+        },
+        {
+          "name": "Victor Osimhen",
+          "season": "2022–23"
+        },
+        {
+          "name": "Lautaro Martínez",
+          "season": "2023–24"
+        },
+        {
+          "name": "Scott McTominay",
+          "season": "2024–25"
+        },
+        {
+          "name": "Federico Dimarco",
+          "season": "2025–26"
+        }
+      ],
+      "src": "/awards/seriea-player.svg",
+      "fallback": "/awards/seriea-player.svg",
+      "imageKind": "labelled-illustration"
+    },
+    {
+      "id": "seriea-young",
+      "label": "Serie A Young Footballer of the Year",
+      "comp": "seriea",
+      "page": "Serie A Young Footballer of the Year",
+      "section": "Winners",
+      "image": "young",
+      "source": "https://en.wikipedia.org/wiki/Serie_A_Young_Footballer_of_the_Year",
+      "winners": [
+        {
+          "name": "Filippo Inzaghi",
+          "season": "1997"
+        },
+        {
+          "name": "Alessandro Nesta",
+          "season": "1998"
+        },
+        {
+          "name": "Francesco Totti",
+          "season": "1999"
+        },
+        {
+          "name": "Roberto Baronio",
+          "season": "2000"
+        },
+        {
+          "name": "Antonio Cassano",
+          "season": "2001"
+        },
+        {
+          "name": "Matteo Brighi",
+          "season": "2002"
+        },
+        {
+          "name": "Antonio Cassano",
+          "season": "2003"
+        },
+        {
+          "name": "Alberto Gilardino",
+          "season": "2004"
+        },
+        {
+          "name": "Giampaolo Pazzini",
+          "season": "2005"
+        },
+        {
+          "name": "Daniele De Rossi",
+          "season": "2006"
+        },
+        {
+          "name": "Riccardo Montolivo",
+          "season": "2007"
+        },
+        {
+          "name": "Marek Hamšík",
+          "season": "2008"
+        },
+        {
+          "name": "Alexandre Pato",
+          "season": "2009"
+        },
+        {
+          "name": "Javier Pastore",
+          "season": "2010"
+        }
+      ],
+      "src": "/awards/seriea-young.svg",
+      "fallback": "/awards/seriea-young.svg",
+      "imageKind": "labelled-illustration"
+    },
+    {
+      "id": "seriea-mvp",
+      "label": "Serie A Most Valuable Player",
+      "comp": "seriea",
+      "page": "Serie A Awards",
+      "section": "Most Valuable Player",
+      "image": "player",
+      "source": "https://en.wikipedia.org/wiki/Serie_A_Awards",
+      "winners": [
+        {
+          "name": "Cristiano Ronaldo",
+          "season": "2018–19"
+        },
+        {
+          "name": "Paulo Dybala",
+          "season": "2019–20"
+        },
+        {
+          "name": "Romelu Lukaku",
+          "season": "2020–21"
+        },
+        {
+          "name": "Rafael Leão",
+          "season": "2021–22"
+        },
+        {
+          "name": "Khvicha Kvaratskhelia",
+          "season": "2022–23"
+        },
+        {
+          "name": "Lautaro Martínez",
+          "season": "2023–24"
+        },
+        {
+          "name": "Scott McTominay",
+          "season": "2024–25"
+        },
+        {
+          "name": "Federico Dimarco",
+          "season": "2025–26"
+        }
+      ],
+      "src": "/awards/seriea-mvp.svg",
+      "fallback": "/awards/seriea-mvp.svg",
+      "imageKind": "labelled-illustration"
+    },
+    {
+      "id": "seriea-keeper",
+      "label": "Serie A Best Goalkeeper",
+      "comp": "seriea",
+      "page": "Serie A Awards",
+      "section": "Best Goalkeeper",
+      "image": "glove",
+      "source": "https://en.wikipedia.org/wiki/Serie_A_Awards",
+      "winners": [
+        {
+          "name": "Samir Handanović",
+          "season": "2018–19"
+        },
+        {
+          "name": "Wojciech Szczęsny",
+          "season": "2019–20"
+        },
+        {
+          "name": "Gianluigi Donnarumma",
+          "season": "2020–21"
+        },
+        {
+          "name": "Mike Maignan",
+          "season": "2021–22"
+        },
+        {
+          "name": "Ivan Provedel",
+          "season": "2022–23"
+        },
+        {
+          "name": "Michele Di Gregorio",
+          "season": "2023–24"
+        },
+        {
+          "name": "Mile Svilar",
+          "season": "2024–25"
+        },
+        {
+          "name": "Mile Svilar",
+          "season": "2025–26"
+        }
+      ],
+      "src": "/awards/seriea-keeper.svg",
+      "fallback": "/awards/seriea-keeper.svg",
+      "imageKind": "labelled-illustration"
+    },
+    {
+      "id": "seriea-defender",
+      "label": "Serie A Best Defender",
+      "comp": "seriea",
+      "page": "Serie A Awards",
+      "section": "Best Defender",
+      "image": "player",
+      "source": "https://en.wikipedia.org/wiki/Serie_A_Awards",
+      "winners": [
+        {
+          "name": "Kalidou Koulibaly",
+          "season": "2018–19"
+        },
+        {
+          "name": "Stefan de Vrij",
+          "season": "2019–20"
+        },
+        {
+          "name": "Cristian Romero",
+          "season": "2020–21"
+        },
+        {
+          "name": "Bremer",
+          "season": "2021–22"
+        },
+        {
+          "name": "Kim Min-jae",
+          "season": "2022–23"
+        },
+        {
+          "name": "Alessandro Bastoni",
+          "season": "2023–24"
+        },
+        {
+          "name": "Alessandro Bastoni",
+          "season": "2024–25"
+        },
+        {
+          "name": "Marco Palestra",
+          "season": "2025–26"
+        }
+      ],
+      "src": "/awards/seriea-defender.svg",
+      "fallback": "/awards/seriea-defender.svg",
+      "imageKind": "labelled-illustration"
+    },
+    {
+      "id": "seriea-midfielder",
+      "label": "Serie A Best Midfielder",
+      "comp": "seriea",
+      "page": "Serie A Awards",
+      "section": "Best Midfielder",
+      "image": "player",
+      "source": "https://en.wikipedia.org/wiki/Serie_A_Awards",
+      "winners": [
+        {
+          "name": "Sergej Milinković-Savić",
+          "season": "2018–19"
+        },
+        {
+          "name": "Alejandro Gómez",
+          "season": "2019–20"
+        },
+        {
+          "name": "Nicolò Barella",
+          "season": "2020–21"
+        },
+        {
+          "name": "Marcelo Brozović",
+          "season": "2021–22"
+        },
+        {
+          "name": "Nicolò Barella",
+          "season": "2022–23"
+        },
+        {
+          "name": "Hakan Çalhanoğlu",
+          "season": "2023–24"
+        },
+        {
+          "name": "Tijjani Reijnders",
+          "season": "2024–25"
+        },
+        {
+          "name": "Nico Paz",
+          "season": "2025–26"
+        }
+      ],
+      "src": "/awards/seriea-midfielder.svg",
+      "fallback": "/awards/seriea-midfielder.svg",
+      "imageKind": "labelled-illustration"
+    },
+    {
+      "id": "seriea-striker",
+      "label": "Serie A Best Striker",
+      "comp": "seriea",
+      "page": "Serie A Awards",
+      "section": "Best Striker",
+      "image": "boot",
+      "source": "https://en.wikipedia.org/wiki/Serie_A_Awards",
+      "winners": [
+        {
+          "name": "Fabio Quagliarella",
+          "season": "2018–19"
+        },
+        {
+          "name": "Ciro Immobile",
+          "season": "2019–20"
+        },
+        {
+          "name": "Cristiano Ronaldo",
+          "season": "2020–21"
+        },
+        {
+          "name": "Ciro Immobile",
+          "season": "2021–22"
+        },
+        {
+          "name": "Victor Osimhen",
+          "season": "2022–23"
+        },
+        {
+          "name": "Dušan Vlahović",
+          "season": "2023–24"
+        },
+        {
+          "name": "Mateo Retegui",
+          "season": "2024–25"
+        },
+        {
+          "name": "Lautaro Martínez",
+          "season": "2025–26"
+        }
+      ],
+      "src": "/awards/seriea-striker.svg",
+      "fallback": "/awards/seriea-striker.svg",
+      "imageKind": "labelled-illustration"
+    },
+    {
+      "id": "seriea-u23",
+      "label": "Serie A Best Under-23 / Rising Star",
+      "comp": "seriea",
+      "page": "Serie A Awards",
+      "section": "Rising Star (Best Under-23)",
+      "image": "young",
+      "source": "https://en.wikipedia.org/wiki/Serie_A_Awards",
+      "winners": [
+        {
+          "name": "Nicolò Zaniolo",
+          "season": "2018–19"
+        },
+        {
+          "name": "Dejan Kulusevski",
+          "season": "2019–20"
+        },
+        {
+          "name": "Dušan Vlahović",
+          "season": "2020–21"
+        },
+        {
+          "name": "Victor Osimhen",
+          "season": "2021–22"
+        },
+        {
+          "name": "Nicolò Fagioli",
+          "season": "2022–23"
+        },
+        {
+          "name": "Joshua Zirkzee",
+          "season": "2023–24"
+        },
+        {
+          "name": "Nico Paz",
+          "season": "2024–25"
+        },
+        {
+          "name": "Kenan Yıldız",
+          "season": "2025–26"
+        }
+      ],
+      "src": "/awards/seriea-u23.svg",
+      "fallback": "/awards/seriea-u23.svg",
+      "imageKind": "labelled-illustration"
+    },
+    {
+      "id": "capocannoniere",
+      "label": "Capocannoniere",
+      "comp": "seriea",
+      "page": "Capocannoniere",
+      "section": "Winners",
+      "image": "boot",
+      "source": "https://en.wikipedia.org/wiki/Capocannoniere",
+      "winners": [
+        {
+          "name": "Edoardo Bosio",
+          "season": "1898"
+        },
+        {
+          "name": "Norman Victor Leaver",
+          "season": "1898"
+        },
+        {
+          "name": "Albert Weber",
+          "season": "1899"
+        },
+        {
+          "name": "Unknown",
+          "season": "1900"
+        },
+        {
+          "name": "Umberto Malvano",
+          "season": "1901"
+        },
+        {
+          "name": "Unknown",
+          "season": "1902"
+        },
+        {
+          "name": "Umberto Malvano",
+          "season": "1903"
+        },
+        {
+          "name": "Unknown",
+          "season": "1904"
+        },
+        {
+          "name": "Unknown",
+          "season": "1905"
+        },
+        {
+          "name": "Guido Pedroni",
+          "season": "1906"
+        },
+        {
+          "name": "Hans Kämpfer",
+          "season": "1907"
+        },
+        {
+          "name": "Mario Cagliani",
+          "season": "1908"
+        },
+        {
+          "name": "Amilcare Pizzi",
+          "season": "1909"
+        },
+        {
+          "name": "Ernest Peterly",
+          "season": "1909–10"
+        },
+        {
+          "name": "Unknown",
+          "season": "1910–11"
+        },
+        {
+          "name": "Carlo Rampini",
+          "season": "1911–12"
+        },
+        {
+          "name": "Unknown",
+          "season": "1912–13"
+        },
+        {
+          "name": "Luigi Cevenini",
+          "season": "1913–14"
+        },
+        {
+          "name": "Unknown",
+          "season": "1914–15"
+        },
+        {
+          "name": "Mario Magnozzi",
+          "season": "1919–20"
+        },
+        {
+          "name": "Luigi Cevenini",
+          "season": "1920–21"
+        },
+        {
+          "name": "Unknown",
+          "season": "1921–22"
+        },
+        {
+          "name": "Fulvio Bernardini",
+          "season": "1922–23"
+        },
+        {
+          "name": "Heinrich Schönfeld",
+          "season": "1923–24"
+        },
+        {
+          "name": "Mario Magnozzi",
+          "season": "1924–25"
+        },
+        {
+          "name": "Ferenc Hirzer",
+          "season": "1925–26"
+        },
+        {
+          "name": "Anton Powolny",
+          "season": "1926–27"
+        },
+        {
+          "name": "Julio Libonatti",
+          "season": "1927–28"
+        },
+        {
+          "name": "Gino Rossetti",
+          "season": "1928–29"
+        },
+        {
+          "name": "Giuseppe Meazza",
+          "season": "1929–30"
+        },
+        {
+          "name": "Rodolfo Volk",
+          "season": "1930–31"
+        },
+        {
+          "name": "Angelo Schiavio",
+          "season": "1931–32"
+        },
+        {
+          "name": "Pedro Petrone",
+          "season": "1931–32"
+        },
+        {
+          "name": "Felice Borel",
+          "season": "1932–33"
+        },
+        {
+          "name": "Felice Borel",
+          "season": "1933–34"
+        },
+        {
+          "name": "Enrique Guaita",
+          "season": "1934–35"
+        },
+        {
+          "name": "Giuseppe Meazza",
+          "season": "1935–36"
+        },
+        {
+          "name": "Silvio Piola",
+          "season": "1936–37"
+        },
+        {
+          "name": "Giuseppe Meazza",
+          "season": "1937–38"
+        },
+        {
+          "name": "Ettore Puricelli",
+          "season": "1938–39"
+        },
+        {
+          "name": "Aldo Boffi",
+          "season": "1938–39"
+        },
+        {
+          "name": "Aldo Boffi",
+          "season": "1939–40"
+        },
+        {
+          "name": "Ettore Puricelli",
+          "season": "1940–41"
+        },
+        {
+          "name": "Aldo Boffi",
+          "season": "1941–42"
+        },
+        {
+          "name": "Silvio Piola",
+          "season": "1942–43"
+        },
+        {
+          "name": "Guglielmo Gabetto",
+          "season": "1945–46"
+        },
+        {
+          "name": "Valentino Mazzola",
+          "season": "1946–47"
+        },
+        {
+          "name": "Giampiero Boniperti",
+          "season": "1947–48"
+        },
+        {
+          "name": "István Nyers",
+          "season": "1948–49"
+        },
+        {
+          "name": "Gunnar Nordahl",
+          "season": "1949–50"
+        },
+        {
+          "name": "Gunnar Nordahl",
+          "season": "1950–51"
+        },
+        {
+          "name": "John Hansen",
+          "season": "1951–52"
+        },
+        {
+          "name": "Gunnar Nordahl",
+          "season": "1952–53"
+        },
+        {
+          "name": "Gunnar Nordahl",
+          "season": "1953–54"
+        },
+        {
+          "name": "Gunnar Nordahl",
+          "season": "1954–55"
+        },
+        {
+          "name": "Gino Pivatelli",
+          "season": "1955–56"
+        },
+        {
+          "name": "Dino da Costa",
+          "season": "1956–57"
+        },
+        {
+          "name": "John Charles",
+          "season": "1957–58"
+        },
+        {
+          "name": "Antonio Valentín Angelillo",
+          "season": "1958–59"
+        },
+        {
+          "name": "Omar Sívori",
+          "season": "1959–60"
+        },
+        {
+          "name": "Sergio Brighenti",
+          "season": "1960–61"
+        },
+        {
+          "name": "José Altafini",
+          "season": "1961–62"
+        },
+        {
+          "name": "Aurelio Milani",
+          "season": "1961–62"
+        },
+        {
+          "name": "Harald Nielsen",
+          "season": "1962–63"
+        },
+        {
+          "name": "Pedro Manfredini",
+          "season": "1962–63"
+        },
+        {
+          "name": "Harald Nielsen",
+          "season": "1963–64"
+        },
+        {
+          "name": "Sandro Mazzola",
+          "season": "1964–65"
+        },
+        {
+          "name": "Alberto Orlando",
+          "season": "1964–65"
+        },
+        {
+          "name": "Luís Vinício",
+          "season": "1965–66"
+        },
+        {
+          "name": "Gigi Riva",
+          "season": "1966–67"
+        },
+        {
+          "name": "Pierino Prati",
+          "season": "1967–68"
+        },
+        {
+          "name": "Gigi Riva",
+          "season": "1968–69"
+        },
+        {
+          "name": "Gigi Riva",
+          "season": "1969–70"
+        },
+        {
+          "name": "Roberto Boninsegna",
+          "season": "1970–71"
+        },
+        {
+          "name": "Roberto Boninsegna",
+          "season": "1971–72"
+        },
+        {
+          "name": "Giuseppe Savoldi",
+          "season": "1972–73"
+        },
+        {
+          "name": "Paolino Pulici",
+          "season": "1972–73"
+        },
+        {
+          "name": "Gianni Rivera",
+          "season": "1972–73"
+        },
+        {
+          "name": "Giorgio Chinaglia",
+          "season": "1973–74"
+        },
+        {
+          "name": "Paolino Pulici",
+          "season": "1974–75"
+        },
+        {
+          "name": "Paolino Pulici",
+          "season": "1975–76"
+        },
+        {
+          "name": "Francesco Graziani",
+          "season": "1976–77"
+        },
+        {
+          "name": "Paolo Rossi",
+          "season": "1977–78"
+        },
+        {
+          "name": "Bruno Giordano",
+          "season": "1978–79"
+        },
+        {
+          "name": "Roberto Bettega",
+          "season": "1979–80"
+        },
+        {
+          "name": "Roberto Pruzzo",
+          "season": "1980–81"
+        },
+        {
+          "name": "Roberto Pruzzo",
+          "season": "1981–82"
+        },
+        {
+          "name": "Michel Platini",
+          "season": "1982–83"
+        },
+        {
+          "name": "Michel Platini",
+          "season": "1983–84"
+        },
+        {
+          "name": "Michel Platini",
+          "season": "1984–85"
+        },
+        {
+          "name": "Roberto Pruzzo",
+          "season": "1985–86"
+        },
+        {
+          "name": "Pietro Paolo Virdis",
+          "season": "1986–87"
+        },
+        {
+          "name": "Diego Maradona",
+          "season": "1987–88"
+        },
+        {
+          "name": "Aldo Serena",
+          "season": "1988–89"
+        },
+        {
+          "name": "Marco van Basten",
+          "season": "1989–90"
+        },
+        {
+          "name": "Gianluca Vialli",
+          "season": "1990–91"
+        },
+        {
+          "name": "Marco van Basten",
+          "season": "1991–92"
+        },
+        {
+          "name": "Giuseppe Signori",
+          "season": "1992–93"
+        },
+        {
+          "name": "Giuseppe Signori",
+          "season": "1993–94"
+        },
+        {
+          "name": "Gabriel Batistuta",
+          "season": "1994–95"
+        },
+        {
+          "name": "Igor Protti",
+          "season": "1995–96"
+        },
+        {
+          "name": "Giuseppe Signori",
+          "season": "1995–96"
+        },
+        {
+          "name": "Filippo Inzaghi",
+          "season": "1996–97"
+        },
+        {
+          "name": "Oliver Bierhoff",
+          "season": "1997–98"
+        },
+        {
+          "name": "Márcio Amoroso",
+          "season": "1998–99"
+        },
+        {
+          "name": "Andriy Shevchenko",
+          "season": "1999–2000"
+        },
+        {
+          "name": "Hernán Crespo",
+          "season": "2000–01"
+        },
+        {
+          "name": "David Trezeguet",
+          "season": "2001–02"
+        },
+        {
+          "name": "Dario Hübner",
+          "season": "2001–02"
+        },
+        {
+          "name": "Christian Vieri",
+          "season": "2002–03"
+        },
+        {
+          "name": "Andriy Shevchenko",
+          "season": "2003–04"
+        },
+        {
+          "name": "Cristiano Lucarelli",
+          "season": "2004–05"
+        },
+        {
+          "name": "Luca Toni",
+          "season": "2005–06"
+        },
+        {
+          "name": "Francesco Totti",
+          "season": "2006–07"
+        },
+        {
+          "name": "Alessandro Del Piero",
+          "season": "2007–08"
+        },
+        {
+          "name": "Zlatan Ibrahimović",
+          "season": "2008–09"
+        },
+        {
+          "name": "Antonio Di Natale",
+          "season": "2009–10"
+        },
+        {
+          "name": "Antonio Di Natale",
+          "season": "2010–11"
+        },
+        {
+          "name": "Zlatan Ibrahimović",
+          "season": "2011–12"
+        },
+        {
+          "name": "Edinson Cavani",
+          "season": "2012–13"
+        },
+        {
+          "name": "Ciro Immobile",
+          "season": "2013–14"
+        },
+        {
+          "name": "Mauro Icardi",
+          "season": "2014–15"
+        },
+        {
+          "name": "Luca Toni",
+          "season": "2014–15"
+        },
+        {
+          "name": "Gonzalo Higuaín",
+          "season": "2015–16"
+        },
+        {
+          "name": "Edin Džeko",
+          "season": "2016–17"
+        },
+        {
+          "name": "Mauro Icardi",
+          "season": "2017–18"
+        },
+        {
+          "name": "Ciro Immobile",
+          "season": "2017–18"
+        },
+        {
+          "name": "Fabio Quagliarella",
+          "season": "2018–19"
+        },
+        {
+          "name": "Ciro Immobile",
+          "season": "2019–20"
+        },
+        {
+          "name": "Cristiano Ronaldo",
+          "season": "2020–21"
+        },
+        {
+          "name": "Ciro Immobile",
+          "season": "2021–22"
+        },
+        {
+          "name": "Victor Osimhen",
+          "season": "2022–23"
+        },
+        {
+          "name": "Lautaro Martínez",
+          "season": "2023–24"
+        },
+        {
+          "name": "Mateo Retegui",
+          "season": "2024–25"
+        },
+        {
+          "name": "Lautaro Martínez",
+          "season": "2025–26"
+        }
+      ],
+      "src": "/awards/capocannoniere.svg",
+      "fallback": "/awards/capocannoniere.svg",
+      "imageKind": "labelled-illustration"
+    },
+    {
+      "id": "bundesliga-player",
+      "label": "Bundesliga Player of the Season",
+      "comp": "bundesliga",
+      "page": "Bundesliga Awards",
+      "section": "Player of the Season",
+      "image": "player",
+      "source": "https://en.wikipedia.org/wiki/Bundesliga_Awards",
+      "winners": [
+        {
+          "name": "Robert Lewandowski",
+          "season": "2019–20"
+        },
+        {
+          "name": "Erling Haaland",
+          "season": "2020–21"
+        },
+        {
+          "name": "Christopher Nkunku",
+          "season": "2021–22"
+        },
+        {
+          "name": "Jude Bellingham",
+          "season": "2022–23"
+        },
+        {
+          "name": "Florian Wirtz",
+          "season": "2023–24"
+        },
+        {
+          "name": "Harry Kane",
+          "season": "2024–25"
+        },
+        {
+          "name": "Michael Olise",
+          "season": "2025–26"
+        }
+      ],
+      "src": "/awards/bundesliga-player.svg",
+      "fallback": "/awards/bundesliga-player.svg",
+      "imageKind": "labelled-illustration"
+    },
+    {
+      "id": "german-player",
+      "label": "German Footballer of the Year",
+      "comp": "bundesliga",
+      "page": "Footballer of the Year (Germany)",
+      "section": "Winners",
+      "image": "player",
+      "source": "https://en.wikipedia.org/wiki/Footballer_of_the_Year_(Germany)",
+      "winners": [
+        {
+          "name": "Uwe Seeler",
+          "season": "1960"
+        },
+        {
+          "name": "Max Morlock",
+          "season": "1961"
+        },
+        {
+          "name": "Karl-Heinz Schnellinger",
+          "season": "1962"
+        },
+        {
+          "name": "Hans Schäfer",
+          "season": "1963"
+        },
+        {
+          "name": "Uwe Seeler",
+          "season": "1964"
+        },
+        {
+          "name": "Hans Tilkowski",
+          "season": "1965"
+        },
+        {
+          "name": "Franz Beckenbauer",
+          "season": "1966"
+        },
+        {
+          "name": "Gerd Müller",
+          "season": "1967"
+        },
+        {
+          "name": "Franz Beckenbauer",
+          "season": "1968"
+        },
+        {
+          "name": "Gerd Müller",
+          "season": "1969"
+        },
+        {
+          "name": "Uwe Seeler",
+          "season": "1970"
+        },
+        {
+          "name": "Berti Vogts",
+          "season": "1971"
+        },
+        {
+          "name": "Günter Netzer",
+          "season": "1972"
+        },
+        {
+          "name": "Günter Netzer",
+          "season": "1973"
+        },
+        {
+          "name": "Franz Beckenbauer",
+          "season": "1974"
+        },
+        {
+          "name": "Sepp Maier",
+          "season": "1975"
+        },
+        {
+          "name": "Franz Beckenbauer",
+          "season": "1976"
+        },
+        {
+          "name": "Sepp Maier",
+          "season": "1977"
+        },
+        {
+          "name": "Sepp Maier",
+          "season": "1978"
+        },
+        {
+          "name": "Berti Vogts",
+          "season": "1979"
+        },
+        {
+          "name": "Karl-Heinz Rummenigge",
+          "season": "1980"
+        },
+        {
+          "name": "Paul Breitner",
+          "season": "1981"
+        },
+        {
+          "name": "Karlheinz Förster",
+          "season": "1982"
+        },
+        {
+          "name": "Rudi Völler",
+          "season": "1983"
+        },
+        {
+          "name": "Harald Schumacher",
+          "season": "1984"
+        },
+        {
+          "name": "Hans-Peter Briegel",
+          "season": "1985"
+        },
+        {
+          "name": "Harald Schumacher",
+          "season": "1986"
+        },
+        {
+          "name": "Uwe Rahn",
+          "season": "1987"
+        },
+        {
+          "name": "Jürgen Klinsmann",
+          "season": "1988"
+        },
+        {
+          "name": "Thomas Häßler",
+          "season": "1989"
+        },
+        {
+          "name": "Lothar Matthäus",
+          "season": "1990"
+        },
+        {
+          "name": "Stefan Kuntz",
+          "season": "1991"
+        },
+        {
+          "name": "Thomas Häßler",
+          "season": "1992"
+        },
+        {
+          "name": "Andreas Köpke",
+          "season": "1993"
+        },
+        {
+          "name": "Jürgen Klinsmann",
+          "season": "1994"
+        },
+        {
+          "name": "Matthias Sammer",
+          "season": "1995"
+        },
+        {
+          "name": "Matthias Sammer",
+          "season": "1996"
+        },
+        {
+          "name": "Jürgen Kohler",
+          "season": "1997"
+        },
+        {
+          "name": "Oliver Bierhoff",
+          "season": "1998"
+        },
+        {
+          "name": "Lothar Matthäus",
+          "season": "1999"
+        },
+        {
+          "name": "Oliver Kahn",
+          "season": "2000"
+        },
+        {
+          "name": "Oliver Kahn",
+          "season": "2001"
+        },
+        {
+          "name": "Michael Ballack",
+          "season": "2002"
+        },
+        {
+          "name": "Michael Ballack",
+          "season": "2003"
+        },
+        {
+          "name": "Aílton",
+          "season": "2004"
+        },
+        {
+          "name": "Michael Ballack",
+          "season": "2005"
+        },
+        {
+          "name": "Miroslav Klose",
+          "season": "2006"
+        },
+        {
+          "name": "Mario Gómez",
+          "season": "2007"
+        },
+        {
+          "name": "Franck Ribéry",
+          "season": "2008"
+        },
+        {
+          "name": "Grafite",
+          "season": "2009"
+        },
+        {
+          "name": "Arjen Robben",
+          "season": "2010"
+        },
+        {
+          "name": "Manuel Neuer",
+          "season": "2011"
+        },
+        {
+          "name": "Marco Reus",
+          "season": "2012"
+        },
+        {
+          "name": "Bastian Schweinsteiger",
+          "season": "2013"
+        },
+        {
+          "name": "Manuel Neuer",
+          "season": "2014"
+        },
+        {
+          "name": "Kevin De Bruyne",
+          "season": "2015"
+        },
+        {
+          "name": "Jérôme Boateng",
+          "season": "2016"
+        },
+        {
+          "name": "Philipp Lahm",
+          "season": "2017"
+        },
+        {
+          "name": "Toni Kroos",
+          "season": "2018"
+        },
+        {
+          "name": "Marco Reus",
+          "season": "2019"
+        },
+        {
+          "name": "Robert Lewandowski",
+          "season": "2020"
+        },
+        {
+          "name": "Robert Lewandowski",
+          "season": "2021"
+        },
+        {
+          "name": "Christopher Nkunku",
+          "season": "2022"
+        },
+        {
+          "name": "İlkay Gündoğan",
+          "season": "2023"
+        },
+        {
+          "name": "Toni Kroos",
+          "season": "2024"
+        },
+        {
+          "name": "Florian Wirtz",
+          "season": "2025"
+        },
+        {
+          "name": "Harry Kane",
+          "season": "2026"
+        }
+      ],
+      "src": "/awards/german-player.svg",
+      "fallback": "/awards/german-player.svg",
+      "imageKind": "labelled-illustration"
+    },
+    {
+      "id": "bundesliga-rookie",
+      "label": "Bundesliga Rookie of the Season",
+      "comp": "bundesliga",
+      "page": "Bundesliga Awards",
+      "section": "Rookie of the Season",
+      "image": "young",
+      "source": "https://en.wikipedia.org/wiki/Bundesliga_Awards",
+      "winners": [
+        {
+          "name": "Ousmane Dembélé",
+          "season": "2016–17"
+        },
+        {
+          "name": "Amine Harit",
+          "season": "2017–18"
+        },
+        {
+          "name": "Ozan Kabak",
+          "season": "2018–19"
+        },
+        {
+          "name": "Alphonso Davies",
+          "season": "2019–20"
+        },
+        {
+          "name": "Silas",
+          "season": "2020–21"
+        },
+        {
+          "name": "Jesper Lindstrøm",
+          "season": "2021–22"
+        },
+        {
+          "name": "Karim Adeyemi",
+          "season": "2022–23"
+        },
+        {
+          "name": "Victor Boniface",
+          "season": "2023–24"
+        },
+        {
+          "name": "Michael Olise",
+          "season": "2024–25"
+        },
+        {
+          "name": "Yan Diomande",
+          "season": "2025–26"
+        }
+      ],
+      "src": "/awards/bundesliga-rookie.svg",
+      "fallback": "/awards/bundesliga-rookie.svg",
+      "imageKind": "labelled-illustration"
+    },
+    {
+      "id": "bundesliga-scorer",
+      "label": "Bundesliga top scorer (Torjagerkanone)",
+      "comp": "bundesliga",
+      "page": "List of Bundesliga top scorers by season",
+      "section": "Top scorers",
+      "image": "boot",
+      "source": "https://en.wikipedia.org/wiki/List_of_Bundesliga_top_scorers_by_season",
+      "winners": [
+        {
+          "name": "Uwe Seeler",
+          "season": "1963–64"
+        },
+        {
+          "name": "Rudolf Brunnenmeier",
+          "season": "1964–65"
+        },
+        {
+          "name": "Lothar Emmerich",
+          "season": "1965–66"
+        },
+        {
+          "name": "Lothar Emmerich",
+          "season": "1966–67"
+        },
+        {
+          "name": "Gerd Müller",
+          "season": "1966–67"
+        },
+        {
+          "name": "Hannes Löhr",
+          "season": "1967–68"
+        },
+        {
+          "name": "Gerd Müller",
+          "season": "1968–69"
+        },
+        {
+          "name": "Gerd Müller",
+          "season": "1969–70"
+        },
+        {
+          "name": "Lothar Kobluhn",
+          "season": "1970–71"
+        },
+        {
+          "name": "Gerd Müller",
+          "season": "1971–72"
+        },
+        {
+          "name": "Gerd Müller",
+          "season": "1972–73"
+        },
+        {
+          "name": "Jupp Heynckes",
+          "season": "1973–74"
+        },
+        {
+          "name": "Gerd Müller",
+          "season": "1973–74"
+        },
+        {
+          "name": "Jupp Heynckes",
+          "season": "1974–75"
+        },
+        {
+          "name": "Klaus Fischer",
+          "season": "1975–76"
+        },
+        {
+          "name": "Dieter Müller",
+          "season": "1976–77"
+        },
+        {
+          "name": "Dieter Müller",
+          "season": "1977–78"
+        },
+        {
+          "name": "Gerd Müller",
+          "season": "1977–78"
+        },
+        {
+          "name": "Klaus Allofs",
+          "season": "1978–79"
+        },
+        {
+          "name": "Karl-Heinz Rummenigge",
+          "season": "1979–80"
+        },
+        {
+          "name": "Karl-Heinz Rummenigge",
+          "season": "1980–81"
+        },
+        {
+          "name": "Horst Hrubesch",
+          "season": "1981–82"
+        },
+        {
+          "name": "Rudi Völler",
+          "season": "1982–83"
+        },
+        {
+          "name": "Karl-Heinz Rummenigge",
+          "season": "1983–84"
+        },
+        {
+          "name": "Klaus Allofs",
+          "season": "1984–85"
+        },
+        {
+          "name": "Stefan Kuntz",
+          "season": "1985–86"
+        },
+        {
+          "name": "Uwe Rahn",
+          "season": "1986–87"
+        },
+        {
+          "name": "Jürgen Klinsmann",
+          "season": "1987–88"
+        },
+        {
+          "name": "Thomas Allofs",
+          "season": "1988–89"
+        },
+        {
+          "name": "Roland Wohlfarth",
+          "season": "1988–89"
+        },
+        {
+          "name": "Jørn Andersen",
+          "season": "1989–90"
+        },
+        {
+          "name": "Roland Wohlfarth",
+          "season": "1990–91"
+        },
+        {
+          "name": "Fritz Walter",
+          "season": "1991–92"
+        },
+        {
+          "name": "Ulf Kirsten",
+          "season": "1992–93"
+        },
+        {
+          "name": "Tony Yeboah",
+          "season": "1992–93"
+        },
+        {
+          "name": "Stefan Kuntz",
+          "season": "1993–94"
+        },
+        {
+          "name": "Tony Yeboah",
+          "season": "1993–94"
+        },
+        {
+          "name": "Mario Basler",
+          "season": "1994–95"
+        },
+        {
+          "name": "Heiko Herrlich",
+          "season": "1994–95"
+        },
+        {
+          "name": "Fredi Bobic",
+          "season": "1995–96"
+        },
+        {
+          "name": "Ulf Kirsten",
+          "season": "1996–97"
+        },
+        {
+          "name": "Ulf Kirsten",
+          "season": "1997–98"
+        },
+        {
+          "name": "Michael Preetz",
+          "season": "1998–99"
+        },
+        {
+          "name": "Martin Max",
+          "season": "1999–2000"
+        },
+        {
+          "name": "Sergej Barbarez",
+          "season": "2000–01"
+        },
+        {
+          "name": "Ebbe Sand",
+          "season": "2000–01"
+        },
+        {
+          "name": "Márcio Amoroso",
+          "season": "2001–02"
+        },
+        {
+          "name": "Martin Max",
+          "season": "2001–02"
+        },
+        {
+          "name": "Thomas Christiansen",
+          "season": "2002–03"
+        },
+        {
+          "name": "Giovane Élber",
+          "season": "2002–03"
+        },
+        {
+          "name": "Aílton",
+          "season": "2003–04"
+        },
+        {
+          "name": "Marek Mintál",
+          "season": "2004–05"
+        },
+        {
+          "name": "Miroslav Klose",
+          "season": "2005–06"
+        },
+        {
+          "name": "Theofanis Gekas",
+          "season": "2006–07"
+        },
+        {
+          "name": "Luca Toni",
+          "season": "2007–08"
+        },
+        {
+          "name": "Grafite",
+          "season": "2008–09"
+        },
+        {
+          "name": "Edin Džeko",
+          "season": "2009–10"
+        },
+        {
+          "name": "Mario Gómez",
+          "season": "2010–11"
+        },
+        {
+          "name": "Klaas-Jan Huntelaar",
+          "season": "2011–12"
+        },
+        {
+          "name": "Stefan Kießling",
+          "season": "2012–13"
+        },
+        {
+          "name": "Robert Lewandowski",
+          "season": "2013–14"
+        },
+        {
+          "name": "Alexander Meier",
+          "season": "2014–15"
+        },
+        {
+          "name": "Robert Lewandowski",
+          "season": "2015–16"
+        },
+        {
+          "name": "Pierre-Emerick Aubameyang",
+          "season": "2016–17"
+        },
+        {
+          "name": "Robert Lewandowski",
+          "season": "2017–18"
+        },
+        {
+          "name": "Robert Lewandowski",
+          "season": "2018–19"
+        },
+        {
+          "name": "Robert Lewandowski",
+          "season": "2019–20"
+        },
+        {
+          "name": "Robert Lewandowski",
+          "season": "2020–21"
+        },
+        {
+          "name": "Robert Lewandowski",
+          "season": "2021–22"
+        },
+        {
+          "name": "Niclas Füllkrug",
+          "season": "2022–23"
+        },
+        {
+          "name": "Christopher Nkunku",
+          "season": "2022–23"
+        },
+        {
+          "name": "Harry Kane",
+          "season": "2023–24"
+        },
+        {
+          "name": "Harry Kane",
+          "season": "2024–25"
+        },
+        {
+          "name": "Harry Kane",
+          "season": "2025–26"
+        }
+      ],
+      "src": "/awards/bundesliga-scorer.svg",
+      "fallback": "/awards/bundesliga-scorer.svg",
+      "imageKind": "labelled-illustration"
+    },
+    {
+      "id": "ligue1-player",
+      "label": "UNFP Ligue 1 Player of the Year",
+      "comp": "ligue1",
+      "page": "Ligue 1 Player of the Year",
+      "section": "Winners",
+      "image": "player",
+      "source": "https://en.wikipedia.org/wiki/Ligue_1_Player_of_the_Year",
+      "winners": [
+        {
+          "name": "David Ginola",
+          "season": "1993–94"
+        },
+        {
+          "name": "Vincent Guérin",
+          "season": "1994–95"
+        },
+        {
+          "name": "Zinedine Zidane",
+          "season": "1995–96"
+        },
+        {
+          "name": "Sonny Anderson",
+          "season": "1996–97"
+        },
+        {
+          "name": "Marco Simone",
+          "season": "1997–98"
+        },
+        {
+          "name": "Ali Benarbia",
+          "season": "1998–99"
+        },
+        {
+          "name": "Marcelo Gallardo",
+          "season": "1999–2000"
+        },
+        {
+          "name": "Eric Carrière",
+          "season": "2000–01"
+        },
+        {
+          "name": "Pauleta",
+          "season": "2001–02"
+        },
+        {
+          "name": "Pauleta",
+          "season": "2002–03"
+        },
+        {
+          "name": "Didier Drogba",
+          "season": "2003–04"
+        },
+        {
+          "name": "Michael Essien",
+          "season": "2004–05"
+        },
+        {
+          "name": "Juninho",
+          "season": "2005–06"
+        },
+        {
+          "name": "Florent Malouda",
+          "season": "2006–07"
+        },
+        {
+          "name": "Karim Benzema",
+          "season": "2007–08"
+        },
+        {
+          "name": "Yoann Gourcuff",
+          "season": "2008–09"
+        },
+        {
+          "name": "Lisandro López",
+          "season": "2009–10"
+        },
+        {
+          "name": "Eden Hazard",
+          "season": "2010–11"
+        },
+        {
+          "name": "Eden Hazard",
+          "season": "2011–12"
+        },
+        {
+          "name": "Zlatan Ibrahimović",
+          "season": "2012–13"
+        },
+        {
+          "name": "Zlatan Ibrahimović",
+          "season": "2013–14"
+        },
+        {
+          "name": "Alexandre Lacazette",
+          "season": "2014–15"
+        },
+        {
+          "name": "Zlatan Ibrahimović",
+          "season": "2015–16"
+        },
+        {
+          "name": "Edinson Cavani",
+          "season": "2016–17"
+        },
+        {
+          "name": "Neymar",
+          "season": "2017–18"
+        },
+        {
+          "name": "Kylian Mbappé",
+          "season": "2018–19"
+        },
+        {
+          "name": "Kylian Mbappé",
+          "season": "2020–21"
+        },
+        {
+          "name": "Kylian Mbappé",
+          "season": "2021–22"
+        },
+        {
+          "name": "Kylian Mbappé",
+          "season": "2022–23"
+        },
+        {
+          "name": "Kylian Mbappé",
+          "season": "2023–24"
+        },
+        {
+          "name": "Ousmane Dembélé",
+          "season": "2024–25"
+        },
+        {
+          "name": "Ousmane Dembélé",
+          "season": "2025–26"
+        }
+      ],
+      "src": "/awards/ligue1-player.svg",
+      "fallback": "/awards/ligue1-player.svg",
+      "imageKind": "labelled-illustration"
+    },
+    {
+      "id": "ligue1-young",
+      "label": "UNFP Ligue 1 Young Player of the Year",
+      "comp": "ligue1",
+      "page": "Ligue 1 Young Player of the Year",
+      "section": "Winners",
+      "image": "young",
+      "source": "https://en.wikipedia.org/wiki/Ligue_1_Young_Player_of_the_Year",
+      "winners": [
+        {
+          "name": "Zinedine Zidane",
+          "season": "1993–94"
+        },
+        {
+          "name": "Florian Maurice",
+          "season": "1994–95"
+        },
+        {
+          "name": "Robert Pires",
+          "season": "1995–96"
+        },
+        {
+          "name": "Thierry Henry",
+          "season": "1996–97"
+        },
+        {
+          "name": "David Trezeguet",
+          "season": "1997–98"
+        },
+        {
+          "name": "Olivier Monterrubio",
+          "season": "1998–99"
+        },
+        {
+          "name": "Philippe Christanval",
+          "season": "1999–2000"
+        },
+        {
+          "name": "Sidney Govou",
+          "season": "2000–01"
+        },
+        {
+          "name": "Djibril Cissé",
+          "season": "2001–02"
+        },
+        {
+          "name": "Lionel Mathis",
+          "season": "2002–03"
+        },
+        {
+          "name": "Patrice Evra",
+          "season": "2003–04"
+        },
+        {
+          "name": "Jérémy Toulalan",
+          "season": "2004–05"
+        },
+        {
+          "name": "Franck Ribéry",
+          "season": "2005–06"
+        },
+        {
+          "name": "Samir Nasri",
+          "season": "2006–07"
+        },
+        {
+          "name": "Hatem Ben Arfa",
+          "season": "2007–08"
+        },
+        {
+          "name": "Eden Hazard",
+          "season": "2008–09"
+        },
+        {
+          "name": "Eden Hazard",
+          "season": "2009–10"
+        },
+        {
+          "name": "Mamadou Sakho",
+          "season": "2010–11"
+        },
+        {
+          "name": "Younès Belhanda",
+          "season": "2011–12"
+        },
+        {
+          "name": "Florian Thauvin",
+          "season": "2012–13"
+        },
+        {
+          "name": "Marco Verratti",
+          "season": "2013–14"
+        },
+        {
+          "name": "Nabil Fekir",
+          "season": "2014–15"
+        },
+        {
+          "name": "Ousmane Dembélé",
+          "season": "2015–16"
+        },
+        {
+          "name": "Kylian Mbappé",
+          "season": "2016−17"
+        },
+        {
+          "name": "Kylian Mbappé",
+          "season": "2017−18"
+        },
+        {
+          "name": "Kylian Mbappé",
+          "season": "2018−19"
+        },
+        {
+          "name": "Aurélien Tchouaméni",
+          "season": "2020−21"
+        },
+        {
+          "name": "William Saliba",
+          "season": "2021−22"
+        },
+        {
+          "name": "Nuno Mendes",
+          "season": "2022−23"
+        },
+        {
+          "name": "Warren Zaïre-Emery",
+          "season": "2023−24"
+        },
+        {
+          "name": "Désiré Doué",
+          "season": "2024–25"
+        },
+        {
+          "name": "Désiré Doué",
+          "season": "2025–26"
+        }
+      ],
+      "src": "/awards/ligue1-young.svg",
+      "fallback": "/awards/ligue1-young.svg",
+      "imageKind": "labelled-illustration"
+    },
+    {
+      "id": "ligue1-keeper",
+      "label": "UNFP Ligue 1 Goalkeeper of the Year",
+      "comp": "ligue1",
+      "page": "Trophées UNFP du football",
+      "section": "Goalkeeper",
+      "image": "glove",
+      "source": "https://en.wikipedia.org/wiki/Troph%C3%A9es_UNFP_du_football",
+      "winners": [
+        {
+          "name": "Ulrich Ramé",
+          "season": "2002"
+        },
+        {
+          "name": "Grégory Coupet",
+          "season": "2003"
+        },
+        {
+          "name": "Grégory Coupet",
+          "season": "2004"
+        },
+        {
+          "name": "Grégory Coupet",
+          "season": "2005"
+        },
+        {
+          "name": "Grégory Coupet",
+          "season": "2006"
+        },
+        {
+          "name": "Teddy Richert",
+          "season": "2007"
+        },
+        {
+          "name": "Steve Mandanda",
+          "season": "2008"
+        },
+        {
+          "name": "Hugo Lloris",
+          "season": "2009"
+        },
+        {
+          "name": "Hugo Lloris",
+          "season": "2010"
+        },
+        {
+          "name": "Steve Mandanda",
+          "season": "2011"
+        },
+        {
+          "name": "Hugo Lloris",
+          "season": "2012"
+        },
+        {
+          "name": "Salvatore Sirigu",
+          "season": "2013"
+        },
+        {
+          "name": "Salvatore Sirigu",
+          "season": "2014"
+        },
+        {
+          "name": "Steve Mandanda",
+          "season": "2015"
+        },
+        {
+          "name": "Steve Mandanda",
+          "season": "2016"
+        },
+        {
+          "name": "Danijel Subašić",
+          "season": "2017"
+        },
+        {
+          "name": "Steve Mandanda",
+          "season": "2018"
+        },
+        {
+          "name": "Mike Maignan",
+          "season": "2019"
+        },
+        {
+          "name": "Keylor Navas",
+          "season": "2021"
+        },
+        {
+          "name": "Gianluigi Donnarumma",
+          "season": "2022"
+        },
+        {
+          "name": "Brice Samba",
+          "season": "2023"
+        },
+        {
+          "name": "Gianluigi Donnarumma",
+          "season": "2024"
+        },
+        {
+          "name": "Lucas Chevalier",
+          "season": "2025"
+        },
+        {
+          "name": "Robin Risser",
+          "season": "2026"
+        }
+      ],
+      "src": "/awards/ligue1-keeper.svg",
+      "fallback": "/awards/ligue1-keeper.svg",
+      "imageKind": "labelled-illustration"
+    },
+    {
+      "id": "ligue1-scorer",
+      "label": "Ligue 1 top scorer",
+      "comp": "ligue1",
+      "page": "List of Ligue 1 top scorers",
+      "section": "Winners",
+      "image": "boot",
+      "source": "https://en.wikipedia.org/wiki/List_of_Ligue_1_top_scorers",
+      "winners": [
+        {
+          "name": "Walter Kaiser",
+          "season": "1932–33"
+        },
+        {
+          "name": "Robert Mercier",
+          "season": "1932–33"
+        },
+        {
+          "name": "István Lukács",
+          "season": "1933–34"
+        },
+        {
+          "name": "André Abegglen",
+          "season": "1934–35"
+        },
+        {
+          "name": "Roger Courtois",
+          "season": "1935–36"
+        },
+        {
+          "name": "Oskar Rohr",
+          "season": "1936–37"
+        },
+        {
+          "name": "Jean Nicolas",
+          "season": "1937–38"
+        },
+        {
+          "name": "Roger Courtois",
+          "season": "1938–39"
+        },
+        {
+          "name": "Désiré Koranyi",
+          "season": "1938–39"
+        },
+        {
+          "name": "René Bihel",
+          "season": "1945–46"
+        },
+        {
+          "name": "Pierre Sinibaldi",
+          "season": "1946–47"
+        },
+        {
+          "name": "Jean Baratte",
+          "season": "1947–48"
+        },
+        {
+          "name": "Jean Baratte",
+          "season": "1948–49"
+        },
+        {
+          "name": "Josef Humpál",
+          "season": "1948–49"
+        },
+        {
+          "name": "Jean Grumellon",
+          "season": "1949–50"
+        },
+        {
+          "name": "Roger Piantoni",
+          "season": "1950–51"
+        },
+        {
+          "name": "Jean Courteaux",
+          "season": "1950–51"
+        },
+        {
+          "name": "Gunnar Andersson",
+          "season": "1951–52"
+        },
+        {
+          "name": "Gunnar Andersson",
+          "season": "1952–53"
+        },
+        {
+          "name": "Édouard Kargu",
+          "season": "1953–54"
+        },
+        {
+          "name": "René Bliard",
+          "season": "1954–55"
+        },
+        {
+          "name": "Thadée Cisowski",
+          "season": "1955–56"
+        },
+        {
+          "name": "Thadée Cisowski",
+          "season": "1956–57"
+        },
+        {
+          "name": "Just Fontaine",
+          "season": "1957–58"
+        },
+        {
+          "name": "Thadée Cisowski",
+          "season": "1958–59"
+        },
+        {
+          "name": "Just Fontaine",
+          "season": "1959–60"
+        },
+        {
+          "name": "Roger Piantoni",
+          "season": "1960–61"
+        },
+        {
+          "name": "Sékou Touré",
+          "season": "1961–62"
+        },
+        {
+          "name": "Serge Masnaghetti",
+          "season": "1962–63"
+        },
+        {
+          "name": "Ahmed Oudjani",
+          "season": "1963–64"
+        },
+        {
+          "name": "Jacques Simon",
+          "season": "1964–65"
+        },
+        {
+          "name": "Philippe Gondet",
+          "season": "1965–66"
+        },
+        {
+          "name": "Hervé Revelli",
+          "season": "1966–67"
+        },
+        {
+          "name": "Étienne Sansonetti",
+          "season": "1967–68"
+        },
+        {
+          "name": "André Guy",
+          "season": "1968–69"
+        },
+        {
+          "name": "Hervé Revelli",
+          "season": "1969–70"
+        },
+        {
+          "name": "Josip Skoblar",
+          "season": "1970–71"
+        },
+        {
+          "name": "Josip Skoblar",
+          "season": "1971–72"
+        },
+        {
+          "name": "Josip Skoblar",
+          "season": "1972–73"
+        },
+        {
+          "name": "Carlos Bianchi",
+          "season": "1973–74"
+        },
+        {
+          "name": "Delio Onnis",
+          "season": "1974–75"
+        },
+        {
+          "name": "Carlos Bianchi",
+          "season": "1975–76"
+        },
+        {
+          "name": "Carlos Bianchi",
+          "season": "1976–77"
+        },
+        {
+          "name": "Carlos Bianchi",
+          "season": "1977–78"
+        },
+        {
+          "name": "Carlos Bianchi",
+          "season": "1978–79"
+        },
+        {
+          "name": "Erwin Kostedde",
+          "season": "1979–80"
+        },
+        {
+          "name": "Delio Onnis",
+          "season": "1979–80"
+        },
+        {
+          "name": "Delio Onnis",
+          "season": "1980–81"
+        },
+        {
+          "name": "Delio Onnis",
+          "season": "1981–82"
+        },
+        {
+          "name": "Vahid Halilhodžić",
+          "season": "1982–83"
+        },
+        {
+          "name": "Patrice Garande",
+          "season": "1983–84"
+        },
+        {
+          "name": "Delio Onnis",
+          "season": "1983–84"
+        },
+        {
+          "name": "Vahid Halilhodžić",
+          "season": "1984–85"
+        },
+        {
+          "name": "Jules Bocandé",
+          "season": "1985–86"
+        },
+        {
+          "name": "Bernard Zénier",
+          "season": "1986–87"
+        },
+        {
+          "name": "Jean-Pierre Papin",
+          "season": "1987–88"
+        },
+        {
+          "name": "Jean-Pierre Papin",
+          "season": "1988–89"
+        },
+        {
+          "name": "Jean-Pierre Papin",
+          "season": "1989–90"
+        },
+        {
+          "name": "Jean-Pierre Papin",
+          "season": "1990–91"
+        },
+        {
+          "name": "Jean-Pierre Papin",
+          "season": "1991–92"
+        },
+        {
+          "name": "Alen Bokšić",
+          "season": "1992–93"
+        },
+        {
+          "name": "Roger Boli",
+          "season": "1993–94"
+        },
+        {
+          "name": "Youri Djorkaeff",
+          "season": "1993–94"
+        },
+        {
+          "name": "Nicolas Ouédec",
+          "season": "1993–94"
+        },
+        {
+          "name": "Patrice Loko",
+          "season": "1994–95"
+        },
+        {
+          "name": "Sonny Anderson",
+          "season": "1995–96"
+        },
+        {
+          "name": "Stéphane Guivarc'h",
+          "season": "1996–97"
+        },
+        {
+          "name": "Stéphane Guivarc'h",
+          "season": "1997–98"
+        },
+        {
+          "name": "Sylvain Wiltord",
+          "season": "1998–99"
+        },
+        {
+          "name": "Sonny Anderson",
+          "season": "1999–2000"
+        },
+        {
+          "name": "Sonny Anderson",
+          "season": "2000–01"
+        },
+        {
+          "name": "Djibril Cissé",
+          "season": "2001–02"
+        },
+        {
+          "name": "Pauleta",
+          "season": "2001–02"
+        },
+        {
+          "name": "Shabani Nonda",
+          "season": "2002–03"
+        },
+        {
+          "name": "Djibril Cissé",
+          "season": "2003–04"
+        },
+        {
+          "name": "Alexander Frei",
+          "season": "2004–05"
+        },
+        {
+          "name": "Pauleta",
+          "season": "2005–06"
+        },
+        {
+          "name": "Pauleta",
+          "season": "2006–07"
+        },
+        {
+          "name": "Karim Benzema",
+          "season": "2007–08"
+        },
+        {
+          "name": "André-Pierre Gignac",
+          "season": "2008–09"
+        },
+        {
+          "name": "Mamadou Niang",
+          "season": "2009–10"
+        },
+        {
+          "name": "Moussa Sow",
+          "season": "2010–11"
+        },
+        {
+          "name": "Olivier Giroud",
+          "season": "2011–12"
+        },
+        {
+          "name": "Nenê",
+          "season": "2011–12"
+        },
+        {
+          "name": "Zlatan Ibrahimović",
+          "season": "2012–13"
+        },
+        {
+          "name": "Zlatan Ibrahimović",
+          "season": "2013–14"
+        },
+        {
+          "name": "Alexandre Lacazette",
+          "season": "2014–15"
+        },
+        {
+          "name": "Zlatan Ibrahimović",
+          "season": "2015–16"
+        },
+        {
+          "name": "Edinson Cavani",
+          "season": "2016–17"
+        },
+        {
+          "name": "Edinson Cavani",
+          "season": "2017–18"
+        },
+        {
+          "name": "Kylian Mbappé",
+          "season": "2018–19"
+        },
+        {
+          "name": "Wissam Ben Yedder",
+          "season": "2019–20"
+        },
+        {
+          "name": "Kylian Mbappé",
+          "season": "2019–20"
+        },
+        {
+          "name": "Kylian Mbappé",
+          "season": "2020–21"
+        },
+        {
+          "name": "Kylian Mbappé",
+          "season": "2021–22"
+        },
+        {
+          "name": "Kylian Mbappé",
+          "season": "2022–23"
+        },
+        {
+          "name": "Kylian Mbappé",
+          "season": "2023–24"
+        },
+        {
+          "name": "Ousmane Dembélé",
+          "season": "2024–25"
+        },
+        {
+          "name": "Mason Greenwood",
+          "season": "2024–25"
+        },
+        {
+          "name": "Esteban Lepaul",
+          "season": "2025–26"
+        }
+      ],
+      "src": "/awards/ligue1-scorer.svg",
+      "fallback": "/awards/ligue1-scorer.svg",
+      "imageKind": "labelled-illustration"
+    },
+    {
+      "id": "uefa-player",
+      "label": "UEFA Men's Player of the Year",
+      "comp": "ucl",
+      "page": "UEFA Men's Player of the Year Award",
+      "section": "Winners",
+      "image": "player",
+      "source": "https://en.wikipedia.org/wiki/UEFA_Men's_Player_of_the_Year_Award",
+      "winners": [
+        {
+          "name": "Lionel Messi",
+          "season": "2010–11"
+        },
+        {
+          "name": "Andrés Iniesta",
+          "season": "2011–12"
+        },
+        {
+          "name": "Franck Ribéry",
+          "season": "2012–13"
+        },
+        {
+          "name": "Cristiano Ronaldo",
+          "season": "2013–14"
+        },
+        {
+          "name": "Lionel Messi",
+          "season": "2014–15"
+        },
+        {
+          "name": "Cristiano Ronaldo",
+          "season": "2015–16"
+        },
+        {
+          "name": "Cristiano Ronaldo",
+          "season": "2016–17"
+        },
+        {
+          "name": "Luka Modrić",
+          "season": "2017–18"
+        },
+        {
+          "name": "Virgil van Dijk",
+          "season": "2018–19"
+        },
+        {
+          "name": "Robert Lewandowski",
+          "season": "2019–20"
+        },
+        {
+          "name": "Jorginho",
+          "season": "2020–21"
+        },
+        {
+          "name": "Karim Benzema",
+          "season": "2021–22"
+        },
+        {
+          "name": "Erling Haaland",
+          "season": "2022–23"
+        }
+      ],
+      "src": "/awards/uefa-player.svg",
+      "fallback": "/awards/uefa-player.svg",
+      "imageKind": "labelled-illustration"
+    },
+    {
+      "id": "uefa-club",
+      "label": "UEFA Club Footballer of the Year",
+      "comp": "ucl",
+      "page": "UEFA Club Footballer of the Year",
+      "section": "Winners",
+      "image": "player",
+      "source": "https://en.wikipedia.org/wiki/UEFA_Club_Footballer_of_the_Year",
+      "winners": [
+        {
+          "name": "Ronaldo",
+          "season": "1997–98"
+        },
+        {
+          "name": "David Beckham",
+          "season": "1998–99"
+        },
+        {
+          "name": "Fernando Redondo",
+          "season": "1999–2000"
+        },
+        {
+          "name": "Stefan Effenberg",
+          "season": "2000–01"
+        },
+        {
+          "name": "Zinedine Zidane",
+          "season": "2001–02"
+        },
+        {
+          "name": "Gianluigi Buffon",
+          "season": "2002–03"
+        },
+        {
+          "name": "Deco",
+          "season": "2003–04"
+        },
+        {
+          "name": "Steven Gerrard",
+          "season": "2004–05"
+        },
+        {
+          "name": "Ronaldinho",
+          "season": "2005–06"
+        },
+        {
+          "name": "Kaká",
+          "season": "2006–07"
+        },
+        {
+          "name": "Cristiano Ronaldo",
+          "season": "2007–08"
+        },
+        {
+          "name": "Lionel Messi",
+          "season": "2008–09"
+        },
+        {
+          "name": "Diego Milito",
+          "season": "2009–10"
+        }
+      ],
+      "src": "/awards/uefa-club.svg",
+      "fallback": "/awards/uefa-club.svg",
+      "imageKind": "labelled-illustration"
+    },
+    {
+      "id": "ucl-player",
+      "label": "UEFA Champions League Player of the Season",
+      "comp": "ucl",
+      "page": "UEFA Champions League",
+      "section": "Player of the Season",
+      "image": "player",
+      "source": "https://en.wikipedia.org/wiki/UEFA_Champions_League",
+      "winners": [
+        {
+          "name": "Karim Benzema",
+          "season": "2021–22"
+        },
+        {
+          "name": "Rodri",
+          "season": "2022–23"
+        },
+        {
+          "name": "Vinícius Júnior",
+          "season": "2023–24"
+        },
+        {
+          "name": "Ousmane Dembélé",
+          "season": "2024–25"
+        },
+        {
+          "name": "Khvicha Kvaratskhelia",
+          "season": "2025–26"
+        }
+      ],
+      "src": "/awards/ucl-player.svg",
+      "fallback": "/awards/ucl-player.svg",
+      "imageKind": "labelled-illustration"
+    },
+    {
+      "id": "ucl-young",
+      "label": "UEFA Champions League Young Player of the Season",
+      "comp": "ucl",
+      "page": "UEFA Champions League",
+      "section": "Young Player of the Season",
+      "image": "young",
+      "source": "https://en.wikipedia.org/wiki/UEFA_Champions_League",
+      "winners": [
+        {
+          "name": "Vinícius Júnior",
+          "season": "2021–22"
+        },
+        {
+          "name": "Khvicha Kvaratskhelia",
+          "season": "2022–23"
+        },
+        {
+          "name": "Jude Bellingham",
+          "season": "2023–24"
+        },
+        {
+          "name": "Désiré Doué",
+          "season": "2024–25"
+        },
+        {
+          "name": "Arda Güler",
+          "season": "2025–26"
+        }
+      ],
+      "src": "/awards/ucl-young.svg",
+      "fallback": "/awards/ucl-young.svg",
+      "imageKind": "labelled-illustration"
+    },
+    {
+      "id": "ucl-scorer",
+      "label": "Champions League season top scorer",
+      "comp": "ucl",
+      "page": "List of UEFA Champions League top scorers",
+      "section": "By season",
+      "image": "boot",
+      "source": "https://en.wikipedia.org/wiki/List_of_UEFA_Champions_League_top_scorers",
+      "winners": [
+        {
+          "name": "Miloš Milutinović",
+          "season": "1955–56"
+        },
+        {
+          "name": "Dennis Viollet",
+          "season": "1956–57"
+        },
+        {
+          "name": "Alfredo Di Stéfano",
+          "season": "1957–58"
+        },
+        {
+          "name": "Just Fontaine",
+          "season": "1958–59"
+        },
+        {
+          "name": "Ferenc Puskás",
+          "season": "1959–60"
+        },
+        {
+          "name": "José Águas",
+          "season": "1960–61"
+        },
+        {
+          "name": "Heinz Strehl",
+          "season": "1961–62"
+        },
+        {
+          "name": "José Altafini",
+          "season": "1962–63"
+        },
+        {
+          "name": "Vladica Kovačević",
+          "season": "1963–64"
+        },
+        {
+          "name": "Sandro Mazzola",
+          "season": "1963–64"
+        },
+        {
+          "name": "Ferenc Puskás",
+          "season": "1963–64"
+        },
+        {
+          "name": "José Torres",
+          "season": "1964–65"
+        },
+        {
+          "name": "Flórián Albert",
+          "season": "1965–66"
+        },
+        {
+          "name": "Eusébio",
+          "season": "1965–66"
+        },
+        {
+          "name": "Jürgen Piepenburg",
+          "season": "1966–67"
+        },
+        {
+          "name": "Paul Van Himst",
+          "season": "1966–67"
+        },
+        {
+          "name": "Eusébio",
+          "season": "1967–68"
+        },
+        {
+          "name": "Denis Law",
+          "season": "1968–69"
+        },
+        {
+          "name": "Mick Jones",
+          "season": "1969–70"
+        },
+        {
+          "name": "Antonis Antoniadis",
+          "season": "1970–71"
+        },
+        {
+          "name": "Johan Cruyff",
+          "season": "1971–72"
+        },
+        {
+          "name": "Antal Dunai",
+          "season": "1971–72"
+        },
+        {
+          "name": "Lou Macari",
+          "season": "1971–72"
+        },
+        {
+          "name": "Silvester Takač",
+          "season": "1971–72"
+        },
+        {
+          "name": "Gerd Müller",
+          "season": "1972–73"
+        },
+        {
+          "name": "Gerd Müller",
+          "season": "1973–74"
+        },
+        {
+          "name": "Gerd Müller",
+          "season": "1974–75"
+        },
+        {
+          "name": "Eduard Markarov",
+          "season": "1974–75"
+        },
+        {
+          "name": "Jupp Heynckes",
+          "season": "1975–76"
+        },
+        {
+          "name": "Gerd Müller",
+          "season": "1976–77"
+        },
+        {
+          "name": "Franco Cucinotta",
+          "season": "1976–77"
+        },
+        {
+          "name": "Allan Simonsen",
+          "season": "1977–78"
+        },
+        {
+          "name": "Claudio Sulser",
+          "season": "1978–79"
+        },
+        {
+          "name": "Søren Lerby",
+          "season": "1979–80"
+        },
+        {
+          "name": "Terry McDermott",
+          "season": "1980–81"
+        },
+        {
+          "name": "Graeme Souness",
+          "season": "1980–81"
+        },
+        {
+          "name": "Karl-Heinz Rummenigge",
+          "season": "1980–81"
+        },
+        {
+          "name": "Dieter Hoeneß",
+          "season": "1981–82"
+        },
+        {
+          "name": "Paolo Rossi",
+          "season": "1982–83"
+        },
+        {
+          "name": "Viktor Sokol",
+          "season": "1983–84"
+        },
+        {
+          "name": "Torbjörn Nilsson",
+          "season": "1984–85"
+        },
+        {
+          "name": "Michel Platini",
+          "season": "1984–85"
+        },
+        {
+          "name": "Torbjörn Nilsson",
+          "season": "1985–86"
+        },
+        {
+          "name": "Borislav Cvetković",
+          "season": "1986–87"
+        },
+        {
+          "name": "Gheorghe Hagi",
+          "season": "1987–88"
+        },
+        {
+          "name": "Petar Novák",
+          "season": "1987–88"
+        },
+        {
+          "name": "René van der Gijp",
+          "season": "1987–88"
+        },
+        {
+          "name": "Rabah Madjer",
+          "season": "1987–88"
+        },
+        {
+          "name": "Ally McCoist",
+          "season": "1987–88"
+        },
+        {
+          "name": "Míchel",
+          "season": "1987–88"
+        },
+        {
+          "name": "Rui Águas",
+          "season": "1987–88"
+        },
+        {
+          "name": "Marco van Basten",
+          "season": "1988–89"
+        },
+        {
+          "name": "Romário",
+          "season": "1989–90"
+        },
+        {
+          "name": "Jean-Pierre Papin",
+          "season": "1989–90"
+        },
+        {
+          "name": "Peter Pacult",
+          "season": "1990–91"
+        },
+        {
+          "name": "Jean-Pierre Papin",
+          "season": "1990–91"
+        },
+        {
+          "name": "Sergei Yuran",
+          "season": "1991–92"
+        },
+        {
+          "name": "Jean-Pierre Papin",
+          "season": "1991–92"
+        },
+        {
+          "name": "Romário",
+          "season": "1992–93"
+        },
+        {
+          "name": "Ronald Koeman",
+          "season": "1993–94"
+        },
+        {
+          "name": "Wynton Rufer",
+          "season": "1993–94"
+        },
+        {
+          "name": "George Weah",
+          "season": "1994–95"
+        },
+        {
+          "name": "Jari Litmanen",
+          "season": "1995–96"
+        },
+        {
+          "name": "Milinko Pantić",
+          "season": "1996–97"
+        },
+        {
+          "name": "Alessandro Del Piero",
+          "season": "1997–98"
+        },
+        {
+          "name": "Andriy Shevchenko",
+          "season": "1998–99"
+        },
+        {
+          "name": "Dwight Yorke",
+          "season": "1998–99"
+        },
+        {
+          "name": "Mário Jardel",
+          "season": "1999–2000"
+        },
+        {
+          "name": "Rivaldo",
+          "season": "1999–2000"
+        },
+        {
+          "name": "Raúl",
+          "season": "1999–2000"
+        },
+        {
+          "name": "Raúl",
+          "season": "2000–01"
+        },
+        {
+          "name": "Ruud van Nistelrooy",
+          "season": "2001–02"
+        },
+        {
+          "name": "Ruud van Nistelrooy",
+          "season": "2002–03"
+        },
+        {
+          "name": "Fernando Morientes",
+          "season": "2003–04"
+        },
+        {
+          "name": "Ruud van Nistelrooy",
+          "season": "2004–05"
+        },
+        {
+          "name": "Andriy Shevchenko",
+          "season": "2005–06"
+        },
+        {
+          "name": "Kaká",
+          "season": "2006–07"
+        },
+        {
+          "name": "Cristiano Ronaldo",
+          "season": "2007–08"
+        },
+        {
+          "name": "Lionel Messi",
+          "season": "2008–09"
+        },
+        {
+          "name": "Lionel Messi",
+          "season": "2009–10"
+        },
+        {
+          "name": "Lionel Messi",
+          "season": "2010–11"
+        },
+        {
+          "name": "Lionel Messi",
+          "season": "2011–12"
+        },
+        {
+          "name": "Cristiano Ronaldo",
+          "season": "2012–13"
+        },
+        {
+          "name": "Cristiano Ronaldo",
+          "season": "2013–14"
+        },
+        {
+          "name": "Neymar",
+          "season": "2014–15"
+        },
+        {
+          "name": "Cristiano Ronaldo",
+          "season": "2014–15"
+        },
+        {
+          "name": "Lionel Messi",
+          "season": "2014–15"
+        },
+        {
+          "name": "Cristiano Ronaldo",
+          "season": "2015–16"
+        },
+        {
+          "name": "Cristiano Ronaldo",
+          "season": "2016–17"
+        },
+        {
+          "name": "Cristiano Ronaldo",
+          "season": "2017–18"
+        },
+        {
+          "name": "Lionel Messi",
+          "season": "2018–19"
+        },
+        {
+          "name": "Robert Lewandowski",
+          "season": "2019–20"
+        },
+        {
+          "name": "Erling Haaland",
+          "season": "2020–21"
+        },
+        {
+          "name": "Karim Benzema",
+          "season": "2021–22"
+        },
+        {
+          "name": "Erling Haaland",
+          "season": "2022–23"
+        },
+        {
+          "name": "Harry Kane",
+          "season": "2023–24"
+        },
+        {
+          "name": "Kylian Mbappé",
+          "season": "2023–24"
+        },
+        {
+          "name": "Serhou Guirassy",
+          "season": "2024–25"
+        },
+        {
+          "name": "Raphinha",
+          "season": "2024–25"
+        },
+        {
+          "name": "Kylian Mbappé",
+          "season": "2025–26"
+        }
+      ],
+      "src": "/awards/ucl-scorer.svg",
+      "fallback": "/awards/ucl-scorer.svg",
+      "imageKind": "labelled-illustration"
+    },
+    {
+      "id": "wc-ball",
+      "label": "World Cup Golden Ball",
+      "comp": "worldcup",
+      "page": "FIFA World Cup awards",
+      "section": "Golden Ball",
+      "image": "ballon",
+      "source": "https://en.wikipedia.org/wiki/FIFA_World_Cup_awards",
+      "winners": [
+        {
+          "name": "Paolo Rossi",
+          "season": "1982"
+        },
+        {
+          "name": "Diego Maradona",
+          "season": "1986"
+        },
+        {
+          "name": "Salvatore Schillaci",
+          "season": "1990"
+        },
+        {
+          "name": "Romário",
+          "season": "1994"
+        },
+        {
+          "name": "Ronaldo",
+          "season": "1998"
+        },
+        {
+          "name": "Oliver Kahn",
+          "season": "2002"
+        },
+        {
+          "name": "Zinedine Zidane",
+          "season": "2006"
+        },
+        {
+          "name": "Diego Forlán",
+          "season": "2010"
+        },
+        {
+          "name": "Lionel Messi",
+          "season": "2014"
+        },
+        {
+          "name": "Luka Modrić",
+          "season": "2018"
+        },
+        {
+          "name": "Lionel Messi",
+          "season": "2022"
+        },
+        {
+          "name": "Rodri",
+          "season": "2026"
+        }
+      ],
+      "src": "/awards/wc-ball.svg",
+      "fallback": "/awards/wc-ball.svg",
+      "imageKind": "labelled-illustration"
+    },
+    {
+      "id": "wc-boot",
+      "label": "World Cup Golden Boot",
+      "comp": "worldcup",
+      "page": "FIFA World Cup awards",
+      "section": "Golden Boot",
+      "image": "boot",
+      "source": "https://en.wikipedia.org/wiki/FIFA_World_Cup_awards",
+      "winners": [
+        {
+          "name": "Guillermo Stábile",
+          "season": "1930"
+        },
+        {
+          "name": "Oldřich Nejedlý",
+          "season": "1934"
+        },
+        {
+          "name": "Leônidas",
+          "season": "1938"
+        },
+        {
+          "name": "Ademir",
+          "season": "1950"
+        },
+        {
+          "name": "Sándor Kocsis",
+          "season": "1954"
+        },
+        {
+          "name": "Just Fontaine",
+          "season": "1958"
+        },
+        {
+          "name": "Flórián Albert",
+          "season": "1962"
+        },
+        {
+          "name": "Valentin Ivanov",
+          "season": "1962"
+        },
+        {
+          "name": "Garrincha",
+          "season": "1962"
+        },
+        {
+          "name": "Vavá",
+          "season": "1962"
+        },
+        {
+          "name": "Dražan Jerković",
+          "season": "1962"
+        },
+        {
+          "name": "Leonel Sánchez",
+          "season": "1962"
+        },
+        {
+          "name": "Eusébio",
+          "season": "1966"
+        },
+        {
+          "name": "Gerd Müller",
+          "season": "1970"
+        },
+        {
+          "name": "Grzegorz Lato",
+          "season": "1974"
+        },
+        {
+          "name": "Mario Kempes",
+          "season": "1978"
+        },
+        {
+          "name": "Paolo Rossi",
+          "season": "1982"
+        },
+        {
+          "name": "Gary Lineker",
+          "season": "1986"
+        },
+        {
+          "name": "Salvatore Schillaci",
+          "season": "1990"
+        },
+        {
+          "name": "Oleg Salenko",
+          "season": "1994"
+        },
+        {
+          "name": "Hristo Stoichkov",
+          "season": "1994"
+        },
+        {
+          "name": "Davor Šuker",
+          "season": "1998"
+        },
+        {
+          "name": "Ronaldo",
+          "season": "2002"
+        },
+        {
+          "name": "Miroslav Klose",
+          "season": "2006"
+        },
+        {
+          "name": "Thomas Müller",
+          "season": "2010"
+        },
+        {
+          "name": "James Rodríguez",
+          "season": "2014"
+        },
+        {
+          "name": "Harry Kane",
+          "season": "2018"
+        },
+        {
+          "name": "Kylian Mbappé",
+          "season": "2022"
+        },
+        {
+          "name": "Kylian Mbappé",
+          "season": "2026"
+        }
+      ],
+      "src": "/awards/wc-boot.svg",
+      "fallback": "/awards/wc-boot.svg",
+      "imageKind": "labelled-illustration"
+    },
+    {
+      "id": "wc-glove",
+      "label": "World Cup Golden Glove",
+      "comp": "worldcup",
+      "page": "FIFA World Cup awards",
+      "section": "Golden Glove",
+      "image": "glove",
+      "source": "https://en.wikipedia.org/wiki/FIFA_World_Cup_awards",
+      "winners": [
+        {
+          "name": "Michel Preud'homme",
+          "season": "1994"
+        },
+        {
+          "name": "Fabien Barthez",
+          "season": "1998"
+        },
+        {
+          "name": "Oliver Kahn",
+          "season": "2002"
+        },
+        {
+          "name": "Gianluigi Buffon",
+          "season": "2006"
+        },
+        {
+          "name": "Iker Casillas",
+          "season": "2010"
+        },
+        {
+          "name": "Manuel Neuer",
+          "season": "2014"
+        },
+        {
+          "name": "Thibaut Courtois",
+          "season": "2018"
+        },
+        {
+          "name": "Emiliano Martínez",
+          "season": "2022"
+        },
+        {
+          "name": "Unai Simón",
+          "season": "2026"
+        }
+      ],
+      "src": "/awards/wc-glove.svg",
+      "fallback": "/awards/wc-glove.svg",
+      "imageKind": "labelled-illustration"
+    },
+    {
+      "id": "wc-young",
+      "label": "World Cup Best Young Player (including retrospective selections)",
+      "comp": "worldcup",
+      "page": "FIFA World Cup awards",
+      "section": "FIFA Young Player Award",
+      "image": "young",
+      "source": "https://en.wikipedia.org/wiki/FIFA_World_Cup_awards",
+      "winners": [
+        {
+          "name": "Pelé",
+          "season": "1958"
+        },
+        {
+          "name": "Flórián Albert",
+          "season": "1962"
+        },
+        {
+          "name": "Franz Beckenbauer",
+          "season": "1966"
+        },
+        {
+          "name": "Teófilo Cubillas",
+          "season": "1970"
+        },
+        {
+          "name": "Władysław Żmuda",
+          "season": "1974"
+        },
+        {
+          "name": "Antonio Cabrini",
+          "season": "1978"
+        },
+        {
+          "name": "Manuel Amoros",
+          "season": "1982"
+        },
+        {
+          "name": "Enzo Scifo",
+          "season": "1986"
+        },
+        {
+          "name": "Robert Prosinečki",
+          "season": "1990"
+        },
+        {
+          "name": "Marc Overmars",
+          "season": "1994"
+        },
+        {
+          "name": "Michael Owen",
+          "season": "1998"
+        },
+        {
+          "name": "Landon Donovan",
+          "season": "2002"
+        },
+        {
+          "name": "Lukas Podolski",
+          "season": "2006"
+        },
+        {
+          "name": "Thomas Müller",
+          "season": "2010"
+        },
+        {
+          "name": "Paul Pogba",
+          "season": "2014"
+        },
+        {
+          "name": "Kylian Mbappé",
+          "season": "2018"
+        },
+        {
+          "name": "Enzo Fernández",
+          "season": "2022"
+        },
+        {
+          "name": "Pau Cubarsí",
+          "season": "2026"
+        }
+      ],
+      "src": "/awards/wc-young.svg",
+      "fallback": "/awards/wc-young.svg",
+      "imageKind": "labelled-illustration"
+    },
+    {
+      "id": "euro-player",
+      "label": "European Championship Player of the Tournament",
+      "comp": "euros",
+      "page": "UEFA European Championship awards",
+      "section": "Player of the Tournament",
+      "image": "player",
+      "source": "https://en.wikipedia.org/wiki/UEFA_European_Championship_awards",
+      "winners": [
+        {
+          "name": "Matthias Sammer",
+          "season": "1996"
+        },
+        {
+          "name": "Zinedine Zidane",
+          "season": "2000"
+        },
+        {
+          "name": "Theodoros Zagorakis",
+          "season": "2004"
+        },
+        {
+          "name": "Xavi",
+          "season": "2008"
+        },
+        {
+          "name": "Andrés Iniesta",
+          "season": "2012"
+        },
+        {
+          "name": "Antoine Griezmann",
+          "season": "2016"
+        },
+        {
+          "name": "Gianluigi Donnarumma",
+          "season": "2020"
+        },
+        {
+          "name": "Rodri",
+          "season": "2024"
+        }
+      ],
+      "src": "/awards/euro-player.svg",
+      "fallback": "/awards/euro-player.svg",
+      "imageKind": "labelled-illustration"
+    },
+    {
+      "id": "euro-boot",
+      "label": "European Championship Golden Boot",
+      "comp": "euros",
+      "page": "UEFA European Championship awards",
+      "section": "Top Goalscorer",
+      "image": "boot",
+      "source": "https://en.wikipedia.org/wiki/UEFA_European_Championship_awards",
+      "winners": [
+        {
+          "name": "Milan Galić",
+          "season": "1960"
+        },
+        {
+          "name": "François Heutte",
+          "season": "1960"
+        },
+        {
+          "name": "Valentin Ivanov",
+          "season": "1960"
+        },
+        {
+          "name": "Dražan Jerković",
+          "season": "1960"
+        },
+        {
+          "name": "Viktor Ponedelnik",
+          "season": "1960"
+        },
+        {
+          "name": "Ferenc Bene",
+          "season": "1964"
+        },
+        {
+          "name": "Dezső Novák",
+          "season": "1964"
+        },
+        {
+          "name": "Chus Pereda",
+          "season": "1964"
+        },
+        {
+          "name": "Dragan Džajić",
+          "season": "1968"
+        },
+        {
+          "name": "Gerd Müller",
+          "season": "1972"
+        },
+        {
+          "name": "Dieter Müller",
+          "season": "1976"
+        },
+        {
+          "name": "Klaus Allofs",
+          "season": "1980"
+        },
+        {
+          "name": "Michel Platini",
+          "season": "1984"
+        },
+        {
+          "name": "Marco van Basten",
+          "season": "1988"
+        },
+        {
+          "name": "Dennis Bergkamp",
+          "season": "1992"
+        },
+        {
+          "name": "Tomas Brolin",
+          "season": "1992"
+        },
+        {
+          "name": "Henrik Larsen",
+          "season": "1992"
+        },
+        {
+          "name": "Karl-Heinz Riedle",
+          "season": "1992"
+        },
+        {
+          "name": "Alan Shearer",
+          "season": "1996"
+        },
+        {
+          "name": "Patrick Kluivert",
+          "season": "2000"
+        },
+        {
+          "name": "Savo Milošević",
+          "season": "2000"
+        },
+        {
+          "name": "Milan Baroš",
+          "season": "2004"
+        },
+        {
+          "name": "David Villa",
+          "season": "2008"
+        },
+        {
+          "name": "Fernando Torres",
+          "season": "2012"
+        },
+        {
+          "name": "Antoine Griezmann",
+          "season": "2016"
+        },
+        {
+          "name": "Cristiano Ronaldo",
+          "season": "2020"
+        },
+        {
+          "name": "Cody Gakpo",
+          "season": "2024"
+        },
+        {
+          "name": "Harry Kane",
+          "season": "2024"
+        },
+        {
+          "name": "Georges Mikautadze",
+          "season": "2024"
+        },
+        {
+          "name": "Jamal Musiala",
+          "season": "2024"
+        },
+        {
+          "name": "Dani Olmo",
+          "season": "2024"
+        },
+        {
+          "name": "Ivan Schranz",
+          "season": "2024"
+        }
+      ],
+      "src": "/awards/euro-boot.svg",
+      "fallback": "/awards/euro-boot.svg",
+      "imageKind": "labelled-illustration"
+    },
+    {
+      "id": "euro-young",
+      "label": "European Championship Young Player of the Tournament",
+      "comp": "euros",
+      "page": "UEFA European Championship awards",
+      "section": "Young Player of the Tournament",
+      "image": "young",
+      "source": "https://en.wikipedia.org/wiki/UEFA_European_Championship_awards",
+      "winners": [
+        {
+          "name": "Renato Sanches",
+          "season": "2016"
+        },
+        {
+          "name": "Pedri",
+          "season": "2020"
+        },
+        {
+          "name": "Lamine Yamal",
+          "season": "2024"
+        }
+      ],
+      "src": "/awards/euro-young.svg",
+      "fallback": "/awards/euro-young.svg",
+      "imageKind": "labelled-illustration"
+    },
+    {
+      "id": "copa-boot",
+      "label": "Copa America top scorer",
+      "comp": "copa",
+      "page": "Copa América awards",
+      "section": "Top goalscorer",
+      "image": "boot",
+      "source": "https://en.wikipedia.org/wiki/Copa_Am%C3%A9rica_awards",
+      "winners": [
+        {
+          "name": "Isabelino Gradín",
+          "season": "1916"
+        },
+        {
+          "name": "Ángel Romano",
+          "season": "1917"
+        },
+        {
+          "name": "Arthur Friedenreich",
+          "season": "1919"
+        },
+        {
+          "name": "Neco",
+          "season": "1919"
+        },
+        {
+          "name": "José Pérez",
+          "season": "1920"
+        },
+        {
+          "name": "Ángel Romano",
+          "season": "1920"
+        },
+        {
+          "name": "Julio Libonatti",
+          "season": "1921"
+        },
+        {
+          "name": "Juan Francia",
+          "season": "1922"
+        },
+        {
+          "name": "Vicente Aguirre",
+          "season": "1923"
+        },
+        {
+          "name": "Pedro Petrone",
+          "season": "1923"
+        },
+        {
+          "name": "Pedro Petrone",
+          "season": "1924"
+        },
+        {
+          "name": "Manuel Seoane",
+          "season": "1925"
+        },
+        {
+          "name": "David Arellano",
+          "season": "1926"
+        },
+        {
+          "name": "Alfredo Carricaberry",
+          "season": "1927"
+        },
+        {
+          "name": "Segundo Luna",
+          "season": "1927"
+        },
+        {
+          "name": "Roberto Figueroa",
+          "season": "1927"
+        },
+        {
+          "name": "Pedro Petrone",
+          "season": "1927"
+        },
+        {
+          "name": "Héctor Scarone",
+          "season": "1927"
+        },
+        {
+          "name": "Aurelio González",
+          "season": "1929"
+        },
+        {
+          "name": "Herminio Masantonio",
+          "season": "1935"
+        },
+        {
+          "name": "Raúl Toro",
+          "season": "1937"
+        },
+        {
+          "name": "Teodoro Fernández",
+          "season": "1939"
+        },
+        {
+          "name": "Juan Marvezzi",
+          "season": "1941"
+        },
+        {
+          "name": "Herminio Masantonio",
+          "season": "1942"
+        },
+        {
+          "name": "José Manuel Moreno",
+          "season": "1942"
+        },
+        {
+          "name": "Norberto Méndez",
+          "season": "1945"
+        },
+        {
+          "name": "Heleno de Freitas",
+          "season": "1945"
+        },
+        {
+          "name": "José María Medina",
+          "season": "1946"
+        },
+        {
+          "name": "Nicolás Falero",
+          "season": "1947"
+        },
+        {
+          "name": "Jair",
+          "season": "1949"
+        },
+        {
+          "name": "Francisco Molina",
+          "season": "1953"
+        },
+        {
+          "name": "Rodolfo Micheli",
+          "season": "1955"
+        },
+        {
+          "name": "Enrique Hormazábal",
+          "season": "1956"
+        },
+        {
+          "name": "Humberto Maschio",
+          "season": "1957"
+        },
+        {
+          "name": "Javier Ambrois",
+          "season": "1957"
+        },
+        {
+          "name": "Pelé",
+          "season": "1959"
+        },
+        {
+          "name": "José Sanfilippo",
+          "season": "1959"
+        },
+        {
+          "name": "Carlos Alberto Raffo",
+          "season": "1963"
+        },
+        {
+          "name": "Luis Artime",
+          "season": "1967"
+        },
+        {
+          "name": "Leopoldo Luque",
+          "season": "1975"
+        },
+        {
+          "name": "Ernesto Díaz",
+          "season": "1975"
+        },
+        {
+          "name": "Jorge Peredo",
+          "season": "1979"
+        },
+        {
+          "name": "Eugenio Morel",
+          "season": "1979"
+        },
+        {
+          "name": "Jorge Burruchaga",
+          "season": "1983"
+        },
+        {
+          "name": "Roberto Dinamite",
+          "season": "1983"
+        },
+        {
+          "name": "Carlos Aguilera",
+          "season": "1983"
+        },
+        {
+          "name": "Arnoldo Iguarán",
+          "season": "1987"
+        },
+        {
+          "name": "Bebeto",
+          "season": "1989"
+        },
+        {
+          "name": "Gabriel Batistuta",
+          "season": "1991"
+        },
+        {
+          "name": "José Luis Dolgetta",
+          "season": "1993"
+        },
+        {
+          "name": "Gabriel Batistuta",
+          "season": "1995"
+        },
+        {
+          "name": "Luis García",
+          "season": "1995"
+        },
+        {
+          "name": "Luis Hernández",
+          "season": "1997"
+        },
+        {
+          "name": "Rivaldo",
+          "season": "1999"
+        },
+        {
+          "name": "Ronaldo",
+          "season": "1999"
+        },
+        {
+          "name": "Víctor Aristizábal",
+          "season": "2001"
+        },
+        {
+          "name": "Adriano",
+          "season": "2004"
+        },
+        {
+          "name": "Robinho",
+          "season": "2007"
+        },
+        {
+          "name": "Paolo Guerrero",
+          "season": "2011"
+        },
+        {
+          "name": "Eduardo Vargas",
+          "season": "2015"
+        },
+        {
+          "name": "Paolo Guerrero",
+          "season": "2015"
+        },
+        {
+          "name": "Eduardo Vargas",
+          "season": "2016"
+        },
+        {
+          "name": "Everton Soares",
+          "season": "2019"
+        },
+        {
+          "name": "Paolo Guerrero",
+          "season": "2019"
+        },
+        {
+          "name": "Lionel Messi",
+          "season": "2021"
+        },
+        {
+          "name": "Luis Díaz",
+          "season": "2021"
+        },
+        {
+          "name": "Lautaro Martínez",
+          "season": "2024"
+        }
+      ],
+      "src": "/awards/copa-boot.svg",
+      "fallback": "/awards/copa-boot.svg",
+      "imageKind": "labelled-illustration"
+    },
+    {
+      "id": "copa-glove",
+      "label": "Copa America Best Goalkeeper",
+      "comp": "copa",
+      "page": "Copa América awards",
+      "section": "Best Goalkeeper",
+      "image": "glove",
+      "source": "https://en.wikipedia.org/wiki/Copa_Am%C3%A9rica_awards",
+      "winners": [
+        {
+          "name": "Justo Villar",
+          "season": "2011"
+        },
+        {
+          "name": "Claudio Bravo",
+          "season": "2015"
+        },
+        {
+          "name": "Claudio Bravo",
+          "season": "2016"
+        },
+        {
+          "name": "Alisson",
+          "season": "2019"
+        },
+        {
+          "name": "Emiliano Martínez",
+          "season": "2021"
+        },
+        {
+          "name": "Emiliano Martínez",
+          "season": "2024"
+        }
+      ],
+      "src": "/awards/copa-glove.svg",
+      "fallback": "/awards/copa-glove.svg",
+      "imageKind": "labelled-illustration"
+    },
+    {
+      "id": "copa-young",
+      "label": "Copa America Best Young Player",
+      "comp": "copa",
+      "page": "Copa América awards",
+      "section": "Best Young Player",
+      "image": "young",
+      "source": "https://en.wikipedia.org/wiki/Copa_Am%C3%A9rica_awards",
+      "winners": [
+        {
+          "name": "Lionel Messi",
+          "season": "2007"
+        },
+        {
+          "name": "Sebastián Coates",
+          "season": "2011"
+        },
+        {
+          "name": "Jeison Murillo",
+          "season": "2015"
+        }
+      ],
+      "src": "/awards/copa-young.svg",
+      "fallback": "/awards/copa-young.svg",
+      "imageKind": "labelled-illustration"
+    },
+    {
+      "id": "copa-player",
+      "label": "Copa America Best Player",
+      "comp": "copa",
+      "page": "Copa América awards",
+      "section": "Best Player",
+      "image": "player",
+      "source": "https://en.wikipedia.org/wiki/Copa_Am%C3%A9rica_awards",
+      "supplementalSources": [
+        "https://www.conmebol.com/noticias/get-messi-y-neymar-los-mejores-jugadores-del-torneo-continental/"
+      ],
+      "winners": [
+        {
+          "name": "Carlos Valderrama",
+          "season": "1987"
+        },
+        {
+          "name": "Rubén Sosa",
+          "season": "1989"
+        },
+        {
+          "name": "Leonardo Rodríguez",
+          "season": "1991"
+        },
+        {
+          "name": "Sergio Goycochea",
+          "season": "1993"
+        },
+        {
+          "name": "Enzo Francescoli",
+          "season": "1995"
+        },
+        {
+          "name": "Ronaldo",
+          "season": "1997"
+        },
+        {
+          "name": "Rivaldo",
+          "season": "1999"
+        },
+        {
+          "name": "Amado Guevara",
+          "season": "2001"
+        },
+        {
+          "name": "Adriano",
+          "season": "2004"
+        },
+        {
+          "name": "Robinho",
+          "season": "2007"
+        },
+        {
+          "name": "Luis Suárez",
+          "season": "2011"
+        },
+        {
+          "name": "Lionel Messi",
+          "season": "2015"
+        },
+        {
+          "name": "Alexis Sánchez",
+          "season": "2016"
+        },
+        {
+          "name": "Dani Alves",
+          "season": "2019"
+        },
+        {
+          "name": "Lionel Messi",
+          "season": "2021"
+        },
+        {
+          "name": "James Rodríguez",
+          "season": "2024"
+        },
+        {
+          "name": "Neymar",
+          "season": "2021"
+        }
+      ],
+      "src": "/awards/copa-player.svg",
+      "fallback": "/awards/copa-player.svg",
+      "imageKind": "labelled-illustration"
+    }
+  ]
+}

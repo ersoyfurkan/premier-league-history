@@ -13,6 +13,7 @@ import { LIGUE1_RONDO } from "@/data/ligue1Content";
 import { SUPERLIG_RONDO } from "@/data/superligContent";
 import { STAT_RONDO_CLUES } from "@/data/statTrivia";
 import { KNOWLEDGE_RONDO_CLUES } from "@/data/knowledgeTrivia";
+import { AWARD_RONDO_CLUES } from "@/data/individualAwards";
 
 export type RondoClue = {
   letter: string;
@@ -289,7 +290,7 @@ export const RONDO_CLUES: Record<Competition, RondoClue[]> = {
 };
 for (const comp of ["general", ...REAL_COMPETITIONS, ...TOURNAMENT_COMPETITIONS] as const) {
   const seen = new Set(RONDO_CLUES[comp].map((clue) => `${clue.letter}:${clue.clue}`));
-  RONDO_CLUES[comp].push(...[...STAT_RONDO_CLUES[comp], ...KNOWLEDGE_RONDO_CLUES[comp]].filter((clue) => {
+  RONDO_CLUES[comp].push(...[...STAT_RONDO_CLUES[comp], ...KNOWLEDGE_RONDO_CLUES[comp], ...AWARD_RONDO_CLUES[comp]].filter((clue) => {
     const key = `${clue.letter}:${clue.clue}`;
     if (seen.has(key)) return false;
     seen.add(key);

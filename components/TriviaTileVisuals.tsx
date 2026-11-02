@@ -28,7 +28,7 @@ export default function TriviaTileVisuals({ visuals, hidden = false }: { visuals
       {visuals.map((visual, index) => (
         <span key={index} role="img" aria-label={visual.label} className="inline-flex items-center justify-center text-accent">
           {visual.kind === "image" ? (
-            <UclImage src={visual.src} alt={visual.label} className="h-9 w-9 sm:h-12 sm:w-12" />
+            <UclImage src={visual.src} fallback={visual.fallback} alt={visual.label} className="h-9 w-9 sm:h-12 sm:w-12" />
           ) : visual.kind === "badge" ? (
             <span className="rounded-lg border border-accent/40 px-1.5 py-1 font-mono text-xs font-black sm:text-sm">{visual.text}</span>
           ) : <Pictogram name={visual.icon} />}

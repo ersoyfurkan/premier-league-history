@@ -7,6 +7,7 @@ import { BUNDESLIGA_FACTS } from "@/data/bundesligaContent";
 import { LIGUE1_FACTS } from "@/data/ligue1Content";
 import { SUPERLIG_FACTS } from "@/data/superligContent";
 import { HONOUR_GROUPS, MODERN_MANAGER_GROUPS, TEAMMATE_GROUPS } from "@/data/footballKnowledge";
+import { AWARD_GROUPS, INDIVIDUAL_AWARDS, awardPlayerKey, awardsInText, individualAward } from "@/data/individualAwards";
 
 export type FootballTicTacToeCell = {
   player: string;
@@ -17,6 +18,8 @@ export type FootballClue = {
   label: string;
   badge?: string;
   badgeAlt?: string;
+  badgeFallback?: string;
+  awardIds?: string[];
 };
 
 export type FootballTicTacToePuzzle = {
@@ -755,7 +758,7 @@ function enrich(facts: Fact[]): Fact[] {
     const set = new Set(names.split("|").map(normalizeFootballPlayerName));
     for (const fact of facts) if (set.has(normalizeFootballPlayerName(fact.name)) && !fact.tags.includes(tag)) fact.tags.push(tag);
   };
-  mark(BALLON_DOR, "bd");
+  mark(`${BALLON_DOR}|${individualAward("ballon").entries.flatMap((entry) => [entry.name, ...entry.aliases]).join("|")}`, "bd");
   mark(WORLD_CUP_WINNERS, "wc");
   const recentWorldCup = HONOUR_GROUPS.find((group) => group.id === "worldcup-2021-2025");
   if (!recentWorldCup) throw new Error("Missing verified recent World Cup winners");
@@ -796,6 +799,16 @@ function withUniverse(own: Fact[], others: Fact[][]): Fact[] {
     const fact = get(trimmed, nation ? [nation] : []);
     if (nation && !fact.nat.includes(nation)) fact.nat.push(nation);
     for (const club of keys.trim().split(/\s+/)) if (!fact.clubs.includes(club)) fact.clubs.push(club);
+  }
+  const knownWinners = new Set([...map.values()].map((fact) => awardPlayerKey(fact.name)));
+  for (const award of INDIVIDUAL_AWARDS) {
+    for (const entry of award.entries) {
+      const key = awardPlayerKey(entry.name);
+      if (knownWinners.has(key)) continue;
+      const nation = nationOf(entry.name);
+      get(entry.name, nation ? [nation] : []);
+      knownWinners.add(key);
+    }
   }
   return [...map.values()];
 }
@@ -884,9 +897,30 @@ const national = (label: string, country: string): Def => ({
   test: (fact) => fact.nat.includes(NAT_KEYS[country] ?? country),
 });
 const stat = (label: string, tag: string): Def => ({
-  clue: { label },
+  clue: awardClue(label),
   test: (fact) => fact.tags.includes(tag),
 });
+
+function awardClue(label: string, awardIds = awardsInText(label).map((award) => award.id)): FootballClue {
+  const first = awardIds.length ? individualAward(awardIds[0]) : undefined;
+  return first ? { label, awardIds, badge: first.src, badgeFallback: first.fallback, badgeAlt: first.label } : { label };
+}
+const FACT_KEYS = new WeakMap<Fact, { award: string; knowledge: string }>();
+function factKeys(fact: Fact) {
+  let keys = FACT_KEYS.get(fact);
+  if (!keys) {
+    keys = { award: awardPlayerKey(fact.name), knowledge: normalizeFootballPlayerName(fact.name) };
+    FACT_KEYS.set(fact, keys);
+  }
+  return keys;
+}
+const awardDefs = (comp: Competition): Def[] => AWARD_GROUPS
+  .filter((group) => group.competitions.includes(comp) && !group.relationId && !group.id.includes("-club-"))
+  .map((group) => {
+    const names = new Set(group.entries.map(({ name }) => awardPlayerKey(name)));
+    return { clue: awardClue(group.label, group.awardIds), test: (fact: Fact) => names.has(factKeys(fact).award) };
+  });
+const AWARD_DEFS = Object.fromEntries((["general", ...REAL_COMPETITIONS, ...TOURNAMENT_COMPETITIONS] as Competition[]).map((comp) => [comp, awardDefs(comp)])) as Record<Competition, Def[]>;
 
 const PL_CLUBS = {
   mun: (prefix = "") => club(`${prefix}Manchester United`, "/club-logos/man-utd.svg", "mun", "Manchester United"),
@@ -1256,7 +1290,7 @@ const POOL_ROWS: Record<RealCompetition, Def[]> = {
 
 const KNOWLEDGE_DEFS: Def[] = [...MODERN_MANAGER_GROUPS, ...TEAMMATE_GROUPS, ...HONOUR_GROUPS].map((group) => {
   const names = new Set(group.entries.flatMap((entry) => [entry.name, ...entry.aliases]).map(normalizeFootballPlayerName));
-  return { clue: { label: group.label }, test: (fact) => names.has(normalizeFootballPlayerName(fact.name)) };
+  return { clue: awardClue(group.label), test: (fact) => names.has(factKeys(fact).knowledge) };
 });
 const EXTRA_CLUB_BADGES: Record<string, [string, number]> = {
   rma: ["Real Madrid", 86], bar: ["Barcelona", 83], atm: ["Atlético Madrid", 1068], bay: ["Bayern Munich", 132],
@@ -1346,7 +1380,11 @@ const tournamentNations = (comp: TournamentComp): Def[] =>
 const TOURNAMENT_NATIONS = Object.fromEntries(TOURNAMENT_COMPETITIONS.map((comp) => [comp, tournamentNations(comp)])) as Record<TournamentComp, Def[]>;
 const TOURNAMENT_COLUMNS = GENERAL_POOL.filter((def) => !/international/i.test(def.clue.label));
 
-const poolFor = (comp: Competition): Def[] => (comp === "general" ? GENERAL_POOL : isTournamentComp(comp) ? TOURNAMENT_COLUMNS : realPool(comp));
+const PUZZLE_POOLS = Object.fromEntries((["general", ...REAL_COMPETITIONS, ...TOURNAMENT_COMPETITIONS] as Competition[]).map((comp) => [comp, [...new Map([
+  ...(comp === "general" ? GENERAL_POOL : isTournamentComp(comp) ? TOURNAMENT_COLUMNS : realPool(comp)),
+  ...AWARD_DEFS[comp],
+].map((def) => [def.clue.label, def])).values()]])) as Record<Competition, Def[]>;
+const PUZZLE_MATCHES = new Map<Competition, Map<Def, Set<string>>>();
 
 function pick<T>(items: T[], count: number): T[] {
   const copy = [...items];
@@ -1359,8 +1397,11 @@ function pick<T>(items: T[], count: number): T[] {
 
 // Any mix of clubs, stats, nations and managers on both axes; every square must have several valid players.
 function generatePuzzle(comp: Competition): FootballTicTacToePuzzle | null {
-  const pool = poolFor(comp);
-  const matches = new Map<Def, Set<string>>();
+  const pool = PUZZLE_POOLS[comp];
+  const withAward = Math.random() < 0.65;
+  const awards = pool.filter((def) => def.clue.awardIds?.length);
+  const matches = PUZZLE_MATCHES.get(comp) ?? new Map<Def, Set<string>>();
+  PUZZLE_MATCHES.set(comp, matches);
   const overlaps = new Map<Def, Map<Def, number>>();
   const namesFor = (def: Def) => {
     let names = matches.get(def);
@@ -1384,10 +1425,17 @@ function generatePuzzle(comp: Competition): FootballTicTacToePuzzle | null {
     return count;
   };
   for (let attempt = 0; attempt < 1500; attempt += 1) {
-    const rows = pick(isTournamentComp(comp) ? TOURNAMENT_NATIONS[comp] : pool, 3) as [Def, Def, Def];
     const minimum = attempt < 1000 ? 3 : 2;
+    const seed = withAward && attempt < 1400 ? pick(awards, 1)[0] : undefined;
+    const rowPool = isTournamentComp(comp) ? TOURNAMENT_NATIONS[comp] : pool;
+    const eligibleRows = seed ? rowPool.filter((row) => row !== seed && !row.clue.awardIds?.length && overlap(row, seed) >= minimum) : rowPool;
+    if (eligibleRows.length < 3) continue;
+    const rows = pick(eligibleRows, 3) as [Def, Def, Def];
     const columns = pool.filter((column) => !rows.includes(column) && rows.every((row) => overlap(row, column) >= minimum));
-    if (columns.length >= 3) return build(comp, rows, pick(columns, 3) as [Def, Def, Def]);
+    if (columns.length >= 3) {
+      const selected = seed ? [seed, ...pick(columns.filter((column) => column !== seed), 2)] : pick(columns, 3);
+      return build(comp, rows, selected as [Def, Def, Def]);
+    }
   }
   return null;
 }

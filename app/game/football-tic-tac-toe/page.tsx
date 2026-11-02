@@ -13,6 +13,7 @@ import PlayerPhoto from "@/components/PlayerPhoto";
 import UclImage from "@/components/UclImage";
 import { playerFaceUrl } from "@/data/playerFaces";
 import { nationMentions } from "@/data/nationVisuals";
+import { awardsInText, individualAward } from "@/data/individualAwards";
 import { poolFor, lobbyFor, parseComp, type Competition } from "@/lib/gameRoom";
 import { COMPETITION_LABELS } from "@/lib/competitions";
 import {
@@ -40,7 +41,33 @@ const faceSrc = (name: string, comp: Competition) =>
 
 function ClueBadge({ clue }: { clue: FootballClue }) {
   const nation = / international$/.test(clue.label) ? nationMentions(clue.label, true)[0] : undefined;
-  return <UclImage src={nation?.src ?? clue.badge} alt={nation ? `${nation.name} national team crest` : clue.badgeAlt ?? clue.label} className="h-5 w-5 sm:h-8 sm:w-8 lg:h-9 lg:w-9" />;
+  const awards = clue.awardIds?.map(individualAward) ?? awardsInText(clue.label);
+  if (awards.length) return (
+    <span className="inline-flex flex-wrap justify-center gap-1">
+      {awards.slice(0, 2).map((award) => <UclImage key={award.id} src={award.src} fallback={award.fallback} alt={award.label} className={awards.length > 1 ? "h-5 w-5 sm:h-6 sm:w-6 lg:h-7 lg:w-7" : "h-5 w-5 sm:h-8 sm:w-8 lg:h-9 lg:w-9"} />)}
+      {awards.length > 2 && <span className="self-center text-[10px]" title={`${awards.length} award categories`}>+{awards.length - 2}</span>}
+    </span>
+  );
+  return <UclImage src={nation?.src ?? clue.badge} fallback={clue.badgeFallback} alt={nation ? `${nation.name} national team crest` : clue.badgeAlt ?? clue.label} className="h-5 w-5 sm:h-8 sm:w-8 lg:h-9 lg:w-9" />;
+}
+
+function clueGridLabel(clue: FootballClue) {
+  if (!clue.awardIds?.length && !awardsInText(clue.label).length) return clue.label;
+  if (clue.awardIds?.length === 2 && clue.label.includes(" + ")) return "Both awards";
+  return clue.label
+    .replace("World Cup, Euros OR Copa America", "International")
+    .replace("UEFA Champions League", "UCL")
+    .replace("European Championship", "Euro")
+    .replace("Premier League", "PL")
+    .replace("Top-five-league", "Top-five")
+    .replace("The Best FIFA Men's", "FIFA Best")
+    .replace("Footballer of the Year", "player")
+    .replace("Player of the Season", "player")
+    .replace("Player of the Year", "player")
+    .replace("Best Under-23 / Rising Star", "Rising Star")
+    .replace(" (including retrospective selections)", "")
+    .replace(" (Torjagerkanone)", "")
+    .replace(/ winner$/, "");
 }
 
 function FootballTicTacToeClient() {
@@ -393,19 +420,19 @@ function FootballTicTacToeClient() {
             </div>
             {puzzle.columns.map((column) => (
               <div key={column.label} className="flex min-h-0 min-w-0 flex-col items-center justify-center gap-1 border border-emerald-950 bg-emerald-900 p-1 text-center text-[clamp(8px,2.8cqw,16px)] font-semibold leading-tight text-white sm:gap-2 sm:p-2">
-                {column.badge && (
+                {(column.badge || awardsInText(column.label).length > 0) && (
                   <ClueBadge clue={column} />
                 )}
-                <span className="min-w-0 max-w-full [overflow-wrap:anywhere]">{column.label}</span>
+                <span title={column.label} className="min-w-0 max-w-full [overflow-wrap:anywhere]">{clueGridLabel(column)}</span>
               </div>
             ))}
             {puzzle.rows.map((row, rowIndex) => (
               <div key={row.label} className="contents">
                 <div className="flex min-h-0 min-w-0 flex-col items-center justify-center gap-1 border border-emerald-950 bg-emerald-900 p-1 text-center text-[clamp(8px,2.8cqw,16px)] font-semibold leading-tight text-white sm:gap-2 sm:p-2">
-                  {row.badge && (
+                  {(row.badge || awardsInText(row.label).length > 0) && (
                     <ClueBadge clue={row} />
                   )}
-                  <span className="min-w-0 max-w-full [overflow-wrap:anywhere]">{row.label}</span>
+                  <span title={row.label} className="min-w-0 max-w-full [overflow-wrap:anywhere]">{clueGridLabel(row)}</span>
                 </div>
                 {puzzle.columns.map((column, columnIndex) => {
                   const index = rowIndex * 3 + columnIndex;

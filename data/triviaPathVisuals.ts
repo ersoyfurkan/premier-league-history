@@ -3,16 +3,17 @@ import { nationMentions } from "@/data/nationVisuals";
 import { playerFaceUrl } from "@/data/playerFaces";
 import { FOOTBALL_KNOWLEDGE_GROUPS, MODERN_SQUADS } from "@/data/footballKnowledge";
 import type { BoardTile } from "@/data/triviaPath";
+import { AWARD_GROUPS, awardsInText, individualAward } from "@/data/individualAwards";
 
 export type TriviaIcon = "ball" | "boot" | "trophy" | "stadium" | "glove" | "players" | "manager" | "award" | "cards" | "question";
 export type TriviaVisual =
-  | { kind: "image"; src: string; label: string }
+  | { kind: "image"; src: string; label: string; fallback?: string }
   | { kind: "icon"; icon: TriviaIcon; label: string }
   | { kind: "badge"; text: string; label: string };
 
 const icon = (name: TriviaIcon, label: string): TriviaVisual => ({ kind: "icon", icon: name, label });
 const badge = (text: string, label = text): TriviaVisual => ({ kind: "badge", text, label });
-const image = (src: string, label: string): TriviaVisual => ({ kind: "image", src, label });
+const image = (src: string, label: string, fallback?: string): TriviaVisual => ({ kind: "image", src, label, ...(fallback ? { fallback } : {}) });
 // Wikimedia Commons portraits from the managers' public biography infoboxes.
 const MANAGER_PORTRAITS: Record<string, [string, string]> = {
   klopp: ["6/6e", "2022-07-21_Fu%C3%9Fball%2C_M%C3%A4nner%2CFreundschaftsspiel%2C_RB_Leipzig_-_FC_Liverpool_1DX_2243_by_Stepro_%28cropped%29_%28cropped%29.jpg"],
@@ -43,7 +44,13 @@ export function triviaTileVisuals(tile: BoardTile): TriviaVisual[] {
   const add = (visual: TriviaVisual) => {
     if (!visuals.some((existing) => JSON.stringify(existing) === JSON.stringify(visual))) visuals.push(visual);
   };
-  const relation = FOOTBALL_KNOWLEDGE_GROUPS.find((group) => tile.id === `s-knowledge-${group.id}`);
+  const awardGroup = AWARD_GROUPS.find((group) => group.id === tile.id);
+  const awards = awardGroup ? awardGroup.awardIds.map(individualAward) : awardsInText(`${tile.noun} ${tile.short}`);
+  for (const award of awards.slice(0, 3)) add(image(award.src, award.label, award.fallback));
+  if (awards.length > 3) add(badge(`+${awards.length - 3}`, `${awards.length} eligible awards; full list in the active question`));
+  if (awardGroup?.awardOperator === "OR") add(badge("OR", "Win any one of these awards"));
+  if (awardGroup?.operator === "AND") add(badge("+", "Match every condition"));
+  const relation = FOOTBALL_KNOWLEDGE_GROUPS.find((group) => tile.id === `s-knowledge-${group.id}` || group.id === awardGroup?.relationId);
   const squad = MODERN_SQUADS.find((squad) => relation?.id.includes(squad.id));
   if (squad && /teammate|manager/.test(relation?.id ?? "")) {
     const person = relation?.id.startsWith("manager-") ? squad.manager : squad.anchors.find((anchor) => relation?.label.includes(anchor));
@@ -62,17 +69,17 @@ export function triviaTileVisuals(tile: BoardTile): TriviaVisual[] {
   }
   for (const nation of nationMentions(text, true)) add(image(nation.src, nation.name));
   for (const [name, id] of LEAGUES) {
-    if (text.includes(normal(name))) add(image(`https://a.espncdn.com/i/leaguelogos/soccer/500/${id}.png`, name));
+    if (awards.length <= 3 && text.includes(normal(name))) add(image(`https://a.espncdn.com/i/leaguelogos/soccer/500/${id}.png`, name));
   }
   if (/stadium|ground|venue/.test(text)) add(icon("stadium", "Stadiums"));
   if (/assist/.test(text)) add(icon("boot", "Assists"));
-  if (/goal(?!keeper)|scor/.test(text)) add(icon("ball", "Goals"));
-  if (/goalkeeper|saves|penalt.*sav/.test(text)) add(icon("glove", "Goalkeepers / saves"));
+  if (!awardGroup && /goal(?!keeper)|scor/.test(text)) add(icon("ball", "Goals"));
+  if (!awardGroup && /goalkeeper|saves|penalt.*sav/.test(text)) add(icon("glove", "Goalkeepers / saves"));
   if (/red card|sending|sent off/.test(text)) add(icon("cards", "Red cards"));
-  if (/ballon|golden ball|yashin|kopa trophy|award/.test(text)) add(icon("award", "Individual award"));
+  if (/ballon|golden ball|yashin|kopa trophy|award/.test(text)) { if (!awards.length) add(icon("award", "Individual award")); }
   else if (/won|winner|champion|title|troph/.test(text)) add(icon("trophy", "Trophy winners"));
   if (/teammate/.test(text)) add(icon("players", "Teammates"));
-  if (/appearances/.test(text)) add(icon("players", "Appearances"));
+  if (!awardGroup && /appearances/.test(text)) add(icon("players", "Appearances"));
   if (/managed|manager|coach/.test(text) && !visuals.some((visual) => visual.kind === "icon" && visual.icon === "manager")) add(icon("manager", "Manager"));
   const times = text.match(/(?:at least |won .*?)(\d+) times|(\d+)\+? (?:champions league |world cup )?titles/);
   const wordTimes = text.match(/(?:at least )?(three|four|five|six|two) times/);

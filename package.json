@@ -12,6 +12,7 @@
     "lint": "eslint",
     "test:stat-games": "node --test scripts/check-stat-games.mjs",
     "data:club-history": "node scripts/refresh-club-history.mjs",
+    "data:individual-awards": "node scripts/refresh-individual-awards.mjs",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
     "preview": "pnpm build && wrangler dev"
   },

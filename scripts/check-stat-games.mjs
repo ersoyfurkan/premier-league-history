@@ -46,6 +46,8 @@ const { default: nationCrests } = await import("../data/nationCrests.generated.j
 const { default: tournamentHistory } = await import("../data/tournamentHistory.generated.json");
 const { freshState, pathView, startPlay, answerPath, finishTurn } = await import("../lib/triviaPathState.ts");
 const { extractClubPlayers } = await import("./refresh-club-history.mjs");
+const { INDIVIDUAL_AWARDS, AWARD_GROUPS, AWARD_TRIVIA_CATEGORIES, AWARD_RONDO_CLUES, individualAward, awardPlayerKey, awardsInText } = await import("../data/individualAwards.ts");
+const { AWARD_SOURCES, awardTables, extractAwardWinners } = await import("./refresh-individual-awards.mjs");
 const comps = ["general", ...REAL_COMPETITIONS, ...TOURNAMENT_COMPETITIONS];
 
 test("nation visuals cover every historical tournament nation, aliases and combined hosts", () => {
@@ -170,7 +172,7 @@ test("boards are unique, reconstructible and nondecreasing, with the bank's high
       assert.ok(tiles.every(Boolean), comp);
       const scores = tiles.map(triviaDifficulty);
       assert.deepEqual(scores, [...scores].sort((a, b) => a - b), comp);
-      const bankMaximum = Math.max(...[...STAT_TRIVIA_CATEGORIES[comp], ...KNOWLEDGE_TRIVIA_CATEGORIES[comp]]
+      const bankMaximum = Math.max(...[...STAT_TRIVIA_CATEGORIES[comp], ...KNOWLEDGE_TRIVIA_CATEGORIES[comp], ...AWARD_TRIVIA_CATEGORIES[comp]]
         .filter((category) => uniqueTriviaEntries(category.entries).length >= FINAL_TILE_MIN_ANSWERS).map(triviaDifficulty));
       if (Number.isFinite(bankMaximum)) assert.ok(scores.at(-1) >= bankMaximum, comp);
       assert.ok(scores.slice(0, -1).every((score) => score < scores.at(-1)), `${comp}: finish must be strictly hardest`);
@@ -518,6 +520,150 @@ test("generated Tic-Tac-Toe grids use new categories and keep every intersection
     Math.random = originalRandom;
   }
   assert.deepEqual([...seen].sort(), ["honour", "manager", "teammate"]);
+});
+
+test("56 sourced individual awards retain tied winners, official boundaries and distinct identities", () => {
+  assert.equal(INDIVIDUAL_AWARDS.length, 56);
+  assert.deepEqual(INDIVIDUAL_AWARDS.map((award) => award.id).sort(), AWARD_SOURCES.map((award) => award.id).sort());
+  for (const award of INDIVIDUAL_AWARDS) {
+    assert.ok(award.winners.length > 0, award.id);
+    assert.match(award.source, /^https:\/\/en\.wikipedia\.org\/wiki\//);
+    assert.ok(comps.includes(award.comp), award.id);
+    const svg = readFileSync(new URL(`../public${award.fallback}`, import.meta.url), "utf8");
+    assert.match(svg, /<svg/);
+    assert.match(svg, /illustrated award/);
+    assert.equal(new Set(award.entries.map(({ name }) => awardPlayerKey(name))).size, award.entries.length, award.id);
+    for (const winner of award.winners) {
+      assert.match(winner.season, /^(18|19|20)\d{2}/);
+      assert.doesNotMatch(winner.name, /\d|[{}<>]|Not awarded|cancelled/i);
+      assert.ok(knowledgeMatches(award.entries, winner.name), `${award.id}: ${winner.name}`);
+    }
+  }
+  const winners = (id, season) => individualAward(id).winners.filter((winner) => winner.season === season).map(({ name }) => name).sort();
+  assert.deepEqual(winners("ballon", "1960"), ["Luis Suarez Miramontes"]);
+  assert.deepEqual(winners("ballon", "2020"), []);
+  assert.ok(!knowledgeMatches(individualAward("ballon").entries, "Luis Suarez"));
+  assert.ok(knowledgeMatches(individualAward("pichichi").entries, "Luis Suarez"));
+  assert.deepEqual(winners("puskas", "2009"), ["Cristiano Ronaldo"]);
+  assert.ok(!winners("puskas", "2009").includes("Andres Iniesta"));
+  assert.equal(winners("wc-boot", "1962").length, 6);
+  assert.deepEqual(winners("wc-boot", "1994"), ["Hristo Stoichkov", "Oleg Salenko"]);
+  assert.deepEqual(winners("euro-boot", "2024"), ["Cody Gakpo", "Dani Olmo", "Georges Mikautadze", "Harry Kane", "Ivan Schranz", "Jamal Musiala"]);
+  assert.deepEqual(winners("copa-boot", "1999"), ["Rivaldo", "Ronaldo"]);
+  assert.deepEqual(winners("copa-player", "2021"), ["Lionel Messi", "Neymar"]);
+  assert.ok(individualAward("copa-player").supplementalSources.some((source) => source.includes("conmebol.com")));
+  assert.deepEqual(winners("euro-boot", "2012"), ["Fernando Torres"]);
+  assert.deepEqual(winners("wc-boot", "2010"), ["Thomas M\u00fcller"]);
+  assert.ok(individualAward("wc-ball").winners.every(({ season }) => Number(season) >= 1982));
+  assert.ok(individualAward("copa-player").winners.every(({ season }) => Number(season) >= 1987));
+  assert.ok(individualAward("pl-playmaker").winners.every(({ season }) => Number(season.slice(0, 4)) >= 2017));
+  assert.ok(!knowledgeMatches(individualAward("pl-playmaker").entries, "Cesc Fabregas"));
+  assert.ok(knowledgeMatches(individualAward("seriea-keeper").entries, "Michele Di Gregorio"));
+  assert.ok(!knowledgeMatches(individualAward("seriea-keeper").entries, "Monza"));
+  for (const [a, b] of [["Ronaldo", "Ronaldo Nazario"], ["Vinicius Junior", "Vinicius Jr"], ["Son Heung-min", "Heung-min Son"], ["Alejandro Gomez", "Papu Gomez"]]) {
+    assert.equal(awardPlayerKey(a), awardPlayerKey(b));
+  }
+  assert.notEqual(awardPlayerKey("Ronaldo"), awardPlayerKey("Cristiano Ronaldo"));
+});
+
+test("award extraction expands shared years, preserves joint winners and rejects runner-up rows", () => {
+  const ranked = `<table class="wikitable" data-mw='{"text":"<tr>not a real row</tr>"}'>
+    <tr><th>Year</th><th>Rank</th><th>Player</th></tr>
+    <tr><td rowspan="2">2025</td><td>1</td><td><a href="https://en.wikipedia.org/wiki/Winner">Winning Player</a></td></tr>
+    <tr><td>2</td><td><a href="./Runner">Runner Up</a></td></tr>
+    <tr><td>2020</td><td>1</td><td>Not awarded (COVID-19)</td></tr></table>`;
+  assert.deepEqual(extractAwardWinners(awardTables(ranked), { id: "fifa-best" }), [{ name: "Winning Player", season: "2025" }]);
+  const tied = `<table class="wikitable"><tr><th>Season</th><th>Player(s)</th></tr>
+    <tr><td rowspan="2">2024–25</td><td><a href="/wiki/First">First Scorer</a><br><a href="https://en.wikipedia.org/wiki/Second">Second Scorer</a></td></tr>
+    <tr><td><a href="./Third">Third Scorer</a></td></tr></table>`;
+  assert.deepEqual(extractAwardWinners(awardTables(tied), { id: "bundesliga-scorer" }), [
+    { name: "First Scorer", season: "2024–25" }, { name: "Second Scorer", season: "2024–25" }, { name: "Third Scorer", season: "2024–25" },
+  ]);
+  assert.throws(() => extractAwardWinners([], { id: "fifa-best" }), /missing winner table/);
+});
+
+test("award questions reconstruct in Trivia Path and Rondo with explicit AND/OR conditions and award images", () => {
+  assert.equal(new Set(AWARD_GROUPS.map(({ id }) => id)).size, AWARD_GROUPS.length);
+  const byAward = (id) => AWARD_GROUPS.find((group) => group.id === id);
+  const both = byAward("s-award-both-ballon-european-shoe");
+  assert.ok(both);
+  assert.ok(knowledgeMatches(both.entries, "Cristiano Ronaldo"));
+  assert.ok(knowledgeMatches(both.entries, "Lionel Messi"));
+  assert.ok(!both.entries.some(({ name }) => awardPlayerKey(name) === awardPlayerKey("Neymar")));
+  for (const group of AWARD_GROUPS) {
+    assert.ok(group.sources.every((source) => source.startsWith("https://")), group.id);
+    assert.ok(group.entries.length > 0, group.id);
+    if (group.operator === "OR") assert.match(group.noun, /at least one/);
+    if (group.operator === "AND") assert.match(group.noun, /AND/);
+    const tile = tileById("general", group.id);
+    assert.ok(tile, group.id);
+    assert.equal(triviaAnswerType(tile), "player", group.id);
+    const visuals = triviaTileVisuals(tile);
+    const first = individualAward(group.awardIds[0]);
+    assert.ok(visuals.some((visual) => visual.kind === "image" && visual.src === first.src && visual.fallback === first.fallback), group.id);
+    for (const { name } of group.entries) assert.ok(matchTriviaAnswer(tile.entries, name), `${group.id}: ${name}`);
+    for (const id of group.awardIds) {
+      if (group.awardOperator !== "OR") {
+        const keys = new Set(individualAward(id).entries.map(({ name }) => awardPlayerKey(name)));
+        assert.ok(group.entries.every(({ name }) => keys.has(awardPlayerKey(name))), `${group.id}: ${id}`);
+      }
+    }
+    if (group.awardOperator === "OR") {
+      const union = new Set(group.awardIds.flatMap((id) => individualAward(id).entries.map(({ name }) => awardPlayerKey(name))));
+      assert.ok(group.entries.every(({ name }) => union.has(awardPlayerKey(name))), group.id);
+    }
+  }
+  const legacy = triviaTileVisuals(tileById("general", "s-knowledge-ballon-worldcup"));
+  assert.ok(legacy.some((visual) => visual.kind === "image" && visual.src === individualAward("ballon").src));
+  assert.equal(awardsInText("PFA Young Player of the Year winner")[0].id, "pfa-young");
+  for (const comp of comps) {
+    assert.ok(AWARD_TRIVIA_CATEGORIES[comp].length > 0, comp);
+    for (const clue of AWARD_RONDO_CLUES[comp]) {
+      assert.ok(RONDO_CLUES[comp].some((candidate) => candidate.letter === clue.letter && candidate.clue === clue.clue), comp);
+      assert.ok(isRondoAnswer(clue, clue.answers[0]));
+      assert.equal(clue.answers[0].normalize("NFD").replace(/[\u0300-\u036f]/g, "")[0].toUpperCase(), clue.letter);
+    }
+    const board = generateBoardIds(comp);
+    assert.ok(board.some((id) => id.startsWith("s-award-")), comp);
+    assert.ok(board.slice(0, -1).every((id) => tileById(comp, id).entries.length >= 13), comp);
+    assert.ok(tileById(comp, board.at(-1)).entries.length >= 6, comp);
+  }
+});
+
+test("randomized award Tic-Tac-Toe grids retain playable intersections and precise winner predicates", () => {
+  const originalRandom = Math.random;
+  let seed = 20261102;
+  Math.random = () => ((seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0) / 4294967296);
+  const groups = new Map(AWARD_GROUPS.map((group) => [group.label, group]));
+  const seen = new Set();
+  try {
+    for (const comp of comps) {
+      let found = false;
+      for (let run = 0; run < 5; run += 1) {
+        const puzzle = randomFootballTicTacToePuzzle(comp);
+        const clues = [...puzzle.rows, ...puzzle.columns];
+        for (const clue of clues.filter((clue) => clue.awardIds?.length)) {
+          found = true;
+          seen.add(clue.label);
+          assert.equal(clue.badge, individualAward(clue.awardIds[0]).src);
+          assert.equal(clue.badgeFallback, individualAward(clue.awardIds[0]).fallback);
+        }
+        for (let row = 0; row < 3; row += 1) {
+          for (let column = 0; column < 3; column += 1) {
+            assert.ok(puzzle.answers[row][column].length >= 2, comp);
+            for (const clue of [puzzle.rows[row], puzzle.columns[column]]) {
+              const group = groups.get(clue.label);
+              if (!group) continue;
+              const keys = new Set(group.entries.map(({ name }) => awardPlayerKey(name)));
+              assert.ok(puzzle.answers[row][column].every((name) => keys.has(awardPlayerKey(name))), `${comp}: ${clue.label}`);
+            }
+          }
+        }
+      }
+      assert.ok(found, `${comp}: no award sampled`);
+    }
+  } finally { Math.random = originalRandom; }
+  assert.ok(seen.size > 10, "award variety");
 });
 
 console.info("New question-bank additions:", STAT_SEASONS.map(({ comp }) => `${comp}: ${STAT_TRIVIA_CATEGORIES[comp].length} Trivia Path / ${STAT_RONDO_CLUES[comp].length} Rondo`).join("; "));

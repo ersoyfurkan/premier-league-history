@@ -17,6 +17,7 @@ import { STAT_TRIVIA_CATEGORIES } from "@/data/statTrivia";
 import { KNOWLEDGE_TRIVIA_CATEGORIES } from "@/data/knowledgeTrivia";
 import { NATION_INFO } from "@/data/nations";
 import { STADIUM_COUNTRIES } from "@/data/stadiumTrivia";
+import { AWARD_TRIVIA_CATEGORIES } from "@/data/individualAwards";
 
 export type TriviaEntry = { name: string; aliases: string[] };
 export type TriviaAnswerType = "player" | "nation" | "club" | "stadium" | "manager" | "nickname" | "campaign" | "season";
@@ -193,6 +194,7 @@ STATIC.general = [...new Map([...REAL_COMPETITIONS.filter((comp) => comp !== "su
 for (const comp of ["general", ...REAL_COMPETITIONS, ...TOURNAMENT_COMPETITIONS] as const) {
   STATIC[comp].push(...STAT_TRIVIA_CATEGORIES[comp]);
   STATIC[comp].push(...KNOWLEDGE_TRIVIA_CATEGORIES[comp]);
+  STATIC[comp].push(...AWARD_TRIVIA_CATEGORIES[comp]);
 }
 
 // General mode drops the Süper Lig clubs; every other competition uses its own club list.
@@ -490,6 +492,11 @@ export function generateBoardIds(comp: Competition): string[] {
     const end = Math.floor((i + 1) * chunk);
     return pick(available.slice(start, end)).id;
   });
+  if (!board.some((id) => id.startsWith("s-award-")) && !finish.id.startsWith("s-award-")) {
+    const award = available.filter((candidate) => candidate.id.startsWith("s-award-"));
+    if (award.length) board[Math.floor(Math.random() * board.length)] = pick(award).id;
+  }
+  board.sort((a, b) => triviaDifficulty(tileById(comp, a)!) - triviaDifficulty(tileById(comp, b)!));
   return [...board, finish.id];
 }
 
