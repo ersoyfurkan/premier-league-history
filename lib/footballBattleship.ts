@@ -22,6 +22,8 @@ export type BattleshipView = {
   opponentReady: boolean;
   rows: BattleshipClue[];
   columns: BattleshipClue[];
+  ownRows: BattleshipClue[];
+  ownColumns: BattleshipClue[];
   ownShips: ShipPlacement[];
   opponentShips: ShipPlacement[] | null;
   shots: Shot[];
@@ -38,6 +40,7 @@ export type BattleshipState = {
   p1Token: string;
   p2Token: string | null;
   board: BattleshipBoard;
+  opponentBoard?: BattleshipBoard;
   ships: Record<BattleshipSide, ShipPlacement[] | null>;
   shots: Shot[];
   notice: string | null;
@@ -77,9 +80,10 @@ export function validBattleshipPlacement(ships: unknown): ships is ShipPlacement
 }
 
 export function newBattleshipGame(comp: Competition, token: string): BattleshipState {
+  const board = newBattleshipBoard(comp);
   return {
     gameId: crypto.randomUUID(), revision: 0, comp, phase: "waiting", turn: "p1", winner: null,
-    p1Token: token, p2Token: null, board: newBattleshipBoard(comp),
+    p1Token: token, p2Token: null, board, opponentBoard: newBattleshipBoard(comp, board.variant),
     ships: { p1: null, p2: null }, shots: [], notice: null, rematch: { p1: false, p2: false },
   };
 }
@@ -98,13 +102,20 @@ export function battleshipSideOf(state: BattleshipState, token: string): Battles
   return null;
 }
 
+export function battleshipAttackBoard(state: BattleshipState, side: BattleshipSide): BattleshipBoard {
+  // Saved rooms created before separate boards retain their shared clues until rematch.
+  return side === "p2" ? state.opponentBoard ?? state.board : state.board;
+}
+
 export function battleshipView(state: BattleshipState, you: BattleshipSide): BattleshipView {
   const opponent = other(you);
+  const own = battleshipClues(state.comp, battleshipAttackBoard(state, opponent));
   return {
     gameId: state.gameId, revision: state.revision, comp: state.comp, phase: state.phase,
     you, turn: state.turn, winner: state.winner, opponentJoined: !!state.p2Token,
     youReady: state.ships[you] !== null, opponentReady: state.ships[opponent] !== null,
-    ...battleshipClues(state.comp, state.board),
+    ...battleshipClues(state.comp, battleshipAttackBoard(state, you)),
+    ownRows: own.rows, ownColumns: own.columns,
     ownShips: state.ships[you] ?? [],
     opponentShips: state.phase === "finished" ? state.ships[opponent] : null,
     shots: state.shots, notice: state.notice, rematch: state.rematch,
@@ -140,6 +151,7 @@ export function applyBattleshipAction(
     if (state.rematch.p1 && state.rematch.p2) {
       state.gameId = crypto.randomUUID();
       state.board = newBattleshipBoard(state.comp);
+      state.opponentBoard = newBattleshipBoard(state.comp, state.board.variant);
       state.phase = "placing";
       state.turn = "p1";
       state.winner = null;
@@ -154,7 +166,7 @@ export function applyBattleshipAction(
     if (!Number.isInteger(action.cell) || action.cell < 0 || action.cell >= 64) return "Choose a square on the board.";
     if (state.shots.some((shot) => shot.side === side && shot.cell === action.cell)) return "You have already fired at this square.";
     if (typeof action.answer !== "string" || !action.answer.trim() || action.answer.length > 100) return "Enter a footballer name.";
-    const player = battleshipAnswer(state.comp, state.board, action.cell, action.answer);
+    const player = battleshipAnswer(state.comp, battleshipAttackBoard(state, side), action.cell, action.answer);
     if (!player) {
       // Wrong answers never inspect the hidden fleet or reserve a target square.
       state.notice = "That player does not match both clues. The turn passes.";

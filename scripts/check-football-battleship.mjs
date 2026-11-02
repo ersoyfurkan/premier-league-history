@@ -8,6 +8,7 @@ import "./register-data.mjs";
 const {
   BATTLESHIP_SIZE, BATTLESHIP_SHIP_SIZES, battleshipShipCells, validBattleshipPlacement,
   newBattleshipGame, joinBattleshipGame, applyBattleshipAction, battleshipView, battleshipSideOf,
+  battleshipAttackBoard,
 } = await import("../lib/footballBattleship.ts");
 const { BATTLESHIP_BOARDS, BATTLESHIP_LEGACY_VARIANTS, battleshipAnswer, battleshipClues, battleshipPlayerKey: awardPlayerKey } =
   await import("../data/footballBattleship.ts");
@@ -21,10 +22,11 @@ const fleet = [
 ];
 const expected = (state) => ({ gameId: state.gameId, revision: state.revision });
 const play = (state, side, action) => applyBattleshipAction(state, side, action, expected(state));
-const answerFor = (state, cell) => {
-  const row = state.board.rows[Math.floor(cell / 8)];
-  const column = state.board.columns[cell % 8];
-  return snapshot.names[BATTLESHIP_BOARDS[state.comp][state.board.variant].answers[row * 8 + column][0]];
+const answerFor = (state, cell, side = state.turn) => {
+  const board = battleshipAttackBoard(state, side);
+  const row = board.rows[Math.floor(cell / 8)];
+  const column = board.columns[cell % 8];
+  return snapshot.names[BATTLESHIP_BOARDS[state.comp][board.variant].answers[row * 8 + column][0]];
 };
 const ready = (comp = "general") => {
   const state = newBattleshipGame(comp, "creator");
@@ -112,10 +114,50 @@ test("Saved rooms using original variant indices still resolve the same clues an
   for (const comp of Object.keys(COMPETITION_LABELS)) {
     const state = newBattleshipGame(comp, "creator");
     state.board = { variant: 0, rows: [0, 1, 2, 3, 4, 5, 6, 7], columns: [0, 1, 2, 3, 4, 5, 6, 7] };
+    delete state.opponentBoard;
     const view = battleshipView(state, "p1");
     assert.deepEqual(view.rows, snapshot.competitions[comp][0].rows);
+    assert.deepEqual(battleshipView(state, "p2").rows, view.rows);
+    assert.deepEqual(view.ownRows, view.rows);
     for (let cell = 0; cell < 64; cell += 1) {
       assert.equal(battleshipAnswer(comp, state.board, cell, answerFor(state, cell)), answerFor(state, cell));
+    }
+  }
+});
+
+test("Each player has different attack clues; fleet clues match the incoming attack board and answers use the attacker's board", () => {
+  for (const comp of Object.keys(COMPETITION_LABELS)) {
+    const state = ready(comp);
+    const p1 = battleshipView(state, "p1");
+    const p2 = battleshipView(state, "p2");
+    assert.notEqual(state.board.variant, state.opponentBoard.variant);
+    assert.notDeepEqual({ rows: p1.rows, columns: p1.columns }, { rows: p2.rows, columns: p2.columns });
+    assert.deepEqual(p1.ownRows, p2.rows);
+    assert.deepEqual(p1.ownColumns, p2.columns);
+    assert.deepEqual(p2.ownRows, p1.rows);
+    assert.deepEqual(p2.ownColumns, p1.columns);
+    assert.deepEqual(battleshipView(JSON.parse(JSON.stringify(state)), "p2"), p2);
+    for (const side of ["p1", "p2"]) {
+      state.turn = side;
+      assert.equal(play(state, side, { action: "attack", cell: 0, answer: answerFor(state, 0, side) }), null);
+      assert.equal(state.shots.at(-1).hit, true, `${comp} ${side}`);
+      const opponent = side === "p1" ? "p2" : "p1";
+      const own = battleshipAttackBoard(state, side);
+      const incoming = battleshipAttackBoard(state, opponent);
+      let testedWrongBoard = false;
+      for (let cell = 1; cell < 64; cell += 1) {
+        const answer = answerFor(state, cell, opponent);
+        if (battleshipAnswer(comp, own, cell, answer)) continue;
+        assert.ok(battleshipAnswer(comp, incoming, cell, answer));
+        const shots = state.shots.length;
+        state.turn = side;
+        assert.equal(play(state, side, { action: "attack", cell, answer }), null);
+        assert.equal(state.shots.length, shots);
+        assert.equal(state.turn, opponent);
+        testedWrongBoard = true;
+        break;
+      }
+      assert.ok(testedWrongBoard, `${comp} ${side}: distinct answer validation`);
     }
   }
 });
@@ -190,12 +232,13 @@ test("Valid shots resolve hit, miss, sinking and all-nine victory; repeat shots 
 
 test("A footballer may be reused on different matching squares, with canonical spelling in shots", () => {
   const state = ready();
+  const board = battleshipAttackBoard(state, state.turn);
   const cellsByPlayer = new Map();
   let pair;
   for (let cell = 0; cell < 64 && !pair; cell += 1) {
-    const row = state.board.rows[Math.floor(cell / 8)];
-    const column = state.board.columns[cell % 8];
-    for (const id of BATTLESHIP_BOARDS[state.comp][state.board.variant].answers[row * 8 + column]) {
+    const row = board.rows[Math.floor(cell / 8)];
+    const column = board.columns[cell % 8];
+    for (const id of BATTLESHIP_BOARDS[state.comp][board.variant].answers[row * 8 + column]) {
       if (cellsByPlayer.has(id)) { pair = [cellsByPlayer.get(id), cell, snapshot.names[id]]; break; }
       cellsByPlayer.set(id, cell);
     }
@@ -237,6 +280,7 @@ test("Views conceal opponent fleets, tokens and answer banks in every pre-finish
   assert.deepEqual(state.shots, []);
   assert.deepEqual(state.rematch, { p1: false, p2: false });
   assert.equal(state.winner, null);
+  assert.notEqual(state.board.variant, state.opponentBoard.variant);
   assert.equal(state.p1Token, "creator");
   assert.equal(state.p2Token, "guest");
   assert.equal(battleshipView(state, "p1").opponentShips, null);

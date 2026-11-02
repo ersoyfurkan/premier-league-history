@@ -29,8 +29,8 @@ function Rules() {
       <summary className="cursor-pointer font-bold">How to play</summary>
       <ul className="mt-3 list-disc space-y-2 pl-5 text-fore-muted">
         <li>Secretly place one small ship (2 squares), one medium (3) and one large (4) on your 8 by 8 board.</li>
-        <li>Ships must be straight, horizontal or vertical, and cannot overlap. They may touch. Lock your fleet when ready; it stays hidden from your opponent.</li>
-        <li>Both players share the same football row and column clues. Choose a target square and name a footballer who satisfies both clues.</li>
+        <li>Ships must be straight: place right, left, down or up, never diagonally. Ships cannot overlap but may touch. Lock your fleet when ready; it stays hidden from your opponent.</li>
+        <li>Each player gets a different attack board. Your fleet placement shows the clues your opponent will answer; your attack board shows the clues you must answer.</li>
         <li>New boards mix single club, nation, trophy, award, manager and teammate criteria. Club and nation headers do not repeat. The labelled board is visible while you place your fleet.</li>
         <li>A correct answer fires your shot. A hit keeps your turn; a miss passes it. A wrong answer also passes the turn, without revealing that square.</li>
         <li>You cannot shoot a square you already hit or missed. A footballer may answer different squares if they satisfy both clues each time.</li>
@@ -54,7 +54,7 @@ function Clue({ clue }: { clue: BattleshipClue }) {
 }
 
 function ClueGrid({ view, label, renderCell }: {
-  view: BattleshipView; label: string; renderCell: (cell: number) => React.ReactNode;
+  view: { rows: BattleshipClue[]; columns: BattleshipClue[] }; label: string; renderCell: (cell: number) => React.ReactNode;
 }) {
   return (
     <div className="mt-4 max-w-full overflow-x-auto pb-3" tabIndex={0} role="region" aria-label={label}>
@@ -82,14 +82,15 @@ function FleetBoard({ view, ships, incoming, interactive, onCell }: {
   view: BattleshipView; ships: ShipPlacement[]; incoming: BattleshipView["shots"]; interactive: boolean; onCell: (cell: number) => void;
 }) {
   const occupied = new Map(ships.flatMap((ship) => cellsOf(ship).map((cell) => [cell, ship.size] as const)));
+  const clues = { rows: view.ownRows, columns: view.ownColumns };
   return (
-    <ClueGrid view={view} label="Your fleet board with football clues" renderCell={(cell) => {
+    <ClueGrid view={clues} label="Your fleet board with football clues" renderCell={(cell) => {
       const shot = incoming.find((item) => item.cell === cell);
       const size = occupied.get(cell);
       return (
         <button key={cell} type="button" disabled={!interactive} onClick={() => onCell(cell)}
           data-testid={`fleet-cell-${cell}`}
-          aria-label={`${coordinate(cell)}: ${view.rows[Math.floor(cell / 8)].label}; ${view.columns[cell % 8].label}${size ? `, size ${size} ship` : ", water"}${shot ? shot.hit ? ", hit" : ", miss" : ""}`}
+          aria-label={`${coordinate(cell)}: ${clues.rows[Math.floor(cell / 8)].label}; ${clues.columns[cell % 8].label}${size ? `, size ${size} ship` : ", water"}${shot ? shot.hit ? ", hit" : ", miss" : ""}`}
           className={`min-h-24 rounded-md border text-xs font-bold disabled:cursor-default ${
             shot?.hit ? "border-red-400 bg-red-500/25 text-red-200"
               : shot ? "border-border bg-surface text-fore-muted"
@@ -108,12 +109,15 @@ function FleetPlacement({ view, busy, onLock }: {
 }) {
   const [ships, setShips] = useState<ShipPlacement[]>([]);
   const [size, setSize] = useState<2 | 3 | 4>(2);
-  const [vertical, setVertical] = useState(false);
+  const [direction, setDirection] = useState<"Right" | "Left" | "Down" | "Up">("Right");
   const [error, setError] = useState<string | null>(null);
   const place = (cell: number) => {
     const others = ships.filter((ship) => ship.size !== size);
-    const next = { size, start: cell, vertical };
-    if (!validPlacement(next, others)) {
+    const vertical = direction === "Up" || direction === "Down";
+    const backwards = direction === "Left" || direction === "Up";
+    const start = backwards ? cell - (size - 1) * (vertical ? 8 : 1) : cell;
+    const next = { size, start, vertical };
+    if ((!vertical && Math.floor(start / 8) !== Math.floor(cell / 8)) || !validPlacement(next, others)) {
       setError("That ship would overlap another ship or extend beyond the board. Choose another starting square.");
       return;
     }
@@ -142,16 +146,16 @@ function FleetPlacement({ view, busy, onLock }: {
               ))}
             </div>
             <div className="mt-3 flex flex-wrap gap-2" role="group" aria-label="Ship direction">
-              {[false, true].map((direction) => (
-                <button key={String(direction)} type="button" disabled={busy} aria-pressed={vertical === direction}
-                  className={`rounded-lg border px-4 py-3 text-sm font-bold ${vertical === direction ? "border-primary bg-primary-dim text-primary" : "border-border"}`}
-                  onClick={() => setVertical(direction)}>{direction ? "Vertical" : "Horizontal"}</button>
+              {(["Right", "Left", "Down", "Up"] as const).map((option) => (
+                <button key={option} type="button" disabled={busy} aria-pressed={direction === option}
+                  className={`rounded-lg border px-4 py-3 text-sm font-bold ${direction === option ? "border-primary bg-primary-dim text-primary" : "border-border"}`}
+                  onClick={() => setDirection(option)}>{option} ({option === "Left" || option === "Right" ? "horizontal" : "vertical"})</button>
               ))}
             </div>
           </>
         )}
         {error && <p role="alert" className="mt-3 text-sm text-warning">{error}</p>}
-        <p className="mt-4 text-sm text-fore-muted">The same clubs, nations and other criteria apply during placement and battle. Scroll sideways to see every column.</p>
+        <p className="mt-4 text-sm text-fore-muted">These are the clues your opponent will answer when attacking your fleet. Your attack board has different clues. Scroll sideways to see every column.</p>
         <FleetBoard view={view} ships={view.youReady ? view.ownShips : ships} incoming={[]} interactive={!busy && !view.youReady} onCell={place} />
         {!view.youReady && (
           <button type="button" className="btn-primary mt-4 w-full" disabled={busy || ships.length !== 3}
@@ -187,13 +191,14 @@ function Battle({ view, busy, attack }: { view: BattleshipView; busy: boolean; a
       {board === "fleet" ? (
         <div className="mt-4 min-w-0 rounded-2xl border border-border bg-surface p-4">
           <h2 className="mb-3 text-xl font-bold">Your fleet</h2>
+          <p className="text-sm text-fore-muted">Your opponent answers these clues to attack these positions.</p>
           <FleetBoard view={view} ships={view.ownShips} incoming={incoming} interactive={false} onCell={() => {}} />
           <p className="mt-3 text-sm text-fore-muted">Numbers show ship sizes. Red squares have been hit; dashes are missed enemy shots.</p>
         </div>
       ) : (
         <div className="mt-4 rounded-2xl border border-border bg-surface p-3 md:p-5">
           <h2 className="text-xl font-bold">Find your opponent&apos;s ships</h2>
-          <p className="mt-2 text-sm text-fore-muted">Scroll sideways to see every column. Select a square, then answer below.</p>
+          <p className="mt-2 text-sm text-fore-muted">This is your attack board, with different clues from your fleet board. Scroll sideways to see every column. Select a square, then answer below.</p>
           <ClueGrid view={view} label="Scrollable attack board" renderCell={(cell) => {
             const shot = mine.find((item) => item.cell === cell);
             return (

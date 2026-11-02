@@ -28,10 +28,11 @@ function shuffledIndices() {
   return indices;
 }
 
-export function newBattleshipBoard(comp: Competition): BattleshipBoard {
+export function newBattleshipBoard(comp: Competition, excludeVariant?: number): BattleshipBoard {
+  const variants = BATTLESHIP_BOARDS[comp].map((_, index) => index)
+    .filter((index) => index >= BATTLESHIP_LEGACY_VARIANTS && index !== excludeVariant);
   return {
-    variant: BATTLESHIP_LEGACY_VARIANTS + crypto.getRandomValues(new Uint32Array(1))[0] %
-      (BATTLESHIP_BOARDS[comp].length - BATTLESHIP_LEGACY_VARIANTS),
+    variant: variants[crypto.getRandomValues(new Uint32Array(1))[0] % variants.length],
     rows: shuffledIndices(),
     columns: shuffledIndices(),
   };
