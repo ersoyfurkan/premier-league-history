@@ -312,7 +312,7 @@ export const RONDO_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 export const RONDO_SECONDS = 180;
 
 export type RondoQuestion = RondoClue & { index: number; difficulty: RondoDifficulty };
-export const RONDO_DIFFICULTY_COUNTS = { easy: 9, medium: 9, hard: 8 } as const;
+export const RONDO_DIFFICULTY_COUNTS = { easy: 12, medium: 10, hard: 4 } as const;
 export const rondoDifficulty = (clue: RondoClue): RondoDifficulty => clue.difficulty ?? "medium";
 export const isSpecificRondoClue = (clue: RondoClue) =>
   clue.singleAnswer !== false

@@ -323,7 +323,8 @@ test("Rondo prompts stay short without removing answer conditions or questions",
   }
 });
 
-test("every new Rondo round mixes nine easy, nine medium and eight hard clues without repeats", () => {
+test("every easier Rondo round mixes twelve easy, ten medium and four hard clues without repeats", () => {
+  assert.deepEqual(RONDO_DIFFICULTY_COUNTS, { easy: 12, medium: 10, hard: 4 });
   for (const comp of comps) {
     let previous = [];
     for (let round = 0; round < 100; round += 1) {
@@ -370,7 +371,7 @@ test("specific award questions identify a dated winner, preserve aliases and rej
 
 test("Süper Lig uses only identifying Turkish-football questions without international fallback", async () => {
   const { SUPERLIG_SPECIFIC_RONDO } = await import("../data/rondoSuperligSpecific.ts");
-  assert.equal(SUPERLIG_SPECIFIC_RONDO.length, 52);
+  assert.equal(SUPERLIG_SPECIFIC_RONDO.length, 66);
   const allowed = new Set(SUPERLIG_SPECIFIC_RONDO.map((clue) => clue.clue));
   for (const clue of SUPERLIG_SPECIFIC_RONDO) {
     assert.ok(isSpecificRondoClue(clue));
