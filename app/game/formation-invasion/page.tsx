@@ -40,7 +40,8 @@ function Rules() {
       <summary className="cursor-pointer font-bold">How to play</summary>
       <ul className="mt-3 list-disc space-y-2 pl-5 text-fore-muted">
         <li>Pick any unlocked footballer in the 4-3-3. Their three career questions progress from easy to medium to hard, randomly chosen and fixed for this match.</li>
-        <li>A correct answer advances that footballer and keeps your turn. Continue with them or choose someone else.</li>
+        <li>Choosing a footballer commits you to their current question. You cannot browse other questions or pass after choosing. A correct answer keeps your turn and lets you choose that footballer again or someone else.</li>
+        <li>Online questions and clues are private to the turn-holder until both agree to a shared-clue race. Same-device play keeps the shared screen visible.</li>
         <li>A wrong answer passes the turn without resetting progress. Your opponent can finish your work.</li>
         <li>Whoever answers question 3 claims the footballer permanently. Own six of the eleven to win.</li>
         <li>Both players must request a clue for that same question. This starts a race: one attempt each, and the first correct answer advances progress and takes the turn. Question 3 still claims the footballer.</li>
@@ -80,6 +81,10 @@ function QuestionPanel({ view, index, busy, act }: {
       <h2 className="mt-2 text-2xl font-bold">{slot.name}</h2>
       {slot.owner ? (
         <p className={`mt-4 font-bold ${sideColor(slot.owner)}`}>Claimed by {formationSideLabel(slot.owner)}. Choose another player.</p>
+      ) : !slot.question ? (
+        <p className="mt-4 text-fore-muted">{view.mode === "online" && view.you !== view.turn
+          ? "Question hidden while your opponent takes their turn. You can still agree to their clue request."
+          : "Choose this footballer on the pitch to reveal and commit to the question."}</p>
       ) : (
         <>
           <p className="mt-4 text-lg font-semibold leading-relaxed" data-testid="formation-question">{slot.question}</p>
@@ -110,7 +115,9 @@ function QuestionPanel({ view, index, busy, act }: {
               ))}
             </ol>
           )}
-          {view.phase === "playing" && slot.cluesRevealed < 3 && (
+        </>
+      )}
+          {!slot.owner && view.phase === "playing" && view.selectedSlot === index && slot.cluesRevealed < 3 && (
             <div className="mt-5 border-t border-border pt-4">
               <p className="mb-3 text-xs text-fore-muted">{view.mode === "solo" ? "Need help with this question?" : "Stuck? Both players must agree on a clue for this question."}</p>
               <div className="flex flex-wrap gap-2">
@@ -127,7 +134,7 @@ function QuestionPanel({ view, index, busy, act }: {
               )}
             </div>
           )}
-          {view.phase === "playing" && view.mode !== "solo" && slot.cluesRevealed === 3 && (
+          {!slot.owner && view.phase === "playing" && view.selectedSlot === index && view.mode !== "solo" && slot.cluesRevealed === 3 && (
             <div className="mt-5 border-t border-border pt-4">
               <p className="text-sm text-fore-muted">Still stuck after three clues? Both players must agree to Last Man Standing for this question.</p>
               <div className="mt-3 flex flex-wrap gap-2">
@@ -141,8 +148,6 @@ function QuestionPanel({ view, index, busy, act }: {
               </div>
             </div>
           )}
-        </>
-      )}
     </div>
   );
 }
@@ -191,7 +196,6 @@ function FormationClient({ comp, code }: { comp: Competition; code: string }) {
   const [clock, setClock] = useState(0);
   const [token, setToken] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
-  const [selected, setSelected] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [connectionError, setConnectionError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -306,7 +310,7 @@ function FormationClient({ comp, code }: { comp: Competition; code: string }) {
 
   const start = (mode: "local" | "solo") => {
     setError(null);
-    try { setLocal(newFormationGame(comp, mode)); setSelected(null); } catch (e) {
+    try { setLocal(newFormationGame(comp, mode)); } catch (e) {
       setError(e instanceof Error ? e.message : "Could not prepare the formation.");
     }
   };
@@ -314,7 +318,7 @@ function FormationClient({ comp, code }: { comp: Competition; code: string }) {
     await navigator.clipboard.writeText(`${window.location.origin}/game/formation-invasion?comp=${activeComp}&code=${code}`);
     setCopied(true);
   });
-  const activeSelection = view?.standing?.slot ?? view?.clueRace?.slot ?? selected;
+  const activeSelection = view?.standing?.slot ?? view?.clueRace?.slot ?? view?.selectedSlot ?? null;
   const chosen = activeSelection === null ? null : view?.slots[activeSelection];
 
   return (
@@ -394,15 +398,16 @@ function FormationClient({ comp, code }: { comp: Competition; code: string }) {
               {view.slots.map((slot, index) => (
                 <button type="button" key={slot.playerId} data-testid={`formation-slot-${index}`}
                   aria-label={`${slot.name}, ${slot.position}, ${slot.owner ? `claimed by ${formationSideLabel(slot.owner)}` : `${slot.progress} of 3 completed`}`}
-                  aria-pressed={activeSelection === index} disabled={busy || Boolean(view.standing) || Boolean(view.clueRace && view.clueRace.slot !== index)}
+                  aria-pressed={activeSelection === index} disabled={busy || Boolean(view.standing) || Boolean(view.clueRace) ||
+                    Boolean(view.selectedSlot != null) || (view.mode === "online" && view.you !== view.turn) || Boolean(slot.owner)}
                   onClick={() => {
-                    setSelected(index);
+                    void act({ action: "select", slot: index, question: slot.progress });
                     if (window.matchMedia("(max-width: 1023px)").matches) panel.current?.scrollIntoView({ behavior: "smooth", block: "start" });
                   }}
                   style={{ left: `${FORMATION_SLOTS[index].x}%`, top: `${FORMATION_SLOTS[index].y}%` }}
                   className={`absolute flex w-[22%] -translate-x-1/2 -translate-y-1/2 flex-col items-center rounded-xl border p-1 text-center transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white
                     ${slot.owner === "p1" ? "border-cyan-300 bg-cyan-950" : slot.owner === "p2" ? "border-fuchsia-300 bg-fuchsia-950" : "border-emerald-200/40 bg-slate-950/85"}
-                    ${selected === index ? "ring-2 ring-yellow-300" : "hover:border-yellow-200"}`}>
+                    ${activeSelection === index ? "ring-2 ring-yellow-300" : "hover:border-yellow-200"}`}>
                   <span className="text-[9px] font-bold text-emerald-100/80">{slot.position}</span>
                   <UclImage src={playerFaceUrl(slot.name)} fallback={formationPortrait(slot.playerId)} alt={slot.name} shape="circle" className="h-8 w-8 sm:h-12 sm:w-12" />
                   <span className="mt-0.5 line-clamp-2 min-h-6 w-full text-[10px] font-bold leading-3 sm:min-h-7 sm:text-xs sm:leading-3.5">{slot.name}</span>
@@ -429,7 +434,7 @@ function FormationClient({ comp, code }: { comp: Competition; code: string }) {
                 Mistakes: {view.mode === "solo" ? view.mistakes.p1 : `P1 ${view.mistakes.p1} / P2 ${view.mistakes.p2}`}
               </p>
               {view.phase === "playing" && view.mode !== "solo" && (
-                <button type="button" className="btn-ghost" disabled={busy || Boolean(view.standing) || Boolean(view.clueRace) || (view.mode === "online" && view.you !== view.turn)}
+                <button type="button" className="btn-ghost" disabled={busy || view.selectedSlot != null || Boolean(view.standing) || Boolean(view.clueRace) || (view.mode === "online" && view.you !== view.turn)}
                   onClick={() => void act({ action: "pass" })}>Pass turn</button>
               )}
               {view.phase === "finished" && (

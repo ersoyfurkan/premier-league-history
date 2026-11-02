@@ -28,6 +28,7 @@ export type FormationState = {
   correct: Record<FormationSide, number>;
   rematch: Votes;
   notice: string | null;
+  selectedSlot?: number | null;
   clueRace?: { slot: number; question: number; openedRevision: number; attempted: Votes } | null;
   standing?: {
     slot: number; question: number; categoryId: string; turn: FormationSide;
@@ -35,6 +36,7 @@ export type FormationState = {
   } | null;
 };
 export type FormationAction =
+  | { action: "select"; slot: number; question: number }
   | { action: "answer"; slot: number; question: number; answer: string }
   | { action: "hint"; slot: number; question: number; clue?: number }
   | { action: "standing-vote"; slot: number; question: number }
@@ -86,6 +88,7 @@ function completeFormationQuestion(state: FormationState, index: number, side: F
   state.turn = side;
   state.clueRace = null;
   state.standing = null;
+  state.selectedSlot = null;
   state.correct[side] += 1;
   slot.progress += 1;
   slot.hints = votes();
@@ -128,7 +131,7 @@ export function newFormationGame(comp: Competition, mode: FormationMode, token: 
       playerId, questionPicks: pickQuestions(playerId), progress: 0, owner: null, hints: votes(), cluesRevealed: 0, standingVotes: votes(),
     })),
     winner: null, mistakes: { p1: 0, p2: 0 }, correct: { p1: 0, p2: 0 },
-    rematch: votes(), notice: null, clueRace: null, standing: null,
+    rematch: votes(), notice: null, selectedSlot: null, clueRace: null, standing: null,
   };
 }
 
@@ -220,6 +223,7 @@ export function applyFormationAction(
     action.question !== state.clueRace.question)) return "Finish the shared-clue race before choosing another question or passing.";
   if (action.action === "pass") {
     if (side !== state.turn) return "It is not your turn.";
+    if (state.selectedSlot != null) return "Answer your selected footballer's question before passing.";
     if (state.mode === "solo") return "In practice, select another player instead.";
     state.turn = other(side);
     state.notice = `${formationSideLabel(side)} passed. ${formationSideLabel(state.turn)} can choose any unlocked player.`;
@@ -230,6 +234,15 @@ export function applyFormationAction(
   if (!Number.isInteger(action.slot) || !slot) return "Choose a player on the pitch.";
   if (slot.owner) return "That player is already claimed and locked.";
   if (slot.progress !== action.question) return "That question is no longer active.";
+  if (state.selectedSlot != null && state.selectedSlot !== action.slot) return "Answer your selected footballer's question before choosing another player.";
+  if (action.action === "select") {
+    if (side !== state.turn) return "It is not your turn.";
+    if (state.selectedSlot === action.slot) return "That footballer is already selected.";
+    state.selectedSlot = action.slot;
+    state.notice = `${formationSideLabel(side)} chose ${formationPlayer(slot.playerId).name}. Answer this question before changing footballer.`;
+    state.revision += 1;
+    return null;
+  }
   if (action.action === "standing-vote") {
     if (state.mode === "solo") return "Last Man Standing needs two players.";
     if (clueCount(state, slot) < 3) return "Reveal all three clues before voting for Last Man Standing.";
@@ -267,6 +280,7 @@ export function applyFormationAction(
       slot.hints = votes();
     }
     if (revealed && state.mode !== "solo") {
+      state.selectedSlot = action.slot;
       state.clueRace = { slot: action.slot, question: slot.progress, openedRevision: state.revision + 1, attempted: votes() };
     }
     state.notice = revealed
@@ -297,8 +311,9 @@ export function applyFormationAction(
       }
     } else {
       if (state.mode !== "solo") state.turn = other(side);
+      if (state.mode !== "solo") state.selectedSlot = null;
       state.notice = state.mode === "solo"
-      ? "Not correct. Try again, choose another player, or request a clue."
+      ? "Not correct. Try this question again or request a clue."
       : `Not correct. ${formationSideLabel(state.turn)} can continue this question or choose another player.`;
     }
   }
@@ -312,6 +327,7 @@ export function formationView(state: FormationState, you: FormationSide, now = D
     phase: state.phase, turn: state.turn, you, opponentJoined: Boolean(state.p2Token),
     scores: formationScores(state), winner: state.winner, mistakes: { ...state.mistakes },
     correct: { ...state.correct }, notice: state.notice, rematch: { ...state.rematch },
+    selectedSlot: state.selectedSlot ?? null,
     clueRace: state.clueRace ? { slot: state.clueRace.slot, question: state.clueRace.question,
       attempted: { ...state.clueRace.attempted } } : null,
     standing: state.standing ? {
@@ -322,7 +338,10 @@ export function formationView(state: FormationState, you: FormationSide, now = D
     serverNow: now,
     slots: state.slots.map((slot, index) => {
       const player = formationPlayer(slot.playerId);
-      const question = slot.owner ? null : formationQuestionFor(slot);
+      const shared = state.clueRace?.slot === index || state.standing?.slot === index;
+      const visible = state.phase === "playing" && (shared ||
+        (state.selectedSlot === index && (state.mode !== "online" || state.turn === you)));
+      const question = slot.owner || !visible ? null : formationQuestionFor(slot);
       return {
         playerId: player.id, name: player.name, position: FORMATION_SLOTS[index].position,
         progress: slot.progress, owner: slot.owner, hints: { ...slot.hints },

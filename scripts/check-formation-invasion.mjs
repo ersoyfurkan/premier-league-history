@@ -116,10 +116,11 @@ test("Easy-medium-hard question picks persist through JSON, wrong answers, passe
       }
       seen.add(state.slots[10].questionPicks.join(","));
       const originalPicks = state.slots.map((slot) => [...slot.questionPicks]);
-      const before = formationView(state, "p1").slots[0].question;
+      play(state, "p1", { action: "select", slot: 0, question: 0 });
+      const before = formationQuestionFor(state.slots[0]).text;
       state = JSON.parse(JSON.stringify(state));
       play(state, "p1", { action: "answer", slot: 0, question: 0, answer: "not correct" });
-      assert.equal(formationView(state, "p1").slots[0].question, before);
+      assert.equal(formationQuestionFor(state.slots[0]).text, before);
       play(state, "p1", { action: "hint", slot: 0, question: 0 });
       if (mode !== "solo") {
         play(state, "p2", { action: "hint", slot: 0, question: 0 });
@@ -127,7 +128,9 @@ test("Easy-medium-hard question picks persist through JSON, wrong answers, passe
       }
       assert.equal(formationView(state, "p1").slots[0].hint, formationQuestionFor(state.slots[0]).hint);
       solve(state, 0);
-      assert.equal(formationView(state, "p1").slots[0].question,
+      assert.equal(formationView(state, "p1").slots[0].question, null);
+      assert.equal(play(state, state.turn, { action: "select", slot: 0, question: 1 }), null);
+      assert.equal(formationView(state, state.turn).slots[0].question,
         formationPlayer(state.slots[0].playerId).questions[originalPicks[0][1]].text);
       assert.deepEqual(state.slots.map((slot) => slot.questionPicks), originalPicks);
     }
@@ -140,6 +143,7 @@ test("Legacy saved rooms without question picks retain their original questions 
   state.slots.forEach((slot) => { delete slot.questionPicks; });
   const player = formationPlayer(state.slots[0].playerId);
   for (let question = 0; question < 3; question += 1) {
+    assert.equal(play(state, state.turn, { action: "select", slot: 0, question }), null);
     assert.equal(formationView(state, "p1").slots[0].question, player.questions[question].text);
     assert.equal(solve(state, 0), null);
   }
@@ -192,6 +196,74 @@ test("Players can switch footballers, pass, and preserve partial progress", () =
   assert.match(solve(state, 1, "p1"), /not your turn/);
 });
 
+test("Selecting commits the turn to one question across reloads; correct unlocks choice and wrong passes a fresh choice", () => {
+  for (const mode of ["online", "local", "solo"]) {
+    let state = mode === "online" ? playing() : newFormationGame("general", mode);
+    assert.equal(play(state, "p1", { action: "select", slot: 0, question: 0 }), null);
+    state = JSON.parse(JSON.stringify(state));
+    const before = structuredClone(state);
+    assert.match(play(state, "p1", { action: "select", slot: 1, question: 0 }), /selected footballer/);
+    assert.match(solve(state, 1, "p1"), /selected footballer/);
+    assert.match(play(state, "p1", { action: "hint", slot: 1, question: 0 }), /selected footballer/);
+    assert.match(play(state, "p1", { action: "pass" }), /selected footballer/);
+    assert.deepEqual(state, before);
+    assert.equal(solve(state, 0), null);
+    assert.equal(state.selectedSlot, null);
+    assert.equal(state.turn, "p1");
+    assert.equal(play(state, "p1", { action: "select", slot: 1, question: 0 }), null);
+    assert.equal(play(state, "p1", { action: "answer", slot: 1, question: 0, answer: "wrong" }), null);
+    if (mode === "solo") {
+      assert.equal(state.turn, "p1");
+      assert.equal(state.selectedSlot, 1);
+      assert.match(play(state, "p1", { action: "select", slot: 2, question: 0 }), /selected footballer/);
+    } else {
+      assert.equal(state.turn, "p2");
+      assert.equal(state.selectedSlot, null);
+      assert.equal(play(state, "p2", { action: "select", slot: 2, question: 0 }), null);
+      assert.match(play(state, "p1", { action: "select", slot: 2, question: 0 }), /not your turn/);
+    }
+  }
+});
+
+test("Online views hide every unchosen or off-turn question and clue, with only the shared race/standing question visible to both", () => {
+  const state = playing();
+  for (const side of ["p1", "p2"]) assert.ok(formationView(state, side).slots.every((slot) => slot.question === null && slot.hint === null && !slot.clues.length));
+  assert.match(play(state, "p2", { action: "select", slot: 0, question: 0 }), /not your turn/);
+  assert.equal(play(state, "p1", { action: "select", slot: 0, question: 0 }), null);
+  assert.equal(formationView(state, "p1").slots[0].question, formationQuestionFor(state.slots[0]).text);
+  assert.ok(formationView(state, "p1").slots.slice(1).every((slot) => slot.question === null));
+  assert.ok(formationView(state, "p2").slots.every((slot) => slot.question === null));
+  assert.equal(play(state, "p1", { action: "hint", slot: 0, question: 0, clue: 0 }), null);
+  assert.equal(formationView(state, "p2").slots[0].question, null);
+  assert.equal(formationView(state, "p2").slots[0].hints.p1, true);
+  assert.equal(play(state, "p2", { action: "hint", slot: 0, question: 0, clue: 0 }), null);
+  for (const side of ["p1", "p2"]) {
+    const view = formationView(state, side);
+    assert.equal(view.slots[0].question, formationQuestionFor(state.slots[0]).text);
+    assert.equal(view.slots[0].clues.length, 1);
+    assert.ok(view.slots.slice(1).every((slot) => slot.question === null));
+  }
+  for (const side of ["p1", "p2"]) {
+    assert.equal(play(state, side, { action: "answer", slot: 0, question: 0, answer: "wrong" }), null);
+  }
+  assert.equal(formationView(state, "p1").slots[0].clues.length, 1);
+  assert.equal(formationView(state, "p2").slots[0].question, null);
+  assert.equal(formationView(state, "p2").slots[0].hint, null);
+  assert.deepEqual(formationView(state, "p2").slots[0].clues, []);
+  for (let clue = 1; clue < 3; clue += 1) {
+    for (const side of ["p1", "p2"]) play(state, side, { action: "hint", slot: 0, question: 0, clue });
+    if (clue === 1) for (const side of ["p1", "p2"]) play(state, side, { action: "answer", slot: 0, question: 0, answer: "wrong" });
+  }
+  for (const side of ["p1", "p2"]) play(state, side, { action: "standing-vote", slot: 0, question: 0 }, 1000);
+  assert.ok(state.standing);
+  for (const side of ["p1", "p2"]) assert.ok(formationView(state, side).slots[0].question);
+  assert.equal(expireFormationStanding(state, 8000), true);
+  assert.ok(formationView(state, state.turn).slots.every((slot) => slot.question === null));
+  const local = newFormationGame("general", "local");
+  play(local, "p1", { action: "select", slot: 0, question: 0 });
+  assert.ok(formationView(local, "p2").slots[0].question, "same-device screen stays shared");
+});
+
 test("Clues need two votes for that exact question and reset on progress; solo reveals immediately", () => {
   const state = playing();
   assert.equal(play(state, "p1", { action: "hint", slot: 0, question: 0 }), null);
@@ -206,6 +278,7 @@ test("Clues need two votes for that exact question and reset on progress; solo r
   assert.equal(formationView(state, "p1").slots[0].hint, null);
   assert.match(play(state, "p1", { action: "hint", slot: 0, question: 0 }), /no longer active/);
   const solo = newFormationGame("copa", "solo");
+  play(solo, "p1", { action: "select", slot: 0, question: 0 });
   play(solo, "p1", { action: "hint", slot: 0, question: 0 });
   assert.ok(formationView(solo, "p1").slots[0].hint);
   assert.equal(formationView(solo, "p1").clueRace, null);
@@ -302,7 +375,7 @@ test("Three sequential mutual clue votes reveal only approved clues; solo reveal
   assert.match(play(state, "p1", { action: "hint", slot: 0, question: 0, clue: 1 }), /no longer active/);
   for (let clue = 0; clue < 3; clue += 1) {
     assert.equal(play(state, "p1", { action: "hint", slot: 0, question: 0, clue }), null);
-    assert.equal(formationView(state, "p2").slots[0].clues.length, clue);
+    assert.equal(formationView(state, "p2").slots[0].clues.length, 0);
     assert.match(play(state, "p1", { action: "hint", slot: 0, question: 0, clue }), /already requested/);
     assert.equal(play(state, "p2", { action: "hint", slot: 0, question: 0, clue }), null);
     assert.deepEqual(formationView(state, "p1").slots[0].clues, question.clues.slice(0, clue + 1));
@@ -317,6 +390,7 @@ test("Three sequential mutual clue votes reveal only approved clues; solo reveal
   assert.equal(formationView(state, "p1").slots[0].cluesRevealed, 0);
   assert.deepEqual(formationView(state, "p1").slots[0].clues, []);
   const solo = newFormationGame("general", "solo");
+  play(solo, "p1", { action: "select", slot: 0, question: 0 });
   for (let clue = 0; clue < 3; clue += 1) {
     assert.equal(play(solo, "p1", { action: "hint", slot: 0, question: 0, clue }), null);
     assert.equal(formationView(solo, "p1").slots[0].clues.length, clue + 1);
@@ -331,6 +405,7 @@ test("Legacy revealed-clue rooms retain their first clue and can mutually unlock
   delete slot.cluesRevealed;
   delete slot.standingVotes;
   slot.hints = { p1: true, p2: true };
+  play(state, "p1", { action: "select", slot: 0, question: 0 });
   assert.equal(formationView(state, "p1").slots[0].clues.length, 1);
   assert.equal(play(state, "p1", { action: "hint", slot: 0, question: 0, clue: 1 }), null);
   assert.equal(slot.cluesRevealed, 1);
@@ -642,6 +717,33 @@ test("Concurrent answers and stale requests can advance a shared online question
   assert.equal((await api({ ...payload, token: joined.token, revision: saved.revision, question: 1, answer: answer(saved, 0) })).status, 409);
 });
 
+test("Room API commits one selection atomically, enforces locks, and never sends the waiting player private questions", async () => {
+  const created = await api({ action: "create", comp: "general" });
+  const joined = await api({ action: "join", code: created.code });
+  const payload = { action: "select", code: created.code, token: created.token, question: 0,
+    gameId: joined.view.gameId, revision: joined.view.revision };
+  assert.equal((await api({ ...payload, token: joined.token, slot: 0 })).status, 409);
+  assert.equal((await api({ ...payload, slot: "0" })).status, 400);
+  const picks = await Promise.all([api({ ...payload, slot: 0 }), api({ ...payload, slot: 1 })]);
+  assert.deepEqual(picks.map((response) => response.status).sort(), [200, 409]);
+  const state = JSON.parse(rows.get(created.code).state);
+  const chosen = state.selectedSlot;
+  const waiting = await GET(new NextRequest(`http://localhost/api/game/formation-invasion?code=${created.code}&token=${joined.token}`));
+  const view = (await waiting.json()).view;
+  assert.equal(view.selectedSlot, chosen);
+  assert.ok(view.slots.every((slot) => slot.question === null && slot.hint === null && slot.clues.length === 0));
+  assert.equal((await api({ ...payload, slot: chosen === 0 ? 1 : 0, ...expected(state) })).status, 409);
+  assert.equal((await api({ ...payload, action: "pass", ...expected(state) })).status, 409);
+  const wrong = await api({ ...payload, action: "answer", slot: chosen, answer: "wrong", ...expected(state) });
+  assert.equal(wrong.status, 200);
+  assert.ok(wrong.view.slots.every((slot) => slot.question === null));
+  const current = JSON.parse(rows.get(created.code).state);
+  assert.equal(current.turn, "p2");
+  assert.equal(current.selectedSlot, null);
+  const next = await api({ ...payload, token: joined.token, slot: chosen === 0 ? 1 : 0, ...expected(current) });
+  assert.equal(next.status, 200);
+  assert.ok(next.view.slots[next.view.selectedSlot].question);
+});
 test("Room API resolves both-side clue races atomically, retaining simultaneous attempts after a wrong answer", async () => {
   for (const scenario of ["both-correct", "offturn-first", "first-wrong", "both-wrong"]) {
     const created = await api({ action: "create", comp: "general" });

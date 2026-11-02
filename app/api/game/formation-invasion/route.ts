@@ -32,10 +32,11 @@ function parseAction(body: Record<string, unknown>): FormationAction | null {
     if (typeof body.answer !== "string" || !body.answer.trim() || body.answer.length > 150) return null;
     return { action: body.action, answer: body.answer, deadline: body.deadline };
   }
-  if ((body.action !== "answer" && body.action !== "hint" && body.action !== "standing-vote") ||
+  if ((body.action !== "answer" && body.action !== "hint" && body.action !== "standing-vote" && body.action !== "select") ||
     !Number.isInteger(body.slot) || typeof body.slot !== "number" || body.slot < 0 || body.slot > 10 ||
     !Number.isInteger(body.question) || typeof body.question !== "number" || body.question < 0 || body.question > 2) return null;
   if (body.action === "standing-vote") return { action: body.action, slot: body.slot, question: body.question };
+  if (body.action === "select") return { action: body.action, slot: body.slot, question: body.question };
   if (body.action === "hint") {
     if (body.clue !== undefined && (typeof body.clue !== "number" || !Number.isInteger(body.clue) || body.clue < 0 || body.clue > 2)) return null;
     return { action: "hint", slot: body.slot, question: body.question,
