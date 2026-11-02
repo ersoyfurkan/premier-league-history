@@ -2,7 +2,7 @@ import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { NextRequest, NextResponse } from "next/server";
 import {
   applyFormationAction, formationSideOf, formationView, isFormationComp,
-  joinFormationGame, newFormationGame, type FormationAction, type FormationState,
+  joinFormationGame, newFormationGame, isFormationRaceAnswer, type FormationAction, type FormationState,
 } from "@/lib/formationInvasion";
 
 const ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -93,8 +93,17 @@ async function post(request: NextRequest) {
   if (error) return json({ error, view: formationView(state, side) }, 409);
   if (!await save(db, code, state, version)) {
     const latest = await load(db, code);
+    // A competing wrong race answer must not discard the other player's simultaneous attempt.
+    const expected = { gameId: body.gameId, revision: body.revision };
+    if (latest && isFormationRaceAnswer(latest.state, side, action, expected)) {
+      const retryError = applyFormationAction(latest.state, side, action, expected);
+      if (!retryError && await save(db, code, latest.state, latest.version)) {
+        return json({ view: formationView(latest.state, side) });
+      }
+    }
+    const current = await load(db, code);
     return json({ error: "The game changed. Check the current question before trying again.",
-      ...(latest ? { view: formationView(latest.state, side) } : {}) }, 409);
+      ...(current ? { view: formationView(current.state, side) } : {}) }, 409);
   }
   return json({ view: formationView(state, side) });
 }

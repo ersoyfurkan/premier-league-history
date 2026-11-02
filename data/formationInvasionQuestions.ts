@@ -1,6 +1,6 @@
 import type { FormationQuestion } from "@/data/formationInvasion";
 
-const q = (text: string, answers: string[], hint: string): FormationQuestion => ({ text, answers, hint });
+const q = (text: string, answers: string[], hint: string): FormationQuestion => ({ text, answers, hint, difficulty: "easy" });
 
 // Original career questions; each player's biography source is recorded in formationInvasion.ts.
 export const EXTRA_FORMATION_QUESTIONS: Record<string, [FormationQuestion, FormationQuestion, FormationQuestion]> = {

@@ -1,8 +1,9 @@
 import type { Competition } from "@/lib/competitions";
 import { EXTRA_FORMATION_QUESTIONS } from "@/data/formationInvasionQuestions";
+import { ADDITIONAL_FORMATION_QUESTIONS, LEGACY_FORMATION_DIFFICULTIES } from "@/data/formationInvasionExpansion";
 
 export type FormationPosition = "GK" | "LB" | "CB" | "RB" | "CM" | "DM" | "LW" | "ST" | "RW";
-export type FormationQuestion = { text: string; answers: string[]; hint: string };
+export type FormationQuestion = { text: string; answers: string[]; hint: string; difficulty: "easy" | "medium" | "hard" };
 export type FormationPlayer = {
   id: string;
   name: string;
@@ -12,12 +13,18 @@ export type FormationPlayer = {
   questions: FormationQuestion[];
 };
 
-const q = (text: string, answers: string[], hint: string): FormationQuestion => ({ text, answers, hint });
+const q = (text: string, answers: string[], hint: string): FormationQuestion => ({ text, answers, hint, difficulty: "easy" });
 const p = (
   id: string, name: string, positions: FormationPosition[], competitions: Competition[],
   article: string, questions: [FormationQuestion, FormationQuestion, FormationQuestion],
 ): FormationPlayer => ({
-  id, name, positions, competitions, questions: [...questions, ...EXTRA_FORMATION_QUESTIONS[id]],
+  id, name, positions, competitions,
+  questions: [
+    ...[...questions, ...EXTRA_FORMATION_QUESTIONS[id]].map((question, index) => ({
+      ...question, difficulty: LEGACY_FORMATION_DIFFICULTIES[id][index],
+    })),
+    ...ADDITIONAL_FORMATION_QUESTIONS[id],
+  ],
   source: `https://en.wikipedia.org/wiki/${article}`,
 });
 

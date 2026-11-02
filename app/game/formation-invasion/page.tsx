@@ -39,11 +39,12 @@ function Rules() {
     <details className="mt-5 rounded-xl border border-border bg-surface/80 p-4 text-sm">
       <summary className="cursor-pointer font-bold">How to play</summary>
       <ul className="mt-3 list-disc space-y-2 pl-5 text-fore-muted">
-        <li>Pick any unlocked footballer in the 4-3-3. Each gets three random career questions at the start; they stay fixed and shared for this match.</li>
+        <li>Pick any unlocked footballer in the 4-3-3. Their three career questions progress from easy to medium to hard, randomly chosen and fixed for this match.</li>
         <li>A correct answer advances that footballer and keeps your turn. Continue with them or choose someone else.</li>
         <li>A wrong answer passes the turn without resetting progress. Your opponent can finish your work.</li>
         <li>Whoever answers question 3 claims the footballer permanently. Own six of the eleven to win.</li>
-        <li>Both players must request a clue for that same question to reveal it. Clues do not reveal the full answer or cost a turn.</li>
+        <li>Both players must request a clue for that same question. This starts a race: one attempt each, and the first correct answer advances progress and takes the turn. Question 3 still claims the footballer.</li>
+        <li>During a clue race, finish that question before switching or passing. If both answers are wrong, normal turns resume with the original player and the clue remains visible.</li>
         <li>You can pass your turn. In solo practice, mistakes are counted; claim six without an opponent and reveal clues immediately.</li>
         <li>Lineups use well-known players active this century with senior appearances in this competition. Questions cover their wider careers.</li>
       </ul>
@@ -55,15 +56,20 @@ function QuestionPanel({ view, index, busy, act }: {
   view: FormationView; index: number; busy: boolean;
   act: (action: FormationAction, side?: FormationSide) => Promise<void>;
 }) {
-  const [answer, setAnswer] = useState("");
+  const [answers, setAnswers] = useState({ p1: "", p2: "" });
   const slot = view.slots[index];
-  const canAnswer = view.phase === "playing" && (view.mode !== "online" || view.you === view.turn);
+  const race = view.clueRace;
+  const raceHere = race?.slot === index;
+  const answeringSides: FormationSide[] = view.mode === "local" && raceHere ? ["p1", "p2"]
+    : [view.mode === "online" ? view.you : view.turn];
+  const canAnswer = (side: FormationSide) => view.phase === "playing" &&
+    (race ? raceHere && !race.attempted[side] : side === view.turn);
   const voters: FormationSide[] = view.mode === "local" ? ["p1", "p2"] : [view.you];
-  const submit = async (event: FormEvent) => {
+  const submit = async (event: FormEvent, side: FormationSide) => {
     event.preventDefault();
-    if (!answer.trim() || !canAnswer || busy) return;
-    await act({ action: "answer", slot: index, question: slot.progress, answer });
-    setAnswer("");
+    if (!answers[side].trim() || !canAnswer(side) || busy) return;
+    await act({ action: "answer", slot: index, question: slot.progress, answer: answers[side] }, side);
+    setAnswers((current) => ({ ...current, [side]: "" }));
   };
   return (
     <div className="rounded-2xl border border-primary/30 bg-surface p-5 md:p-6">
@@ -74,18 +80,24 @@ function QuestionPanel({ view, index, busy, act }: {
       ) : (
         <>
           <p className="mt-4 text-lg font-semibold leading-relaxed" data-testid="formation-question">{slot.question}</p>
-          {view.phase === "playing" && (
-            <form onSubmit={submit} className="mt-5 space-y-3">
-              <label htmlFor="formation-answer" className="block text-sm text-fore-muted">
-                {canAnswer ? view.mode === "solo" ? "Your answer" : `${formationSideLabel(view.turn)}'s answer` : "Your opponent is answering"}
+          {raceHere && <p className="mt-4 font-bold text-warning">Clue race: first correct answer takes the turn. One attempt each.</p>}
+          {race && !raceHere && <p className="mt-4 text-warning">Finish the clue race on {view.slots[race.slot].name} first.</p>}
+          {view.phase === "playing" && answeringSides.map((side) => (
+            <form key={side} onSubmit={(event) => void submit(event, side)} className="mt-5 space-y-3">
+              <label htmlFor={raceHere ? `formation-answer-${side}` : "formation-answer"} className="block text-sm text-fore-muted">
+                {raceHere && race.attempted[side] ? `${formationSideLabel(side)}: attempt used`
+                  : canAnswer(side) ? view.mode === "solo" ? "Your answer" : `${formationSideLabel(side)}'s answer` : "Your opponent is answering"}
               </label>
-              <input id="formation-answer" value={answer} onChange={(event) => setAnswer(event.target.value)}
-                disabled={!canAnswer || busy} maxLength={150} autoComplete="off"
+              <input id={raceHere ? `formation-answer-${side}` : "formation-answer"} value={answers[side]}
+                onChange={(event) => setAnswers((current) => ({ ...current, [side]: event.target.value }))}
+                disabled={!canAnswer(side) || busy} maxLength={150} autoComplete="off"
                 placeholder="Type your answer..."
                 className="w-full rounded-xl border border-border bg-background px-4 py-3 text-base disabled:opacity-50" />
-              <button type="submit" className="btn-primary w-full" disabled={!canAnswer || busy || !answer.trim()}>Submit answer</button>
+              <button type="submit" className="btn-primary w-full" disabled={!canAnswer(side) || busy || !answers[side].trim()}>
+                {view.mode === "local" && raceHere ? `${formationSideLabel(side)}: Submit answer` : "Submit answer"}
+              </button>
             </form>
-          )}
+          ))}
           {slot.hint ? (
             <p role="note" className="mt-4 rounded-xl border border-warning/40 bg-warning/10 p-4 text-sm">
               <strong>Clue:</strong> {slot.hint}
@@ -96,7 +108,7 @@ function QuestionPanel({ view, index, busy, act }: {
               <div className="flex flex-wrap gap-2">
                 {voters.map((side) => (
                   <button type="button" key={side} className="btn-ghost text-sm"
-                    disabled={busy || slot.hints[side]}
+                    disabled={busy || slot.hints[side] || Boolean(race)}
                     onClick={() => void act({ action: "hint", slot: index, question: slot.progress }, side)}>
                     {view.mode === "solo" ? "Reveal clue" : `${formationSideLabel(side)}: ${slot.hints[side] ? "Clue requested" : "Request clue"}`}
                   </button>
@@ -224,7 +236,8 @@ function FormationClient({ comp, code }: { comp: Competition; code: string }) {
     await navigator.clipboard.writeText(`${window.location.origin}/game/formation-invasion?comp=${activeComp}&code=${code}`);
     setCopied(true);
   });
-  const chosen = selected === null ? null : view?.slots[selected];
+  const activeSelection = view?.clueRace?.slot ?? selected;
+  const chosen = activeSelection === null ? null : view?.slots[activeSelection];
 
   return (
     <Shell comp={activeComp}>
@@ -285,6 +298,7 @@ function FormationClient({ comp, code }: { comp: Competition; code: string }) {
             {view.mode !== "solo" && <p className="font-bold text-fuchsia-300">Player 2: {view.scores.p2}/6</p>}
             <p className={`font-bold ${sideColor(view.turn)}`}>
               {view.phase === "finished" ? view.mode === "solo" ? "Practice complete!" : `${formationSideLabel(view.winner!)} wins!`
+                : view.clueRace ? "Shared-clue race: both players can answer"
                 : view.mode === "solo" ? "Solo practice" : `${formationSideLabel(view.turn)}'s turn${code ? ` (you: ${formationSideLabel(view.you)})` : ""}`}
             </p>
           </div>
@@ -301,7 +315,7 @@ function FormationClient({ comp, code }: { comp: Competition; code: string }) {
               {view.slots.map((slot, index) => (
                 <button type="button" key={slot.playerId} data-testid={`formation-slot-${index}`}
                   aria-label={`${slot.name}, ${slot.position}, ${slot.owner ? `claimed by ${formationSideLabel(slot.owner)}` : `${slot.progress} of 3 completed`}`}
-                  aria-pressed={selected === index} disabled={busy}
+                  aria-pressed={activeSelection === index} disabled={busy || Boolean(view.clueRace && view.clueRace.slot !== index)}
                   onClick={() => {
                     setSelected(index);
                     if (window.matchMedia("(max-width: 1023px)").matches) panel.current?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -321,8 +335,8 @@ function FormationClient({ comp, code }: { comp: Competition; code: string }) {
             </div>
             <div ref={panel} className="scroll-mt-24 space-y-4">
               <button type="button" className="btn-ghost lg:hidden" onClick={() => pitch.current?.scrollIntoView({ behavior: "smooth", block: "start" })}>Choose a player on the pitch</button>
-              {chosen && selected !== null ? (
-                <QuestionPanel key={`${view.gameId}:${selected}:${chosen.progress}:${view.turn}`} view={view} index={selected} busy={busy} act={act} />
+              {chosen && activeSelection !== null ? (
+                <QuestionPanel key={`${view.gameId}:${activeSelection}:${chosen.progress}:${view.turn}:${Boolean(view.clueRace)}`} view={view} index={activeSelection} busy={busy} act={act} />
               ) : (
                 <div className="data-card p-6">
                   <h2 className="text-xl font-bold">Choose your target</h2>
@@ -334,7 +348,7 @@ function FormationClient({ comp, code }: { comp: Competition; code: string }) {
                 Mistakes: {view.mode === "solo" ? view.mistakes.p1 : `P1 ${view.mistakes.p1} / P2 ${view.mistakes.p2}`}
               </p>
               {view.phase === "playing" && view.mode !== "solo" && (
-                <button type="button" className="btn-ghost" disabled={busy || (view.mode === "online" && view.you !== view.turn)}
+                <button type="button" className="btn-ghost" disabled={busy || Boolean(view.clueRace) || (view.mode === "online" && view.you !== view.turn)}
                   onClick={() => void act({ action: "pass" })}>Pass turn</button>
               )}
               {view.phase === "finished" && (
