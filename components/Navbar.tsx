@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { LEAGUE_META, isEspnComp } from "@/lib/leagues";
+import { TOURNAMENTS, tournamentForPath } from "@/lib/tournaments";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -18,10 +19,18 @@ export default function Navbar() {
   const sectionComp = (Object.keys(LEAGUE_META) as (keyof typeof LEAGUE_META)[]).find(
     (key) => pathname === LEAGUE_META[key].home || pathname.startsWith(`${LEAGUE_META[key].home}/`) || (isEspnComp(compParam) && compParam === key),
   );
+  const tournamentKey = tournamentForPath(pathname);
+  const tournament = tournamentKey ? TOURNAMENTS[tournamentKey] : undefined;
   const links =
     pathname === "/"
       ? []
-      : sectionComp
+      : tournament
+        ? [
+            { href: "/", label: "Home" },
+            { href: tournament.home, label: tournament.label },
+            { href: tournament.game, label: "Game" },
+          ]
+        : sectionComp
         ? [
             { href: "/", label: "Home" },
             { href: LEAGUE_META[sectionComp].home, label: LEAGUE_META[sectionComp].label },
@@ -42,7 +51,7 @@ export default function Navbar() {
   ];
 
   const isActive = (href: string) =>
-    href === "/" || href === "/champions-league" || Object.values(LEAGUE_META).some((meta) => meta.home === href)
+    href === "/" || href === "/champions-league" || Object.values(LEAGUE_META).some((meta) => meta.home === href) || Object.values(TOURNAMENTS).some((meta) => meta.home === href)
       ? pathname === href
       : pathname === href || pathname.startsWith(`${href}/`);
 

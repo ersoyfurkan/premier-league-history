@@ -7,6 +7,7 @@ import UclImage from "@/components/UclImage";
 import { playerFaceUrl } from "@/data/playerFaces";
 import type { Comp, EventKind, LineupPlayer, MatchDetail, MatchEvent, Side, TeamDetail } from "@/lib/matchDetail";
 import { LEAGUE_META } from "@/lib/leagues";
+import { TOURNAMENTS, isTournament } from "@/lib/tournaments";
 
 type Tab = "timeline" | "lineups" | "stats";
 
@@ -312,13 +313,13 @@ export default function MatchCenter({ comp, id }: { comp: Comp; id: string }) {
 
   const activeTab: Tab = tab ?? (match?.status === "upcoming" ? "lineups" : "timeline");
   const back =
-    comp === "ucl" ? "/champions-league" : comp === "pl" ? "/premier-league" : LEAGUE_META[comp].home;
+    comp === "ucl" ? "/champions-league" : comp === "pl" ? "/premier-league" : isTournament(comp) ? TOURNAMENTS[comp].home : LEAGUE_META[comp].home;
 
   return (
     <main className="min-h-screen bg-background px-5 pb-12 pt-24 text-foreground grid-bg md:px-8">
       <section className="mx-auto w-full max-w-5xl space-y-6">
         <Link href={back} className="font-mono text-[11px] uppercase tracking-[0.14em] text-primary hover:text-accent">
-          ← {comp === "ucl" ? "Champions League" : comp === "pl" ? "Premier League" : LEAGUE_META[comp].label}
+          ← {comp === "ucl" ? "Champions League" : comp === "pl" ? "Premier League" : isTournament(comp) ? TOURNAMENTS[comp].label : LEAGUE_META[comp].label}
         </Link>
 
         {!match ? (

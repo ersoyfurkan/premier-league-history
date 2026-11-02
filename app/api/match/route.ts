@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
-import { fetchEspnLeagueMatch } from "@/lib/espn";
+import { fetchEspnLeagueMatch, fetchTournamentMatch } from "@/lib/espn";
 import { isEspnComp } from "@/lib/leagues";
+import { isTournament } from "@/lib/tournaments";
 import { fetchPlMatch, fetchUclMatch } from "@/lib/matchDetail";
 
 export async function GET(request: NextRequest) {
   const comp = request.nextUrl.searchParams.get("comp");
   const id = request.nextUrl.searchParams.get("id") ?? "";
 
-  if ((comp !== "pl" && comp !== "ucl" && !isEspnComp(comp)) || !/^\d{1,10}$/.test(id)) {
+  if ((comp !== "pl" && comp !== "ucl" && !isEspnComp(comp) && !isTournament(comp)) || !/^\d{1,10}$/.test(id)) {
     return NextResponse.json({ error: "Invalid match." }, { status: 400 });
   }
 
@@ -15,9 +16,11 @@ export async function GET(request: NextRequest) {
     const match =
       comp === "ucl"
         ? await fetchUclMatch(id)
-        : isEspnComp(comp)
-          ? await fetchEspnLeagueMatch(id, comp)
-          : await fetchPlMatch(id);
+        : isTournament(comp)
+          ? await fetchTournamentMatch(id, comp)
+          : isEspnComp(comp)
+            ? await fetchEspnLeagueMatch(id, comp)
+            : await fetchPlMatch(id);
     return NextResponse.json(match, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
     console.error("Match request failed", error);

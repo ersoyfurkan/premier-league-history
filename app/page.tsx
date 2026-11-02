@@ -126,6 +126,60 @@ const competitions = [
       />
     ),
   },
+  {
+    name: "FIFA World Cup",
+    eyebrow: "World · since 1930",
+    description:
+      "Follow the tournament groups, knockout fixtures and live scores, qualifiers, every past final, all-time records and the World Cup mini-games.",
+    href: "/world-cup",
+    accent: "text-warning",
+    border: "border-warning/25 hover:border-warning/60",
+    glow: "glow-orb-violet",
+    mark: (
+      <span
+        role="img"
+        aria-label="World Cup logo"
+        className="h-20 w-20 bg-contain bg-center bg-no-repeat"
+        style={{ backgroundImage: "url(https://a.espncdn.com/i/leaguelogos/soccer/500/4.png)" }}
+      />
+    ),
+  },
+  {
+    name: "UEFA Euros",
+    eyebrow: "Europe · since 1960",
+    description:
+      "Follow the tournament groups, knockout fixtures and live scores, qualifiers, every past final, all-time records and the Euros mini-games.",
+    href: "/euros",
+    accent: "text-primary",
+    border: "border-primary/25 hover:border-primary/60",
+    glow: "glow-orb-cyan",
+    mark: (
+      <span
+        role="img"
+        aria-label="Euros logo"
+        className="h-20 w-20 bg-contain bg-center bg-no-repeat"
+        style={{ backgroundImage: "url(https://a.espncdn.com/i/leaguelogos/soccer/500/74.png)" }}
+      />
+    ),
+  },
+  {
+    name: "Copa América",
+    eyebrow: "South America · since 1916",
+    description:
+      "Follow the tournament groups, knockout fixtures and live scores, every past final, all-time records and the Copa América mini-games.",
+    href: "/copa-america",
+    accent: "text-success",
+    border: "border-success/25 hover:border-success/60",
+    glow: "glow-orb-purple",
+    mark: (
+      <span
+        role="img"
+        aria-label="Copa América logo"
+        className="h-20 w-20 bg-contain bg-center bg-no-repeat"
+        style={{ backgroundImage: "url(https://a.espncdn.com/i/leaguelogos/soccer/500/83.png)" }}
+      />
+    ),
+  },
 ];
 
 export default function Home() {
