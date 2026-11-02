@@ -7,6 +7,7 @@ import { Suspense, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import type { PlayerCard } from "@/data/players";
 import { lobbyFor, parseComp, poolFor } from "@/lib/gameRoom";
+import { isTournamentComp } from "@/lib/competitions";
 
 type StatKey = "appearances" | "goals" | "assists";
 type Side = "p1" | "p2";
@@ -213,7 +214,7 @@ function GamePlayClient() {
               </div>
               {p1Card ? (
                 <div className="mt-6 space-y-4 font-mono text-lg md:text-2xl">
-                  <CardFace card={p1Card} />
+                  <CardFace card={p1Card} nation={isTournamentComp(comp)} />
                   <p className="text-primary uppercase tracking-[0.08em]">{p1Card.name}</p>
                   <p>Appearances: {p1Card.appearances}</p>
                   <p>Goals: {p1Card.goals}</p>
@@ -230,7 +231,7 @@ function GamePlayClient() {
               </div>
               {roundResolved && p2Card ? (
                 <div className="mt-6 space-y-4 font-mono text-lg md:text-2xl">
-                  <CardFace card={p2Card} />
+                  <CardFace card={p2Card} nation={isTournamentComp(comp)} />
                   <p className="text-primary uppercase tracking-[0.08em]">{p2Card.name}</p>
                   <p>Appearances: {p2Card.appearances}</p>
                   <p>Goals: {p2Card.goals}</p>

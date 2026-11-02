@@ -22,6 +22,7 @@ type PathState = {
   phase: "waiting" | "roll" | "play" | "result" | "finished";
   board: string[];
   shorts: string[];
+  logos?: string[][];
   pos: Record<Side, number>;
   turns: Record<Side, number>;
   turn: Side;
@@ -132,6 +133,7 @@ function view(state: PathState, side: Side, now: number) {
     phase: state.phase,
     opponentJoined: Boolean(state.p2Token),
     shorts: state.shorts,
+    logos: state.logos ?? state.shorts.map(() => []),
     pos: state.pos,
     turns: state.turns,
     turn: state.turn,
@@ -183,7 +185,8 @@ function freshState(comp: Competition, p1Token: string): PathState {
     p1Token,
     phase: "waiting",
     board,
-    shorts: board.map((id) => tileById(comp, id)?.short ?? "Trivia"),
+    shorts: board.map((id) => tileById(comp, id)?.short ?? "Football question"),
+    logos: board.map((id) => tileById(comp, id)?.logos ?? []),
     pos: { p1: 0, p2: 0 },
     turns: { p1: 0, p2: 0 },
     turn: "p1",

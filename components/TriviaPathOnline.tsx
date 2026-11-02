@@ -14,6 +14,7 @@ type PathView = {
   phase: "waiting" | "roll" | "play" | "result" | "finished";
   opponentJoined: boolean;
   shorts: string[];
+  logos?: string[][];
   pos: Record<Side, number>;
   turns: Record<Side, number>;
   turn: Side;
@@ -202,12 +203,18 @@ export default function TriviaPathOnline({ comp, code }: { comp: Competition; co
             {view.shorts.map((short, i) => (
               <div
                 key={i}
-                className={`relative flex min-h-20 flex-col justify-between rounded-xl border p-2 text-xs ${
+                className={`relative flex min-h-24 flex-col justify-between rounded-xl border p-2 text-xs ${
                   view.phase === "play" && view.dice && i === view.target - 1 ? "border-accent bg-accent/10" : "border-line bg-background/60"
                 }`}
               >
                 <span className="font-mono text-fore-muted">{i + 1}{i === view.boardSize - 1 ? " 🏁" : ""}</span>
-                <span className="line-clamp-2 leading-tight">{short}</span>
+                <div className="flex gap-1">
+                  {(view.logos?.[i] ?? []).slice(0, 2).map((src) => (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img key={src} src={src} alt="" className="h-5 w-5 object-contain" onError={(e) => (e.currentTarget.style.display = "none")} />
+                  ))}
+                </div>
+                <span className="text-[11px] leading-tight">{short}</span>
                 <div className="absolute -top-2 right-1 flex gap-1">
                   {(["p1", "p2"] as Side[]).map((side) =>
                     view.pos[side] === i + 1 ? (

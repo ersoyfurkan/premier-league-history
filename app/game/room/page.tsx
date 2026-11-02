@@ -17,13 +17,13 @@ type Api = { error?: string; token?: string; view?: RoomView };
 
 type Card = { id?: string; name: string; appearances: number; goals: number; assists: number; photo?: string; club?: string; clubId?: string };
 
-function CardPanel({ title, card, hiddenText }: { title: string; card: Card | null; hiddenText: string }) {
+function CardPanel({ title, card, hiddenText, nation }: { title: string; card: Card | null; hiddenText: string; nation?: boolean }) {
   return (
     <div className="cyber-card p-6 md:p-8">
       <h2 className="text-3xl md:text-5xl">{title}</h2>
       {card ? (
         <div className="mt-6 space-y-4 font-mono text-lg md:text-2xl">
-          <CardFace card={card} />
+          <CardFace card={card} nation={nation} />
           <p className="text-primary uppercase tracking-[0.08em]">{card.name}</p>
           <p>Appearances: {card.appearances}</p>
           <p>Goals: {card.goals}</p>
@@ -261,8 +261,8 @@ function RoomClient() {
 
       {view.phase !== "waiting" && (
         <div className="mt-6 grid gap-5 xl:grid-cols-2">
-          <CardPanel title="Your Card" card={view.yourCard} hiddenText="Card hidden." />
-          <CardPanel title="Friend's Card" card={view.opponentCard} hiddenText="Hidden until the round ends." />
+          <CardPanel title="Your Card" card={view.yourCard} hiddenText="Card hidden." nation={isTournamentComp(view.comp)} />
+          <CardPanel title="Friend's Card" card={view.opponentCard} hiddenText="Hidden until the round ends." nation={isTournamentComp(view.comp)} />
         </div>
       )}
 

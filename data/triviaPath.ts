@@ -6,6 +6,13 @@ import { BUNDESLIGA_TRIVIA } from "@/data/bundesligaContent";
 import { LIGUE1_TRIVIA } from "@/data/ligue1Content";
 import { SUPERLIG_TRIVIA } from "@/data/superligContent";
 import { liveTriviaCategories, wikiTriviaCategories, mergeWikiNames } from "@/data/liveTrivia";
+import { PLAYERS, type PlayerCard } from "@/data/players";
+import { UCL_CARDS } from "@/data/uclCards";
+import { LALIGA_CARDS } from "@/data/laLigaCards";
+import { SERIEA_CARDS } from "@/data/serieACards";
+import { BUNDESLIGA_CARDS } from "@/data/bundesligaCards";
+import { LIGUE1_CARDS } from "@/data/ligue1Cards";
+import { SUPERLIG_CARDS } from "@/data/superligCards";
 
 export type TriviaEntry = { name: string; aliases: string[] };
 export type TriviaQuestion = { id: string; text: string; count: number; noun: string; plural: string; entries: TriviaEntry[]; short?: string };
@@ -151,11 +158,9 @@ STATIC.superlig = newLeagueStatic(SUPERLIG_TRIVIA);
 for (const comp of ["pl", "laliga", "seriea", "ucl"] as const) {
   STATIC[comp].push(...LEAGUE_EXTRA[comp]);
 }
-const LIVE_SHORT: Record<string, string> = {};
 for (const comp of ["pl", "laliga", "seriea", "bundesliga", "ligue1", "superlig", "ucl"] as const) {
   for (const item of [...liveTriviaCategories(comp), ...wikiTriviaCategories(comp)]) {
-    STATIC[comp].push({ id: item.id, noun: item.noun, plural: item.plural, entries: item.entries });
-    LIVE_SHORT[item.id] = item.short;
+    STATIC[comp].push({ id: `${item.id}:${comp}`, noun: item.noun, plural: item.plural, entries: item.entries });
   }
 }
 // General football / international trivia belongs to the Champions League; domestic leagues keep their own content.
@@ -172,7 +177,6 @@ for (const comp of REAL_COMPETITIONS) {
 
 // General mode: every competition's categories (de-duplicated) plus the international tournaments.
 const TOURNAMENT_CATEGORIES = tournamentTriviaCategories();
-for (const item of TOURNAMENT_CATEGORIES) LIVE_SHORT[item.id] = item.short;
 for (const comp of TOURNAMENT_COMPETITIONS) {
   STATIC[comp] = [
     ...TOURNAMENT_TRIVIA[comp],
@@ -180,7 +184,12 @@ for (const comp of TOURNAMENT_COMPETITIONS) {
     ...(comp === "worldcup" ? [{ id: "s-wc", noun: "nation that has won the World Cup", plural: "nations that have won the World Cup", entries: WC_NATIONS }] : []),
   ];
 }
-STATIC.general = [...new Map([...REAL_COMPETITIONS.flatMap((comp) => STATIC[comp]), ...TOURNAMENT_CATEGORIES].map((item) => [item.id, item])).values()];
+STATIC.general = [...new Map([...REAL_COMPETITIONS.filter((comp) => comp !== "superlig").flatMap((comp) => STATIC[comp]), ...TOURNAMENT_CATEGORIES].map((item) => [item.id, item])).values()];
+
+// General mode drops the Süper Lig clubs; every other competition uses its own club list.
+const TURKISH_CLUB_KEYS = new Set(DUEL_CLUBS.superlig.map((club) => club.key));
+const triviaClubs = (comp: Competition) => (comp === "general" ? DUEL_CLUBS.general.filter((club) => !TURKISH_CLUB_KEYS.has(club.key)) : DUEL_CLUBS[comp]);
+const scopeName = (comp: Competition) => (isTournamentComp(comp) || comp === "general" ? "Europe's top leagues" : COMPETITION_LABELS[comp].replace(" McDonald's", ""));
 
 const CLUB_ALIASES: Record<string, string[]> = {
   mun: ["Man United", "Man Utd", "Manchester Utd"],
@@ -206,7 +215,7 @@ function leagueClubCategory(comp: Competition): Category {
     id: "s-clubs",
     noun: `club in the ${names} this season`,
     plural: `clubs in the ${names} this season`,
-    entries: DUEL_CLUBS[comp].map((club) => e(club.label, ...(CLUB_ALIASES[club.key] ?? []))),
+    entries: triviaClubs(comp).map((club) => e(club.label, ...(CLUB_ALIASES[club.key] ?? []))),
   };
 }
 
@@ -219,7 +228,7 @@ export function rollDice() {
 
 export const BOARD_SIZE = 16;
 
-export type BoardTile = { id: string; short: string; noun: string; plural: string; entries: TriviaEntry[] };
+export type BoardTile = { id: string; short: string; noun: string; plural: string; entries: TriviaEntry[]; logos: string[] };
 
 export const tileQuestion = (tile: BoardTile, count: number) =>
   `Name ${WORDS[count]} ${count === 1 ? tile.noun : tile.plural}`;
@@ -227,51 +236,46 @@ export const tileQuestion = (tile: BoardTile, count: number) =>
 // How many answers a roll really demands: never more than the tile can reasonably supply.
 export const answersFor = (tile: BoardTile, roll: number) => Math.max(1, Math.min(roll, tile.entries.length - 2));
 
-const SHORT: Record<string, string> = {
-  ...LIVE_SHORT,
-  "s-ballon": "Ballon d'Or",
-  "s-wc": "World Cup nations",
-  "s-plmgr": "PL managers",
-  "s-plstad": "Stadiums",
-  "s-llstad": "Stadiums",
-  "s-sastad": "Stadiums",
-  "s-uclstad": "Stadiums",
-  "s-scotstad": "Scottish stadiums",
-  "s-clwin": "UCL winners",
-  "s-clubs": "League clubs",
-  "s-wchost": "WC hosts",
-  "s-wcball": "WC Golden Ball",
-  "s-wcboot": "WC Golden Boot",
-  "s-wccapt": "WC captains",
-  "s-wcgk": "WC keepers",
-  "s-ballonfw": "Madrid/Barça Ballon d'Or",
-  "s-pllondon": "London clubs",
-  "s-plnw": "North West clubs",
-  "s-uclfinallost": "Final losers",
-  "s-uclpens": "Penalty winners",
-  "s-euro": "Euro winners",
-  "s-wcfinal": "WC final scorers",
-  "s-clmgr": "UCL managers",
-  "s-clmulti": "Double UCL winners",
-  "s-plgb": "Golden Boot",
-  "s-plclub": "PL champions",
-  "s-plrel": "Relegated clubs",
-  "s-plinv": "Invincibles",
-  "s-plcapt": "Title captains",
-  "s-plmun7": "United No. 7",
-  "s-llclub": "Liga champions",
-  "s-ll2010": "Spain 2010",
-  "s-llpich": "Pichichi",
-  "s-llmasia": "La Masia",
-  "s-llspmgr": "Spanish managers",
-  "s-lleuro": "Euro trophies",
-  "s-saclub": "Scudetto clubs",
-  "s-sacap": "Capocannoniere",
-  "s-sagk": "Serie A keepers",
-  "s-sajuve": "Juve foreigners",
-  "s-sadef": "Defenders",
-  "s-uclscorers": "UCL scorers",
+const capitalize = (text: string) => text.charAt(0).toUpperCase() + text.slice(1);
+
+const LEAGUE_LOGO_IDS: Partial<Record<Competition, number>> = {
+  pl: 23, laliga: 15, seriea: 12, bundesliga: 10, ligue1: 9, superlig: 18, ucl: 2, worldcup: 4, euros: 74, copa: 83,
 };
+const competitionLogo = (comp: Competition) => (LEAGUE_LOGO_IDS[comp] ? `https://a.espncdn.com/i/leaguelogos/soccer/500/${LEAGUE_LOGO_IDS[comp]}.png` : undefined);
+
+// Static categories belong to a competition by id prefix; the logo shown on the tile follows that.
+function staticLogoOwner(id: string, comp: Competition): Competition | null {
+  if (id.includes("ucl")) return "ucl";
+  const live = id.match(/:(\w+)$/);
+  if (live) return live[1] as Competition;
+  if (/^s-(t-)?wc/.test(id)) return "worldcup";
+  if (/^s-(t-euro|euro)/.test(id)) return "euros";
+  if (id.startsWith("s-t-copa")) return "copa";
+  if (/^s-(ucl|cl)/.test(id)) return "ucl";
+  if (/^s-pl/.test(id)) return "pl";
+  if (/^s-ll/.test(id)) return "laliga";
+  if (/^s-sa/.test(id)) return "seriea";
+  if (id.startsWith("s-bl-")) return "bundesliga";
+  if (id.startsWith("s-l1-")) return "ligue1";
+  if (id.startsWith("s-sl-")) return "superlig";
+  if (id.startsWith("s-ballon")) return null;
+  return comp === "general" ? null : comp;
+}
+
+function logosFor(comp: Competition, id: string): string[] {
+  const clubs = triviaClubs(comp);
+  const badge = (key?: string) => clubs.find((club) => club.key === key)?.badge;
+  const [kind, a, b] = id.split("-");
+  let logos: (string | undefined)[];
+  if (kind === "c") logos = [badge(id.slice(2))];
+  else if (kind === "p") logos = [badge(a), badge(b)];
+  else if (kind === "n" || kind === "h") logos = [badge(b ?? a)];
+  else if (kind === "s") {
+    const owner = staticLogoOwner(id, comp);
+    logos = [owner ? competitionLogo(owner) : undefined];
+  } else logos = [competitionLogo(comp)];
+  return logos.filter((logo): logo is string => Boolean(logo));
+}
 
 const NATIONS: Record<string, string> = {
   esp: "Spanish", fra: "French", bra: "Brazilian", arg: "Argentine", por: "Portuguese", eng: "English", ned: "Dutch",
@@ -282,12 +286,14 @@ const NATIONS: Record<string, string> = {
 
 // Questions built from the career dataset, so any player in it is a valid answer.
 function dynamicById(comp: Competition, id: string): Category | null {
-  const clubs = DUEL_CLUBS[comp];
+  const clubs = triviaClubs(comp);
   const facts = footballFacts(comp);
   const leagueKeys = new Set(clubs.map((club) => club.key));
   const names = (items: typeof facts) => playerEntries(items.map((fact) => fact.name));
+  const scope = scopeName(comp);
   const [kind, a, b] = id.split("-");
 
+  if (kind === "st") return statCategory(comp, id, a, Number(b));
   if (kind === "n") {
     const club = clubs.find((item) => item.key === b);
     if (!club || !NATIONS[a]) return null;
@@ -295,7 +301,7 @@ function dynamicById(comp: Competition, id: string): Category | null {
     if (pool.length < 7) return null;
     return {
       id,
-      short: `${NATIONS[a]} at ${club.label}`,
+      short: "",
       noun: `${NATIONS[a]} player who played for ${club.label}`,
       plural: `${NATIONS[a]} players who played for ${club.label}`,
       entries: names(pool),
@@ -307,9 +313,9 @@ function dynamicById(comp: Competition, id: string): Category | null {
     if (pool.length < 10) return null;
     return {
       id,
-      short: `${NATIONS[a]} players`,
-      noun: `${NATIONS[a]} player who played for a club in this league this season`,
-      plural: `${NATIONS[a]} players who played for a club in this league this season`,
+      short: "",
+      noun: `${NATIONS[a]} player who played for a ${scope} club this season`,
+      plural: `${NATIONS[a]} players who played for a ${scope} club this season`,
       entries: names(pool),
     };
   }
@@ -320,7 +326,7 @@ function dynamicById(comp: Competition, id: string): Category | null {
     if (pool.length < 7) return null;
     return {
       id,
-      short: `WC winners at ${club.label}`,
+      short: "",
       noun: `World Cup winner who played for ${club.label}`,
       plural: `World Cup winners who played for ${club.label}`,
       entries: names(pool),
@@ -333,34 +339,63 @@ function dynamicById(comp: Competition, id: string): Category | null {
     const word = min === 3 ? "three" : "four";
     return {
       id,
-      short: `${min}+ league clubs`,
-      noun: `player who played for at least ${word} of this season's clubs in this league`,
-      plural: `players who played for at least ${word} of this season's clubs in this league`,
+      short: "",
+      noun: `player who played for at least ${word} ${scope} clubs this season`,
+      plural: `players who played for at least ${word} ${scope} clubs this season`,
       entries: names(pool),
     };
   }
   return null;
 }
 
+const STAT_CARDS: Partial<Record<Competition, PlayerCard[]>> = {
+  pl: PLAYERS,
+  laliga: LALIGA_CARDS,
+  seriea: SERIEA_CARDS,
+  bundesliga: BUNDESLIGA_CARDS,
+  ligue1: LIGUE1_CARDS,
+  superlig: SUPERLIG_CARDS,
+  ucl: UCL_CARDS,
+};
+const STAT_STEPS = {
+  goals: [10, 20, 30, 40, 50, 75, 100, 150, 200],
+  assists: [10, 20, 30, 50, 75, 100],
+  apps: [100, 150, 200, 300, 400, 500],
+} as const;
+type StatMetric = keyof typeof STAT_STEPS;
+
+// "Player with N+ goals / assists / appearances in this competition", from the card stats. General mode uses the Champions League.
+function statCategory(comp: Competition, id: string, metric: string, min: number): Category | null {
+  const cards = STAT_CARDS[comp === "general" ? "ucl" : comp];
+  if (!cards || !(metric in STAT_STEPS) || !Number.isFinite(min)) return null;
+  const field = metric === "apps" ? "appearances" : (metric as "goals" | "assists");
+  const pool = cards.filter((card) => card[field] >= min);
+  if (pool.length < 8 || pool.length > 150) return null;
+  const label = comp === "general" ? "Champions League" : COMPETITION_LABELS[comp].replace(" McDonald's", "");
+  const verb = metric === "goals" ? `scored ${min} or more ${label} goals` : metric === "assists" ? `provided ${min} or more ${label} assists` : `made ${min} or more ${label} appearances`;
+  return { id, noun: `player who ${verb}`, plural: `players who ${verb}`, entries: playerEntries(pool.map((card) => card.name)) };
+}
+
 function dynamicCategory(comp: Competition): Category | null {
-  const kind = Math.floor(Math.random() * 5);
-  const club = pick(DUEL_CLUBS[comp]).key;
+  const kind = Math.random() < 0.3 ? 5 : Math.floor(Math.random() * 5);
+  const club = pick(triviaClubs(comp)).key;
   const nat = pick(Object.keys(NATIONS));
+  if (kind === 5) {
+    const metric = pick(Object.keys(STAT_STEPS)) as StatMetric;
+    return dynamicById(comp, `st-${metric}-${pick([...STAT_STEPS[metric]])}`);
+  }
   const id = [`n-${nat}-${club}`, `l-${nat}`, `h-wc-${club}`, "m3", "m4"][kind];
   return dynamicById(comp, id);
 }
 
 // Rebuilds a board tile from its id, so a server only needs to store the 16 ids.
 export function tileById(comp: Competition, id: string): BoardTile | null {
-  const clubs = DUEL_CLUBS[comp];
-  const clubLabel = (key: string) => clubs.find((club) => club.key === key)?.label ?? key;
+  const clubs = triviaClubs(comp);
   let category: Category | null = null;
-  let short = SHORT[id];
   if (id.startsWith("c-")) {
     const club = clubs.find((item) => item.key === id.slice(2));
     if (club) {
       category = { id, noun: `player who played for ${club.label}`, plural: `players who played for ${club.label}`, entries: playerEntries(playersForClub(club.key, comp)) };
-      short = club.label;
     }
   } else if (id.startsWith("p-")) {
     const [a, b] = id.slice(2).split("-");
@@ -373,15 +408,14 @@ export function tileById(comp: Competition, id: string): BoardTile | null {
         plural: `players who played for both ${ca.label} and ${cb.label}`,
         entries: playerEntries(playersForBoth(a, b, comp)),
       };
-      short = `${clubLabel(a)} + ${clubLabel(b)}`;
     }
-  } else if (/^(n|l|h|m\d)/.test(id) && id !== "s-clubs") {
+  } else if (/^(n-|l-|h-|m\d|st-)/.test(id)) {
     category = dynamicById(comp, id);
-    short = category?.short ?? short;
   } else {
     category = [...STATIC[comp], leagueClubCategory(comp)].find((item) => item.id === id) ?? null;
   }
-  return category ? { id, short: short ?? "Trivia", noun: category.noun, plural: category.plural, entries: category.entries } : null;
+  if (!category) return null;
+  return { id, short: capitalize(category.plural), noun: category.noun, plural: category.plural, entries: category.entries, logos: logosFor(comp, id) };
 }
 
 // Builds a random path that gets harder: early squares have big answer pools, the final ones have the smallest.
@@ -398,8 +432,10 @@ export function generateBoardIds(comp: Competition): string[] {
   const chunk = Math.max(1, candidates.length / BOARD_SIZE);
   const taken = new Set<string>();
   return Array.from({ length: BOARD_SIZE }, (_, i) => {
-    const start = Math.floor(i * chunk);
-    const end = Math.max(start + 1, Math.floor((i + 1) * chunk));
+    const last = i === BOARD_SIZE - 1;
+    // The final square is drawn from the three smallest answer pools in the candidate list.
+    const start = last ? Math.max(0, candidates.length - 3) : Math.floor(i * chunk);
+    const end = last ? candidates.length : Math.max(start + 1, Math.floor((i + 1) * chunk));
     const options = candidates.slice(start, end).filter((c) => !taken.has(c.id));
     const choice = options.length ? options[Math.floor(Math.random() * options.length)] : candidates.find((c) => !taken.has(c.id)) ?? candidates[0];
     taken.add(choice.id);
@@ -431,7 +467,7 @@ export function triviaSeconds(count: number) {
 
 // Picks a category whose answer pool is comfortably bigger than the number asked for.
 export function pickTriviaQuestion(comp: Competition, count: number, used: Set<string>): TriviaQuestion {
-  const clubs = DUEL_CLUBS[comp];
+  const clubs = triviaClubs(comp);
   const need = count + 3;
   const build = (id: string, category: Category): TriviaQuestion => ({
     id,
@@ -439,7 +475,7 @@ export function pickTriviaQuestion(comp: Competition, count: number, used: Set<s
     noun: category.noun,
     plural: category.plural,
     entries: category.entries,
-    short: category.short,
+    short: capitalize(category.plural),
     text: `Name ${WORDS[count]} ${count === 1 ? category.noun : category.plural}`,
   });
 
@@ -473,7 +509,7 @@ export function pickTriviaQuestion(comp: Competition, count: number, used: Set<s
         entries: playerEntries(names),
       });
     }
-    if (roll < 0.65) {
+    if (roll < 0.7) {
       const dynamic = dynamicCategory(comp);
       if (!dynamic || used.has(dynamic.id)) continue;
       return build(dynamic.id, dynamic);

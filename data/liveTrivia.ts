@@ -2,6 +2,7 @@
 import live from "@/data/liveFacts.generated.json";
 import wikiFacts from "@/data/wikiFacts.generated.json";
 import { normalizeFootballPlayerName } from "@/data/footballTicTacToe";
+import { COMPETITION_LABELS } from "@/lib/competitions";
 
 type Entry = { name: string; aliases: string[] };
 export type LiveCategory = { id: string; short: string; noun: string; plural: string; entries: Entry[] };
@@ -75,13 +76,14 @@ export function liveTriviaCategories(comp: Competition): LiveCategory[] {
   const first = facts.seasons[0].season;
   const last = facts.seasons[facts.seasons.length - 1].season;
 
+  const league = COMPETITION_LABELS[comp].replace(" McDonald's", "");
   const top4 = unique(facts.seasons.flatMap((season) => season.top4).map(clubEntry));
   if (top4.length >= 8) {
     out.push({
       id: "s-lv-top4",
       short: "Top-four clubs",
-      noun: `club that finished in the top four between ${span(first, last)}`,
-      plural: `clubs that finished in the top four between ${span(first, last)}`,
+      noun: `club that finished in the ${league} top four between ${span(first, last)}`,
+      plural: `clubs that finished in the ${league} top four between ${span(first, last)}`,
       entries: top4,
     });
   }
@@ -90,8 +92,8 @@ export function liveTriviaCategories(comp: Competition): LiveCategory[] {
     out.push({
       id: "s-lv-rel",
       short: "Relegated clubs",
-      noun: `club that was relegated between ${span(first, last)}`,
-      plural: `clubs that were relegated between ${span(first, last)}`,
+      noun: `club that was relegated from the ${league} between ${span(first, last)}`,
+      plural: `clubs that were relegated from the ${league} between ${span(first, last)}`,
       entries: relegated,
     });
   }
@@ -100,8 +102,8 @@ export function liveTriviaCategories(comp: Competition): LiveCategory[] {
     out.push({
       id: "s-lv-scorers",
       short: "Top scorers now",
-      noun: "player in this season's current top 20 scorers",
-      plural: "players in this season's current top 20 scorers",
+      noun: `player in the current ${league} top 20 scorers`,
+      plural: `players in the current ${league} top 20 scorers`,
       entries: scorers,
     });
   }
@@ -110,8 +112,8 @@ export function liveTriviaCategories(comp: Competition): LiveCategory[] {
     out.push({
       id: "s-lv-assists",
       short: "Top assisters now",
-      noun: "player in this season's current top 20 for assists",
-      plural: "players in this season's current top 20 for assists",
+      noun: `player in the current ${league} top 20 for assists`,
+      plural: `players in the current ${league} top 20 for assists`,
       entries: assists,
     });
   }
@@ -136,11 +138,11 @@ export function mergeWikiNames(target: Entry[], key: string, kind: "player" | "c
 
 const TOP_SCORER_AWARDS: Partial<Record<Competition, { key: string; short: string; noun: string }>> = {
   pl: { key: "plGoldenBoot", short: "Golden Boot", noun: "Premier League Golden Boot winner" },
-  laliga: { key: "laligaPichichi", short: "Pichichi", noun: "La Liga Pichichi Trophy winner" },
-  seriea: { key: "serieaCapocannoniere", short: "Capocannoniere", noun: "Serie A Capocannoniere (top scorer) winner" },
-  bundesliga: { key: "bundesligaTop", short: "Torjäger", noun: "Bundesliga top scorer (Torjägerkanone) winner" },
+  laliga: { key: "laligaPichichi", short: "La Liga top scorers", noun: "La Liga top scorer award winner" },
+  seriea: { key: "serieaCapocannoniere", short: "Serie A top scorers", noun: "Serie A top scorer award winner" },
+  bundesliga: { key: "bundesligaTop", short: "Bundesliga top scorers", noun: "Bundesliga top scorer award winner" },
   ligue1: { key: "ligue1Top", short: "Ligue 1 top scorer", noun: "Ligue 1 top scorer award winner" },
-  superlig: { key: "superligTop", short: "Gol Kralı", noun: "Süper Lig top scorer (Gol Kralı)" },
+  superlig: { key: "superligTop", short: "Süper Lig top scorers", noun: "Süper Lig top scorer award winner" },
 };
 
 // Categories built from Wikipedia lists, refreshed by scripts/refresh-wiki-facts.mts

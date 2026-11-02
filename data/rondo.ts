@@ -276,11 +276,14 @@ function tournamentClues(comp: TournamentComp): RondoClue[] {
   return [...own, ...[...RONDO_TOURNAMENTS, ...TOURNAMENT_ALL].filter((clue) => missing.includes(clue.letter))];
 }
 
-// General mode: every league, the Champions League and the international tournaments in one pool.
+// General mode: every league except the Süper Lig, the Champions League and the international tournaments in one pool.
+const TURKISH_LEAGUE = /s[uü]per lig|galatasaray|fenerbah|be[sş]ikta[sş]|trabzonspor|gol krali|gol kralı|turkish (league|cup|super)/i;
 export const RONDO_CLUES: Record<Competition, RondoClue[]> = {
   ...REAL_RONDO,
   ...(Object.fromEntries(TOURNAMENT_COMPETITIONS.map((comp) => [comp, tournamentClues(comp)])) as Record<TournamentComp, RondoClue[]>),
-  general: mergeUnique([...RONDO_TOURNAMENTS, ...TOURNAMENT_ALL], ...REAL_COMPETITIONS.map((comp) => REAL_RONDO[comp])),
+  general: mergeUnique([...RONDO_TOURNAMENTS, ...TOURNAMENT_ALL], ...REAL_COMPETITIONS.filter((comp) => comp !== "superlig").map((comp) => REAL_RONDO[comp])).filter(
+    (clue) => !TURKISH_LEAGUE.test(`${clue.clue} ${clue.answers.join(" ")}`),
+  ),
 };
 export const RONDO_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 export const RONDO_SECONDS = 180;

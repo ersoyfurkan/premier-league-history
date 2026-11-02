@@ -10,7 +10,7 @@ import { MARKET_VALUE_PLAYERS, type MarketValuePlayer, type MarketValueSnapshot 
 import { normalizeFootballPlayerName } from "@/data/footballTicTacToe";
 import type { PlayerCard } from "@/data/players";
 import { poolFor, type Competition } from "@/lib/gameRoom";
-import { COMPETITION_LABELS } from "@/lib/competitions";
+import { COMPETITION_LABELS, isTournamentComp } from "@/lib/competitions";
 import { espnHeadshot } from "@/lib/clubArt";
 
 export type MiniGameMode = "higher-lower" | "transfer-market";
@@ -97,13 +97,13 @@ function HigherLower({ comp, onBack }: { comp: Competition; onBack: () => void }
       {pair ? (
         <div className="mt-6 grid gap-4 md:grid-cols-2">
           <div className="data-card p-5">
-            <CardFace card={pair[0]} />
+            <CardFace card={pair[0]} nation={isTournamentComp(comp)} />
             <p className="mt-4 text-2xl font-bold">{pair[0].name}</p>
             <p className="mt-1 text-sm text-fore-muted">{pair[0].club ?? "Career record"}</p>
             <p className="mt-4 font-mono text-primary">{pair[0][stat]} {STAT_LABELS[stat]}</p>
           </div>
           <div className="data-card p-5">
-            <CardFace card={pair[1]} />
+            <CardFace card={pair[1]} nation={isTournamentComp(comp)} />
             <p className="mt-4 text-2xl font-bold">{pair[1].name}</p>
             <p className="mt-1 text-sm text-fore-muted">{pair[1].club ?? "Career record"}</p>
             <p className="mt-4 font-mono text-accent">
