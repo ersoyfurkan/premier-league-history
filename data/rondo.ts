@@ -20,13 +20,18 @@ export type RondoClue = {
   clue: string;
   answers: string[]; // accepted spellings; the first is shown as the correct answer
   contains?: boolean; // the answer contains the letter instead of starting with it
+  prompt?: string;
+  difficulty?: RondoDifficulty;
 };
+
+export type RondoDifficulty = "easy" | "medium" | "hard";
 
 const r = (letter: string, clue: string, answers: string, contains = false): RondoClue => ({
   letter,
   clue,
   answers: answers.split("|"),
   contains,
+  difficulty: "easy",
 });
 
 // Several clues per letter; every game picks one at random for each letter.
@@ -266,15 +271,18 @@ const REAL_RONDO: Record<RealCompetition, RondoClue[]> = {
   laliga: mergeUnique([...LL, ...RONDO_MORE.laliga, ...RONDO_EXTRA.laliga], RONDO_BONUS.laliga, RONDO_BONUS2.laliga, RONDO_BONUS3.laliga, RONDO_BONUS4.laliga),
   seriea: mergeUnique([...SA, ...RONDO_MORE.seriea, ...RONDO_EXTRA.seriea], RONDO_BONUS.seriea, RONDO_BONUS2.seriea, RONDO_BONUS3.seriea, RONDO_BONUS4.seriea),
   ucl: mergeUnique([...UCL, ...RONDO_MORE.ucl, ...RONDO_EXTRA.ucl], RONDO_BONUS.ucl, RONDO_BONUS2.ucl, RONDO_BONUS3.ucl, RONDO_BONUS4.ucl),
-  bundesliga: mergeUnique(BUNDESLIGA_RONDO, RONDO_BONUS4.bundesliga),
-  ligue1: mergeUnique(LIGUE1_RONDO, RONDO_BONUS4.ligue1),
-  superlig: mergeUnique(SUPERLIG_RONDO, RONDO_BONUS4.superlig),
+  bundesliga: mergeUnique(BUNDESLIGA_RONDO.map((clue) => ({ ...clue, difficulty: "easy" })), RONDO_BONUS4.bundesliga),
+  ligue1: mergeUnique(LIGUE1_RONDO.map((clue) => ({ ...clue, difficulty: "easy" })), RONDO_BONUS4.ligue1),
+  superlig: mergeUnique(SUPERLIG_RONDO.map((clue) => ({ ...clue, difficulty: "easy" })), RONDO_BONUS4.superlig),
 };
 const TOURNAMENT_ALL = TOURNAMENT_COMPETITIONS.flatMap((comp) => [...RONDO_TOURNAMENT_BANK[comp], ...RONDO_TOURNAMENT_LIVE[comp]]);
 
 // Each tournament uses its own hand-written and live-generated clues; a letter it can't cover borrows from the other tournaments.
 function tournamentClues(comp: TournamentComp): RondoClue[] {
-  const own = [...RONDO_TOURNAMENT_BANK[comp], ...RONDO_TOURNAMENT_LIVE[comp]];
+  const own: RondoClue[] = [
+    ...RONDO_TOURNAMENT_BANK[comp].map((clue) => ({ ...clue, difficulty: "easy" as const })),
+    ...RONDO_TOURNAMENT_LIVE[comp].map((clue) => ({ ...clue, difficulty: "hard" as const })),
+  ];
   const missing = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").filter((letter) => !own.some((clue) => clue.letter === letter));
   return [...own, ...[...RONDO_TOURNAMENTS, ...TOURNAMENT_ALL].filter((clue) => missing.includes(clue.letter))];
 }
@@ -284,7 +292,7 @@ const TURKISH_LEAGUE = /s[uü]per lig|galatasaray|fenerbah|be[sş]ikta[sş]|trab
 export const RONDO_CLUES: Record<Competition, RondoClue[]> = {
   ...REAL_RONDO,
   ...(Object.fromEntries(TOURNAMENT_COMPETITIONS.map((comp) => [comp, tournamentClues(comp)])) as Record<TournamentComp, RondoClue[]>),
-  general: mergeUnique([...RONDO_TOURNAMENTS, ...TOURNAMENT_ALL], ...REAL_COMPETITIONS.filter((comp) => comp !== "superlig").map((comp) => REAL_RONDO[comp])).filter(
+  general: mergeUnique([...RONDO_TOURNAMENTS.map((clue) => ({ ...clue, difficulty: "easy" as const })), ...TOURNAMENT_ALL], ...REAL_COMPETITIONS.filter((comp) => comp !== "superlig").map((comp) => REAL_RONDO[comp])).filter(
     (clue) => !TURKISH_LEAGUE.test(`${clue.clue} ${clue.answers.join(" ")}`),
   ),
 };
@@ -300,7 +308,9 @@ for (const comp of ["general", ...REAL_COMPETITIONS, ...TOURNAMENT_COMPETITIONS]
 export const RONDO_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 export const RONDO_SECONDS = 180;
 
-export type RondoQuestion = RondoClue & { index: number };
+export type RondoQuestion = RondoClue & { index: number; difficulty: RondoDifficulty };
+export const RONDO_DIFFICULTY_COUNTS = { easy: 9, medium: 9, hard: 8 } as const;
+export const rondoDifficulty = (clue: RondoClue): RondoDifficulty => clue.difficulty ?? "medium";
 
 const letterCache = new Map<Competition, Map<string, RondoClue[]>>();
 const byLetter = (comp: Competition, letter: string) => {
@@ -316,18 +326,47 @@ const byLetter = (comp: Competition, letter: string) => {
 // A game is one clue index per letter, so both players in a match get identical questions.
 // `avoid` is the previous game's picks, so back-to-back games never repeat a question.
 export function randomRondoPicks(comp: Competition, avoid: number[] = []): number[] {
-  return RONDO_LETTERS.map((letter, index) => {
-    const size = byLetter(comp, letter).length;
-    let pick = Math.floor(Math.random() * size);
-    if (size > 1 && pick === avoid[index]) pick = (pick + 1 + Math.floor(Math.random() * (size - 1))) % size;
-    return pick;
+  const options = RONDO_LETTERS.map((letter, letterIndex) => {
+    const clues = byLetter(comp, letter);
+    return clues.map((clue, index) => ({ index, difficulty: rondoDifficulty(clue) }))
+      .filter(({ index }) => clues.length === 1 || index !== avoid[letterIndex]);
+  });
+  const slots = (Object.keys(RONDO_DIFFICULTY_COUNTS) as RondoDifficulty[])
+    .flatMap((difficulty) => Array<RondoDifficulty>(RONDO_DIFFICULTY_COUNTS[difficulty]).fill(difficulty));
+  const letters = RONDO_LETTERS.map((_, index) => index);
+  for (let index = letters.length - 1; index > 0; index -= 1) {
+    const swap = Math.floor(Math.random() * (index + 1));
+    [letters[index], letters[swap]] = [letters[swap], letters[index]];
+  }
+  const assigned = new Map<number, number>();
+  // Match difficulty slots to letters, including scarce letters such as X, without retry loops.
+  const assign = (slot: number, visited: Set<number>): boolean => {
+    for (const letter of letters) {
+      if (visited.has(letter) || !options[letter].some((option) => option.difficulty === slots[slot])) continue;
+      visited.add(letter);
+      const previous = assigned.get(letter);
+      if (previous === undefined || assign(previous, visited)) {
+        assigned.set(letter, slot);
+        return true;
+      }
+    }
+    return false;
+  };
+  for (let slot = 0; slot < slots.length; slot += 1) {
+    if (!assign(slot, new Set())) throw new Error(`Not enough ${slots[slot]} Rondo questions for ${comp}.`);
+  }
+  return options.map((choices, letter) => {
+    const difficulty = slots[assigned.get(letter)!];
+    const eligible = choices.filter((choice) => choice.difficulty === difficulty);
+    return eligible[Math.floor(Math.random() * eligible.length)].index;
   });
 }
 
 export function rondoQuestions(comp: Competition, picks: number[]): RondoQuestion[] {
   return RONDO_LETTERS.map((letter, index) => {
     const options = byLetter(comp, letter);
-    return { ...options[(picks[index] ?? 0) % options.length], index };
+    const clue = options[(picks[index] ?? 0) % options.length];
+    return { ...clue, difficulty: rondoDifficulty(clue), index };
   });
 }
 

@@ -916,7 +916,8 @@ function factKeys(fact: Fact) {
   return keys;
 }
 const awardDefs = (comp: Competition): Def[] => AWARD_GROUPS
-  .filter((group) => group.competitions.includes(comp) && !group.relationId && !group.id.includes("-club-"))
+  .filter((group) => group.competitions.includes(comp) && !group.relationId && !group.id.includes("-club-")
+    && (group.awardIds.length === 1 || (group.awardOperator ?? group.operator) === "AND"))
   .map((group) => {
     const names = new Set(group.entries.map(({ name }) => awardPlayerKey(name)));
     return { clue: awardClue(group.label, group.awardIds), test: (fact: Fact) => names.has(factKeys(fact).award) };
@@ -1401,6 +1402,8 @@ function generatePuzzle(comp: Competition): FootballTicTacToePuzzle | null {
   const pool = PUZZLE_POOLS[comp];
   const withAward = Math.random() < 0.65;
   const awards = pool.filter((def) => def.clue.awardIds?.length);
+  const preferSingleAward = Math.random() < 0.5;
+  const preferredAwards = awards.filter(({ clue }) => (clue.awardIds?.length === 1) === preferSingleAward);
   const matches = PUZZLE_MATCHES.get(comp) ?? new Map<Def, Set<string>>();
   PUZZLE_MATCHES.set(comp, matches);
   const overlaps = new Map<Def, Map<Def, number>>();
@@ -1427,7 +1430,9 @@ function generatePuzzle(comp: Competition): FootballTicTacToePuzzle | null {
   };
   for (let attempt = 0; attempt < 1500; attempt += 1) {
     const minimum = attempt < 1000 ? 3 : 2;
-    const seed = withAward && attempt < 1400 ? pick(awards, 1)[0] : undefined;
+    const seed = withAward && attempt < 1400
+      ? pick(attempt < 700 && preferredAwards.length ? preferredAwards : awards, 1)[0]
+      : undefined;
     const rowPool = isTournamentComp(comp) ? TOURNAMENT_NATIONS[comp] : pool;
     const eligibleRows = seed ? rowPool.filter((row) => row !== seed && !row.clue.awardIds?.length && overlap(row, seed) >= minimum) : rowPool;
     if (eligibleRows.length < 3) continue;

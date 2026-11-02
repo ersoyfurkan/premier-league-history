@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import {
   FOOTBALL_TIC_TAC_TOE,
   footballTicTacToePlayerNames,
@@ -16,11 +16,14 @@ import { nationMentions } from "@/data/nationVisuals";
 import { awardsInText, individualAward } from "@/data/individualAwards";
 import { poolFor, lobbyFor, parseComp, type Competition } from "@/lib/gameRoom";
 import { COMPETITION_LABELS } from "@/lib/competitions";
+import TicTacToeModePicker from "@/components/TicTacToeModePicker";
 import {
   applyFootballTicTacToeMove,
   expireFootballTicTacToeTurn,
   footballTicTacToeView,
   newFootballTicTacToeRoom,
+  requestFootballTicTacToeRematch,
+  type FootballTicTacToeMode,
   type FootballTicTacToeRoomState,
   type FootballTicTacToeRoomView,
 } from "@/lib/footballTicTacToe";
@@ -39,40 +42,44 @@ const faceSrc = (name: string, comp: Competition) =>
   poolFor(comp).find((card) => normalizeFootballPlayerName(card.name) === normalizeFootballPlayerName(name))?.photo ??
   playerFaceUrl(name);
 
-function ClueBadge({ clue }: { clue: FootballClue }) {
+function ClueHeader({ clue }: { clue: FootballClue }) {
   const nation = / international$/.test(clue.label) ? nationMentions(clue.label, true)[0] : undefined;
   const awards = clue.awardIds?.map(individualAward) ?? awardsInText(clue.label);
-  if (awards.length) return (
-    <span className="inline-flex flex-wrap justify-center gap-1">
-      {awards.slice(0, 2).map((award) => <UclImage key={award.id} src={award.src} fallback={award.fallback} alt={award.label} className={awards.length > 1 ? "h-5 w-5 sm:h-6 sm:w-6 lg:h-7 lg:w-7" : "h-5 w-5 sm:h-8 sm:w-8 lg:h-9 lg:w-9"} />)}
-      {awards.length > 2 && <span className="self-center text-[10px]" title={`${awards.length} award categories`}>+{awards.length - 2}</span>}
-    </span>
+  if (awards.length) {
+    return (
+      <>
+        {awards.length > 1 && (
+          <span className="shrink-0 text-[clamp(8px,2.4cqw,13px)] font-bold text-lime-200">
+            {/\bOR\b/.test(clue.label) || !clue.label.includes(" + ") ? clue.label : "Win both awards"}
+          </span>
+        )}
+        <div
+          role="group"
+          aria-label={clue.label}
+          tabIndex={awards.length > 1 ? 0 : undefined}
+          className="award-clue-list max-h-32 min-h-0 w-full overflow-y-auto overscroll-contain rounded focus-visible:outline-2 focus-visible:outline-lime-300 sm:max-h-40"
+        >
+          {awards.map((award) => (
+            <div key={award.id} className="flex flex-col items-center gap-1 px-0.5 py-1">
+              <UclImage src={award.src} fallback={award.fallback} alt={award.label} className="h-10 w-10 shrink-0 sm:h-14 sm:w-14 lg:h-16 lg:w-16" />
+              <span className="w-full text-balance [overflow-wrap:anywhere] text-[clamp(8px,2.6cqw,14px)] font-semibold leading-tight">{award.label}</span>
+            </div>
+          ))}
+        </div>
+        {awards.length > 1 && <span className="shrink-0 text-[8px] font-normal text-emerald-100 sm:text-[10px]">Scroll for all awards</span>}
+      </>
+    );
+  }
+  return (
+    <>
+      {(clue.badge || nation) && <UclImage src={nation?.src ?? clue.badge} fallback={clue.badgeFallback} alt={nation ? `${nation.name} national team crest` : clue.badgeAlt ?? clue.label} className="h-5 w-5 sm:h-8 sm:w-8 lg:h-9 lg:w-9" />}
+      <span title={clue.label} className="min-w-0 max-w-full [overflow-wrap:anywhere]">{clue.label}</span>
+    </>
   );
-  return <UclImage src={nation?.src ?? clue.badge} fallback={clue.badgeFallback} alt={nation ? `${nation.name} national team crest` : clue.badgeAlt ?? clue.label} className="h-5 w-5 sm:h-8 sm:w-8 lg:h-9 lg:w-9" />;
-}
-
-function clueGridLabel(clue: FootballClue) {
-  if (!clue.awardIds?.length && !awardsInText(clue.label).length) return clue.label;
-  if (clue.awardIds?.length === 2 && clue.label.includes(" + ")) return "Both awards";
-  return clue.label
-    .replace("World Cup, Euros OR Copa America", "International")
-    .replace("UEFA Champions League", "UCL")
-    .replace("European Championship", "Euro")
-    .replace("Premier League", "PL")
-    .replace("Top-five-league", "Top-five")
-    .replace("The Best FIFA Men's", "FIFA Best")
-    .replace("Footballer of the Year", "player")
-    .replace("Player of the Season", "player")
-    .replace("Player of the Year", "player")
-    .replace("Best Under-23 / Rising Star", "Rising Star")
-    .replace(" (including retrospective selections)", "")
-    .replace(" (Torjagerkanone)", "")
-    .replace(/ winner$/, "");
 }
 
 function FootballTicTacToeClient() {
   const search = useSearchParams();
-  const router = useRouter();
   const code = (search.get("code") ?? "").toUpperCase();
   const isLocal = search.get("local") === "1";
   const comp = parseComp(search.get("comp")) as Competition;
@@ -83,13 +90,13 @@ function FootballTicTacToeClient() {
   const [token, setToken] = useState<string | null>(null);
   const [remoteView, setRemoteView] = useState<FootballTicTacToeRoomView | null>(null);
   const [localRoom, setLocalRoom] = useState<FootballTicTacToeRoomState | null>(null);
+  const [localMode, setLocalMode] = useState<FootballTicTacToeMode>(() => search.get("rules") === "hidden-trap" ? "hidden-trap" : "normal");
   const [selectedCell, setSelectedCell] = useState<number | null>(null);
   const [playerName, setPlayerName] = useState("");
   const [submittingAnswer, setSubmittingAnswer] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [serverFatal, setFatal] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
-  const [creating, setCreating] = useState(false);
   const [clockNow, setClockNow] = useState(0);
   const view = isLocal && localRoom
     ? footballTicTacToeView(localRoom, localRoom.turn)
@@ -98,17 +105,13 @@ function FootballTicTacToeClient() {
   const activeComp = view?.comp ?? comp;
   const puzzle = view?.puzzle ?? FOOTBALL_TIC_TAC_TOE[activeComp];
 
-  useEffect(() => {
-    if (!isLocal) return;
-    const timer = setTimeout(() => {
-      const room = newFootballTicTacToeRoom("local-player-1", comp);
-      room.p2Token = "local-player-2";
-      room.status = "playing";
-      room.turnDeadline = Date.now() + TURN_MS;
-      setLocalRoom(room);
-    }, 0);
-    return () => clearTimeout(timer);
-  }, [comp, isLocal]);
+  const startLocal = (mode: FootballTicTacToeMode) => {
+    const room = newFootballTicTacToeRoom("local-player-1", comp, mode);
+    room.p2Token = "local-player-2";
+    room.status = "playing";
+    room.turnDeadline = Date.now() + TURN_MS;
+    setLocalRoom(room);
+  };
 
   useEffect(() => {
     const first = setTimeout(() => setClockNow(Date.now()), 0);
@@ -309,34 +312,18 @@ function FootballTicTacToeClient() {
     }
   };
 
-  const playAgain = async () => {
-    if (isLocal) {
-      const room = newFootballTicTacToeRoom("local-player-1", activeComp);
-      room.p2Token = "local-player-2";
-      room.status = "playing";
-      room.turnDeadline = Date.now() + TURN_MS;
-      setLocalRoom(room);
-      setSelectedCell(null);
-      setPlayerName("");
-      setError(null);
+  const voteLocalNewGame = (side: "p1" | "p2") => {
+    if (!localRoom) return;
+    const next = { ...localRoom, rematch: { ...(localRoom.rematch ?? { p1: false, p2: false }) } };
+    const voteError = requestFootballTicTacToeRematch(next, side, clockNow);
+    if (voteError) {
+      setError(voteError);
       return;
     }
-    setCreating(true);
+    setLocalRoom(next);
+    setSelectedCell(null);
+    setPlayerName("");
     setError(null);
-    try {
-      const res = await fetch("/api/game/football-tic-tac-toe", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "create", comp: activeComp }),
-      });
-      const data = (await res.json()) as Api;
-      if (!res.ok || !data.code || !data.token) throw new Error(data.error ?? "Could not create another game");
-      localStorage.setItem(`plttt:${data.code}`, data.token);
-      router.push(`/game/football-tic-tac-toe?code=${data.code}&comp=${activeComp}`);
-    } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Could not create another game");
-      setCreating(false);
-    }
   };
 
   if (fatal) {
@@ -346,6 +333,17 @@ function FootballTicTacToeClient() {
           <p className="text-lg text-warning">{fatal}</p>
           <Link href={lobbyFor(activeComp)} className="btn-primary mt-4 inline-block">Back to lobby</Link>
         </div>
+      </Shell>
+    );
+  }
+
+  if (isLocal && !localRoom) {
+    return (
+      <Shell>
+        <h2 className="mt-6 text-3xl">Tik Tak Toe</h2>
+        <p className="mt-2 text-fore-muted">Choose the rules before starting. Both players use the same rules.</p>
+        <TicTacToeModePicker value={localMode} onChange={setLocalMode} />
+        <button type="button" className="btn-primary mt-4" onClick={() => startLocal(localMode)}>Start game</button>
       </Shell>
     );
   }
@@ -398,6 +396,7 @@ function FootballTicTacToeClient() {
         <div>
           <p className="section-eyebrow text-accent">{competitionLabel} · {isLocal ? "Same device" : "Online vs Friend"}</p>
           <h2 className="mt-1 text-2xl sm:text-3xl lg:text-4xl">Tik Tak Toe</h2>
+          <p className="mt-1 text-sm text-fore-muted">{view.mode === "hidden-trap" ? "Hidden Trap: hit the hidden answer and your opponent takes the square and next turn." : "Normal rules"}</p>
         </div>
         <div className="mobile-turn-status text-right">
           <p className="text-lg text-fore-muted">{turnMessage}</p>
@@ -409,10 +408,35 @@ function FootballTicTacToeClient() {
         </div>
       </div>
 
+      {view.lastTrap && (
+        <p role="status" className="mt-3 rounded-xl border border-warning/40 bg-warning/10 p-3 text-sm text-warning">
+          Trap! {view.lastTrap.player} was the hidden answer.
+          {" "}{isLocal ? `Player ${view.lastTrap.side === "p1" ? "2" : "1"}` : view.lastTrap.side === view.you ? "Your opponent" : "You"} won that square.
+          {view.status === "playing" ? " The turn passes to the opponent of the player who hit the trap." : ""}
+        </p>
+      )}
+
+      {view.status !== "waiting" && (
+        <div className="mt-3 flex flex-wrap items-center gap-3">
+          {isLocal ? (["p1", "p2"] as const).map((side) => (
+            <button key={side} type="button" className="btn-ghost disabled:opacity-60"
+              disabled={localRoom?.rematch?.[side] ?? false} onClick={() => voteLocalNewGame(side)}>
+              Player {side === "p1" ? "1" : "2"}: {localRoom?.rematch?.[side] ? "Voted for new game" : "Vote for new game"}
+            </button>
+          )) : (
+            <button type="button" className="btn-ghost disabled:opacity-60" disabled={view.youWantRematch} onClick={requestRematch}>
+              {view.youWantRematch ? "Voted — waiting for opponent…" : view.opponentWantsRematch ? "Agree to new game" : "Vote for new game"}
+            </button>
+          )}
+          <p className="text-xs text-fore-muted">Both players must agree. The current board stays until both vote.</p>
+          {!isLocal && view.opponentWantsRematch && !view.youWantRematch && <p role="status" className="text-sm text-accent">Your opponent wants a new game.</p>}
+        </div>
+      )}
+
       {view.status !== "waiting" && (
       <div
         className="tic-tac-toe-board mx-auto mt-3 w-full rounded-2xl border border-emerald-500/20 bg-surface/70 p-2 sm:p-3 lg:mt-2"
-        style={{ maxWidth: "min(920px, max(420px, calc(100svh - 400px)))" }}
+        style={{ maxWidth: "min(920px, max(640px, calc(100svh - 400px)))" }}
       >
         <div className="grid aspect-square grid-cols-4 grid-rows-4 overflow-hidden [container-type:inline-size] rounded-xl border border-emerald-500/20">
             <div className="flex min-h-0 min-w-0 flex-col items-center justify-center gap-1 bg-indigo-800 p-1 text-center text-[9px] font-black uppercase tracking-wide text-white sm:gap-2 sm:text-sm">
@@ -420,23 +444,18 @@ function FootballTicTacToeClient() {
             </div>
             {puzzle.columns.map((column) => (
               <div key={column.label} className="flex min-h-0 min-w-0 flex-col items-center justify-center gap-1 border border-emerald-950 bg-emerald-900 p-1 text-center text-[clamp(8px,2.8cqw,16px)] font-semibold leading-tight text-white sm:gap-2 sm:p-2">
-                {(column.badge || awardsInText(column.label).length > 0) && (
-                  <ClueBadge clue={column} />
-                )}
-                <span title={column.label} className="min-w-0 max-w-full [overflow-wrap:anywhere]">{clueGridLabel(column)}</span>
+                <ClueHeader clue={column} />
               </div>
             ))}
             {puzzle.rows.map((row, rowIndex) => (
               <div key={row.label} className="contents">
                 <div className="flex min-h-0 min-w-0 flex-col items-center justify-center gap-1 border border-emerald-950 bg-emerald-900 p-1 text-center text-[clamp(8px,2.8cqw,16px)] font-semibold leading-tight text-white sm:gap-2 sm:p-2">
-                  {(row.badge || awardsInText(row.label).length > 0) && (
-                    <ClueBadge clue={row} />
-                  )}
-                  <span title={row.label} className="min-w-0 max-w-full [overflow-wrap:anywhere]">{clueGridLabel(row)}</span>
+                  <ClueHeader clue={row} />
                 </div>
                 {puzzle.columns.map((column, columnIndex) => {
                   const index = rowIndex * 3 + columnIndex;
                   const cell = view.board[index];
+                  const revealedTrap = view.revealedTraps?.[index];
                   const selectable = view.status === "playing" && isMyTurn && !cell;
                   return (
                     <button
@@ -457,7 +476,7 @@ function FootballTicTacToeClient() {
                               ? "bg-teal-600"
                               : "bg-emerald-700/80 hover:bg-emerald-600"
                       } disabled:cursor-default disabled:hover:border-border`}
-                      aria-label={`${row.label} and ${column.label}${cell ? `: ${cell.player}` : ""}`}
+                      aria-label={`${row.label} and ${column.label}${cell ? `: ${cell.player}` : ""}${revealedTrap ? `. AI pick: ${revealedTrap}` : ""}`}
                     >
                       {cell ? (
                         <>
@@ -467,7 +486,7 @@ function FootballTicTacToeClient() {
                               fallback={playerFaceUrl(cell.player)}
                               alt={cell.player}
                               shape="circle"
-                              className="pointer-events-none relative h-[38%] max-h-14 w-auto aspect-square border border-white/40"
+                              className={`pointer-events-none relative ${revealedTrap ? "h-[25%] max-h-10" : "h-[38%] max-h-14"} w-auto aspect-square border border-white/40`}
                             />
                           ) : (
                             <JerseyIcon className="pointer-events-none absolute inset-x-0 top-1 mx-auto h-[55%] w-[55%] text-white/25" />
@@ -476,6 +495,11 @@ function FootballTicTacToeClient() {
                             {cell.side === "p1" ? "X" : "O"}
                           </span>
                           <span className="relative w-full min-w-0 text-balance [overflow-wrap:anywhere] text-[clamp(8px,2.8cqw,15px)] font-bold leading-[1.1] text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">{cell.player}</span>
+                          {revealedTrap && (
+                            <span className="relative w-full min-w-0 text-balance [overflow-wrap:anywhere] text-[clamp(7px,2.2cqw,12px)] leading-tight text-lime-100">
+                              AI pick: {revealedTrap}
+                            </span>
+                          )}
                         </>
                       ) : (
                         <>
@@ -557,18 +581,6 @@ function FootballTicTacToeClient() {
         {error && !(view.status === "playing" && isMyTurn && selectedCell !== null) && <p role="alert" className="mt-3 text-sm text-warning">{error}</p>}
         {view.status === "finished" && (
           <div className="mt-4 flex flex-wrap items-center gap-3">
-            {isLocal ? (
-              <button type="button" onClick={playAgain} disabled={creating} className="btn-primary disabled:opacity-60">
-                Play again
-              </button>
-            ) : (
-              <button type="button" onClick={requestRematch} disabled={view.youWantRematch} className="btn-primary disabled:opacity-60">
-                {view.youWantRematch ? "Waiting for opponent…" : view.opponentWantsRematch ? "Accept rematch" : "Request rematch"}
-              </button>
-            )}
-            {!isLocal && view.opponentWantsRematch && !view.youWantRematch && (
-              <p className="text-sm font-semibold text-accent">Your opponent wants a rematch!</p>
-            )}
             <Link href={lobbyFor(activeComp)} className="btn-ghost">Back to lobby</Link>
           </div>
         )}

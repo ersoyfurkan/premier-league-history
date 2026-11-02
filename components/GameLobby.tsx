@@ -8,6 +8,8 @@ import CompetitionMiniGames, { type MiniGameMode } from "@/components/Competitio
 import { LEAGUE_META, isEspnComp } from "@/lib/leagues";
 import { COMPETITION_LABELS, type TournamentComp } from "@/lib/competitions";
 import { TOURNAMENTS, isTournament } from "@/lib/tournaments";
+import TicTacToeModePicker from "@/components/TicTacToeModePicker";
+import type { FootballTicTacToeMode } from "@/lib/footballTicTacToe";
 
 export default function GameLobby({ comp }: { comp: Competition }) {
   const router = useRouter();
@@ -16,6 +18,7 @@ export default function GameLobby({ comp }: { comp: Competition }) {
   const [miniGame, setMiniGame] = useState<MiniGameMode | null>(null);
   const [creatingGrid, setCreatingGrid] = useState(false);
   const [gridError, setGridError] = useState<string | null>(null);
+  const [gridMode, setGridMode] = useState<FootballTicTacToeMode>("normal");
   const isUcl = comp === "ucl";
   const isGeneral = comp === "general";
   const tournament = isTournament(comp) ? TOURNAMENTS[comp] : null;
@@ -48,7 +51,7 @@ export default function GameLobby({ comp }: { comp: Competition }) {
       const res = await fetch("/api/game/football-tic-tac-toe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "create", comp }),
+        body: JSON.stringify({ action: "create", comp, mode: gridMode }),
       });
       const data = (await res.json()) as { error?: string; code?: string; token?: string };
       if (!res.ok || !data.code || !data.token) throw new Error(data.error ?? "Could not create game");
@@ -136,6 +139,7 @@ export default function GameLobby({ comp }: { comp: Competition }) {
                       Randomized clue grid, player portraits, and a one-minute timer for every turn.
                     </p>
                     {gridError && <p className="mt-3 text-sm text-warning">{gridError}</p>}
+                    <TicTacToeModePicker value={gridMode} onChange={setGridMode} disabled={creatingGrid} />
                     <div className="mt-4 flex flex-wrap gap-2">
                       <button
                         type="button"
@@ -146,7 +150,7 @@ export default function GameLobby({ comp }: { comp: Competition }) {
                         {creatingGrid ? "Creating…" : "Invite a friend"}
                       </button>
                       <Link
-                        href={`/game/football-tic-tac-toe?local=1&comp=${comp}`}
+                        href={`/game/football-tic-tac-toe?local=1&comp=${comp}&rules=${gridMode}`}
                         className="btn-ghost"
                       >
                         Play on this device

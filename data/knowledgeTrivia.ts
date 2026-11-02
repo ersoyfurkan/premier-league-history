@@ -23,6 +23,8 @@ const groupClues = FOOTBALL_KNOWLEDGE_GROUPS.map((group) => {
     group,
     clues: [...letters].map(([letter, answers]) => ({
       letter, clue: `Name a ${group.noun} (answer starts with ${letter}).`, answers,
+      prompt: group.label,
+      difficulty: group.difficulty >= 4 ? "hard" as const : "medium" as const,
     })),
   };
 });
@@ -35,6 +37,7 @@ export const KNOWLEDGE_RONDO_CLUES = Object.fromEntries(competitions.map((comp) 
         letter: stadium.name[0].toUpperCase(),
         clue: stadium.clue,
         answers: [stadium.name, ...stadium.aliases],
+        difficulty: "easy",
       });
     }
   }

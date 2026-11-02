@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { FormEvent, Suspense, useEffect, useMemo, useState } from "react";
+import { FormEvent, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import UclImage from "@/components/UclImage";
 import { playerFaceUrl } from "@/data/playerFaces";
@@ -25,7 +25,9 @@ type DuelView = {
   notice: string | null;
   youPassed: boolean;
   opponentPassed: boolean;
-  last: { winner: Side | null; player: string | null; reason: "correct" | "pass" | "timeout" } | null;
+  youGuessed: boolean;
+  opponentGuessed: boolean;
+  last: { winner: Side | null; player: string | null; reason: "correct" | "pass" | "timeout" | "wrong" } | null;
   usedCount: number;
   winner: Side | null;
   youWantRematch: boolean;
@@ -94,6 +96,8 @@ function DuelClient() {
   const [copied, setCopied] = useState(false);
   const [guess, setGuess] = useState("");
   const [feedback, setFeedback] = useState<string | null>(null);
+  const [submittingGuess, setSubmittingGuess] = useState(false);
+  const guessing = useRef(false);
 
   useEffect(() => {
     const interval = setInterval(() => setNow(Date.now()), 250);
@@ -196,13 +200,18 @@ function DuelClient() {
 
   const sendGuess = async (raw: string) => {
     const text = raw.trim();
-    if (!text) return;
+    if (!text || guessing.current || view?.phase !== "guess" || view.youGuessed || view.youPassed) return;
+    guessing.current = true;
+    setSubmittingGuess(true);
     setGuess("");
     try {
-      const data = await post({ action: "guess", guess: text });
+      const data = await post({ action: "guess", guess: text, round: view.round });
       setFeedback(data.correct ? null : data.message ?? "Not correct");
     } catch (e) {
       setFeedback(e instanceof Error ? e.message : "Something went wrong");
+    } finally {
+      guessing.current = false;
+      setSubmittingGuess(false);
     }
   };
 
@@ -225,7 +234,7 @@ function DuelClient() {
       <Shell comp={comp}>
         <h2 className="mt-1 text-3xl md:text-4xl">Club Duel</h2>
         <p className="mt-2 max-w-2xl text-sm text-fore-muted">
-          1v1, invite only. Both players have 20 seconds to pick a club from the league this season. Then you race to name a player who has played for both clubs, for example Falcao for Chelsea and Manchester United. The fastest correct answer wins the round. First to 5 wins. If you are stuck, both vote to pass.
+          1v1, invite only. Both players have 20 seconds to pick a club from the league this season. Then you each get one guess to name a player who played for both clubs. The fastest correct answer earns one point; two wrong answers earn zero points each. First to 5 wins. You can skip your guess if stuck.
         </p>
         {error && <p className="mt-4 text-sm text-red-400">{error}</p>}
         <button type="button" onClick={createInvite} disabled={busy} className="btn-primary mt-6">
@@ -335,10 +344,12 @@ function DuelClient() {
                   </div>
                 ))}
               </div>
+              {!view.youGuessed && !view.youPassed ? (
               <form onSubmit={submitGuess} className="mt-4 flex flex-col gap-3 sm:flex-row">
                 <div className="relative min-w-0 flex-1">
                   <input
                     value={guess}
+                    disabled={submittingGuess}
                     onChange={(event) => setGuess(event.target.value)}
                     autoFocus
                     autoComplete="off"
@@ -354,6 +365,7 @@ function DuelClient() {
                           type="button"
                           role="option"
                           aria-selected={false}
+                          disabled={submittingGuess}
                           onClick={() => void sendGuess(name)}
                           className="flex w-full items-center gap-3 border-b border-border/50 px-3 py-2 text-left text-sm last:border-b-0 hover:bg-primary/10"
                         >
@@ -364,19 +376,23 @@ function DuelClient() {
                     </div>
                   )}
                 </div>
-                <button type="submit" className="btn-primary">Guess</button>
+                <button type="submit" disabled={submittingGuess || !guess.trim()} className="btn-primary disabled:opacity-60">{submittingGuess ? "Submitting…" : "Use my one guess"}</button>
               </form>
+              ) : (
+                <p role="status" className="mt-4 text-fore-muted">Your guess is used. Waiting for your opponent.</p>
+              )}
               {feedback && <p className="mt-2 text-sm text-red-400">{feedback}</p>}
+              {view.opponentGuessed && <p className="mt-2 text-sm text-warning">Your opponent used their guess. You still have one chance.</p>}
               <div className="mt-4 flex flex-wrap items-center gap-3">
                 <button
                   type="button"
                   onClick={() => act({ action: "pass" })}
-                  disabled={view.youPassed}
+                  disabled={view.youPassed || view.youGuessed || submittingGuess}
                   className="btn-ghost"
                 >
-                  {view.youPassed ? "You voted to pass" : "Vote to pass"}
+                  {view.youPassed ? "You skipped" : "Skip my guess"}
                 </button>
-                {view.opponentPassed && <span className="text-sm text-warning">Opponent voted to pass</span>}
+                {view.opponentPassed && <span className="text-sm text-warning">Opponent skipped</span>}
               </div>
               <p className="mt-3 text-xs text-fore-muted">
                 Full names count, and so does a surname when only one shared player has it. A player can only be used once per match.
@@ -396,6 +412,7 @@ function DuelClient() {
               )}
               {last.reason === "pass" && <p className="text-xl">Both players passed. New round next.</p>}
               {last.reason === "timeout" && <p className="text-xl">Time ran out. New round next.</p>}
+              {last.reason === "wrong" && <p className="text-xl">Neither player got it right. Zero points each.</p>}
               {view.phase === "result" && <p className="mt-2 text-sm text-fore-muted">Next round starting…</p>}
             </div>
           )}

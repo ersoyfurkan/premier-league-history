@@ -77,9 +77,13 @@ export function randomFootballTicTacToePuzzle(comp: Competition): FootballTicTac
   const { pool, nations } = competitions[comp];
   const withAward = Math.random() < 0.65;
   const awards = pool.filter(({ clue }) => clue.awardIds?.length);
+  const preferSingleAward = Math.random() < 0.5;
+  const preferredAwards = awards.filter(({ clue }) => (clue.awardIds?.length === 1) === preferSingleAward);
   for (let attempt = 0; attempt < 1500; attempt += 1) {
     const minimum = attempt < 1000 ? 3 : 2;
-    const seed = withAward && attempt < 1400 ? pick(awards, 1)[0] : undefined;
+    const seed = withAward && attempt < 1400
+      ? pick(attempt < 700 && preferredAwards.length ? preferredAwards : awards, 1)[0]
+      : undefined;
     const rowPool = isTournamentComp(comp) ? nations : pool;
     const eligible = seed ? rowPool.filter((row) =>
       row !== seed && !row.clue.awardIds?.length && overlap(row.members, seed.members, minimum),

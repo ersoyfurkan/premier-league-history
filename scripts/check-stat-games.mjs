@@ -9,7 +9,7 @@ const { STAT_TRIVIA_CATEGORIES, STAT_RONDO_CLUES } = await import("../data/statT
 const { AUTHORED_STAT_CATEGORIES, STAT_RECORDS } = await import("../data/statTriviaRecords.ts");
 const { STAT_SEASONS } = await import("../data/statTriviaSeasons.ts");
 const { BOARD_SIZE, NORMAL_TILE_MIN_ANSWERS, FINAL_TILE_MIN_ANSWERS, uniqueTriviaEntries, generateBoardIds, tileById, triviaDifficulty, answersFor, matchTriviaAnswer, suggestTrivia, triviaAnswerType, checkTriviaAnswer, REPEATED_TRIVIA_ANSWER, rollPathDice, pathTurnMovement } = await import("../data/triviaPath.ts");
-const { RONDO_CLUES, RONDO_LETTERS, randomRondoPicks, rondoQuestions, isRondoAnswer } = await import("../data/rondo.ts");
+const { RONDO_CLUES, RONDO_LETTERS, RONDO_DIFFICULTY_COUNTS, rondoDifficulty, randomRondoPicks, rondoQuestions, isRondoAnswer } = await import("../data/rondo.ts");
 const { KNOWLEDGE_TRIVIA_CATEGORIES, KNOWLEDGE_RONDO_CLUES } = await import("../data/knowledgeTrivia.ts");
 const { FOOTBALL_KNOWLEDGE_GROUPS, MODERN_SQUADS, MODERN_MANAGER_GROUPS, TEAMMATE_GROUPS, knowledgeMatches } = await import("../data/footballKnowledge.ts");
 const { STADIUM_COUNTRIES } = await import("../data/stadiumTrivia.ts");
@@ -25,6 +25,233 @@ const { extractClubPlayers } = await import("./refresh-club-history.mjs");
 const { INDIVIDUAL_AWARDS, AWARD_GROUPS, AWARD_TRIVIA_CATEGORIES, AWARD_RONDO_CLUES, individualAward, awardPlayerKey, awardsInText } = await import("../data/individualAwards.ts");
 const { AWARD_SOURCES, awardTables, extractAwardWinners } = await import("./refresh-individual-awards.mjs");
 const comps = ["general", ...REAL_COMPETITIONS, ...TOURNAMENT_COMPETITIONS];
+const {
+  newFootballTicTacToeRoom, applyFootballTicTacToeMove, footballTicTacToeView,
+  requestFootballTicTacToeRematch, expireFootballTicTacToeTurn, isFootballTicTacToeMode,
+} = await import("../lib/footballTicTacToe.ts");
+const { normalizeFootballPlayerName } = await import("../data/footballNames.ts");
+const { submitDuelGuess, skipDuelGuess } = await import("../lib/clubDuelRound.ts");
+const { playersForBoth, DUEL_WIN_SCORE } = await import("../data/clubDuel.ts");
+
+function guessingDuel() {
+  return {
+    comp: "general", phase: "guess", clubs: { p1: "che", p2: "mun" },
+    scores: { p1: 0, p2: 0 }, used: [], pass: { p1: false, p2: false },
+    last: null, winner: null, deadline: 60_000,
+  };
+}
+
+test("Club Duel allows one guess each, two wrong guesses score zero, and repeats cannot retry", () => {
+  const state = guessingDuel();
+  const correct = playersForBoth("che", "mun", "general")[0];
+  assert.ok(correct);
+  assert.equal(submitDuelGuess(state, "p1", "Not A Player", 100).correct, false);
+  assert.equal(state.phase, "guess");
+  assert.equal(submitDuelGuess(state, "p1", correct, 200).correct, false);
+  assert.equal(state.guesses.p1, true);
+  assert.deepEqual(state.scores, { p1: 0, p2: 0 });
+  assert.equal(submitDuelGuess(state, "p2", "Another Wrong Name", 300).correct, false);
+  assert.equal(state.phase, "result");
+  assert.equal(state.last.reason, "wrong");
+  assert.deepEqual(state.scores, { p1: 0, p2: 0 });
+});
+
+test("Club Duel awards only the fastest correct guess, including after an opponent's wrong guess", () => {
+  const correct = playersForBoth("che", "mun", "general")[0];
+  for (const first of ["p1", "p2"]) {
+    const second = first === "p1" ? "p2" : "p1";
+    const state = guessingDuel();
+    assert.equal(submitDuelGuess(state, first, correct, 100).correct, true);
+    assert.equal(submitDuelGuess(state, second, correct, 101).correct, false);
+    assert.equal(state.scores[first], 1);
+    assert.equal(state.scores[second], 0);
+    assert.equal(state.last.winner, first);
+    const afterWrong = guessingDuel();
+    submitDuelGuess(afterWrong, first, "Wrong Name", 100);
+    assert.equal(submitDuelGuess(afterWrong, second, correct, 200).correct, true);
+    assert.equal(afterWrong.scores[second], 1);
+    assert.equal(afterWrong.scores[first], 0);
+  }
+});
+
+test("Club Duel handles used names, skips, timeouts and the winning point without extra guesses", () => {
+  const correct = playersForBoth("che", "mun", "general")[0];
+  const state = guessingDuel();
+  state.used = [normalizeFootballPlayerName(correct)];
+  assert.equal(submitDuelGuess(state, "p1", correct, 100).correct, false);
+  skipDuelGuess(state, "p2", 200);
+  assert.equal(state.phase, "result");
+  assert.deepEqual(state.scores, { p1: 0, p2: 0 });
+  const skipped = guessingDuel();
+  skipDuelGuess(skipped, "p1", 100);
+  assert.equal(submitDuelGuess(skipped, "p1", correct, 200).correct, false);
+  skipDuelGuess(skipped, "p2", 300);
+  assert.equal(skipped.last.reason, "pass");
+  const late = guessingDuel();
+  assert.equal(submitDuelGuess(late, "p1", correct, 60_000).correct, false);
+  assert.equal(late.last.reason, "timeout");
+  const winning = guessingDuel();
+  winning.scores.p1 = DUEL_WIN_SCORE - 1;
+  assert.equal(submitDuelGuess(winning, "p1", correct, 100).correct, true);
+  assert.equal(winning.phase, "finished");
+  assert.equal(winning.winner, "p1");
+});
+
+function playingGrid(mode = "normal") {
+  const state = newFootballTicTacToeRoom("creator", "general", mode);
+  state.p2Token = "guest";
+  state.status = "playing";
+  state.turn = "p1";
+  state.turnDeadline = 60_000;
+  state.puzzle = {
+    rows: [{ label: "Row 1" }, { label: "Row 2" }, { label: "Row 3" }],
+    columns: [{ label: "Column 1" }, { label: "Column 2" }, { label: "Column 3" }],
+    answers: Array.from({ length: 3 }, (_, row) => Array.from({ length: 3 }, (_, column) => [
+      `Trap Player ${row * 3 + column}`, `Safe Player ${row * 3 + column}`,
+    ])),
+  };
+  if (mode === "hidden-trap") {
+    state.traps = state.puzzle.answers.flatMap((row) => row.map((answers) => normalizeFootballPlayerName(answers[0])));
+  }
+  return state;
+}
+
+test("Hidden Trap picks one valid answer per square and never exposes traps or answer pools in room views", () => {
+  for (const comp of comps) {
+    const state = newFootballTicTacToeRoom("creator", comp, "hidden-trap");
+    assert.equal(state.traps.length, 9);
+    for (let cell = 0; cell < 9; cell += 1) {
+      assert.ok(state.puzzle.answers[Math.floor(cell / 3)][cell % 3].some((name) =>
+        normalizeFootballPlayerName(name) === state.traps[cell]), `${comp} ${cell}`);
+    }
+    for (const side of ["p1", "p2"]) {
+      const view = footballTicTacToeView(state, side);
+      assert.equal(view.mode, "hidden-trap");
+      assert.ok(!("traps" in view));
+      assert.ok(!("answers" in view.puzzle));
+      assert.ok(!("p1Token" in view));
+      assert.ok(!("p2Token" in view));
+      assert.equal(view.lastTrap, null);
+      assert.deepEqual(view.revealedTraps, Array(9).fill(null));
+    }
+  }
+  assert.ok(isFootballTicTacToeMode("normal"));
+  assert.ok(isFootballTicTacToeMode("hidden-trap"));
+  assert.ok(!isFootballTicTacToeMode("other"));
+});
+
+test("normal rules stay unchanged and legacy rooms default to normal", () => {
+  const state = playingGrid();
+  assert.equal(state.traps, undefined);
+  delete state.mode;
+  assert.equal(footballTicTacToeView(state, "p1").mode, "normal");
+  assert.equal(applyFootballTicTacToeMove(state, "p1", 0, "Trap Player 0", 100), null);
+  assert.equal(state.board[0].side, "p1");
+  assert.equal(state.turn, "p2");
+  assert.equal(state.lastTrap, null);
+  assert.deepEqual(footballTicTacToeView(state, "p1").revealedTraps, Array(9).fill(null));
+});
+
+test("Tic-Tac-Toe new-game votes require both players during or after play", () => {
+  for (const status of ["playing", "finished"]) {
+    const state = playingGrid("hidden-trap");
+    state.status = status;
+    state.board[0] = { side: "p1", player: "Safe Player 0" };
+    const puzzle = state.puzzle;
+    assert.equal(requestFootballTicTacToeRematch(state, "p1", 100), null);
+    assert.equal(requestFootballTicTacToeRematch(state, "p1", 200), null);
+    assert.equal(state.puzzle, puzzle);
+    assert.ok(state.board[0]);
+    assert.equal(state.status, status);
+    assert.equal(footballTicTacToeView(state, "p2").opponentWantsRematch, true);
+    assert.equal(requestFootballTicTacToeRematch(state, "p2", 300), null);
+    assert.notEqual(state.puzzle, puzzle);
+    assert.ok(state.board.every((cell) => cell === null));
+    assert.equal(state.status, "playing");
+    assert.equal(state.mode, "hidden-trap");
+    assert.equal(state.turnDeadline, 60_300);
+    assert.deepEqual(state.rematch, { p1: false, p2: false });
+  }
+  const waiting = newFootballTicTacToeRoom("creator", "general");
+  assert.match(requestFootballTicTacToeRematch(waiting, "p1", 100), /both players/);
+});
+
+test("completed squares reveal the AI pick on hits and safe moves for both players only", () => {
+  const state = playingGrid("hidden-trap");
+  assert.match(applyFootballTicTacToeMove(state, "p1", 0, "Invalid Player", 100), /both clues/);
+  assert.deepEqual(footballTicTacToeView(state, "p1").revealedTraps, Array(9).fill(null));
+  assert.equal(applyFootballTicTacToeMove(state, "p1", 0, "TRAP PLAYER 0", 200), null);
+  assert.equal(applyFootballTicTacToeMove(state, "p2", 1, "Safe Player 1", 300), null);
+  for (const side of ["p1", "p2"]) {
+    const view = JSON.parse(JSON.stringify(footballTicTacToeView(state, side)));
+    assert.deepEqual(view.revealedTraps, ["Trap Player 0", "Trap Player 1", ...Array(7).fill(null)]);
+    assert.ok(!("traps" in view));
+    assert.ok(!("answers" in view.puzzle));
+    assert.equal(view.board[0].side, "p2");
+    assert.equal(view.board[1].side, "p2");
+  }
+  state.status = "finished";
+  requestFootballTicTacToeRematch(state, "p1", 400);
+  requestFootballTicTacToeRematch(state, "p2", 500);
+  assert.deepEqual(footballTicTacToeView(state, "p1").revealedTraps, Array(9).fill(null));
+});
+
+test("trap hits award the square and next turn to the opponent, while safe answers behave normally", () => {
+  const state = playingGrid("hidden-trap");
+  assert.equal(applyFootballTicTacToeMove(state, "p1", 0, "TRAP PLAYER 0", 100), null);
+  assert.deepEqual(state.board[0], { side: "p2", player: "TRAP PLAYER 0" });
+  assert.equal(state.turn, "p2");
+  assert.equal(state.turnDeadline, 60_100);
+  assert.deepEqual(state.lastTrap, { cell: 0, player: "TRAP PLAYER 0", side: "p1" });
+  assert.match(applyFootballTicTacToeMove(state, "p1", 1, "Safe Player 1", 200), /opponent/);
+  assert.match(applyFootballTicTacToeMove(state, "p2", 0, "Safe Player 0", 200), /empty/);
+  assert.match(applyFootballTicTacToeMove(state, "p2", 1, "Not a matching player", 200), /both clues/);
+  assert.equal(state.turn, "p2");
+  assert.equal(applyFootballTicTacToeMove(state, "p2", 1, "Safe Player 1", 200), null);
+  assert.equal(state.board[1].side, "p2");
+  assert.equal(state.turn, "p1");
+  assert.equal(state.lastTrap, null);
+  state.board[2] = { side: "p1", player: "Safe Player 3" };
+  assert.match(applyFootballTicTacToeMove(state, "p1", 3, "Safe Player 3", 300), /already been used/);
+});
+
+test("a trap can complete the opponent's winning line or fill the board for a draw", () => {
+  const state = playingGrid("hidden-trap");
+  state.board[0] = { side: "p2", player: "Safe Player 0" };
+  state.board[1] = { side: "p2", player: "Safe Player 1" };
+  assert.equal(applyFootballTicTacToeMove(state, "p1", 2, "Trap Player 2", 100), null);
+  assert.equal(state.winner, "p2");
+  assert.equal(state.status, "finished");
+  assert.equal(state.turnDeadline, null);
+  const draw = playingGrid("hidden-trap");
+  const sides = ["p1", "p2", "p1", "p1", "p2", "p2", "p2", "p1"];
+  draw.board = [...sides.map((side, index) => ({ side, player: `Safe Player ${index}` })), null];
+  assert.equal(applyFootballTicTacToeMove(draw, "p1", 8, "Trap Player 8", 100), null);
+  assert.equal(draw.status, "finished");
+  assert.equal(draw.winner, null);
+  assert.equal(draw.turnDeadline, null);
+});
+
+test("trap rematches regenerate private picks and preserve rules; timeouts do not award squares", () => {
+  const state = playingGrid("hidden-trap");
+  const oldTraps = state.traps;
+  state.status = "finished";
+  assert.equal(requestFootballTicTacToeRematch(state, "p1", 100), null);
+  assert.equal(state.traps, oldTraps);
+  assert.equal(requestFootballTicTacToeRematch(state, "p2", 200), null);
+  assert.notEqual(state.traps, oldTraps);
+  assert.equal(state.mode, "hidden-trap");
+  assert.equal(state.lastTrap, null);
+  assert.ok(state.board.every((cell) => cell === null));
+  assert.equal(state.status, "playing");
+  const priorTurn = state.turn;
+  assert.ok(expireFootballTicTacToeTurn(state, 60_200));
+  assert.notEqual(state.turn, priorTurn);
+  assert.ok(state.board.every((cell) => cell === null));
+  for (const [index, trap] of state.traps.entries()) {
+    assert.ok(state.puzzle.answers[Math.floor(index / 3)][index % 3].some((name) => normalizeFootballPlayerName(name) === trap));
+  }
+});
 
 test("prepared football facts and awards match their authored builders without changing Rondo indices", async () => {
   const football = await import("./builders/footballTicTacToe.ts");
@@ -32,7 +259,9 @@ test("prepared football facts and awards match their authored builders without c
   const { AWARD_RONDO_CLUES } = await import("../data/individualAwards.ts");
   assert.deepEqual(INDIVIDUAL_AWARDS, awards.INDIVIDUAL_AWARDS);
   assert.deepEqual(AWARD_GROUPS, awards.AWARD_GROUPS);
-  assert.deepEqual(AWARD_RONDO_CLUES, awards.AWARD_RONDO_CLUES);
+  for (const comp of comps) {
+    assert.deepEqual(AWARD_RONDO_CLUES[comp].map(({ letter, clue, answers }) => ({ letter, clue, answers })), awards.AWARD_RONDO_CLUES[comp]);
+  }
   for (const comp of comps) {
     assert.deepEqual(footballFacts(comp), football.footballFacts(comp), comp);
     const previous = randomRondoPicks(comp);
@@ -40,8 +269,51 @@ test("prepared football facts and awards match their authored builders without c
     const questions = rondoQuestions(comp, picks);
     for (const [index, letter] of RONDO_LETTERS.entries()) {
       const options = RONDO_CLUES[comp].filter((clue) => clue.letter === letter);
-      assert.deepEqual(questions[index], { ...options[picks[index]], index }, `${comp} ${letter}`);
+      const selected = options[picks[index]];
+      assert.deepEqual(questions[index], { ...selected, difficulty: rondoDifficulty(selected), index }, `${comp} ${letter}`);
       if (options.length > 1) assert.notEqual(picks[index], previous[index], `${comp} ${letter}`);
+    }
+  }
+});
+
+test("Rondo prompts stay short without removing answer conditions or questions", () => {
+  const unitedGoldenBoot = AWARD_RONDO_CLUES.general.find((clue) =>
+    clue.letter === "A" && clue.prompt === "Man Utd player who won the PL Golden Boot");
+  assert.ok(unitedGoldenBoot);
+  assert.ok(unitedGoldenBoot.answers.includes("Andy Cole"));
+  for (const comp of comps) {
+    for (const clue of RONDO_CLUES[comp]) {
+      const prompt = clue.prompt ?? clue.clue;
+      assert.ok(prompt.length <= 140, `${comp} (${prompt.length} characters): ${prompt}`);
+      assert.doesNotMatch(prompt, /answer starts with|through the recorded award seasons|Name a (winner|player):/);
+      assert.ok(clue.answers.length > 0);
+    }
+    const youngAward = AWARD_RONDO_CLUES[comp].find((clue) => clue.clue.includes("La Liga U23 Player") && clue.clue.includes("PFA Young"));
+    if (youngAward) {
+      assert.equal(youngAward.prompt, "Top-five-league young player award");
+      assert.match(youngAward.clue, /PFA Young Player of the Year OR/);
+      assert.match(youngAward.clue, /La Liga U23/);
+    }
+  }
+});
+
+test("every new Rondo round mixes nine easy, nine medium and eight hard clues without repeats", () => {
+  for (const comp of comps) {
+    let previous = [];
+    for (let round = 0; round < 100; round += 1) {
+      const picks = randomRondoPicks(comp, previous);
+      const questions = rondoQuestions(comp, picks);
+      assert.equal(questions.length, 26, comp);
+      assert.deepEqual(questions.map(({ letter }) => letter), RONDO_LETTERS, comp);
+      const counts = { easy: 0, medium: 0, hard: 0 };
+      for (const [index, question] of questions.entries()) {
+        counts[question.difficulty] += 1;
+        const options = RONDO_CLUES[comp].filter((clue) => clue.letter === question.letter);
+        assert.deepEqual(question.answers, options[picks[index]].answers);
+        if (previous.length && options.length > 1) assert.notEqual(picks[index], previous[index], `${comp} ${question.letter}`);
+      }
+      assert.deepEqual(counts, RONDO_DIFFICULTY_COUNTS, `${comp} round ${round}`);
+      previous = picks;
     }
   }
 });
@@ -743,11 +1015,12 @@ test("randomized award Tic-Tac-Toe grids retain playable intersections and preci
   let seed = 20261102;
   Math.random = () => ((seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0) / 4294967296);
   const groups = new Map(AWARD_GROUPS.map((group) => [group.label, group]));
+  const prepared = JSON.parse(readFileSync(new URL("../data/quizFootball.generated.json", import.meta.url), "utf8"));
   const seen = new Set();
   try {
     for (const comp of comps) {
       let found = false;
-      for (let run = 0; run < 5; run += 1) {
+      for (let run = 0; run < 30; run += 1) {
         const puzzle = randomFootballTicTacToePuzzle(comp);
         const clues = [...puzzle.rows, ...puzzle.columns];
         for (const clue of clues.filter((clue) => clue.awardIds?.length)) {
@@ -768,10 +1041,60 @@ test("randomized award Tic-Tac-Toe grids retain playable intersections and preci
           }
         }
       }
-      assert.ok(found, `${comp}: no award sampled`);
+      const bank = prepared.competitions[comp];
+      const rows = TOURNAMENT_COMPETITIONS.includes(comp) ? bank.nations : bank.pool;
+      const feasibleAward = bank.pool.some((award) => award.clue.awardIds?.length
+        && rows.filter((row) => row.members.filter((member) => award.members.includes(member)).length >= 2).length >= 3);
+      if (feasibleAward) assert.ok(found, `${comp}: no feasible award sampled`);
     }
   } finally { Math.random = originalRandom; }
   assert.ok(seen.size > 10, "award variety");
+});
+
+test("award grids mix single/grouped awards with nation, club, manager and teammate conditions", () => {
+  const originalRandom = Math.random;
+  let seed = 20261103;
+  Math.random = () => ((seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0) / 4294967296);
+  const seen = new Set();
+  try {
+    for (let run = 0; run < 150; run += 1) {
+      const puzzle = randomFootballTicTacToePuzzle("general");
+      for (let row = 0; row < 3; row += 1) {
+        for (let column = 0; column < 3; column += 1) {
+          assert.ok(puzzle.answers[row][column].length >= 2);
+          const axes = [puzzle.rows[row], puzzle.columns[column]];
+          for (const [index, clue] of axes.entries()) {
+            if (!clue.awardIds?.length) continue;
+            seen.add(clue.awardIds.length === 1 ? "single" : "grouped");
+            const other = axes[1 - index].label;
+            if (/international$/.test(other)) seen.add("nation");
+            if (/^Played for /.test(other)) seen.add("club");
+            if (/^Managed by /.test(other)) seen.add("manager");
+            if (/^Teammate of /.test(other)) seen.add("teammate");
+          }
+        }
+      }
+    }
+  } finally { Math.random = originalRandom; }
+  for (const kind of ["single", "grouped", "nation", "club", "manager", "teammate"]) {
+    assert.ok(seen.has(kind), `Missing award intersection variety: ${kind}`);
+  }
+});
+
+test("Tic-Tac-Toe prepared pools and fallback grids contain no OR award groups", async () => {
+  const { default: prepared } = await import("../data/quizFootball.generated.json");
+  const groups = new Map(AWARD_GROUPS.map((group) => [group.label, group]));
+  for (const comp of comps) {
+    const clues = [
+      ...prepared.competitions[comp].pool.map(({ clue }) => clue),
+      ...prepared.variants[comp].flatMap((puzzle) => [...puzzle.rows, ...puzzle.columns]),
+    ];
+    for (const clue of clues) {
+      const group = groups.get(clue.label);
+      if (!group || group.awardIds.length < 2) continue;
+      assert.equal(group.awardOperator ?? group.operator, "AND", `${comp}: ${clue.label}`);
+    }
+  }
 });
 
 console.info("New question-bank additions:", STAT_SEASONS.map(({ comp }) => `${comp}: ${STAT_TRIVIA_CATEGORIES[comp].length} Trivia Path / ${STAT_RONDO_CLUES[comp].length} Rondo`).join("; "));

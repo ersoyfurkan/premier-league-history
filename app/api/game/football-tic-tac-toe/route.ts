@@ -8,6 +8,7 @@ import {
   newFootballTicTacToeRoom,
   parseFootballTicTacToeComp,
   requestFootballTicTacToeRematch,
+  isFootballTicTacToeMode,
   type FootballTicTacToeRoomState,
 } from "@/lib/footballTicTacToe";
 
@@ -74,6 +75,10 @@ async function handlePost(request: NextRequest) {
   }
 
   if (body.action === "create") {
+    if (body.mode !== undefined && !isFootballTicTacToeMode(body.mode)) {
+      return json({ error: "Choose Normal or Hidden Trap rules" }, 400);
+    }
+    const mode = body.mode ?? "normal";
     await db
       .prepare("DELETE FROM football_tic_tac_toe_rooms WHERE updated_at < ?")
       .bind(Date.now() - ROOM_TTL_MS)
@@ -87,7 +92,7 @@ async function handlePost(request: NextRequest) {
           .prepare(
             "INSERT INTO football_tic_tac_toe_rooms (code, state, version, updated_at) VALUES (?, ?, 0, ?)",
           )
-          .bind(code, JSON.stringify(newFootballTicTacToeRoom(token, comp)), Date.now())
+          .bind(code, JSON.stringify(newFootballTicTacToeRoom(token, comp, mode)), Date.now())
           .run();
         return json({ code, token });
       } catch (error) {

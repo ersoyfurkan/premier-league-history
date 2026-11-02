@@ -53,7 +53,7 @@ function addRondo(comp: Competition, condition: string, entries: TriviaEntry[]) 
   const letters = new Set(entries.map(({ name }) => name[0].toUpperCase()));
   for (const letter of letters) {
     const answers = entries.filter(({ name }) => name[0].toUpperCase() === letter).flatMap(({ name, aliases }) => [name, ...aliases]);
-    const clue = { letter, clue: `Player who ${condition}`, answers };
+    const clue: RondoClue = { letter, clue: `Player who ${condition}`, answers, difficulty: "hard" };
     STAT_RONDO_CLUES[comp].push(clue);
     if (comp !== "general") STAT_RONDO_CLUES.general.push(clue);
   }

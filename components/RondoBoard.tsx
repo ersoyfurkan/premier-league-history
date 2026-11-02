@@ -133,7 +133,7 @@ export default function RondoBoard({
           <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-accent">
             {question.contains ? `Contains ${question.letter}` : `Starts with ${question.letter}`}
           </p>
-          <p className="max-w-full text-[clamp(11px,2.6vw,17px)] font-semibold leading-snug">{question.clue}</p>
+          <p className="max-w-full text-[clamp(11px,2.6vw,17px)] font-semibold leading-snug">{question.prompt ?? question.clue}</p>
           <input
             ref={inputRef}
             value={guess}
@@ -157,6 +157,12 @@ export default function RondoBoard({
           <p className={`h-4 text-xs ${flash?.ok ? "text-emerald-400" : "text-red-400"}`}>{flash?.text ?? ""}</p>
         </div>
       </div>
+      {question.prompt && (
+        <details key={current} className="mt-3 rounded-lg border border-border px-3 py-2 text-sm text-fore-muted">
+          <summary className="cursor-pointer">Question scope</summary>
+          <p className="mt-2">{question.clue.replace(/ \(answer starts with [A-Z]\)\.$/, ".")}</p>
+        </details>
+      )}
     </div>
   );
 }

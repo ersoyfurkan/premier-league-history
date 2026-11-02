@@ -19,6 +19,23 @@ export function individualAward(id: string): IndividualAward {
 }
 
 const competitions: Competition[] = ["general", ...REAL_COMPETITIONS, ...TOURNAMENT_COMPETITIONS];
+function awardPrompt(group: AwardGroup) {
+  const compact = (label: string) => label
+    .replaceAll("Manchester United", "Man Utd")
+    .replaceAll("Manchester City", "Man City")
+    .replaceAll("Premier League", "PL")
+    .replaceAll("UEFA Champions League", "UCL")
+    .replaceAll("European Championship", "Euros")
+    .replaceAll("Footballer of the Year", "Player of the Year");
+  if (group.id.includes("-club-")) {
+    const split = group.label.lastIndexOf(" + ");
+    const award = compact(group.label.slice(0, split)).replace(/ winner$/, "");
+    const club = compact(group.label.slice(split + 3));
+    return `${club} player who won the ${award}`;
+  }
+  return compact(group.label).replaceAll(" + ", " AND ");
+}
+
 export const AWARD_TRIVIA_CATEGORIES = Object.fromEntries(competitions.map((comp) => [
   comp, AWARD_GROUPS.filter((group) => group.competitions.includes(comp)).map((group) => ({ ...group, short: group.label })),
 ])) as Record<Competition, (AwardGroup & { short: string })[]>;
@@ -35,6 +52,8 @@ const groupClues = AWARD_GROUPS.map((group) => {
     group,
     clues: [...letters].map(([letter, answers]) => ({
       letter, clue: `Name a ${group.noun} (answer starts with ${letter}).`, answers,
+      prompt: awardPrompt(group),
+      difficulty: group.difficulty >= 4 ? "hard" as const : "medium" as const,
     })),
   };
 });

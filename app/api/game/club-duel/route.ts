@@ -5,16 +5,14 @@ import {
   DUEL_CLUBS,
   DUEL_GUESS_MS,
   DUEL_PICK_MS,
-  DUEL_RESULT_MS,
   DUEL_WIN_SCORE,
   clubByKey,
-  matchSharedPlayer,
   playersForBoth,
 } from "@/data/clubDuel";
-import { normalizeFootballPlayerName } from "@/data/footballTicTacToe";
+import { endDuelRound as endRound, submitDuelGuess, skipDuelGuess, type DuelRoundResult } from "@/lib/clubDuelRound";
 
 type Side = "p1" | "p2";
-type RoundResult = { winner: Side | null; player: string | null; reason: "correct" | "pass" | "timeout" };
+type RoundResult = DuelRoundResult;
 type DuelState = {
   game: "clubduel";
   comp: Competition;
@@ -28,6 +26,7 @@ type DuelState = {
   notice: string | null;
   used: string[]; // normalized names already guessed this match
   pass: Record<Side, boolean>;
+  guesses?: Record<Side, boolean>;
   last: RoundResult | null;
   winner: Side | null;
   rematch: Record<Side, boolean>;
@@ -75,6 +74,7 @@ function startPick(state: DuelState, now: number) {
   state.picks = {};
   state.clubs = null;
   state.pass = { p1: false, p2: false };
+  state.guesses = { p1: false, p2: false };
   state.deadline = now + DUEL_PICK_MS;
 }
 
@@ -97,21 +97,8 @@ function startGuess(state: DuelState, now: number) {
   state.clubs = { p1, p2 };
   state.phase = "guess";
   state.pass = { p1: false, p2: false };
+  state.guesses = { p1: false, p2: false };
   state.deadline = now + DUEL_GUESS_MS;
-}
-
-function endRound(state: DuelState, now: number, result: RoundResult) {
-  state.last = result;
-  if (result.winner) state.scores[result.winner] += 1;
-  const leader = state.scores.p1 >= DUEL_WIN_SCORE ? "p1" : state.scores.p2 >= DUEL_WIN_SCORE ? "p2" : null;
-  if (leader) {
-    state.phase = "finished";
-    state.winner = leader;
-    state.deadline = null;
-  } else {
-    state.phase = "result";
-    state.deadline = now + DUEL_RESULT_MS;
-  }
 }
 
 // Advances any phase whose timer ran out or whose conditions are met.
@@ -147,6 +134,8 @@ function view(state: DuelState, side: Side, now: number) {
     notice: state.notice,
     youPassed: state.pass[side],
     opponentPassed: state.pass[opponent],
+    youGuessed: state.guesses?.[side] ?? false,
+    opponentGuessed: state.guesses?.[opponent] ?? false,
     last: state.last,
     usedCount: state.used.length,
     winner: state.winner,
@@ -265,23 +254,14 @@ async function handlePost(request: NextRequest) {
   if (body.action === "guess") {
     const guess = typeof body.guess === "string" ? body.guess.slice(0, 60) : "";
     return mutate(db, code, token, (state, side, now) => {
-      if (state.phase !== "guess" || !state.clubs) return { extra: { correct: false, message: "Too late" } };
-      const player = matchSharedPlayer(state.clubs.p1, state.clubs.p2, guess, state.comp);
-      if (!player) return { extra: { correct: false, message: "Not a player we know who played for both clubs" } };
-      if (state.used.includes(normalizeFootballPlayerName(player))) {
-        return { extra: { correct: false, message: `${player} was already used` } };
-      }
-      state.used.push(normalizeFootballPlayerName(player));
-      endRound(state, now, { winner: side, player, reason: "correct" });
-      return { extra: { correct: true, message: player } };
+      if (body.round !== state.round) return { extra: { correct: false, message: "That round is over" } };
+      return { extra: submitDuelGuess(state, side, guess, now) };
     });
   }
 
   if (body.action === "pass") {
     return mutate(db, code, token, (state, side, now) => {
-      if (state.phase !== "guess") return;
-      state.pass[side] = true;
-      if (state.pass.p1 && state.pass.p2) endRound(state, now, { winner: null, player: null, reason: "pass" });
+      skipDuelGuess(state, side, now);
     });
   }
 

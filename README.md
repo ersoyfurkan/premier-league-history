@@ -74,6 +74,24 @@ The same focused test command also checks stadium aliases/search, modern manager
 
 Phone-specific layouts are scoped to `width < 768px` in [the shared styles](./app/globals.css); the existing laptop/desktop layout at 768px and above is unchanged. Mobile navigation accommodates device safe areas, forms use 16px inputs to avoid focus zoom, and controls have a 44px minimum touch height. Competition tabs swipe horizontally and wide tables retain every column in their own scroll region. Trivia Path answer panels stack on phones, Tic-Tac-Toe clues are larger, and Rondo puts the answer form below its letter ring so the keyboard does not crowd the question.
 
+### Short, mixed-difficulty Rondo rounds
+
+Every new A-Z round has **9 easy, 9 medium and 8 hard** clues in all competition modes, shared by solo, same-device and online play. Familiar core clues and stadiums supply easy questions, the extended bank and standalone awards supply medium questions, and statistical records/compound conditions supply hard questions. The letter/difficulty assignment is randomized and avoids the preceding round's question when alternatives exist.
+
+Rondo's main prompts are at most **140 characters**. Difficulty stays internal: no difficulty badges or "Name a winner/player:" prefixes appear on the board. Generated questions use short wording such as "Man Utd player who won the PL Golden Boot". Expand **Question scope** below the ring for the full award alternatives, dates, club spells or AND/OR conditions. No questions or answers were removed; canonical clue text, order and saved multiplayer picks remain intact. Existing saved games retain their original selection rather than being rebalanced midway.
+
+### Tic-Tac-Toe rules
+
+The creator chooses **Normal** or **Hidden Trap** before inviting a friend; same-device games also have a pregame rules screen. Normal preserves existing rules. Hidden Trap automatically picks one random valid answer per square, without calling an AI service. Guessing that hidden answer gives the square to the opponent and passes the turn to them; all other valid, unused answers work normally. Trap awards can complete a win or draw.
+
+Award headers show larger images and each award's name, never a hidden "+N" count. New grids exclude OR award collections: an award header names one specific award or requires all awards in a combination. Multi-award headers scroll within the box. Awards intersect with compatible nation, club, documented manager-spell and teammate-spell clues. A player must meet both axes; every square still has at least two valid answers. Existing saved boards keep their original conditions until both players start a new game.
+
+Online picks remain private in the stored room state, and public room views omit unrevealed picks and answer pools. After each valid move, the completed square displays **AI pick**, whether the submitted answer matched it or not. Invalid guesses do not reveal picks; empty squares stay hidden. Same-device picks live in browser memory, hidden from the game UI rather than protected from developer tools. During or after play, each player can vote for a new game; only both votes together reset the board, preserving the rules and generating a fresh grid and picks. Same-device play has separate Player 1 and Player 2 vote buttons. Older rooms without a mode keep Normal rules.
+
+### Club Duel guesses
+
+Each player gets **one guess per round**. A wrong or already-used player consumes that guess; the opponent can still answer. Two wrong guesses give zero points each. The first correct guess accepted by the server wins the round's single point, with optimistic version retries preventing simultaneous correct requests from scoring twice. Skipping gives up that player's guess; if neither player can answer, the round ends with no points. The existing timer and first-to-five match target remain unchanged.
+
 ## Cloudflare resource limits
 
 `pnpm build` runs `pnpm data:quiz` before compiling Next.js. The [quiz preparation script](./scripts/prepare-quiz-data.mjs) computes award combinations, the shared career/fact universe, Tic-Tac-Toe clue memberships, and Trivia Path tiles/candidate ratings offline. Generated quiz snapshots are committed; after changing source facts, awards, careers or categories, regenerate them with `pnpm data:quiz`. `pnpm test:stat-games` rejects stale snapshots.

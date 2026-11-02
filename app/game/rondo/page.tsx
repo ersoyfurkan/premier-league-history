@@ -191,7 +191,7 @@ function RondoClient() {
 
   const rules = (
     <p className="mt-2 text-sm text-fore-muted">
-      One question for every letter A–Z. You have 3 minutes. Pass to come back to a letter later. Most correct answers wins; fewest wrong breaks a tie.
+      One question for every letter A–Z: 9 easy, 9 medium and 8 hard. You have 3 minutes. Pass to return later. Most correct answers wins; fewest wrong breaks a tie.
     </p>
   );
 
