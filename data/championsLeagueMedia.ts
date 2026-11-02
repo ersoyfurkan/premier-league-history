@@ -55,7 +55,7 @@ export const uclClubLogos: Record<string, string> = {
   "Manchester City": "https://img.uefa.com/imgml/TP/teams/logos/700x700/52919.png",
   "Dynamo Kyiv": "https://img.uefa.com/imgml/TP/teams/logos/700x700/52723.png",
   "Bayern München": "https://img.uefa.com/imgml/TP/teams/logos/700x700/50037.png",
-  "Liverpool": "https://img.uefa.com/imgml/TP/teams/logos/700x700/7889.png",
+  "Liverpool Fc": "https://img.uefa.com/imgml/TP/teams/logos/700x700/7889.png",
   "Arsenal": "https://img.uefa.com/imgml/TP/teams/logos/700x700/52280.png",
   "Milan": "https://img.uefa.com/imgml/TP/teams/logos/700x700/50058.png",
   "Benfica": "https://img.uefa.com/imgml/TP/teams/logos/700x700/50147.png",
