@@ -237,6 +237,21 @@ export function rollDice() {
   return 1 + Math.floor(Math.random() * 6);
 }
 
+export type PathDice = number | "skull";
+export function rollPathDice(skullTurn = false): PathDice {
+  const face = 1 + Math.floor(Math.random() * (skullTurn ? 6 : 7));
+  return face === 7 ? "skull" : face;
+}
+
+export function pathTurnMovement(origin: number, dice: number, skullTurn: boolean, success: boolean) {
+  const target = Math.min(origin + dice, BOARD_SIZE);
+  const position = success ? target : skullTurn ? Math.max(0, origin - dice) : origin;
+  const resetSpaces = !success && skullTurn
+    ? Array.from({ length: target - Math.max(1, position) + 1 }, (_, index) => Math.max(1, position) + index)
+    : [];
+  return { position, resetSpaces };
+}
+
 export const BOARD_SIZE = 16;
 export const NORMAL_TILE_MIN_ANSWERS = 13;
 export const FINAL_TILE_MIN_ANSWERS = 6;

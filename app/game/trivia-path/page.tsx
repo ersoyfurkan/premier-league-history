@@ -16,7 +16,9 @@ import {
   answersFor,
   generateBoard,
   checkTriviaAnswer,
-  rollDice,
+  rollPathDice,
+  pathTurnMovement,
+  type PathDice,
   suggestTrivia,
   triviaAnswerType,
   tileQuestion,
@@ -44,6 +46,8 @@ function TriviaClient() {
   const [board, setBoard] = useState<BoardTile[]>([]);
   const [turn, setTurn] = useState(0);
   const [dice, setDice] = useState<number | null>(null);
+  const [diceFace, setDiceFace] = useState<PathDice | null>(null);
+  const [skullTurn, setSkullTurn] = useState(false);
   const [rolling, setRolling] = useState(false);
   const [required, setRequired] = useState(1);
   const [found, setFound] = useState<TriviaEntry[]>([]);
@@ -95,6 +99,8 @@ function TriviaClient() {
     setTurn(0);
     setTaken({});
     setDice(null);
+    setDiceFace(null);
+    setSkullTurn(false);
     setFinalRevealed(false);
     setPhase("roll");
   };
@@ -105,10 +111,16 @@ function TriviaClient() {
     let ticks = 0;
     const timer = window.setInterval(() => {
       ticks += 1;
-      setDice(rollDice());
+      setDiceFace(rollPathDice(skullTurn));
       if (ticks < 9) return;
       window.clearInterval(timer);
-      const final = rollDice();
+      const final = rollPathDice(skullTurn);
+      setDiceFace(final);
+      if (final === "skull") {
+        setSkullTurn(true);
+        setRolling(false);
+        return;
+      }
       const target = board[Math.min(current.pos + final, BOARD_SIZE) - 1];
       if (Math.min(current.pos + final, BOARD_SIZE) === BOARD_SIZE) setFinalRevealed(true);
       const count = answersFor(target, final);
@@ -133,9 +145,15 @@ function TriviaClient() {
     setPassed(success);
     if (!success) setFeedback(message);
     // Only answers from a completed question are used up; a failed attempt counts for nothing.
-    if (success) setTaken((prev) => ({ ...prev, [targetPos - 1]: [...(prev[targetPos - 1] ?? []), ...answers.map((a) => a.name)] }));
+    const movement = pathTurnMovement(origin, dice!, skullTurn, success);
+    setTaken((prev) => {
+      const updated = { ...prev };
+      if (success) updated[targetPos] = [...(prev[targetPos] ?? []), ...answers.map((a) => a.name)];
+      for (const space of movement.resetSpaces) delete updated[space];
+      return updated;
+    });
     setPlayers((prev) =>
-      prev.map((p, i) => (i === turn ? { ...p, pos: success ? targetPos : p.pos, turns: p.turns + 1 } : p)),
+      prev.map((p, i) => (i === turn ? { ...p, pos: movement.position, turns: p.turns + 1 } : p)),
     );
     setPhase("result");
   };
@@ -148,7 +166,7 @@ function TriviaClient() {
 
   const submitAnswer = (value: string) => {
     if (!tile || phase !== "play") return;
-    const result = checkTriviaAnswer(tile.entries, value, found.map((entry) => entry.name), taken[targetPos - 1] ?? []);
+    const result = checkTriviaAnswer(tile.entries, value, found.map((entry) => entry.name), taken[targetPos] ?? []);
     setGuess("");
     if (result.kind !== "correct") {
       setFeedback(result.message);
@@ -173,6 +191,8 @@ function TriviaClient() {
     }
     setTurn((turn + 1) % players.length);
     setDice(null);
+    setDiceFace(null);
+    setSkullTurn(false);
     setPhase("roll");
   };
 
@@ -206,6 +226,8 @@ function TriviaClient() {
               the new space. Get one wrong and you lose your turn and stay where you were. First to the last space wins.
               {" "}Board spaces use visual clues; the full question appears when you land. The final space stays hidden
               until either player reaches it.
+              {" "}Roll a 💀 and roll again: answer correctly to advance, or move back the follow-up roll
+              from your starting position (never below start). Moving backward reopens used answers on every box crossed.
             </p>
             <div className="mt-5 flex gap-2">
               <button type="button" onClick={() => setVersus(false)} className={versus ? "btn-ghost" : "btn-primary"}>
@@ -282,12 +304,13 @@ function TriviaClient() {
 
         {phase === "roll" && current && (
           <div className="mt-6 rounded-2xl border border-line bg-background/60 p-8 text-center">
-            <p className="text-lg font-bold">{current.name}, roll the dice</p>
+            <p className="text-lg font-bold">{current.name}, {skullTurn ? "💀 roll again" : "roll the dice"}</p>
             <div className="mx-auto mt-5 flex h-24 w-24 items-center justify-center rounded-2xl border-2 border-accent text-5xl font-black">
-              {dice ?? "?"}
+              {diceFace === "skull" ? "💀" : diceFace ?? "?"}
             </div>
+            {skullTurn && <p className="mt-3 text-sm text-warning">Skull turn: a wrong answer or timeout moves you backward by your next roll.</p>}
             <button type="button" onClick={roll} disabled={rolling} className="btn-primary mt-6">
-              {rolling ? "Rolling…" : "Roll"}
+              {rolling ? "Rolling…" : skullTurn ? "Roll again" : "Roll"}
             </button>
           </div>
         )}
@@ -300,7 +323,7 @@ function TriviaClient() {
               </div>
               <div className="trivia-question-copy flex-1">
                 <p className="text-xs uppercase tracking-widest text-fore-muted">
-                  Rolled {dice} · moving to space {targetPos}
+                  {skullTurn ? "💀 " : ""}Rolled {dice} · moving to space {targetPos}
                 </p>
                 <p className="text-xl font-bold leading-snug"><NationText text={tileQuestion(tile, required)} includeAdjectives /></p>
               </div>
@@ -311,6 +334,7 @@ function TriviaClient() {
               )}
             </div>
             <p className="mt-3 text-sm text-fore-muted">{current.name}: {found.length}/{required}</p>
+            {skullTurn && phase === "play" && <p className="mt-2 text-sm text-warning">Wrong or out of time: move back to {Math.max(0, origin - dice) || "start"}.</p>}
             <ul className="mt-3 flex flex-wrap gap-2">
               {found.map((entry) => (
                 <li key={entry.name} className={`rounded-full border px-3 py-1 text-sm ${phase === "result" && !passed ? "border-red-400/40 bg-red-400/10 text-fore-muted line-through" : "border-accent/50 bg-accent/10"}`}>
@@ -358,6 +382,7 @@ function TriviaClient() {
                 <p className={`text-lg font-bold ${passed ? "text-accent" : "text-red-400"}`}>
                   {passed ? `Correct! You move to space ${targetPos}.` : feedback ?? "Time ran out — you lose your turn."}
                 </p>
+                {!passed && skullTurn && <p className="mt-2 text-sm text-red-400">💀 You move back to {current.pos ? `space ${current.pos}` : "start"}. Previously used answers on every box crossed are available again.</p>}
                 {missed.length > 0 && (
                   <p className="mt-1 text-sm text-fore-muted">Could have said: {missed.map((m) => m.name).join(", ")}</p>
                 )}

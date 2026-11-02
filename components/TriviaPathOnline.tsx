@@ -22,6 +22,7 @@ type PathView = {
   turns: Record<Side, number>;
   turn: Side;
   dice: number | null;
+  skullTurn?: boolean;
   target: number;
   required: number;
   question: string | null;
@@ -226,9 +227,10 @@ export default function TriviaPathOnline({ comp, code }: { comp: Competition; co
 
           {view.phase === "roll" && (
             <div className="mt-6 rounded-2xl border border-line bg-background/60 p-8 text-center">
-              <p className="text-lg font-bold">{myTurn ? "Your turn, roll the dice" : "Opponent is rolling…"}</p>
-              <div className="mx-auto mt-5 flex h-24 w-24 items-center justify-center rounded-2xl border-2 border-accent text-5xl font-black">?</div>
-              {myTurn && <button type="button" onClick={() => act({ action: "roll" })} className="btn-primary mt-6">Roll</button>}
+              <p className="text-lg font-bold">{view.skullTurn ? `${tag(view.turn)} rolled a skull — roll again` : myTurn ? "Your turn, roll the dice" : "Opponent is rolling…"}</p>
+              <div className="mx-auto mt-5 flex h-24 w-24 items-center justify-center rounded-2xl border-2 border-accent text-5xl font-black">{view.skullTurn ? "💀" : "?"}</div>
+              {view.skullTurn && <p className="mt-3 text-sm text-warning">A wrong answer or timeout moves the player backward by the next roll.</p>}
+              {myTurn && <button type="button" onClick={() => act({ action: "roll" })} className="btn-primary mt-6">{view.skullTurn ? "Roll again" : "Roll"}</button>}
               {secondsLeft !== null && <p className="mt-3 text-xs text-fore-muted">Auto-roll in {secondsLeft}s</p>}
             </div>
           )}
@@ -241,7 +243,7 @@ export default function TriviaPathOnline({ comp, code }: { comp: Competition; co
                 </div>
                 <div className="trivia-question-copy flex-1">
                   <p className="text-xs uppercase tracking-widest text-fore-muted">
-                    {tag(view.turn)} rolled {view.dice} · space {view.target}
+                    {view.skullTurn ? "💀 " : ""}{tag(view.turn)} rolled {view.dice} · space {view.target}
                   </p>
                   <p className="text-xl font-bold leading-snug"><NationText text={view.question ?? ""} includeAdjectives /></p>
                 </div>
@@ -250,6 +252,7 @@ export default function TriviaPathOnline({ comp, code }: { comp: Competition; co
                 )}
               </div>
               <p className="mt-3 text-sm text-fore-muted">{tag(view.turn)}: {view.found.length}/{view.required}</p>
+              {view.skullTurn && view.phase === "play" && <p className="mt-2 text-sm text-warning">Skull turn: wrong answers or timeouts move the player backward from their starting position by {view.dice} spaces.</p>}
               <ul className="mt-3 flex flex-wrap gap-2">
                 {(view.phase === "result" && view.last ? view.last.answers : view.found).map((name) => (
                   <li key={name} className={`rounded-full border px-3 py-1 text-sm ${view.phase === "result" && view.last && !view.last.success ? "border-red-400/40 bg-red-400/10 text-fore-muted line-through" : "border-accent/50 bg-accent/10"}`}>{name}</li>
@@ -294,11 +297,12 @@ export default function TriviaPathOnline({ comp, code }: { comp: Competition; co
               {feedback && view.phase === "play" && <p className="mt-2 text-sm text-red-400">{feedback}</p>}
 
               {view.phase === "result" && view.last && (
-                <p className={`mt-5 text-lg font-bold ${view.last.success ? "text-accent" : "text-red-400"}`}>
+                <div className={`mt-5 text-lg font-bold ${view.last.success ? "text-accent" : "text-red-400"}`}>
                   {view.last.success
                     ? `${tag(view.last.side)} moved to space ${view.pos[view.last.side]}.`
                     : `${tag(view.last.side)} lost the turn: ${view.last.message}.`}
-                </p>
+                  {!view.last.success && view.skullTurn && <p className="mt-2 text-sm">💀 {tag(view.last.side)} moved back to {view.pos[view.last.side] ? `space ${view.pos[view.last.side]}` : "start"}. Used answers on every box crossed are available again.</p>}
+                </div>
               )}
             </div>
           )}

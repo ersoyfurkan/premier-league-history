@@ -32,7 +32,7 @@ const { REAL_COMPETITIONS, TOURNAMENT_COMPETITIONS } = await import("../lib/comp
 const { STAT_TRIVIA_CATEGORIES, STAT_RONDO_CLUES } = await import("../data/statTrivia.ts");
 const { AUTHORED_STAT_CATEGORIES, STAT_RECORDS } = await import("../data/statTriviaRecords.ts");
 const { STAT_SEASONS } = await import("../data/statTriviaSeasons.ts");
-const { BOARD_SIZE, NORMAL_TILE_MIN_ANSWERS, FINAL_TILE_MIN_ANSWERS, uniqueTriviaEntries, generateBoardIds, tileById, triviaDifficulty, answersFor, matchTriviaAnswer, suggestTrivia, triviaAnswerType, checkTriviaAnswer, REPEATED_TRIVIA_ANSWER } = await import("../data/triviaPath.ts");
+const { BOARD_SIZE, NORMAL_TILE_MIN_ANSWERS, FINAL_TILE_MIN_ANSWERS, uniqueTriviaEntries, generateBoardIds, tileById, triviaDifficulty, answersFor, matchTriviaAnswer, suggestTrivia, triviaAnswerType, checkTriviaAnswer, REPEATED_TRIVIA_ANSWER, rollPathDice, pathTurnMovement } = await import("../data/triviaPath.ts");
 const { RONDO_CLUES, isRondoAnswer } = await import("../data/rondo.ts");
 const { KNOWLEDGE_TRIVIA_CATEGORIES, KNOWLEDGE_RONDO_CLUES } = await import("../data/knowledgeTrivia.ts");
 const { FOOTBALL_KNOWLEDGE_GROUPS, MODERN_SQUADS, MODERN_MANAGER_GROUPS, TEAMMATE_GROUPS, knowledgeMatches } = await import("../data/footballKnowledge.ts");
@@ -44,7 +44,7 @@ const { MARKET_VALUE_PLAYERS } = await import("../data/marketValues.ts");
 const { nationLogoSrc, nationMentions } = await import("../data/nationVisuals.ts");
 const { default: nationCrests } = await import("../data/nationCrests.generated.json");
 const { default: tournamentHistory } = await import("../data/tournamentHistory.generated.json");
-const { freshState, pathView, startPlay, answerPath, finishTurn } = await import("../lib/triviaPathState.ts");
+const { freshState, pathView, startPlay, answerPath, finishTurn, rollPath, startPathRoll, tickPath } = await import("../lib/triviaPathState.ts");
 const { extractClubPlayers } = await import("./refresh-club-history.mjs");
 const { INDIVIDUAL_AWARDS, AWARD_GROUPS, AWARD_TRIVIA_CATEGORIES, AWARD_RONDO_CLUES, individualAward, awardPlayerKey, awardsInText } = await import("../data/individualAwards.ts");
 const { AWARD_SOURCES, awardTables, extractAwardWinners } = await import("./refresh-individual-awards.mjs");
@@ -337,6 +337,118 @@ test("search suggestions stay within the active answer type without exposing cor
   const brazil = tileById("general", "s-knowledge-stadiums-brazil");
   assert.ok(!brazil.entries.some((entry) => entry.name === "Anfield"));
   assert.ok(suggestTrivia("general", "Anfield", triviaAnswerType(brazil)).includes("Anfield"));
+});
+
+test("skull is a seventh dice outcome and its follow-up is numeric only", () => {
+  const original = Math.random;
+  try {
+    const first = [];
+    const second = [];
+    for (let index = 0; index < 7; index += 1) {
+      Math.random = () => (index + 0.5) / 7;
+      first.push(rollPathDice());
+    }
+    for (let index = 0; index < 6; index += 1) {
+      Math.random = () => (index + 0.5) / 6;
+      second.push(rollPathDice(true));
+    }
+    assert.deepEqual(first, [1, 2, 3, 4, 5, 6, "skull"]);
+    assert.deepEqual(second, [1, 2, 3, 4, 5, 6]);
+  } finally { Math.random = original; }
+});
+
+test("skull failure moves behind the origin and reopens every crossed box for both players", () => {
+  const state = freshState("general", "p1");
+  state.p2Token = "p2";
+  state.board = Array(BOARD_SIZE).fill("s-clwin");
+  const [first, second] = tileById("general", "s-clwin").entries;
+  state.pos.p1 = 8;
+  state.pos.p2 = 4;
+  state.taken = Object.fromEntries(Array.from({ length: 12 }, (_, index) => [index + 1, [first.name]]));
+  startPathRoll(state, 1000);
+  rollPath(state, 1100, "skull");
+  assert.equal(state.phase, "roll");
+  assert.equal(state.turn, "p1");
+  assert.equal(state.dice, null);
+  assert.equal(state.deadline, 31100);
+  assert.equal(state.turns.p1, 0);
+  for (const side of ["p1", "p2"]) {
+    const view = pathView(state, side, 1200);
+    assert.equal(view.skullTurn, true);
+    assert.equal(view.question, null);
+    assert.equal(view.answerType, null);
+  }
+  const restored = JSON.parse(JSON.stringify(state));
+  rollPath(restored, 1300, 2);
+  assert.equal(restored.origin, 8);
+  assert.equal(pathView(restored, "p1", 1300).target, 10);
+  assert.equal(restored.required, 2);
+  assert.equal(answerPath(restored, second.name, 1400), "Correct");
+  assert.equal(restored.phase, "play");
+  assert.equal(answerPath(restored, first.name, 1500), REPEATED_TRIVIA_ANSWER);
+  assert.equal(restored.pos.p1, 6);
+  assert.equal(restored.pos.p2, 4);
+  assert.equal(restored.turns.p1, 1);
+  assert.equal(restored.last.success, false);
+  assert.deepEqual(Object.keys(restored.taken).map(Number), [1, 2, 3, 4, 5, 11, 12]);
+  tickPath(restored, restored.deadline);
+  assert.equal(restored.turn, "p2");
+  assert.equal(restored.skullTurn, false);
+  assert.equal(restored.dice, null);
+  assert.equal(restored.question, null);
+  // Both players can reuse the released answer, including its alias.
+  restored.pos.p2 = 8;
+  rollPath(restored, 5000, 2);
+  assert.equal(answerPath(restored, first.aliases[0] ?? first.name, 5100), "Correct");
+  assert.equal(restored.phase, "play");
+  assert.equal(answerPath(restored, second.name, 5200), "Correct");
+  assert.equal(restored.pos.p2, 10);
+  assert.deepEqual(restored.taken[10], [first.name, second.name]);
+});
+
+test("skull success, timeout, auto-reroll, start clamp and final reveal preserve game rules", () => {
+  const state = freshState("general", "p1");
+  state.board = Array(BOARD_SIZE).fill("s-clwin");
+  const entries = tileById("general", "s-clwin").entries;
+  state.pos.p1 = 8;
+  state.taken = { 7: [entries[0].name] };
+  startPathRoll(state, 0);
+  rollPath(state, 1, "skull");
+  rollPath(state, 2, 2);
+  answerPath(state, entries[0].name, 3);
+  answerPath(state, entries[1].name, 4);
+  assert.equal(state.pos.p1, 10);
+  assert.equal(state.last.success, true);
+  assert.deepEqual(state.taken[7], [entries[0].name]);
+  assert.deepEqual(state.taken[10], [entries[0].name, entries[1].name]);
+
+  startPathRoll(state, 100);
+  const original = Math.random;
+  try {
+    Math.random = () => 0.999;
+    tickPath(state, state.deadline);
+    assert.equal(state.phase, "roll");
+    assert.equal(state.skullTurn, true);
+    tickPath(state, state.deadline);
+    assert.equal(state.phase, "play");
+    assert.equal(state.dice, 6);
+  } finally { Math.random = original; }
+  assert.equal(state.finalRevealed, true);
+  tickPath(state, state.deadline);
+  assert.equal(state.pos.p1, 4);
+  assert.equal(state.last.success, false);
+  assert.equal(pathView(state, "p1", 50000).tiles.at(-1).hidden, false);
+  assert.equal(state.taken[7], undefined);
+  assert.equal(state.taken[10], undefined);
+  assert.deepEqual(pathTurnMovement(1, 6, true, false), { position: 0, resetSpaces: [1, 2, 3, 4, 5, 6, 7] });
+  assert.deepEqual(pathTurnMovement(8, 2, false, false), { position: 8, resetSpaces: [] });
+  assert.deepEqual(pathTurnMovement(15, 6, true, false), { position: 9, resetSpaces: [9, 10, 11, 12, 13, 14, 15, 16] });
+  assert.equal(freshState("general", "rematch").skullTurn, false);
+  // Legacy stored rooms without the optional skull flag retain ordinary failure behavior.
+  delete state.skullTurn;
+  startPlay(state, 60000, 2);
+  finishTurn(state, 60100, false, "Wrong answer");
+  assert.equal(state.pos.p1, 4);
 });
 
 test("club-history import requires actual positive appearances, not a transfer or a squad listing", () => {

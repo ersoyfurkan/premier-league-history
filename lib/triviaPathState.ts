@@ -1,5 +1,5 @@
 import type { Competition } from "@/lib/competitions";
-import { BOARD_SIZE, answersFor, checkTriviaAnswer, generateBoardIds, tileById, tileQuestion, triviaAnswerType, triviaSeconds } from "@/data/triviaPath";
+import { BOARD_SIZE, answersFor, checkTriviaAnswer, generateBoardIds, pathTurnMovement, rollPathDice, tileById, tileQuestion, triviaAnswerType, triviaSeconds, type PathDice } from "@/data/triviaPath";
 import { triviaBoardPresentation } from "@/data/triviaPathVisuals";
 
 export type PathSide = "p1" | "p2";
@@ -14,6 +14,7 @@ export type PathState = {
   turns: Record<PathSide, number>;
   turn: PathSide;
   dice: number | null;
+  skullTurn?: boolean;
   origin: number;
   required: number;
   question: string | null;
@@ -27,6 +28,37 @@ export type PathState = {
 };
 
 export const targetOf = (state: PathState) => Math.min(state.origin + (state.dice ?? 0), BOARD_SIZE);
+
+export function startPathRoll(state: PathState, now: number) {
+  state.phase = "roll";
+  state.dice = null;
+  state.skullTurn = false;
+  state.question = null;
+  state.found = [];
+  state.deadline = now + 30_000;
+}
+
+export function tickPath(state: PathState, now: number) {
+  if (state.deadline === null || now < state.deadline) return;
+  if (state.phase === "roll") rollPath(state, now);
+  else if (state.phase === "play") finishTurn(state, now, false, "Time ran out");
+  else if (state.phase === "result") {
+    state.turn = state.turn === "p1" ? "p2" : "p1";
+    startPathRoll(state, now);
+  }
+}
+
+export function rollPath(state: PathState, now: number, face: PathDice = rollPathDice(Boolean(state.skullTurn))) {
+  if (state.phase !== "roll") throw new Error("Trivia Path is not ready to roll");
+  if (face === "skull") {
+    if (state.skullTurn) throw new Error("A skull follow-up roll must be numeric");
+    state.skullTurn = true;
+    state.dice = null;
+    state.deadline = now + 30_000;
+    return;
+  }
+  startPlay(state, now, face);
+}
 
 export function startPlay(state: PathState, now: number, dice: number) {
   state.dice = dice;
@@ -48,8 +80,10 @@ export function finishTurn(state: PathState, now: number, success: boolean, mess
   state.taken ??= {};
   if (success) {
     state.taken[target] = [...new Set([...(state.taken[target] ?? []), ...state.found])];
-    state.pos[side] = target;
   }
+  const movement = pathTurnMovement(state.origin, state.dice!, Boolean(state.skullTurn), success);
+  state.pos[side] = movement.position;
+  for (const space of movement.resetSpaces) delete state.taken[space];
   state.turns[side] += 1;
   state.last = { side, success, message, answers: [...state.found] };
   if (success && state.pos[side] >= BOARD_SIZE) {
@@ -96,6 +130,7 @@ export function pathView(state: PathState, side: PathSide, now: number) {
     turns: state.turns,
     turn: state.turn,
     dice: state.dice,
+    skullTurn: Boolean(state.skullTurn),
     target: targetOf(state),
     required: state.required,
     question: state.question,
@@ -115,6 +150,6 @@ export function freshState(comp: Competition, p1Token: string): PathState {
     game: "triviapath", comp, p1Token, phase: "waiting", board: generateBoardIds(comp),
     pos: { p1: 0, p2: 0 }, turns: { p1: 0, p2: 0 }, turn: "p1", dice: null, origin: 0,
     required: 1, question: null, found: [], taken: {}, last: null, winner: null,
-    rematch: { p1: false, p2: false }, deadline: null, finalRevealed: false,
+    rematch: { p1: false, p2: false }, deadline: null, finalRevealed: false, skullTurn: false,
   };
 }

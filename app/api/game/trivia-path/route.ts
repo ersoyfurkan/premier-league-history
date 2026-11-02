@@ -1,14 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { parseComp } from "@/lib/gameRoom";
-import { answerPath, finishTurn, freshState, pathView, startPlay, type PathSide as Side, type PathState } from "@/lib/triviaPathState";
-import {
-  rollDice,
-} from "@/data/triviaPath";
+import { answerPath, freshState, pathView, rollPath, startPathRoll, tickPath, type PathSide as Side, type PathState } from "@/lib/triviaPathState";
 
 const CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 const ROOM_TTL_MS = 24 * 60 * 60 * 1000;
-const ROLL_MS = 30_000;
 
 const json = (body: unknown, status = 200) =>
   NextResponse.json(body, { status, headers: { "Cache-Control": "no-store" } });
@@ -18,8 +14,6 @@ const makeCode = () =>
 
 const normalizeCode = (value: unknown) =>
   typeof value === "string" ? value.trim().toUpperCase().slice(0, 12) : "";
-
-const otherSide = (side: Side): Side => (side === "p1" ? "p2" : "p1");
 
 async function loadRoom(db: D1Database, code: string) {
   const row = await db
@@ -42,25 +36,6 @@ async function saveRoom(db: D1Database, code: string, state: PathState, version:
 const sideOf = (state: PathState, token: string) =>
   token && state.p1Token === token ? "p1" : token && state.p2Token === token ? "p2" : null;
 
-function startRoll(state: PathState, now: number) {
-  state.phase = "roll";
-  state.dice = null;
-  state.question = null;
-  state.found = [];
-  state.deadline = now + ROLL_MS;
-}
-
-// Advances any phase whose timer ran out. A player who never rolls gets an automatic roll.
-function tick(state: PathState, now: number) {
-  if (state.deadline === null || now < state.deadline) return;
-  if (state.phase === "roll") startPlay(state, now, rollDice());
-  else if (state.phase === "play") finishTurn(state, now, false, "Time ran out");
-  else if (state.phase === "result") {
-    state.turn = otherSide(state.turn);
-    startRoll(state, now);
-  }
-}
-
 type Outcome = { error?: string; status?: number; extra?: Record<string, unknown> } | void;
 
 // Reloads and retries on version conflicts so that simultaneous requests are applied in order.
@@ -77,7 +52,7 @@ async function mutate(
     if (!side) return json({ error: "You are not in this room" }, 403);
     const now = Date.now();
     const before = JSON.stringify(room.state);
-    tick(room.state, now);
+    tickPath(room.state, now);
     const outcome = apply(room.state, side, now);
     if (outcome?.error) return json({ error: outcome.error }, outcome.status ?? 400);
     if (JSON.stringify(room.state) === before || (await saveRoom(db, code, room.state, room.version))) {
@@ -133,7 +108,7 @@ async function handlePost(request: NextRequest) {
     if (room.state.p2Token) return json({ error: "This room is already full" }, 409);
     const token = crypto.randomUUID();
     room.state.p2Token = token;
-    startRoll(room.state, Date.now());
+    startPathRoll(room.state, Date.now());
     if (!(await saveRoom(db, code, room.state, room.version))) return json({ error: "Room is busy, try again" }, 409);
     return json({ code, token });
   }
@@ -143,7 +118,7 @@ async function handlePost(request: NextRequest) {
   if (body.action === "roll") {
     return mutate(db, code, token, (state, side, now) => {
       if (state.phase !== "roll" || state.turn !== side) return { error: "It is not your turn to roll" };
-      startPlay(state, now, rollDice());
+      rollPath(state, now);
     });
   }
 
@@ -161,7 +136,7 @@ async function handlePost(request: NextRequest) {
       state.rematch[side] = true;
       if (state.rematch.p1 && state.rematch.p2) {
         Object.assign(state, freshState(state.comp, state.p1Token), { p2Token: state.p2Token });
-        startRoll(state, now);
+        startPathRoll(state, now);
       }
     });
   }
