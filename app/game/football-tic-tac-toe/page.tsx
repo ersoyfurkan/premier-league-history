@@ -256,6 +256,25 @@ function FootballTicTacToeClient() {
     }
   };
 
+  const requestRematch = async () => {
+    if (!token) return;
+    setError(null);
+    try {
+      const res = await fetch("/api/game/football-tic-tac-toe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "rematch", code, token }),
+      });
+      const data = (await res.json()) as Api;
+      if (!res.ok || !data.view) throw new Error(data.error ?? "Could not request a rematch");
+      setRemoteView(data.view);
+      setSelectedCell(null);
+      setPlayerName("");
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Could not request a rematch");
+    }
+  };
+
   const playAgain = async () => {
     if (isLocal) {
       const room = newFootballTicTacToeRoom("local-player-1", activeComp);
@@ -505,9 +524,18 @@ function FootballTicTacToeClient() {
         {error && !(view.status === "playing" && isMyTurn && selectedCell !== null) && <p role="alert" className="mt-3 text-sm text-warning">{error}</p>}
         {view.status === "finished" && (
           <div className="mt-4 flex flex-wrap items-center gap-3">
-            <button type="button" onClick={playAgain} disabled={creating} className="btn-primary disabled:opacity-60">
-              {creating ? "Creating…" : "Play again"}
-            </button>
+            {isLocal ? (
+              <button type="button" onClick={playAgain} disabled={creating} className="btn-primary disabled:opacity-60">
+                Play again
+              </button>
+            ) : (
+              <button type="button" onClick={requestRematch} disabled={view.youWantRematch} className="btn-primary disabled:opacity-60">
+                {view.youWantRematch ? "Waiting for opponent…" : view.opponentWantsRematch ? "Accept rematch" : "Request rematch"}
+              </button>
+            )}
+            {!isLocal && view.opponentWantsRematch && !view.youWantRematch && (
+              <p className="text-sm font-semibold text-accent">Your opponent wants a rematch!</p>
+            )}
             <Link href={lobbyFor(activeComp)} className="btn-ghost">Back to lobby</Link>
           </div>
         )}

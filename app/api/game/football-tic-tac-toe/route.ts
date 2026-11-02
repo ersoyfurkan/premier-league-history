@@ -7,6 +7,7 @@ import {
   footballTicTacToeView,
   newFootballTicTacToeRoom,
   parseFootballTicTacToeComp,
+  requestFootballTicTacToeRematch,
   type FootballTicTacToeRoomState,
 } from "@/lib/footballTicTacToe";
 
@@ -116,8 +117,15 @@ async function handlePost(request: NextRequest) {
   const side = footballTicTacToeSideOf(state, token);
   if (!side) return json({ error: "You are not in this room" }, 403);
 
-  if (body.action !== "move") return json({ error: "Unknown action" }, 400);
   const now = Date.now();
+  if (body.action === "rematch") {
+    const rematchError = requestFootballTicTacToeRematch(state, side, now);
+    if (rematchError) return json({ error: rematchError }, 400);
+    if (!(await saveRoom(db, code, state, version))) return json({ error: "Room is busy, try again" }, 409);
+    return json({ view: footballTicTacToeView(state, side) });
+  }
+
+  if (body.action !== "move") return json({ error: "Unknown action" }, 400);
   if (expireFootballTicTacToeTurn(state, now)) {
     if (!(await saveRoom(db, code, state, version))) return json({ error: "Room is busy, try again" }, 409);
     return json({

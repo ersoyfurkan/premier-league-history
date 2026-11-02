@@ -20,11 +20,32 @@ export type FootballTicTacToeRoomState = {
   winner: Side | null;
   turnDeadline: number | null;
   timedOut: Side | null;
+  rematch?: Record<Side, boolean>;
 };
 
-export type FootballTicTacToeRoomView = Omit<FootballTicTacToeRoomState, "p1Token" | "p2Token"> & {
+export type FootballTicTacToeRoomView = Omit<FootballTicTacToeRoomState, "p1Token" | "p2Token" | "rematch"> & {
   you: Side;
+  youWantRematch: boolean;
+  opponentWantsRematch: boolean;
 };
+
+export function requestFootballTicTacToeRematch(state: FootballTicTacToeRoomState, side: Side, now: number) {
+  if (state.status !== "finished") return "The game is not finished yet";
+  const rematch = state.rematch ?? { p1: false, p2: false };
+  rematch[side] = true;
+  state.rematch = rematch;
+  if (rematch.p1 && rematch.p2) {
+    state.puzzle = randomFootballTicTacToePuzzle(state.comp);
+    state.board = Array(9).fill(null);
+    state.winner = null;
+    state.timedOut = null;
+    state.turn = Math.random() < 0.5 ? "p1" : "p2";
+    state.status = "playing";
+    state.turnDeadline = now + 60_000;
+    state.rematch = { p1: false, p2: false };
+  }
+  return null;
+}
 
 export function newFootballTicTacToeRoom(token: string, comp: Competition): FootballTicTacToeRoomState {
   return {
@@ -61,6 +82,8 @@ export function footballTicTacToeView(
     turnDeadline: state.turnDeadline ?? null,
     timedOut: state.timedOut ?? null,
     you,
+    youWantRematch: state.rematch?.[you] ?? false,
+    opponentWantsRematch: state.rematch?.[other(you)] ?? false,
   };
 }
 
