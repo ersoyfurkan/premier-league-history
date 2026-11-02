@@ -15,9 +15,10 @@ import {
   BOARD_SIZE,
   answersFor,
   generateBoard,
-  matchTriviaAnswer,
+  checkTriviaAnswer,
   rollDice,
   suggestTrivia,
+  triviaAnswerType,
   tileQuestion,
   triviaSeconds,
   type BoardTile,
@@ -67,6 +68,7 @@ function TriviaClient() {
   // origin is the position at roll time, so the target stays correct after pos updates in the result phase
   const targetPos = dice ? Math.min(origin + dice, BOARD_SIZE) : 0;
   const tile = dice ? board[targetPos - 1] : undefined;
+  const answerType = tile ? triviaAnswerType(tile) : "player";
 
   const createInvite = async () => {
     setInviting(true);
@@ -125,10 +127,11 @@ function TriviaClient() {
     }, 80);
   };
 
-  const finishTurn = (success: boolean, answers: TriviaEntry[] = found) => {
+  const finishTurn = (success: boolean, answers: TriviaEntry[] = found, message = "Time ran out — you lose your turn") => {
     if (finished.current) return;
     finished.current = true;
     setPassed(success);
+    if (!success) setFeedback(message);
     // Only answers from a completed question are used up; a failed attempt counts for nothing.
     if (success) setTaken((prev) => ({ ...prev, [targetPos - 1]: [...(prev[targetPos - 1] ?? []), ...answers.map((a) => a.name)] }));
     setPlayers((prev) =>
@@ -145,22 +148,14 @@ function TriviaClient() {
 
   const submitAnswer = (value: string) => {
     if (!tile || phase !== "play") return;
-    const used = taken[targetPos - 1] ?? [];
-    const open = tile.entries.filter((e) => !found.includes(e) && !used.includes(e.name));
-    // Match against open entries first so a shared name (e.g. "Ronaldo") can still reach the other player.
-    const entry = matchTriviaAnswer(open, value);
+    const result = checkTriviaAnswer(tile.entries, value, found.map((entry) => entry.name), taken[targetPos - 1] ?? []);
     setGuess("");
-    if (!entry) {
-      const repeat = matchTriviaAnswer(tile.entries, value);
-      if (repeat) {
-        setFeedback(found.includes(repeat) ? "Already said that one" : "Already answered on this question — try another");
-        return;
-      }
-      setFeedback("Wrong answer — you lose your turn");
-      finishTurn(false);
+    if (result.kind !== "correct") {
+      setFeedback(result.message);
+      if (result.kind !== "duplicate") finishTurn(false, found, result.message);
       return;
     }
-    const next = [...found, entry];
+    const next = [...found, result.entry];
     setFound(next);
     setFeedback(null);
     if (next.length >= required) finishTurn(true, next);
@@ -182,8 +177,8 @@ function TriviaClient() {
   };
 
   const suggestions = useMemo(
-    () => (phase === "play" ? suggestTrivia(comp, guess).filter((n) => !found.some((f) => f.name === n)) : []),
-    [comp, guess, phase, found],
+    () => (phase === "play" ? suggestTrivia(comp, guess, answerType).filter((n) => !found.some((f) => f.name === n)) : []),
+    [comp, guess, phase, found, answerType],
   );
 
   const winner = players.find((p) => p.pos >= BOARD_SIZE);
@@ -331,7 +326,7 @@ function TriviaClient() {
                     autoComplete="off"
                     value={guess}
                     onChange={(event) => setGuess(event.target.value)}
-                    placeholder="Search a player, club, stadium…"
+                    placeholder={`Search a ${answerType}…`}
                     aria-label="Trivia answer"
                     enterKeyHint="send"
                     className="w-full rounded-xl border-2 border-lime-400/80 bg-background px-4 py-3 outline-none focus:border-lime-300"
@@ -347,8 +342,8 @@ function TriviaClient() {
                           onClick={() => submitAnswer(name)}
                           className="flex w-full items-center gap-3 border-b border-border/50 px-3 py-2 text-left text-sm last:border-b-0 hover:bg-primary/10"
                         >
-                          <UclImage fallback={playerFaceUrl(name)} alt={name} className="h-9 w-9" shape="circle" />
-                          <span className="min-w-0 flex-1 truncate">{name}</span>
+                          {(answerType === "player" || answerType === "manager") && <UclImage fallback={playerFaceUrl(name)} alt={name} className="h-9 w-9" shape="circle" />}
+                          <span className="min-w-0 flex-1 truncate">{answerType === "nation" ? <NationText text={name} /> : name}</span>
                         </button>
                       ))}
                     </div>
@@ -361,7 +356,7 @@ function TriviaClient() {
             {phase === "result" && (
               <div className="mt-5">
                 <p className={`text-lg font-bold ${passed ? "text-accent" : "text-red-400"}`}>
-                  {passed ? `Correct! You move to space ${targetPos}.` : "Wrong. Back to where you were."}
+                  {passed ? `Correct! You move to space ${targetPos}.` : feedback ?? "Time ran out — you lose your turn."}
                 </p>
                 {missed.length > 0 && (
                   <p className="mt-1 text-sm text-fore-muted">Could have said: {missed.map((m) => m.name).join(", ")}</p>

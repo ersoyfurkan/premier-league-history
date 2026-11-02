@@ -1,18 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { parseComp } from "@/lib/gameRoom";
-import { freshState, pathView, startPlay, targetOf, type PathSide as Side, type PathState } from "@/lib/triviaPathState";
+import { answerPath, finishTurn, freshState, pathView, startPlay, type PathSide as Side, type PathState } from "@/lib/triviaPathState";
 import {
-  BOARD_SIZE,
-  matchTriviaAnswer,
   rollDice,
-  tileById,
 } from "@/data/triviaPath";
 
 const CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 const ROOM_TTL_MS = 24 * 60 * 60 * 1000;
 const ROLL_MS = 30_000;
-const RESULT_MS = 3_000;
 
 const json = (body: unknown, status = 200) =>
   NextResponse.json(body, { status, headers: { "Cache-Control": "no-store" } });
@@ -52,24 +48,6 @@ function startRoll(state: PathState, now: number) {
   state.question = null;
   state.found = [];
   state.deadline = now + ROLL_MS;
-}
-
-function finishTurn(state: PathState, now: number, success: boolean, message: string) {
-  const side = state.turn;
-  const key = targetOf(state);
-  state.taken ??= {};
-  if (success) state.taken[key] = [...(state.taken[key] ?? []), ...state.found];
-  if (success) state.pos[side] = targetOf(state);
-  state.turns[side] += 1;
-  state.last = { side, success, message, answers: state.found };
-  if (success && state.pos[side] >= BOARD_SIZE) {
-    state.phase = "finished";
-    state.winner = side;
-    state.deadline = null;
-    return;
-  }
-  state.phase = "result";
-  state.deadline = now + RESULT_MS;
 }
 
 // Advances any phase whose timer ran out. A player who never rolls gets an automatic roll.
@@ -173,22 +151,7 @@ async function handlePost(request: NextRequest) {
     const guess = typeof body.guess === "string" ? body.guess.slice(0, 60) : "";
     return mutate(db, code, token, (state, side, now) => {
       if (state.phase !== "play" || state.turn !== side) return { extra: { message: "Not your question" } };
-      const tile = tileById(state.comp, state.board[targetOf(state) - 1]);
-      if (!tile) return { error: "Question unavailable" };
-      const used = (state.taken ??= {})[targetOf(state)] ?? [];
-      const open = tile.entries.filter((entry) => !state.found.includes(entry.name) && !used.includes(entry.name));
-      const entry = matchTriviaAnswer(open, guess);
-      if (!entry) {
-        const repeat = matchTriviaAnswer(tile.entries, guess);
-        if (repeat) {
-          const message = state.found.includes(repeat.name) ? "Already said that one" : "Already answered on this question, try another";
-          return { extra: { message } };
-        }
-        finishTurn(state, now, false, "Wrong answer, you lose your turn");
-        return { extra: { message: "Wrong answer, you lose your turn" } };
-      }
-      state.found.push(entry.name);
-      if (state.found.length >= state.required) finishTurn(state, now, true, "Correct");
+      return { extra: { message: answerPath(state, guess, now) } };
     });
   }
 

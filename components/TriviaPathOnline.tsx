@@ -7,7 +7,7 @@ import TriviaTileVisuals from "@/components/TriviaTileVisuals";
 import NationText from "@/components/NationText";
 import type { TriviaVisual } from "@/data/triviaPathVisuals";
 import { playerFaceUrl } from "@/data/playerFaces";
-import { suggestTrivia } from "@/data/triviaPath";
+import { suggestTrivia, type TriviaAnswerType } from "@/data/triviaPath";
 import { lobbyFor, type Competition } from "@/lib/gameRoom";
 
 type Side = "p1" | "p2";
@@ -25,6 +25,7 @@ type PathView = {
   target: number;
   required: number;
   question: string | null;
+  answerType: TriviaAnswerType | null;
   found: string[];
   last: { side: Side; success: boolean; message: string; answers: string[] } | null;
   winner: Side | null;
@@ -150,8 +151,8 @@ export default function TriviaPathOnline({ comp, code }: { comp: Competition; co
   const myTurn = view?.turn === view?.you;
   const suggestions = useMemo(
     () =>
-      view?.phase === "play" && myTurn
-        ? suggestTrivia(activeComp, guess).filter((name) => !view.found.includes(name))
+      view?.phase === "play" && myTurn && view.answerType
+        ? suggestTrivia(activeComp, guess, view.answerType).filter((name) => !view.found.includes(name))
         : [],
     [activeComp, guess, view, myTurn],
   );
@@ -263,7 +264,7 @@ export default function TriviaPathOnline({ comp, code }: { comp: Competition; co
                       autoComplete="off"
                       value={guess}
                       onChange={(event) => setGuess(event.target.value)}
-                      placeholder="Search a player, club, stadium…"
+                      placeholder={`Search a ${view.answerType ?? "football answer"}…`}
                       aria-label="Trivia answer"
                       enterKeyHint="send"
                       className="w-full rounded-xl border-2 border-lime-400/80 bg-background px-4 py-3 outline-none focus:border-lime-300"
@@ -279,8 +280,8 @@ export default function TriviaPathOnline({ comp, code }: { comp: Competition; co
                             onClick={() => sendAnswer(name)}
                             className="flex w-full items-center gap-3 border-b border-border/50 px-3 py-2 text-left text-sm last:border-b-0 hover:bg-primary/10"
                           >
-                            <UclImage fallback={playerFaceUrl(name)} alt={name} className="h-9 w-9" shape="circle" />
-                            <span className="min-w-0 flex-1 truncate">{name}</span>
+                            {(view.answerType === "player" || view.answerType === "manager") && <UclImage fallback={playerFaceUrl(name)} alt={name} className="h-9 w-9" shape="circle" />}
+                            <span className="min-w-0 flex-1 truncate">{view.answerType === "nation" ? <NationText text={name} /> : name}</span>
                           </button>
                         ))}
                       </div>

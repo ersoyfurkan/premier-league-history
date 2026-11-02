@@ -1,5 +1,5 @@
 import type { Competition } from "@/lib/competitions";
-import { BOARD_SIZE, answersFor, generateBoardIds, tileById, tileQuestion, triviaSeconds } from "@/data/triviaPath";
+import { BOARD_SIZE, answersFor, checkTriviaAnswer, generateBoardIds, tileById, tileQuestion, triviaAnswerType, triviaSeconds } from "@/data/triviaPath";
 import { triviaBoardPresentation } from "@/data/triviaPathVisuals";
 
 export type PathSide = "p1" | "p2";
@@ -42,6 +42,40 @@ export function startPlay(state: PathState, now: number, dice: number) {
   state.deadline = now + triviaSeconds(state.required) * 1000;
 }
 
+export function finishTurn(state: PathState, now: number, success: boolean, message: string) {
+  const side = state.turn;
+  const target = targetOf(state);
+  state.taken ??= {};
+  if (success) {
+    state.taken[target] = [...new Set([...(state.taken[target] ?? []), ...state.found])];
+    state.pos[side] = target;
+  }
+  state.turns[side] += 1;
+  state.last = { side, success, message, answers: [...state.found] };
+  if (success && state.pos[side] >= BOARD_SIZE) {
+    state.phase = "finished";
+    state.winner = side;
+    state.deadline = null;
+  } else {
+    state.phase = "result";
+    state.deadline = now + 3000;
+  }
+}
+
+export function answerPath(state: PathState, guess: string, now: number): string {
+  const target = targetOf(state);
+  const tile = tileById(state.comp, state.board[target - 1]);
+  if (!tile) throw new Error(`Trivia Path question unavailable: ${state.board[target - 1]}`);
+  const result = checkTriviaAnswer(tile.entries, guess, state.found, state.taken?.[target] ?? []);
+  if (result.kind !== "correct") {
+    if (result.kind !== "duplicate") finishTurn(state, now, false, result.message);
+    return result.message;
+  }
+  state.found.push(result.entry.name);
+  if (state.found.length >= state.required) finishTurn(state, now, true, "Correct");
+  return "Correct";
+}
+
 export function pathView(state: PathState, side: PathSide, now: number) {
   const opponent = side === "p1" ? "p2" : "p1";
   const finalRevealed = Boolean(state.finalRevealed || state.pos.p1 >= BOARD_SIZE || state.pos.p2 >= BOARD_SIZE
@@ -65,6 +99,7 @@ export function pathView(state: PathState, side: PathSide, now: number) {
     target: targetOf(state),
     required: state.required,
     question: state.question,
+    answerType: state.phase === "play" || state.phase === "result" ? triviaAnswerType(tiles[targetOf(state) - 1]) : null,
     found: state.found,
     last: state.last,
     winner: state.winner,

@@ -15,8 +15,11 @@ import { LIGUE1_CARDS } from "@/data/ligue1Cards";
 import { SUPERLIG_CARDS } from "@/data/superligCards";
 import { STAT_TRIVIA_CATEGORIES } from "@/data/statTrivia";
 import { KNOWLEDGE_TRIVIA_CATEGORIES } from "@/data/knowledgeTrivia";
+import { NATION_INFO } from "@/data/nations";
+import { STADIUM_COUNTRIES } from "@/data/stadiumTrivia";
 
 export type TriviaEntry = { name: string; aliases: string[] };
+export type TriviaAnswerType = "player" | "nation" | "club" | "stadium" | "manager" | "nickname" | "campaign" | "season";
 export type TriviaQuestion = { id: string; text: string; count: number; noun: string; plural: string; entries: TriviaEntry[]; short?: string };
 
 type Category = { id: string; noun: string; plural: string; entries: TriviaEntry[]; short?: string; difficulty?: number };
@@ -494,18 +497,54 @@ export function generateBoard(comp: Competition): BoardTile[] {
   return generateBoardIds(comp).map((id) => tileById(comp, id) as BoardTile);
 }
 
-// Search over every possible answer type so suggestions never reveal which ones are correct.
-export function suggestTrivia(comp: Competition, query: string, limit = 8): string[] {
+export function triviaAnswerType(category: { noun: string }): TriviaAnswerType {
+  const head = category.noun.split(/\b(?:who|that|of|from|in|with|at)\b/i)[0];
+  if (/\bnickname\b/i.test(head)) return "nickname";
+  if (/\bcampaign\b/i.test(head)) return "campaign";
+  if (/\bseason\b/i.test(head)) return "season";
+  if (/\b(?:player|teammate|goalkeeper|captain|member|scorer|footballer|defender|midfielder|forward|graduate)\b/i.test(head)) return "player";
+  if (/\bstadium\b/i.test(head)) return "stadium";
+  if (/\b(?:nation|country)\b/i.test(head)) return "nation";
+  if (/\b(?:manager|coach)\b/i.test(head)) return "manager";
+  if (/\bclub\b/i.test(head) || /^(?:Bundesliga champion|Ligue 1 champion|Coupe de France winner|Turkish Cup winner)$/i.test(category.noun)) return "club";
+  return "player";
+}
+
+const searchEntries = new Map<TriviaAnswerType, TriviaEntry[]>();
+function entriesForSearch(type: TriviaAnswerType): TriviaEntry[] {
+  const cached = searchEntries.get(type);
+  if (cached) return cached;
+  const entries = Object.values(STATIC).flat().filter((category) => triviaAnswerType(category) === type).flatMap((category) => category.entries);
+  if (type === "club") entries.push(...Object.values(DUEL_CLUBS).flat().map((club) => e(club.label, ...(CLUB_ALIASES[club.key] ?? []))));
+  if (type === "nation") entries.push(...Object.values(NATION_INFO).map(([name]) => e(name)));
+  if (type === "stadium") entries.push(...STADIUM_COUNTRIES.flatMap((country) => country.stadiums));
+  const unique = uniqueTriviaEntries(entries);
+  searchEntries.set(type, unique);
+  return unique;
+}
+
+// Search the whole answer type, not the current tile's correct answers.
+export function suggestTrivia(comp: Competition, query: string, type: TriviaAnswerType, limit = 8): string[] {
   const q = normalizeFootballPlayerName(query);
   if (q.length < 2) return [];
-  const names = new Set(searchDuelPlayers(comp, query, limit));
-  for (const category of [...STATIC[comp], leagueClubCategory(comp)]) {
-    for (const entry of category.entries) {
-      if (names.size >= limit * 2) break;
-      if ([entry.name, ...entry.aliases].some((n) => normalizeFootballPlayerName(n).includes(q))) names.add(entry.name);
-    }
+  const names = new Set(type === "player" ? searchDuelPlayers(comp, query, limit) : []);
+  for (const entry of entriesForSearch(type)) {
+    if (names.size >= limit * 2) break;
+    if ([entry.name, ...entry.aliases].some((n) => normalizeFootballPlayerName(n).includes(q))) names.add(entry.name);
   }
   return [...names].slice(0, limit);
+}
+
+export const REPEATED_TRIVIA_ANSWER = "Already used to complete this box — you lose your turn";
+
+export function checkTriviaAnswer(entries: TriviaEntry[], guess: string, found: string[], taken: string[]):
+  | { kind: "correct"; entry: TriviaEntry }
+  | { kind: "duplicate" | "used" | "wrong"; message: string } {
+  const entry = matchTriviaAnswer(entries, guess);
+  if (!entry) return { kind: "wrong", message: "Wrong answer — you lose your turn" };
+  if (taken.includes(entry.name)) return { kind: "used", message: REPEATED_TRIVIA_ANSWER };
+  if (found.includes(entry.name)) return { kind: "duplicate", message: "Already said that one" };
+  return { kind: "correct", entry };
 }
 
 export function triviaSeconds(count: number) {

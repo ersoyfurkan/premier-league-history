@@ -32,7 +32,7 @@ const { REAL_COMPETITIONS, TOURNAMENT_COMPETITIONS } = await import("../lib/comp
 const { STAT_TRIVIA_CATEGORIES, STAT_RONDO_CLUES } = await import("../data/statTrivia.ts");
 const { AUTHORED_STAT_CATEGORIES, STAT_RECORDS } = await import("../data/statTriviaRecords.ts");
 const { STAT_SEASONS } = await import("../data/statTriviaSeasons.ts");
-const { BOARD_SIZE, NORMAL_TILE_MIN_ANSWERS, FINAL_TILE_MIN_ANSWERS, uniqueTriviaEntries, generateBoardIds, tileById, triviaDifficulty, answersFor, matchTriviaAnswer, suggestTrivia } = await import("../data/triviaPath.ts");
+const { BOARD_SIZE, NORMAL_TILE_MIN_ANSWERS, FINAL_TILE_MIN_ANSWERS, uniqueTriviaEntries, generateBoardIds, tileById, triviaDifficulty, answersFor, matchTriviaAnswer, suggestTrivia, triviaAnswerType, checkTriviaAnswer, REPEATED_TRIVIA_ANSWER } = await import("../data/triviaPath.ts");
 const { RONDO_CLUES, isRondoAnswer } = await import("../data/rondo.ts");
 const { KNOWLEDGE_TRIVIA_CATEGORIES, KNOWLEDGE_RONDO_CLUES } = await import("../data/knowledgeTrivia.ts");
 const { FOOTBALL_KNOWLEDGE_GROUPS, MODERN_SQUADS, MODERN_MANAGER_GROUPS, TEAMMATE_GROUPS, knowledgeMatches } = await import("../data/footballKnowledge.ts");
@@ -44,7 +44,7 @@ const { MARKET_VALUE_PLAYERS } = await import("../data/marketValues.ts");
 const { nationLogoSrc, nationMentions } = await import("../data/nationVisuals.ts");
 const { default: nationCrests } = await import("../data/nationCrests.generated.json");
 const { default: tournamentHistory } = await import("../data/tournamentHistory.generated.json");
-const { freshState, pathView, startPlay } = await import("../lib/triviaPathState.ts");
+const { freshState, pathView, startPlay, answerPath, finishTurn } = await import("../lib/triviaPathState.ts");
 const { extractClubPlayers } = await import("./refresh-club-history.mjs");
 const comps = ["general", ...REAL_COMPETITIONS, ...TOURNAMENT_COMPETITIONS];
 
@@ -259,6 +259,84 @@ test("final tile stays secret in both online views and is permanently revealed o
   assert.equal(triviaBoardPresentation(tiles, true).at(-1).hidden, false);
 });
 
+test("completed-box answers are reserved for both players and repeats immediately lose a turn", () => {
+  const state = freshState("general", "p1");
+  state.p2Token = "p2";
+  state.board = Array(BOARD_SIZE).fill("s-clwin");
+  const tile = tileById("general", "s-clwin");
+  const [first, second, third] = tile.entries;
+  startPlay(state, 1000, 2);
+  assert.equal(pathView(state, "p1", 1000).answerType, "club");
+  assert.equal(answerPath(state, first.name, 1100), "Correct");
+  assert.deepEqual(state.taken, {});
+  assert.equal(answerPath(state, first.name, 1200), "Already said that one");
+  assert.equal(state.phase, "play");
+  assert.equal(answerPath(state, second.name, 1300), "Correct");
+  assert.equal(state.pos.p1, 2);
+  assert.deepEqual(state.taken[2], [first.name, second.name]);
+
+  const restored = JSON.parse(JSON.stringify(state));
+  restored.turn = "p2";
+  startPlay(restored, 2000, 2);
+  assert.equal(answerPath(restored, third.name, 2100), "Correct");
+  assert.equal(answerPath(restored, second.aliases[0] ?? second.name, 2200), REPEATED_TRIVIA_ANSWER);
+  assert.equal(restored.phase, "result");
+  assert.equal(restored.pos.p2, 0);
+  assert.equal(restored.turns.p2, 1);
+  assert.equal(restored.last.success, false);
+  assert.equal(restored.last.message, REPEATED_TRIVIA_ANSWER);
+  assert.deepEqual(restored.taken[2], [first.name, second.name]);
+  // A correct partial answer from a lost turn is not reserved.
+  startPlay(restored, 3000, 2);
+  assert.equal(answerPath(restored, third.name, 3100), "Correct");
+  finishTurn(restored, 3200, false, "Time ran out");
+  startPlay(restored, 4000, 2);
+  assert.equal(answerPath(restored, third.name, 4100), "Correct");
+  // Reservations apply to the same box, not to all boxes with overlapping answers.
+  startPlay(restored, 5000, 1);
+  assert.equal(answerPath(restored, first.name, 5100), "Correct");
+  assert.equal(restored.pos.p2, 1);
+  assert.deepEqual(freshState("general", "rematch").taken, {});
+
+  const entries = [{ name: "Luka Modric", aliases: ["Modric"] }, { name: "Lucas Modric", aliases: [] }];
+  assert.equal(checkTriviaAnswer(entries, "Modric", [], ["Luka Modric"]).kind, "used");
+  assert.equal(checkTriviaAnswer(entries, "Luka Modric", ["Luka Modric"], []).kind, "duplicate");
+  assert.equal(checkTriviaAnswer(entries, "not a valid answer", [], []).kind, "wrong");
+});
+
+test("search suggestions stay within the active answer type without exposing correct answers", () => {
+  const cases = [
+    ["player", "Messi", "Lionel Messi"],
+    ["nation", "Argentina", "Argentina"],
+    ["club", "Arsenal", "Arsenal"],
+    ["stadium", "Anfield", "Anfield"],
+    ["manager", "Guardiola", "Pep Guardiola"],
+    ["nickname", "Les Gones", "Les Gones"],
+    ["campaign", "Marseille 1993", "Marseille 1993 European Cup final"],
+  ];
+  for (const [type, query, expected] of cases) {
+    assert.ok(suggestTrivia("general", query, type).includes(expected), `${type}: ${query}`);
+    for (const other of cases.map(([kind]) => kind).filter((kind) => kind !== type)) {
+      if (["player", "manager"].includes(type) && ["player", "manager"].includes(other)) continue;
+      assert.ok(!suggestTrivia("general", query, other).includes(expected), `${expected} leaked into ${other}`);
+    }
+  }
+  for (const [id, type] of [["s-ballon", "player"], ["s-clwin", "club"], ["s-wchost", "nation"], ["s-knowledge-stadiums-brazil", "stadium"], ["s-clmgr", "manager"]]) {
+    const tile = tileById("general", id);
+    assert.ok(tile, id);
+    assert.equal(triviaAnswerType(tile), type, id);
+  }
+  assert.equal(triviaAnswerType({ noun: "player who was managed by Pep Guardiola at a club in Spain" }), "player");
+  assert.equal(triviaAnswerType({ noun: "club teammate of Lionel Messi at Barcelona" }), "player");
+  assert.equal(triviaAnswerType({ noun: "Scottish football stadium" }), "stadium");
+  assert.equal(triviaAnswerType({ noun: "Ligue 1 title-winning manager" }), "manager");
+  assert.equal(triviaAnswerType({ noun: "Bundesliga champion" }), "club");
+  assert.deepEqual(suggestTrivia("general", "a", "nation"), []);
+  const brazil = tileById("general", "s-knowledge-stadiums-brazil");
+  assert.ok(!brazil.entries.some((entry) => entry.name === "Anfield"));
+  assert.ok(suggestTrivia("general", "Anfield", triviaAnswerType(brazil)).includes("Anfield"));
+});
+
 test("club-history import requires actual positive appearances, not a transfer or a squad listing", () => {
   const html = `<table class="wikitable"><tr><th>Name</th><th>Career</th><th>Appearances</th></tr>
     <tr><td><a href="/wiki/Divock_Origi">Divock Origi</a></td><td>2023-2024</td><td>22</td></tr>
@@ -327,8 +405,8 @@ test("stadiums use physical venues, country scopes, searchable aliases, and club
   assert.equal(brazil.entries.length, 10);
   assert.equal(matchTriviaAnswer(brazil.entries, "Estadio Jornalista Mario Filho")?.name, "Maracana");
   assert.equal(matchTriviaAnswer(brazil.entries, "Anfield"), null);
-  assert.ok(suggestTrivia("general", "Maracana").includes("Maracana"));
-  assert.ok(suggestTrivia("pl", "Anfield").includes("Anfield"));
+  assert.ok(suggestTrivia("general", "Maracana", "stadium").includes("Maracana"));
+  assert.ok(suggestTrivia("pl", "Anfield", "stadium").includes("Anfield"));
   const anfield = KNOWLEDGE_RONDO_CLUES.pl.find((clue) => clue.letter === "A" && /Liverpool's home/.test(clue.clue));
   assert.ok(anfield);
   assert.ok(isRondoAnswer(anfield, "Anfield"));
