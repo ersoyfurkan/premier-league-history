@@ -34,6 +34,19 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
 
 Run the focused checks with `pnpm test:stat-games` (Node.js 22.15+). They cover source metadata, answer pools and aliases, statistical boundaries, Rondo integration, and the final-tile invariant across all competition modes.
 
+### Stadiums, teammates, managers, and honours
+
+[The shared football knowledge bank](./data/footballKnowledge.ts) supplies Trivia Path and Rondo with multi-club and multi-league careers, league-plus-club intersections, trophy/award combinations, and harder geographical questions. Egyptian internationals are distinct from players who actually appeared in Egypt's domestic league; Japan and South Africa also have domestic-football questions. These are curated historical answer banks with source links, not live/exhaustive career databases.
+
+- Recent-honour questions explicitly use **2021-2025**, **2016-2025**, or **2020/21-2024/25**. These are frozen reference windows, not a rolling clock; update the wording and verified winners together. The Messi/Ronaldo exclusion applies to the ten-year Ballon d'Or question.
+- Teammates come from specified senior club seasons, never from matching undated club histories. The named player cannot answer their own teammate question.
+- Football Tic-Tac-Toe uses these same teammate and honour memberships. Managed-by categories now use familiar coaches and explicit club spells from **2010 onward**; Capello and the old all-time manager pools are removed. A manager clue is restricted to the club/season printed on it, not every player they ever coached.
+- Tic-Tac-Toe samples compatible axes before building a grid, retaining the existing minimum of three answers per square (two if generation needs to relax). Domestic modes now admit global trophy and award categories too.
+- [The stadium bank](./data/stadiumTrivia.ts) covers Brazil, Argentina, England, Spain, Germany, Italy, France, Portugal, and Egypt. Country questions use stadium nouns, while Rondo has club-home and national-venue clues, including **A: Liverpool's stadium → Anfield**. Historic/sponsor names are aliases of one venue, not extra answers.
+- Additions are appended to Rondo to preserve saved clue indices. Trivia Path category IDs reconstruct in both solo and online games, and the highest-rated statistical finish remains strictly harder than earlier tiles.
+
+The same focused test command also checks stadium aliases/search, modern manager boundaries, teammate overlap/self-exclusion, trophy rosters, compound predicates, and playable generated Tic-Tac-Toe grids in every mode.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

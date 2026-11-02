@@ -32,8 +32,12 @@ const { REAL_COMPETITIONS, TOURNAMENT_COMPETITIONS } = await import("../lib/comp
 const { STAT_TRIVIA_CATEGORIES, STAT_RONDO_CLUES } = await import("../data/statTrivia.ts");
 const { AUTHORED_STAT_CATEGORIES, STAT_RECORDS } = await import("../data/statTriviaRecords.ts");
 const { STAT_SEASONS } = await import("../data/statTriviaSeasons.ts");
-const { BOARD_SIZE, generateBoardIds, tileById, triviaDifficulty, answersFor, matchTriviaAnswer } = await import("../data/triviaPath.ts");
+const { BOARD_SIZE, generateBoardIds, tileById, triviaDifficulty, answersFor, matchTriviaAnswer, suggestTrivia } = await import("../data/triviaPath.ts");
 const { RONDO_CLUES, isRondoAnswer } = await import("../data/rondo.ts");
+const { KNOWLEDGE_TRIVIA_CATEGORIES, KNOWLEDGE_RONDO_CLUES } = await import("../data/knowledgeTrivia.ts");
+const { FOOTBALL_KNOWLEDGE_GROUPS, MODERN_SQUADS, MODERN_MANAGER_GROUPS, TEAMMATE_GROUPS, knowledgeMatches } = await import("../data/footballKnowledge.ts");
+const { STADIUM_COUNTRIES } = await import("../data/stadiumTrivia.ts");
+const { footballFacts, randomFootballTicTacToePuzzle, isFootballTicTacToeAnswer } = await import("../data/footballTicTacToe.ts");
 const comps = ["general", ...REAL_COMPETITIONS, ...TOURNAMENT_COMPETITIONS];
 
 test("all seven requested competitions have dated statistics and combination categories", () => {
@@ -54,7 +58,7 @@ test("all seven requested competitions have dated statistics and combination cat
 
 test("every new tile reconstructs, has provenance, and accepts its answers without impossible dice requirements", () => {
   for (const comp of comps) {
-    const categories = STAT_TRIVIA_CATEGORIES[comp];
+    const categories = [...STAT_TRIVIA_CATEGORIES[comp], ...KNOWLEDGE_TRIVIA_CATEGORIES[comp]];
     assert.equal(new Set(categories.map((category) => category.id)).size, categories.length, comp);
     for (const category of categories) {
       assert.ok(category.sources.length > 0);
@@ -83,7 +87,7 @@ test("boards are unique, reconstructible and nondecreasing, with the bank's high
       assert.ok(tiles.every(Boolean), comp);
       const scores = tiles.map(triviaDifficulty);
       assert.deepEqual(scores, [...scores].sort((a, b) => a - b), comp);
-      const bankMaximum = Math.max(...STAT_TRIVIA_CATEGORIES[comp].map(triviaDifficulty));
+      const bankMaximum = Math.max(...[...STAT_TRIVIA_CATEGORIES[comp], ...KNOWLEDGE_TRIVIA_CATEGORIES[comp]].map(triviaDifficulty));
       if (Number.isFinite(bankMaximum)) assert.ok(scores.at(-1) >= bankMaximum, comp);
       assert.ok(scores.slice(0, -1).every((score) => score < scores.at(-1)), `${comp}: finish must be strictly hardest`);
       if (STAT_TRIVIA_CATEGORIES[comp].some((category) => category.difficulty === 5)) {
@@ -96,7 +100,7 @@ test("boards are unique, reconstructible and nondecreasing, with the bank's high
 test("Rondo includes the sourced additions and preserves valid A-Z questions", () => {
   for (const comp of comps) {
     for (const letter of "ABCDEFGHIJKLMNOPQRSTUVWXYZ") assert.ok(RONDO_CLUES[comp].some((clue) => clue.letter === letter), `${comp}: ${letter}`);
-    for (const clue of STAT_RONDO_CLUES[comp]) {
+    for (const clue of [...STAT_RONDO_CLUES[comp], ...KNOWLEDGE_RONDO_CLUES[comp]]) {
       assert.match(clue.letter, /^[A-Z]$/);
       assert.ok(RONDO_CLUES[comp].some((question) => question.clue === clue.clue && question.letter === clue.letter));
       assert.ok(isRondoAnswer(clue, clue.answers[0]));
@@ -122,6 +126,143 @@ test("known statistical boundaries and combined answers are correct", () => {
     assert.equal(final.difficulty, 5);
     assert.equal(final.answers.length, 1);
   }
+});
+
+const knowledge = (id) => {
+  const group = FOOTBALL_KNOWLEDGE_GROUPS.find((group) => group.id === id);
+  assert.ok(group, id);
+  return group;
+};
+const accepts = (id, name) => knowledgeMatches(knowledge(id).entries, name);
+
+test("stadiums use physical venues, country scopes, searchable aliases, and club-home Rondo clues", () => {
+  for (const country of STADIUM_COUNTRIES) {
+    const tile = tileById("general", `s-knowledge-stadiums-${country.country.toLowerCase()}`);
+    assert.ok(tile);
+    assert.equal(new Set(tile.entries.map((entry) => entry.name)).size, tile.entries.length);
+    assert.ok(tile.noun.includes(country.country));
+    for (const entry of tile.entries) {
+      assert.equal(matchTriviaAnswer(tile.entries, entry.name)?.name, entry.name);
+      for (const alias of entry.aliases) assert.equal(matchTriviaAnswer(tile.entries, alias)?.name, entry.name);
+    }
+  }
+  const brazil = tileById("general", "s-knowledge-stadiums-brazil");
+  assert.equal(brazil.entries.length, 10);
+  assert.equal(matchTriviaAnswer(brazil.entries, "Estadio Jornalista Mario Filho")?.name, "Maracana");
+  assert.equal(matchTriviaAnswer(brazil.entries, "Anfield"), null);
+  assert.ok(suggestTrivia("general", "Maracana").includes("Maracana"));
+  assert.ok(suggestTrivia("pl", "Anfield").includes("Anfield"));
+  const anfield = KNOWLEDGE_RONDO_CLUES.pl.find((clue) => clue.letter === "A" && /Liverpool's home/.test(clue.clue));
+  assert.ok(anfield);
+  assert.ok(isRondoAnswer(anfield, "Anfield"));
+  assert.ok(!isRondoAnswer(anfield, "Old Trafford"));
+});
+
+test("relationships require documented modern spells and exclude self and non-overlapping club eras", () => {
+  for (const group of FOOTBALL_KNOWLEDGE_GROUPS) {
+    assert.equal(new Set(group.entries.map((entry) => entry.name)).size, group.entries.length, group.id);
+    assert.ok(group.entries.length > 0);
+    assert.ok(group.sources.every((source) => source.startsWith("https://")));
+  }
+  for (const squad of MODERN_SQUADS) {
+    const years = squad.season.match(/\d{4}/g).map(Number);
+    assert.ok(years.every((year) => year >= 2010 && year <= 2025));
+    assert.ok(!/capello|keegan|lippi|rijkaard/i.test(squad.manager));
+    for (const anchor of squad.anchors) {
+      assert.ok(knowledgeMatches(squad.entries, anchor));
+      const group = TEAMMATE_GROUPS.find((group) => group.id.startsWith(`teammate-${squad.id}-`) && group.label.includes(anchor));
+      assert.ok(group);
+      assert.ok(!knowledgeMatches(group.entries, anchor));
+    }
+  }
+  assert.ok(accepts("manager-liv1920", "Mohamed Salah"));
+  assert.ok(!accepts("manager-liv1920", "Steven Gerrard"));
+  assert.ok(!accepts("manager-liv1920", "Luis Suarez"));
+  assert.ok(!accepts("manager-liv1920", "Tom Hill"));
+  assert.ok(!accepts("manager-liv1920", "Luis Longstaff"));
+  assert.ok(!accepts("manager-liv1920", "Leighton Clarkson"));
+  assert.ok(!accepts("manager-rma1314", "Jose Rodriguez"));
+  assert.ok(!accepts("manager-mci2223", "Neymar"));
+  assert.ok(!accepts("manager-mci2223", "Luis Suarez"));
+  assert.ok(accepts("manager-mun1011", "Wayne Rooney"));
+  assert.ok(!accepts("manager-mun1011", "Cristiano Ronaldo"));
+  assert.ok(!accepts("manager-che2021", "Fikayo Tomori"));
+  assert.ok(!accepts("teammate-bar1415-lionelmessi", "Ousmane Dembele"));
+  assert.ok(accepts("teammate-psg2122-lionelmessi", "Sergio Ramos"));
+  assert.ok(accepts("teammate-liv1920-sadiomane", "Andy Robertson"));
+});
+
+test("dated honours and difficult compound categories enforce all their conditions", () => {
+  assert.deepEqual(knowledge("ballon-2016-2025-no-duopoly").entries.map((entry) => entry.name),
+    ["Luka Modric", "Karim Benzema", "Rodri", "Ousmane Dembele"]);
+  for (const name of ["Lionel Messi", "Cristiano Ronaldo", "Harry Kane"]) assert.ok(!accepts("ballon-2016-2025-no-duopoly", name));
+  for (const name of ["Lionel Messi", "Ronaldo Nazario", "Kaka"]) assert.ok(accepts("ballon-worldcup", name));
+  for (const name of ["Cristiano Ronaldo", "Luka Modric", "Karim Benzema"]) assert.ok(!accepts("ballon-worldcup", name));
+  assert.equal(knowledge("worldcup-2021-2025").entries.length, 26);
+  assert.ok(!accepts("worldcup-2021-2025", "Giovani Lo Celso"));
+  assert.ok(!accepts("worldcup-2021-2025", "Nicolas Gonzalez"));
+  assert.ok(accepts("copa-2021-2025", "Giovani Lo Celso"));
+  assert.ok(accepts("copa-2021-2025", "Juan Musso"));
+  assert.ok(!accepts("copa-2021-2025", "Paulo Dybala"));
+  assert.equal(knowledge("euros-2021-2025").entries.length, 52);
+  assert.ok(accepts("euros-2021-2025", "Jorginho"));
+  assert.ok(accepts("euros-2021-2025", "Lamine Yamal"));
+  assert.ok(accepts("leagues-pl-sevilla", "Jesus Navas"));
+  assert.ok(!accepts("leagues-pl-sevilla", "Ivan Rakitic"));
+  assert.ok(!accepts("leagues-pl-sevilla", "Loic Bade"));
+  assert.ok(!accepts("leagues-pl-bundesliga-ligue1", "Takumi Minamino"));
+  assert.ok(accepts("domestic-egypt", "Percy Tau"));
+  assert.ok(!accepts("egypt-pl", "Percy Tau"));
+  assert.ok(accepts("egypt-pl", "Mohamed Elneny"));
+  assert.ok(accepts("klopp-egypt", "Mohamed Salah"));
+  assert.ok(!accepts("klopp-egypt", "Sadio Mane"));
+  assert.ok(accepts("messi-teammate-pl", "Luis Suarez"));
+  assert.ok(!accepts("messi-teammate-pl", "Lionel Messi"));
+  const facts = footballFacts("general");
+  for (const name of ["Giovani Lo Celso", "Gabriel Batistuta", "Santi Cazorla"]) {
+    const fact = facts.find((fact) => fact.name === name);
+    assert.ok(fact, name);
+    assert.ok(!fact.tags.includes("wc"), name);
+  }
+});
+
+test("generated Tic-Tac-Toe grids use new categories and keep every intersection playable", () => {
+  const originalRandom = Math.random;
+  let seed = 20251101;
+  Math.random = () => ((seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0) / 4294967296);
+  const seen = new Set();
+  const groups = new Map(FOOTBALL_KNOWLEDGE_GROUPS.map((group) => [group.label, group]));
+  try {
+    for (const comp of [...comps, ...Array(9).fill("general")]) {
+      const puzzle = randomFootballTicTacToePuzzle(comp);
+      const clues = [...puzzle.rows, ...puzzle.columns];
+      assert.ok(!clues.some((clue) => /Capello|Keegan|Lippi|Rijkaard/.test(clue.label)));
+      for (const clue of clues) {
+        if (clue.label.startsWith("Managed by")) {
+          assert.ok(MODERN_MANAGER_GROUPS.some((group) => group.label === clue.label));
+          seen.add("manager");
+        }
+        if (clue.label.startsWith("Teammate of")) seen.add("teammate");
+        if (/winner|champion|Golden Shoe/i.test(clue.label)) seen.add("honour");
+      }
+      for (let row = 0; row < 3; row += 1) {
+        for (let column = 0; column < 3; column += 1) {
+          const answers = puzzle.answers[row][column];
+          assert.ok(answers.length >= 2, `${comp}: ${puzzle.rows[row].label} / ${puzzle.columns[column].label}`);
+          for (const name of answers) {
+            assert.ok(isFootballTicTacToeAnswer(comp, row * 3 + column, name, puzzle));
+            for (const clue of [puzzle.rows[row], puzzle.columns[column]]) {
+              const group = groups.get(clue.label);
+              if (group) assert.ok(knowledgeMatches(group.entries, name), `${clue.label}: ${name}`);
+            }
+          }
+        }
+      }
+    }
+  } finally {
+    Math.random = originalRandom;
+  }
+  assert.deepEqual([...seen].sort(), ["honour", "manager", "teammate"]);
 });
 
 console.info("New question-bank additions:", STAT_SEASONS.map(({ comp }) => `${comp}: ${STAT_TRIVIA_CATEGORIES[comp].length} Trivia Path / ${STAT_RONDO_CLUES[comp].length} Rondo`).join("; "));

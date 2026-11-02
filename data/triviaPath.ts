@@ -14,6 +14,7 @@ import { BUNDESLIGA_CARDS } from "@/data/bundesligaCards";
 import { LIGUE1_CARDS } from "@/data/ligue1Cards";
 import { SUPERLIG_CARDS } from "@/data/superligCards";
 import { STAT_TRIVIA_CATEGORIES } from "@/data/statTrivia";
+import { KNOWLEDGE_TRIVIA_CATEGORIES } from "@/data/knowledgeTrivia";
 
 export type TriviaEntry = { name: string; aliases: string[] };
 export type TriviaQuestion = { id: string; text: string; count: number; noun: string; plural: string; entries: TriviaEntry[]; short?: string };
@@ -188,6 +189,7 @@ for (const comp of TOURNAMENT_COMPETITIONS) {
 STATIC.general = [...new Map([...REAL_COMPETITIONS.filter((comp) => comp !== "superlig").flatMap((comp) => STATIC[comp]), ...TOURNAMENT_CATEGORIES].map((item) => [item.id, item])).values()];
 for (const comp of ["general", ...REAL_COMPETITIONS, ...TOURNAMENT_COMPETITIONS] as const) {
   STATIC[comp].push(...STAT_TRIVIA_CATEGORIES[comp]);
+  STATIC[comp].push(...KNOWLEDGE_TRIVIA_CATEGORIES[comp]);
 }
 
 // General mode drops the Süper Lig clubs; every other competition uses its own club list.
