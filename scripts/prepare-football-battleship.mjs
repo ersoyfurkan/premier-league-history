@@ -4,8 +4,11 @@ import { awardPlayerKey } from "../data/footballNames.ts";
 
 const source = JSON.parse(readFileSync(new URL("../data/quizFootball.generated.json", import.meta.url), "utf8"));
 const output = new URL("../data/footballBattleship.generated.json", import.meta.url);
-const names = [];
-const nameIds = new Map();
+const previous = JSON.parse(readFileSync(output, "utf8"));
+// Retain the original four variants and name indices for rooms already in D1.
+const legacyVariantCount = previous.legacyVariantCount ?? 4;
+const names = [...previous.names];
+const nameIds = new Map(names.map((name, index) => [awardPlayerKey(name.replace(/ı/g, "i")), index]));
 const playerId = (name) => {
   const key = awardPlayerKey(name.replace(/ı/g, "i"));
   if (!nameIds.has(key)) {
@@ -22,67 +25,63 @@ const random = () => {
 const shuffle = (items) => items.map((value) => ({ value, rank: random() }))
   .sort((a, b) => a.rank - b.rank).map(({ value }) => value);
 const intersect = (first, second) => first.filter((id) => second.has(id));
-const hasThree = (first, second) => {
-  let count = 0;
-  for (const id of first) if (second.has(id) && ++count === 3) return true;
-  return false;
+const kinds = ["club", "nation", "award", "trophy", "manager", "teammate"];
+const kindOf = (clue) => {
+  if (/\b(?:OR|AND)\b/.test(clue.label)) return null;
+  if (clue.label.startsWith("Played for ")) return "club";
+  if (clue.label.endsWith(" international")) return "nation";
+  if (clue.awardIds?.length === 1) return "award";
+  if (clue.label.startsWith("Managed by ")) return "manager";
+  if (clue.label.startsWith("Teammate of ")) return "teammate";
+  if (/winner|champion/i.test(clue.label) && !clue.awardIds?.length) return "trophy";
+  return null;
 };
 
 function candidates(comp, prepared) {
-  const clubs = prepared.pool.filter(({ clue, members }) =>
-    clue.label.startsWith("Played for ") && members.length >= 5,
-  ).sort((a, b) => b.members.length - a.members.length).slice(0, 24);
   const conditions = [];
-  const add = (entries) => {
-    const members = new Set(entries.flatMap(({ members }) => members.map((index) =>
+  const identities = new Set();
+  for (const { clue, members: indices } of [...prepared.pool, ...prepared.nations]) {
+    const kind = kindOf(clue);
+    if (!kind || !indices.length) continue;
+    if ((kind === "club" || kind === "nation") && !clue.badge) {
+      throw new Error(`Missing ${kind} logo: ${clue.label}`);
+    }
+    const identity = `${kind}:${kind === "club" || kind === "nation" ? clue.badge : clue.label}`;
+    if (identities.has(identity)) continue;
+    identities.add(identity);
+    const members = new Set(indices.map((index) =>
       playerId(source.records[prepared.facts[index]].name),
-    )));
-    const ids = entries.map(({ clue }) => clue.label).sort();
+    ));
     conditions.push({
-      id: `${comp}:${ids.join("|")}`,
-      label: entries.length === 1 ? entries[0].clue.label :
-        `Played for ${entries.map(({ clue }) => clue.label.slice("Played for ".length)).join(" OR ")}`,
+      ...clue,
+      id: `${comp}:${clue.label}`,
+      kind,
+      identity,
       members: [...members].sort((a, b) => a - b),
       set: members,
-      width: entries.length,
     });
-  };
-  clubs.forEach((club) => add([club]));
-  for (let a = 0; a < clubs.length; a += 1) {
-    for (let b = a + 1; b < clubs.length; b += 1) add([clubs[a], clubs[b]]);
   }
   return conditions;
-}
-
-function distinctAssignments(answers) {
-  const assigned = new Map();
-  function match(cell, seen) {
-    for (const id of answers[cell]) {
-      if (seen.has(id)) continue;
-      seen.add(id);
-      if (!assigned.has(id) || match(assigned.get(id), seen)) {
-        assigned.set(id, cell);
-        return true;
-      }
-    }
-    return false;
-  }
-  return answers.every((_, cell) => match(cell, new Set()));
 }
 
 const competitions = {};
 for (const [comp, prepared] of Object.entries(source.competitions)) {
   const pool = candidates(comp, prepared);
   const compatible = pool.map((row) => pool.map((column, index) =>
-    row.id !== column.id && hasThree(row.members, column.set) ? index : -1,
+    row.identity !== column.identity && row.members.some((id) => column.set.has(id)) ? index : -1,
   ).filter((index) => index >= 0));
   const variants = [];
   const signatures = new Set();
-  for (let attempt = 0; attempt < 1500 && variants.length < 4; attempt += 1) {
+  const covered = new Set();
+  for (let attempt = 0; attempt < 12000 && (variants.length < 8 || covered.size < kinds.length); attempt += 1) {
     const rows = [];
     let columns = pool.map((_, index) => index);
-    const order = shuffle(pool.map((_, index) => index))
-      .sort((a, b) => pool[a].width - pool[b].width);
+    const missing = kinds.filter((kind) => !covered.has(kind));
+    const desired = (missing.length ? missing : kinds)[attempt % (missing.length || kinds.length)];
+    const order = shuffle(pool.map((_, index) => index));
+    const seedNation = order.find((index) => pool[index].kind === "nation" && compatible[index].length >= 8);
+    const priority = (index) => index === seedNation ? 2 : pool[index].kind === desired ? 1 : 0;
+    order.sort((a, b) => priority(b) - priority(a));
     for (const row of order) {
       if (columns.length < 8) break;
       const allowed = new Set(compatible[row]);
@@ -93,22 +92,40 @@ for (const [comp, prepared] of Object.entries(source.competitions)) {
       if (rows.length === 8) break;
     }
     if (rows.length !== 8) continue;
-    const picked = shuffle(columns).sort((a, b) => pool[a].width - pool[b].width).slice(0, 8);
+    const usedKinds = new Set(rows.map((index) => pool[index].kind));
+    const picked = [];
+    for (const index of shuffle(columns)) {
+      if (!usedKinds.has(pool[index].kind)) {
+        picked.push(index);
+        usedKinds.add(pool[index].kind);
+      }
+    }
+    for (const index of shuffle(columns)) {
+      if (picked.length === 8) break;
+      if (!picked.includes(index)) picked.push(index);
+    }
+    if (picked.length !== 8 || !usedKinds.has(desired) || !usedKinds.has("club") || !usedKinds.has("nation") || usedKinds.size < 4) continue;
     const answers = rows.flatMap((row) => picked.map((column) => intersect(pool[row].members, pool[column].set)));
-    if (!answers.every((cell) => cell.length >= 3) || !distinctAssignments(answers)) continue;
+    if (!answers.every((cell) => cell.length >= 1)) continue;
     const signature = [...rows].sort((a, b) => a - b).join(",") + ":" + [...picked].sort((a, b) => a - b).join(",");
     if (signatures.has(signature)) continue;
     signatures.add(signature);
-    const clue = (index) => ({ id: pool[index].id, label: pool[index].label });
+    const clue = (index) => {
+      const { id, label, kind, identity, badge, badgeAlt, badgeFallback, awardIds } = pool[index];
+      return { id, label, kind, identity, badge, badgeAlt, badgeFallback, awardIds };
+    };
     variants.push({ rows: rows.map(clue), columns: picked.map(clue), answers });
+    usedKinds.forEach((kind) => covered.add(kind));
   }
-  if (variants.length !== 4) throw new Error(`Could not prepare four complete ${comp} boards`);
-  competitions[comp] = variants;
+  if (variants.length < 8 || covered.size < kinds.length) {
+    throw new Error(`Could not prepare mixed ${comp} boards (${variants.length}; categories ${[...covered]})`);
+  }
+  competitions[comp] = [...previous.competitions[comp].slice(0, legacyVariantCount), ...variants];
 }
-const content = JSON.stringify({ names, competitions }) + "\n";
+const content = JSON.stringify({ legacyVariantCount, names, competitions }) + "\n";
 if (process.argv.includes("--check")) {
   if (readFileSync(output, "utf8") !== content) throw new Error("Football Battleship snapshot is out of date");
 } else {
   writeFileSync(output, content);
 }
-console.log(`Football Battleship: ${Object.keys(competitions).length} scopes, four 8x8 boards each, >=3 answers/cell, 64 distinct answer assignments.`);
+console.log(`Football Battleship: ${Object.keys(competitions).length} scopes, single-category mixed 8x8 boards, >=1 verified answer/cell.`);

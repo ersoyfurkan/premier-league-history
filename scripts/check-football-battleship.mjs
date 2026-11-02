@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
+import { createHash } from "node:crypto";
 import { registerHooks } from "node:module";
 import { test } from "node:test";
 import "./register-data.mjs";
@@ -8,7 +9,7 @@ const {
   BATTLESHIP_SIZE, BATTLESHIP_SHIP_SIZES, battleshipShipCells, validBattleshipPlacement,
   newBattleshipGame, joinBattleshipGame, applyBattleshipAction, battleshipView, battleshipSideOf,
 } = await import("../lib/footballBattleship.ts");
-const { BATTLESHIP_BOARDS, battleshipAnswer, battleshipClues, battleshipPlayerKey: awardPlayerKey } =
+const { BATTLESHIP_BOARDS, BATTLESHIP_LEGACY_VARIANTS, battleshipAnswer, battleshipClues, battleshipPlayerKey: awardPlayerKey } =
   await import("../data/footballBattleship.ts");
 const { COMPETITION_LABELS } = await import("../lib/competitions.ts");
 const prepared = JSON.parse(readFileSync(new URL("../data/quizFootball.generated.json", import.meta.url), "utf8"));
@@ -35,26 +36,43 @@ const ready = (comp = "general") => {
   return state;
 };
 
-test("All eleven scopes have four 8x8 boards, correct scoped intersections and at least three canonical answers per square", () => {
+test("All eleven scopes have mixed single-category 8x8 boards, unique clubs/nations, visuals and verified answers in every square", () => {
   assert.equal(BATTLESHIP_SIZE, 8);
   assert.deepEqual(BATTLESHIP_SHIP_SIZES, [2, 3, 4]);
   assert.deepEqual(Object.keys(BATTLESHIP_BOARDS).sort(), Object.keys(COMPETITION_LABELS).sort());
   for (const [comp, variants] of Object.entries(BATTLESHIP_BOARDS)) {
     const source = prepared.competitions[comp];
-    const byClue = new Map(source.pool.map(({ clue, members }) => [clue.label, new Set(members.map((index) =>
+    const byClue = new Map([...source.pool, ...source.nations].map(({ clue, members }) => [clue.label, new Set(members.map((index) =>
       awardPlayerKey(prepared.records[source.facts[index]].name),
     ))]));
     const scoped = new Set(source.facts.map((id) => awardPlayerKey(prepared.records[id].name)));
-    assert.equal(variants.length, 4);
-    for (const board of variants) {
+    assert.ok(variants.length >= BATTLESHIP_LEGACY_VARIANTS + 8);
+    const kinds = new Set();
+    let hasBallon = false;
+    for (const [variant, board] of variants.entries()) {
+      const legacy = variant < BATTLESHIP_LEGACY_VARIANTS;
       assert.equal(board.rows.length, 8);
       assert.equal(board.columns.length, 8);
       assert.equal(board.answers.length, 64);
       assert.equal(new Set([...board.rows, ...board.columns].map(({ id }) => id)).size, 16);
+      if (!legacy) {
+        const clues = [...board.rows, ...board.columns];
+        assert.equal(new Set(clues.map((clue) => clue.identity)).size, 16, `${comp}: repeated identity`);
+        assert.ok(new Set(clues.map((clue) => clue.kind)).size >= 4);
+        assert.ok(clues.some((clue) => clue.kind === "club"));
+        assert.ok(clues.some((clue) => clue.kind === "nation"));
+        for (const clue of clues) {
+          assert.doesNotMatch(clue.label, /\b(?:OR|AND)\b|\s\+\s/);
+          kinds.add(clue.kind);
+          if (clue.kind === "club" || clue.kind === "nation") assert.ok(clue.badge, `${comp}: missing logo ${clue.label}`);
+          if (clue.kind === "award") assert.equal(clue.awardIds.length, 1);
+          if (clue.awardIds?.includes("ballon")) hasBallon = true;
+        }
+      }
       const matches = (clue, key) => clue.id.slice(comp.length + 1).split("|").some((id) => byClue.get(id)?.has(key));
       for (let cell = 0; cell < 64; cell += 1) {
         const keys = board.answers[cell].map((id) => awardPlayerKey(snapshot.names[id]));
-        assert.ok(keys.length >= 3, `${comp} ${cell}`);
+        assert.ok(keys.length >= (legacy ? 3 : 1), `${comp} ${cell}`);
         assert.equal(new Set(keys).size, keys.length);
         for (const key of keys) {
           assert.ok(scoped.has(key), `${comp}: scope leaked ${key}`);
@@ -63,9 +81,12 @@ test("All eleven scopes have four 8x8 boards, correct scoped intersections and a
         }
       }
     }
+    assert.deepEqual([...kinds].sort(), ["award", "club", "manager", "nation", "teammate", "trophy"]);
+    assert.ok(hasBallon, `${comp}: no Ballon d'Or category`);
     const boards = new Set();
     for (let iteration = 0; iteration < 20; iteration += 1) {
       const state = newBattleshipGame(comp, "creator");
+      assert.ok(state.board.variant >= BATTLESHIP_LEGACY_VARIANTS, "New games must never select legacy OR boards");
       const view = battleshipClues(comp, state.board);
       assert.equal(new Set(state.board.rows).size, 8);
       assert.equal(new Set(state.board.columns).size, 8);
@@ -77,6 +98,25 @@ test("All eleven scopes have four 8x8 boards, correct scoped intersections and a
       }
     }
     assert.ok(boards.size > 1, `${comp}: no board variety`);
+  }
+});
+
+test("Saved rooms using original variant indices still resolve the same clues and answers", () => {
+  const legacy = Object.fromEntries(Object.entries(snapshot.competitions).map(([comp, boards]) => [
+    comp, boards.slice(0, BATTLESHIP_LEGACY_VARIANTS).map((board) => ({
+      ...board, answers: board.answers.map((answers) => answers.map((id) => snapshot.names[id])),
+    })),
+  ]));
+  assert.equal(createHash("sha256").update(JSON.stringify(legacy)).digest("hex"),
+    "b007cdd1ba99291445cba20a024aa3d65170e5894e8067d9f3ab4cdccbb34ffb");
+  for (const comp of Object.keys(COMPETITION_LABELS)) {
+    const state = newBattleshipGame(comp, "creator");
+    state.board = { variant: 0, rows: [0, 1, 2, 3, 4, 5, 6, 7], columns: [0, 1, 2, 3, 4, 5, 6, 7] };
+    const view = battleshipView(state, "p1");
+    assert.deepEqual(view.rows, snapshot.competitions[comp][0].rows);
+    for (let cell = 0; cell < 64; cell += 1) {
+      assert.equal(battleshipAnswer(comp, state.board, cell, answerFor(state, cell)), answerFor(state, cell));
+    }
   }
 });
 

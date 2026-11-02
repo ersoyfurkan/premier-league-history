@@ -2,10 +2,20 @@ import prepared from "@/data/footballBattleship.generated.json";
 import { awardPlayerKey } from "@/data/footballNames";
 import type { Competition } from "@/lib/competitions";
 
-export type BattleshipClue = { id: string; label: string };
+export type BattleshipClue = {
+  id: string;
+  label: string;
+  kind?: "club" | "nation" | "award" | "trophy" | "manager" | "teammate";
+  identity?: string;
+  badge?: string;
+  badgeAlt?: string;
+  badgeFallback?: string;
+  awardIds?: string[];
+};
 export type BattleshipBoard = { variant: number; rows: number[]; columns: number[] };
 type PreparedBoard = { rows: BattleshipClue[]; columns: BattleshipClue[]; answers: number[][] };
-export const BATTLESHIP_BOARDS: Record<Competition, PreparedBoard[]> = prepared.competitions;
+export const BATTLESHIP_BOARDS: Record<Competition, PreparedBoard[]> = prepared.competitions as Record<Competition, PreparedBoard[]>;
+export const BATTLESHIP_LEGACY_VARIANTS = prepared.legacyVariantCount;
 export const battleshipPlayerKey = (name: string) => awardPlayerKey(name.replace(/ı/g, "i"));
 const players = new Map(prepared.names.map((name, id) => [battleshipPlayerKey(name), id]));
 
@@ -20,7 +30,8 @@ function shuffledIndices() {
 
 export function newBattleshipBoard(comp: Competition): BattleshipBoard {
   return {
-    variant: crypto.getRandomValues(new Uint32Array(1))[0] % BATTLESHIP_BOARDS[comp].length,
+    variant: BATTLESHIP_LEGACY_VARIANTS + crypto.getRandomValues(new Uint32Array(1))[0] %
+      (BATTLESHIP_BOARDS[comp].length - BATTLESHIP_LEGACY_VARIANTS),
     rows: shuffledIndices(),
     columns: shuffledIndices(),
   };
