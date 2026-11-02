@@ -534,9 +534,9 @@ export default function TournamentDashboard({ tk }: { tk: TournamentKey }) {
           <h1 className="section-title mt-2">{meta.label}</h1>
           <Link href={meta.game} className={`${buttonClass(false)} mt-5 inline-block`}>Play {meta.short} mini-games</Link>
         </header>
-        <nav aria-label={`${meta.label} sections`} className="flex flex-wrap justify-center gap-3">
+        <nav aria-label={`${meta.label} sections`} className="mobile-tabs flex flex-wrap justify-center gap-3">
           {views.map(([key, label]) => (
-            <button key={key} type="button" className={buttonClass(view === key)} onClick={() => setView(key)}>{label}</button>
+            <button key={key} type="button" aria-pressed={view === key} className={buttonClass(view === key)} onClick={() => setView(key)}>{label}</button>
           ))}
         </nav>
         {view === "current" && <Current tk={tk} />}

@@ -113,7 +113,7 @@ function ClubFixtures({ comp, team, onClose }: { comp: Comp; team: ClubTeam; onC
             <li key={f.id}>
               <Link
                 href={`${base}/${f.id}`}
-                className="grid grid-cols-[1fr_auto_1fr] items-center gap-3 rounded-xl border border-border-dim bg-surface/80 px-3 py-3 text-sm transition hover:border-primary/50"
+                className="mobile-fixture grid grid-cols-[1fr_auto_1fr] items-center gap-3 rounded-xl border border-border-dim bg-surface/80 px-3 py-3 text-sm transition hover:border-primary/50"
               >
                 <span className="flex items-center justify-end gap-2 text-right font-semibold">
                   {f.home.name}

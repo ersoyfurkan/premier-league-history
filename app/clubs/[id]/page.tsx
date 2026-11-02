@@ -36,7 +36,7 @@ export default async function ClubPage({ params }: { params: Promise<{ id: strin
 
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <div className="data-card p-8 mb-10 scanline">
+        <div className="club-profile-header data-card p-8 mb-10 scanline">
           <p className="section-eyebrow text-primary mb-2">Club Signal</p>
           <div className="flex items-start gap-8">
           {clubLogo ? (

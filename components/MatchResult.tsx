@@ -29,7 +29,7 @@ export default function MatchResult({
   const [pieces] = useState<Piece[]>(() => (won ? makePieces() : []));
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-6 backdrop-blur-sm">
+    <div className="match-result fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-6 backdrop-blur-sm">
       {won && (
         <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
           {pieces.map((p, i) => (

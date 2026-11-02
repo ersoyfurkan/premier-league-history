@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
@@ -13,6 +13,7 @@ export default function Navbar() {
   const router = useRouter();
   const { user, logout } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
+  const menuButton = useRef<HTMLButtonElement>(null);
 
   const inUcl = pathname.startsWith("/champions-league") || searchParams.get("comp") === "ucl";
   const compParam = searchParams.get("comp");
@@ -56,11 +57,20 @@ export default function Navbar() {
       : pathname === href || pathname.startsWith(`${href}/`);
 
   return (
-    <nav className="fixed inset-x-0 top-0 z-50 border-b border-[rgba(0,229,255,0.08)] bg-[rgba(3,4,10,0.85)] backdrop-blur-[20px]">
-      <div className="max-w-7xl mx-auto px-6 py-4">
+    <nav
+      aria-label="Main navigation"
+      className="site-nav fixed inset-x-0 top-0 z-50 border-b border-[rgba(0,229,255,0.08)] bg-[rgba(3,4,10,0.85)] backdrop-blur-[20px]"
+      onKeyDown={(event) => {
+        if (event.key === "Escape" && isOpen) {
+          setIsOpen(false);
+          menuButton.current?.focus();
+        }
+      }}
+    >
+      <div className="site-nav-inner max-w-7xl mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="font-display text-xl tracking-[0.14em] uppercase text-primary drop-shadow-[0_0_14px_rgba(0,229,255,0.45)]">
+          <Link href="/" onClick={() => setIsOpen(false)} className="site-brand font-display text-xl tracking-[0.14em] uppercase text-primary drop-shadow-[0_0_14px_rgba(0,229,255,0.45)]">
             Football <span className="text-accent">History</span>
           </Link>
 
@@ -126,6 +136,11 @@ export default function Navbar() {
 
           {/* Mobile Menu Button */}
           <button
+            ref={menuButton}
+            type="button"
+            aria-label={isOpen ? "Close navigation" : "Open navigation"}
+            aria-expanded={isOpen}
+            aria-controls="mobile-navigation"
             onClick={() => setIsOpen(!isOpen)}
             className="md:hidden p-2 rounded-lg border border-border-dim hover:border-border transition"
           >
@@ -147,7 +162,7 @@ export default function Navbar() {
 
         {/* Mobile Menu */}
         {isOpen && (
-          <div className="md:hidden mt-4 pb-4 space-y-3 border-t border-border-dim pt-4">
+          <div id="mobile-navigation" className="mobile-navigation md:hidden mt-4 pb-4 space-y-3 border-t border-border-dim pt-4">
             {links.map((link) => (
               <Link
                 key={link.href}

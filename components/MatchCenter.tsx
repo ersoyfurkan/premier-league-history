@@ -99,7 +99,7 @@ function Header({ match }: { match: MatchDetail }) {
       .map((event) => `${event.player} ${minuteLabel(event)}${event.kind === "penalty" ? " (pen)" : event.kind === "own_goal" ? " (og)" : ""}`);
 
   return (
-    <div className="data-card p-5 md:p-8">
+    <div className="match-header data-card p-5 md:p-8">
       <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3 md:gap-6">
         {(["home", "away"] as const).map((side) => {
           const team = match[side];
@@ -165,7 +165,7 @@ function Timeline({ match }: { match: MatchDetail }) {
                   : event.player;
         const home = event.side === "home";
         return (
-          <li key={event.id} className="grid grid-cols-[1fr_auto_1fr] items-center gap-3 rounded-xl border border-border-dim bg-surface/80 px-3 py-2 text-sm">
+          <li key={event.id} className="match-event grid grid-cols-[1fr_auto_1fr] items-center gap-3 rounded-xl border border-border-dim bg-surface/80 px-3 py-2 text-sm">
             <span className={`text-right ${home ? "" : "invisible"}`}>{detail}</span>
             <span className="flex min-w-16 items-center justify-center gap-2 font-mono text-primary">
               <span>{EVENT_ICON[event.kind]}</span>

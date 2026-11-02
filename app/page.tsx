@@ -184,8 +184,8 @@ const competitions = [
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-background text-foreground grid-bg px-6 py-14 md:py-20">
-      <section className="relative mx-auto flex min-h-[calc(100vh-12rem)] w-full max-w-6xl flex-col justify-center">
+    <main className="competition-home min-h-screen bg-background text-foreground grid-bg px-6 py-14 md:py-20">
+      <section className="competition-hero relative mx-auto flex min-h-[calc(100vh-12rem)] w-full max-w-6xl flex-col justify-center">
         <div className="glow-orb glow-orb-cyan -left-24 top-0 h-[420px] w-[420px]" />
         <div className="glow-orb glow-orb-purple -right-24 bottom-0 h-[500px] w-[500px]" />
 
@@ -196,16 +196,16 @@ export default function Home() {
             Pick a competition to explore its seasons, stats, records, and player games.
           </p>
 
-          <div className="mt-12 grid gap-5 text-left md:grid-cols-2">
+          <div className="competition-grid mt-12 grid gap-5 text-left md:grid-cols-2">
             {competitions.map((competition) => (
               <Link
                 key={competition.name}
                 href={competition.href}
-                className={`group relative overflow-hidden rounded-3xl border bg-surface/80 p-7 shadow-glow-card transition hover:-translate-y-1 md:p-9 ${competition.border}`}
+                className={`competition-card group relative overflow-hidden rounded-3xl border bg-surface/80 p-7 shadow-glow-card transition hover:-translate-y-1 md:p-9 ${competition.border}`}
               >
                 <div className={`glow-orb ${competition.glow} -right-16 -top-24 h-64 w-64`} />
                 <div className="relative z-10 flex h-full flex-col">
-                  <div className={`mb-7 flex h-24 w-24 items-center justify-center rounded-2xl border border-white/10 bg-black/25 ${competition.accent}`}>
+                  <div className={`competition-mark mb-7 flex h-24 w-24 items-center justify-center rounded-2xl border border-white/10 bg-black/25 ${competition.accent}`}>
                     {competition.mark}
                   </div>
                   <p className={`section-eyebrow ${competition.accent}`}>{competition.eyebrow}</p>

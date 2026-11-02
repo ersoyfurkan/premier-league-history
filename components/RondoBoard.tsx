@@ -100,7 +100,7 @@ export default function RondoBoard({
   const mins = Math.floor(secondsLeft / 60);
 
   return (
-    <div className="mx-auto w-full" style={{ maxWidth: "min(640px, max(340px, calc(100svh - 230px)))" }}>
+    <div className="rondo-board mx-auto w-full" style={{ maxWidth: "min(640px, max(340px, calc(100svh - 230px)))" }}>
       <div className="mb-2 flex items-center justify-between font-mono text-sm font-bold">
         <span className="text-emerald-400">✓ {score.right}</span>
         <span className={secondsLeft <= 20 ? "text-warning" : "text-primary"}>
@@ -109,7 +109,8 @@ export default function RondoBoard({
         <span className="text-red-400">✗ {score.wrong}</span>
       </div>
 
-      <div className="relative aspect-square w-full">
+      <div className="rondo-stage relative aspect-square w-full">
+        <div className="rondo-ring absolute inset-0">
         {RONDO_LETTERS.map((letter, index) => {
           const angle = (index / RONDO_LETTERS.length) * 2 * Math.PI;
           return (
@@ -125,8 +126,10 @@ export default function RondoBoard({
             </span>
           );
         })}
+          <span aria-hidden="true" className="rondo-current hidden">{question.letter}</span>
+        </div>
 
-        <div className="absolute inset-[15%] flex flex-col items-center justify-center gap-2 rounded-full text-center">
+        <div className="rondo-question absolute inset-[15%] flex flex-col items-center justify-center gap-2 rounded-full text-center">
           <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-accent">
             {question.contains ? `Contains ${question.letter}` : `Starts with ${question.letter}`}
           </p>
@@ -138,6 +141,8 @@ export default function RondoBoard({
             onKeyDown={(event) => event.key === "Enter" && submit()}
             disabled={over}
             placeholder="Type your answer…"
+            aria-label="Rondo answer"
+            enterKeyHint="send"
             autoComplete="off"
             className="w-full max-w-xs rounded-lg border border-primary/30 bg-background px-3 py-1.5 text-center text-sm"
           />

@@ -365,7 +365,7 @@ function FootballTicTacToeClient() {
           <p className="section-eyebrow text-accent">{competitionLabel} · {isLocal ? "Same device" : "Online vs Friend"}</p>
           <h2 className="mt-1 text-2xl sm:text-3xl lg:text-4xl">Tik Tak Toe</h2>
         </div>
-        <div className="text-right">
+        <div className="mobile-turn-status text-right">
           <p className="text-lg text-fore-muted">{turnMessage}</p>
           {secondsLeft !== null && (
             <p className={`mt-1 font-mono text-sm font-bold ${secondsLeft <= 10 ? "text-warning" : "text-primary"}`}>
@@ -377,7 +377,7 @@ function FootballTicTacToeClient() {
 
       {view.status !== "waiting" && (
       <div
-        className="mx-auto mt-3 w-full rounded-2xl border border-emerald-500/20 bg-surface/70 p-2 sm:p-3 lg:mt-2"
+        className="tic-tac-toe-board mx-auto mt-3 w-full rounded-2xl border border-emerald-500/20 bg-surface/70 p-2 sm:p-3 lg:mt-2"
         style={{ maxWidth: "min(920px, max(420px, calc(100svh - 400px)))" }}
       >
         <div className="grid aspect-square grid-cols-4 grid-rows-4 overflow-hidden [container-type:inline-size] rounded-xl border border-emerald-500/20">

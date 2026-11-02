@@ -63,7 +63,7 @@ export default function GameLobby({ comp }: { comp: Competition }) {
   return (
     <main className="min-h-screen bg-background text-foreground grid-bg px-6 py-10">
       <section className="mx-auto w-full max-w-5xl">
-        <div className="relative overflow-hidden rounded-3xl border border-primary/20 bg-surface/80 p-8 md:p-12 shadow-glow-card">
+        <div className="mobile-lobby relative overflow-hidden rounded-3xl border border-primary/20 bg-surface/80 p-8 md:p-12 shadow-glow-card">
           <div className="glow-orb glow-orb-cyan h-80 w-80 -top-24 -left-16" />
           <div className="glow-orb glow-orb-purple h-96 w-96 -right-20 top-1/3" />
 

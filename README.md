@@ -57,6 +57,10 @@ The same focused test command also checks stadium aliases/search, modern manager
 - Run `pnpm data:club-history` to refresh [the sourced senior-appearance supplement](./data/clubHistory.generated.json). Its `checkedAt`, per-club source URLs, coverage statements, and unavailable/unsupported sources are persisted. Only positive appearance rows are imported; merely signing for a club is not evidence of playing.
 - **Coverage is not guaranteed exhaustive.** Many public player lists impose minimum appearance counts, and some clubs lack a compatible list. The supplement broadens the existing career union; it does not prove that every short loan, every historic player, or every authored trivia category has been captured. A successful refresh reports remaining source gaps explicitly rather than claiming completeness. Existing live and award snapshots retain their own update dates; dated historical questions retain their printed cutoffs rather than silently becoming live totals.
 
+## Mobile layouts
+
+Phone-specific layouts are scoped to `width < 768px` in [the shared styles](./app/globals.css); the existing laptop/desktop layout at 768px and above is unchanged. Mobile navigation accommodates device safe areas, forms use 16px inputs to avoid focus zoom, and controls have a 44px minimum touch height. Competition tabs swipe horizontally and wide tables retain every column in their own scroll region. Trivia Path answer panels stack on phones, Tic-Tac-Toe clues are larger, and Rondo puts the answer form below its letter ring so the keyboard does not crowd the question.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

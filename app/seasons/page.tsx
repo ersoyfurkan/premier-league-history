@@ -41,7 +41,7 @@ export default function SeasonsPage() {
           </h1>
         </div>
 
-        <div className="flex justify-center gap-3 mb-8">
+        <div className="mobile-tabs flex justify-center gap-3 mb-8">
           {([["history", "Past Seasons"], ["current", "Current Season 26/27"]] as const).map(([id, label]) => (
             <button
               key={id}

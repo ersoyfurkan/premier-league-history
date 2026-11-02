@@ -259,7 +259,7 @@ function TriviaClient() {
               ))}
             </div>
 
-            <div className="mt-4 grid grid-cols-4 gap-2">
+            <div className="trivia-board mt-4 grid grid-cols-4 gap-2">
               {board.map((t, i) => (
                 <div
                   key={i}
@@ -299,11 +299,11 @@ function TriviaClient() {
 
         {(phase === "play" || phase === "result") && tile && current && dice && (
           <div className="mt-6 rounded-2xl border border-line bg-background/60 p-6">
-            <div className="flex items-start justify-between gap-4">
+            <div className="trivia-question-header flex items-start justify-between gap-4">
               <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border-2 border-accent text-3xl font-black">
                 {dice}
               </div>
-              <div className="flex-1">
+              <div className="trivia-question-copy flex-1">
                 <p className="text-xs uppercase tracking-widest text-fore-muted">
                   Rolled {dice} · moving to space {targetPos}
                 </p>
@@ -324,7 +324,7 @@ function TriviaClient() {
               ))}
             </ul>
             {phase === "play" && (
-              <form onSubmit={submit} className="mt-4 flex gap-2">
+              <form onSubmit={submit} className="mobile-answer-form mt-4 flex gap-2">
                 <div className="relative flex-1">
                   <input
                     autoFocus
@@ -332,6 +332,8 @@ function TriviaClient() {
                     value={guess}
                     onChange={(event) => setGuess(event.target.value)}
                     placeholder="Search a player, club, stadium…"
+                    aria-label="Trivia answer"
+                    enterKeyHint="send"
                     className="w-full rounded-xl border-2 border-lime-400/80 bg-background px-4 py-3 outline-none focus:border-lime-300"
                   />
                   {suggestions.length > 0 && (

@@ -164,14 +164,14 @@ function GamePlayClient() {
   return (
     <main className="min-h-screen bg-background text-foreground grid-bg px-4 md:px-8 py-8 md:py-12">
       <section className="mx-auto w-full max-w-[110rem]">
-        <div className="mb-6 flex items-center justify-between gap-4">
+        <div className="mobile-arena-header mb-6 flex items-center justify-between gap-4">
           <h1 className="section-title text-[clamp(48px,8vw,120px)] leading-[0.9]">Stat Duel Arena</h1>
           <Link href={lobby} className="btn-ghost">
             Change Mode
           </Link>
         </div>
 
-        <div className="grid gap-5 lg:grid-cols-3">
+        <div className="duel-summary grid gap-5 lg:grid-cols-3">
           <div className="data-card p-6 md:p-8">
             <p className="section-eyebrow text-fore-muted">Score</p>
             <p className="mt-4 font-display text-[clamp(52px,8vw,110px)] leading-none text-primary">

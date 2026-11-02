@@ -223,7 +223,7 @@ function Fixtures({ initialWeek }: { initialWeek: number | null }) {
 
   return (
     <div className="data-card p-6">
-      <div className="mb-4 flex items-center justify-between gap-3">
+      <div className="mobile-fixture-controls mb-4 flex items-center justify-between gap-3">
         <div>
           <p className="section-eyebrow text-accent">Fixtures</p>
           <h3 className="mt-2 text-3xl">Matchweek {week ?? "…"}</h3>

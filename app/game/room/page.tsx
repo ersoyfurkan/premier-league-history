@@ -194,7 +194,7 @@ function RoomClient() {
         </div>
       )}
 
-      <div className="mt-6 grid gap-5 lg:grid-cols-3">
+      <div className="duel-summary mt-6 grid gap-5 lg:grid-cols-3">
         <div className="data-card p-6 md:p-8">
           <p className="section-eyebrow text-fore-muted">Score</p>
           <p className="mt-4 font-display text-[clamp(52px,8vw,110px)] leading-none text-primary">
@@ -289,7 +289,7 @@ function Shell({ children }: { children: React.ReactNode }) {
   return (
     <main className="min-h-screen bg-background text-foreground grid-bg px-4 md:px-8 py-8 md:py-12">
       <section className="mx-auto w-full max-w-[110rem]">
-        <div className="flex items-center justify-between gap-4">
+        <div className="mobile-arena-header flex items-center justify-between gap-4">
           <h1 className="section-title text-[clamp(48px,8vw,120px)] leading-[0.9]">Stat Duel Arena</h1>
           <Link href="/game" className="btn-ghost">
             Leave

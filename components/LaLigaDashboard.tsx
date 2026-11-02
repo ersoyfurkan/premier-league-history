@@ -654,7 +654,7 @@ export default function LaLigaDashboard() {
           </p>
         </header>
 
-        <nav aria-label="La Liga sections" className="mb-8 flex flex-wrap justify-center gap-3">
+        <nav aria-label="La Liga sections" className="mobile-tabs mb-8 flex flex-wrap justify-center gap-3">
           {([
             ["current", "Current season"],
             ["seasons", "Past seasons"],
@@ -664,7 +664,7 @@ export default function LaLigaDashboard() {
             ["alltime", "All-time table"],
             ["winners", "Winners"],
           ] as const).map(([id, label]) => (
-            <button key={id} type="button" onClick={() => setView(id)} className={buttonClass(view === id)}>
+            <button key={id} type="button" aria-pressed={view === id} onClick={() => setView(id)} className={buttonClass(view === id)}>
               {label}
             </button>
           ))}
