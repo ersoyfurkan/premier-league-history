@@ -439,11 +439,28 @@ function BattleshipClient({ comp, code }: { comp: Competition; code: string }) {
                 setCopied(true);
               })}>{copied ? "Invite copied" : "Copy invite link"}</button>
             </section>
-            <p className="mt-5 text-xl font-bold" data-testid="battleship-turn">
-              {view.phase === "finished" ? `${view.winner === view.you ? "You win!" : `${sideLabel(view.winner ?? view.turn)} wins!`} All three ships sunk.`
-                : view.phase === "playing" ? view.turn === view.you ? "Your turn - choose a square" : "Your opponent is answering"
-                  : "Place your fleet before battle"}
-            </p>
+            <section role="status" aria-live="polite" aria-atomic="true" data-testid="battleship-turn"
+              className={`sticky top-20 z-30 mt-5 rounded-2xl border-2 bg-background p-4 shadow-xl ${
+                view.phase === "playing" ? view.turn === view.you ? "border-primary" : "border-warning" : "border-border"
+              }`}>
+              <p className="text-xs font-bold uppercase tracking-widest text-fore-muted">
+                You are {sideLabel(view.you)}
+              </p>
+              <h2 className={`mt-1 text-2xl font-black md:text-3xl ${
+                view.phase === "playing" ? view.turn === view.you ? "text-primary" : "text-warning" : ""
+              }`}>
+                {view.phase === "finished" ? `${sideLabel(view.winner ?? view.turn)} wins${view.winner === view.you ? " - you win!" : "!"}`
+                  : view.phase === "playing" ? `${sideLabel(view.turn)}'s turn${view.turn === view.you ? " - YOUR TURN" : " - OPPONENT'S TURN"}`
+                    : "Fleet placement"}
+              </h2>
+              <p className="mt-1 text-sm text-fore-muted">
+                {view.phase === "finished" ? "All three ships sunk. Battle finished."
+                  : view.phase === "playing" ? view.turn === view.you
+                    ? "Choose a square on your attack board, then answer and fire."
+                    : `Wait for ${sideLabel(view.turn)} to answer. You cannot fire yet.`
+                    : "Both players must lock their fleets before the first turn."}
+              </p>
+            </section>
             {view.notice && <p role="status" className="mt-3 rounded-xl border border-primary/30 bg-surface p-4">{view.notice}</p>}
             {(view.phase === "waiting" || view.phase === "placing") ? (
               <FleetPlacement key={view.gameId} view={view} busy={busy} onLock={(ships) => act({ action: "place", ships })} />

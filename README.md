@@ -135,6 +135,7 @@ Each player gets **one guess per round**. A wrong or already-used player consume
 - A correct hit keeps the turn. A correct miss or wrong answer passes the turn. Wrong answers do not reveal occupancy or consume the square. Previously fired squares cannot be targeted again; footballers may be reused at different intersections.
 - Player-name search starts after two characters, supports accents/aliases and keyboard selection, and returns at most twelve names. It is not filtered by the selected square and never returns answer memberships. Selecting a suggestion does not fire; submit the answer explicitly. Search failures are shown, and manual entry remains available.
 - Both the attack board and your fleet mark **hits red** and **misses blue**, retaining text/accessible labels so colour is not the only signal.
+- A sticky turn banner identifies your player number and the active player explicitly, with a highlighted **YOUR TURN / OPPONENT'S TURN** status and screen-reader announcements. It stays visible while scrolling the board; setup and finished games show their own status instead of an active turn.
 - The first player to hit all **nine** occupied enemy squares wins. Enemy positions stay hidden until the match finishes. Rematches require both players' votes and restart ship placement.
 - Matching uses a curated historical answer bank, not a live or exhaustive career database.
 
