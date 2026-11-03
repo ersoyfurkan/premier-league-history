@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { COMPETITION_LABELS, type Competition } from "@/lib/competitions";
 import { lobbyFor } from "@/lib/gameNavigation";
 import UclImage from "@/components/UclImage";
+import { playerFaceUrl } from "@/data/playerFaces";
 import type { BattleshipClue } from "@/data/footballBattleship";
 import type { BattleshipSide, BattleshipView, ShipPlacement } from "@/lib/footballBattleship";
 
@@ -22,8 +23,22 @@ const validPlacement = (ship: ShipPlacement, others: ShipPlacement[]) => {
     !others.some((other) => cellsOf(other).some((cell) => cells.includes(cell)));
 };
 type Api = { error?: string; code?: string; token?: string; view?: BattleshipView };
-const hitStyle = "border-red-400 bg-red-600/60 text-white";
+const hitStyle = "border-primary bg-surface text-foreground";
 const missStyle = "border-blue-400 bg-blue-600/60 text-white";
+
+function PlayerPortrait({ name, large = false }: { name: string; large?: boolean }) {
+  return <UclImage src={playerFaceUrl(name)} alt={name} shape="circle" className={large ? "h-14 w-14" : "h-9 w-9"} />;
+}
+
+function HitPlayer({ shot }: { shot: BattleshipView["shots"][number] }) {
+  return (
+    <span className="flex flex-col items-center justify-center gap-1 p-1">
+      <PlayerPortrait name={shot.player} large />
+      <span className="max-w-full break-words text-[10px]">{shot.player}</span>
+      <span className="text-[10px] text-primary">HIT{shot.sunk ? ` - sunk ${shot.sunk}` : ""}</span>
+    </span>
+  );
+}
 
 function PlayerSearch({ value, onChange, disabled }: { value: string; onChange: (value: string) => void; disabled: boolean }) {
   const [results, setResults] = useState<{ query: string; names: string[]; error: string | null } | null>(null);
@@ -69,7 +84,9 @@ function PlayerSearch({ value, onChange, disabled }: { value: string; onChange: 
           {names.map((name, index) => (
             <li key={name} id={`battleship-player-${index}`} role="option" aria-selected={active === index}
               onMouseDown={(event) => event.preventDefault()} onClick={() => choose(name)}
-              className={`cursor-pointer px-4 py-3 text-sm hover:bg-primary-dim ${active === index ? "bg-primary-dim text-primary" : ""}`}>{name}</li>
+              className={`flex cursor-pointer items-center gap-3 px-4 py-3 text-sm hover:bg-primary-dim ${active === index ? "bg-primary-dim text-primary" : ""}`}>
+              <PlayerPortrait name={name} /><span>{name}</span>
+            </li>
           ))}
         </ul>
       )}
@@ -156,7 +173,7 @@ function FleetBoard({ view, ships, incoming, interactive, onCell }: {
                 : size ? "border-cyan-300 bg-cyan-400/25 text-cyan-100"
                   : "border-border bg-background text-fore-muted hover:border-primary"
           }`}>
-          {shot ? shot.hit ? "HIT" : "-" : size ?? coordinate(cell)}
+          {shot ? shot.hit ? <HitPlayer shot={shot} /> : "MISS" : size ?? coordinate(cell)}
         </button>
       );
     }} />
@@ -254,13 +271,13 @@ function Battle({ view, busy, attack }: { view: BattleshipView; busy: boolean; a
           <h2 className="mb-3 text-xl font-bold">Your fleet</h2>
           <p className="text-sm text-fore-muted">Your opponent answers these clues to attack these positions.</p>
           <FleetBoard view={view} ships={view.ownShips} incoming={incoming} interactive={false} onCell={() => {}} />
-          <p className="mt-3 text-sm text-fore-muted">Numbers show ship sizes. Red = hit. Blue = miss.</p>
+          <p className="mt-3 text-sm text-fore-muted">Numbers show ship sizes. Player portraits mark hits. Blue = miss.</p>
         </div>
       ) : (
         <div className="mt-4 rounded-2xl border border-border bg-surface p-3 md:p-5">
           <h2 className="text-xl font-bold">Find your opponent&apos;s ships</h2>
           <p className="mt-2 text-sm text-fore-muted">This is your attack board, with different clues from your fleet board. Scroll sideways to see every column. Select a square, then answer below.</p>
-          <p className="mt-2 text-sm"><span className="text-red-400">Red = hit.</span>{" "}<span className="text-blue-400">Blue = miss.</span></p>
+          <p className="mt-2 text-sm">Player portrait = hit. <span className="text-blue-400">Blue = miss.</span></p>
           <ClueGrid view={view} label="Scrollable attack board" renderCell={(cell) => {
             const shot = mine.find((item) => item.cell === cell);
             return (
@@ -273,7 +290,7 @@ function Battle({ view, busy, attack }: { view: BattleshipView; busy: boolean; a
                       : targetShips.has(cell) ? "border-warning bg-warning/15"
                         : "border-border bg-background/70 hover:border-primary"
                 }`}>
-                {shot ? `${shot.hit ? "HIT" : "MISS"}${shot.sunk ? ` - sunk ${shot.sunk}` : ""}` : targetShips.has(cell) ? "Ship" : coordinate(cell)}
+                {shot ? shot.hit ? <HitPlayer shot={shot} /> : "MISS" : targetShips.has(cell) ? "Ship" : coordinate(cell)}
               </button>
             );
           }} />
