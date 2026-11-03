@@ -1,5 +1,6 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { NextRequest, NextResponse } from "next/server";
+import { searchBattleshipPlayers } from "@/data/footballBattleship";
 import {
   applyBattleshipAction, battleshipSideOf, battleshipView, isBattleshipComp,
   joinBattleshipGame, newBattleshipGame, validBattleshipPlacement,
@@ -37,6 +38,11 @@ function parseAction(body: Record<string, unknown>): BattleshipAction | null {
 }
 
 async function get(request: NextRequest) {
+  const search = request.nextUrl.searchParams.get("search");
+  if (search !== null) {
+    if (search.length > 100) return json({ error: "Player search must be at most 100 characters." }, 400);
+    return json({ players: searchBattleshipPlayers(search) });
+  }
   const code = roomCode(request.nextUrl.searchParams.get("code"));
   const token = request.nextUrl.searchParams.get("token") ?? "";
   if (!validCode(code)) return json({ error: "Enter a valid six-character room code." }, 400);

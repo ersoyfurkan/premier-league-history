@@ -11,13 +11,25 @@ export type BattleshipClue = {
   badgeAlt?: string;
   badgeFallback?: string;
   awardIds?: string[];
+  reference?: string;
+  source?: string;
 };
 export type BattleshipBoard = { variant: number; rows: number[]; columns: number[] };
 type PreparedBoard = { rows: BattleshipClue[]; columns: BattleshipClue[]; answers: number[][] };
 export const BATTLESHIP_BOARDS: Record<Competition, PreparedBoard[]> = prepared.competitions as Record<Competition, PreparedBoard[]>;
 export const BATTLESHIP_LEGACY_VARIANTS = prepared.legacyVariantCount;
+export const BATTLESHIP_AWARDS_CHECKED_AT = prepared.awardsCheckedAt;
 export const battleshipPlayerKey = (name: string) => awardPlayerKey(name.replace(/ı/g, "i"));
 const players = new Map(prepared.names.map((name, id) => [battleshipPlayerKey(name), id]));
+const searchIndex = prepared.names.map((name) => ({ name, key: battleshipPlayerKey(name) }));
+
+export function searchBattleshipPlayers(query: string): string[] {
+  const key = battleshipPlayerKey(query.trim());
+  if (key.length < 2) return [];
+  return searchIndex.filter((player) => player.key.includes(key))
+    .sort((a, b) => Number(b.key.startsWith(key)) - Number(a.key.startsWith(key)) || a.name.localeCompare(b.name))
+    .slice(0, 12).map((player) => player.name);
+}
 
 function shuffledIndices() {
   const indices = Array.from({ length: 8 }, (_, index) => index);

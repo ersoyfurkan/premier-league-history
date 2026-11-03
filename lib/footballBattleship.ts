@@ -1,5 +1,5 @@
 import {
-  battleshipAnswer, battleshipClues, newBattleshipBoard, type BattleshipBoard, type BattleshipClue,
+  BATTLESHIP_AWARDS_CHECKED_AT, battleshipAnswer, battleshipClues, newBattleshipBoard, type BattleshipBoard, type BattleshipClue,
 } from "@/data/footballBattleship";
 import { COMPETITION_LABELS, type Competition } from "@/lib/competitions";
 
@@ -24,6 +24,7 @@ export type BattleshipView = {
   columns: BattleshipClue[];
   ownRows: BattleshipClue[];
   ownColumns: BattleshipClue[];
+  awardsCheckedAt: string;
   ownShips: ShipPlacement[];
   opponentShips: ShipPlacement[] | null;
   shots: Shot[];
@@ -116,6 +117,7 @@ export function battleshipView(state: BattleshipState, you: BattleshipSide): Bat
     youReady: state.ships[you] !== null, opponentReady: state.ships[opponent] !== null,
     ...battleshipClues(state.comp, battleshipAttackBoard(state, you)),
     ownRows: own.rows, ownColumns: own.columns,
+    awardsCheckedAt: BATTLESHIP_AWARDS_CHECKED_AT,
     ownShips: state.ships[you] ?? [],
     opponentShips: state.phase === "finished" ? state.ships[opponent] : null,
     shots: state.shots, notice: state.notice, rematch: state.rematch,

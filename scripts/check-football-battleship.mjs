@@ -10,7 +10,7 @@ const {
   newBattleshipGame, joinBattleshipGame, applyBattleshipAction, battleshipView, battleshipSideOf,
   battleshipAttackBoard,
 } = await import("../lib/footballBattleship.ts");
-const { BATTLESHIP_BOARDS, BATTLESHIP_LEGACY_VARIANTS, battleshipAnswer, battleshipClues, battleshipPlayerKey: awardPlayerKey } =
+const { BATTLESHIP_BOARDS, BATTLESHIP_LEGACY_VARIANTS, battleshipAnswer, battleshipClues, searchBattleshipPlayers, battleshipPlayerKey: awardPlayerKey } =
   await import("../data/footballBattleship.ts");
 const { COMPETITION_LABELS } = await import("../lib/competitions.ts");
 const prepared = JSON.parse(readFileSync(new URL("../data/quizFootball.generated.json", import.meta.url), "utf8"));
@@ -37,6 +37,41 @@ const ready = (comp = "general") => {
   assert.equal(state.phase, "playing");
   return state;
 };
+
+test("Player search handles accents, aliases and partial names without exposing square answers", () => {
+  assert.deepEqual(searchBattleshipPlayers(""), []);
+  assert.deepEqual(searchBattleshipPlayers("m"), []);
+  assert.ok(searchBattleshipPlayers("mbappe").some((name) => name.includes("Mbapp")));
+  assert.ok(searchBattleshipPlayers("neymar jr").includes("Neymar"));
+  assert.ok(searchBattleshipPlayers("  DAVID LUIZ ").includes("David Luiz"));
+  assert.ok(searchBattleshipPlayers("ron").length <= 12);
+  assert.deepEqual(searchBattleshipPlayers("not-a-real-player-123"), []);
+});
+
+test("The screenshot's Ballon d'Or/PFA intersection rejects David Luiz, and retains recorded 2026 award winners", () => {
+  const awards = JSON.parse(readFileSync(new URL("../data/individualAwards.generated.json", import.meta.url), "utf8"));
+  const keysFor = (id) => new Set(awards.awards.find((award) => award.id === id).winners.map(({ name }) => awardPlayerKey(name)));
+  const ballon = keysFor("ballon");
+  const pfa = keysFor("pfa-player");
+  assert.ok(ballon.has(awardPlayerKey("Harry Kane")), "Recorded 2026 Ballon d'Or winner must not be omitted");
+  assert.ok(pfa.has(awardPlayerKey("Bruno Fernandes")), "Recorded 2025/26 PFA winner must not be omitted");
+  assert.ok(!ballon.has(awardPlayerKey("David Luiz")) && !pfa.has(awardPlayerKey("David Luiz")));
+  let intersections = 0;
+  for (const [comp, variants] of Object.entries(BATTLESHIP_BOARDS)) {
+    for (const [variant, board] of variants.entries()) {
+      for (let cell = 0; cell < 64; cell += 1) {
+        const clues = [board.rows[Math.floor(cell / 8)], board.columns[cell % 8]];
+        if (!clues.some(({ label }) => label === "Ballon d'Or winner") ||
+          !clues.some(({ label }) => label === "PFA Players' Player of the Year winner")) continue;
+        const layout = { variant, rows: [0, 1, 2, 3, 4, 5, 6, 7], columns: [0, 1, 2, 3, 4, 5, 6, 7] };
+        assert.equal(battleshipAnswer(comp, layout, cell, "David Luiz"), null);
+        assert.ok(board.answers[cell].every((id) => ballon.has(awardPlayerKey(snapshot.names[id])) && pfa.has(awardPlayerKey(snapshot.names[id]))));
+        intersections += 1;
+      }
+    }
+  }
+  assert.ok(intersections > 0);
+});
 
 test("All eleven scopes have mixed single-category 8x8 boards, unique clubs/nations, visuals and verified answers in every square", () => {
   assert.equal(BATTLESHIP_SIZE, 8);
@@ -337,6 +372,21 @@ registerHooks({
 });
 const { NextRequest } = await import("next/server.js");
 const { GET, POST } = await import("../app/api/game/football-battleship/route.ts");
+test("Search API returns only names, does not require a room/DB, bounds input and leaves room state unchanged", async () => {
+  const before = JSON.stringify([...rows]);
+  missingTable = true;
+  try {
+    const response = await GET(new NextRequest("http://localhost/api/game/football-battleship?search=David%20Luiz"));
+    assert.equal(response.status, 200);
+    assert.equal(response.headers.get("Cache-Control"), "no-store");
+    assert.deepEqual(await response.json(), { players: ["David Luiz"] });
+    const invalid = await GET(new NextRequest(`http://localhost/api/game/football-battleship?search=${"a".repeat(101)}`));
+    assert.equal(invalid.status, 400);
+    const empty = await GET(new NextRequest("http://localhost/api/game/football-battleship?search=a"));
+    assert.deepEqual(await empty.json(), { players: [] });
+  } finally { missingTable = false; }
+  assert.equal(JSON.stringify([...rows]), before);
+});
 const api = async (body) => {
   const response = await POST(new NextRequest("http://localhost/api/game/football-battleship", {
     method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body),

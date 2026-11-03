@@ -22,6 +22,63 @@ const validPlacement = (ship: ShipPlacement, others: ShipPlacement[]) => {
     !others.some((other) => cellsOf(other).some((cell) => cells.includes(cell)));
 };
 type Api = { error?: string; code?: string; token?: string; view?: BattleshipView };
+const hitStyle = "border-red-400 bg-red-600/60 text-white";
+const missStyle = "border-blue-400 bg-blue-600/60 text-white";
+
+function PlayerSearch({ value, onChange, disabled }: { value: string; onChange: (value: string) => void; disabled: boolean }) {
+  const [results, setResults] = useState<{ query: string; names: string[]; error: string | null } | null>(null);
+  const [focused, setFocused] = useState(false);
+  const [active, setActive] = useState(-1);
+  useEffect(() => {
+    if (disabled || value.trim().length < 2 || !focused) return;
+    const controller = new AbortController();
+    const timer = setTimeout(async () => {
+      try {
+        const response = await fetch(`${ENDPOINT}?search=${encodeURIComponent(value)}`, { signal: controller.signal, cache: "no-store" });
+        const data = await response.json() as { players?: string[]; error?: string };
+        if (!response.ok || !data.players) throw new Error(data.error ?? "Could not search players.");
+        if (!controller.signal.aborted) setResults({ query: value, names: data.players, error: null });
+      } catch (error) {
+        if (!controller.signal.aborted) setResults({ query: value, names: [], error: error instanceof Error ? error.message : "Could not search players." });
+      }
+    }, 200);
+    return () => { clearTimeout(timer); controller.abort(); };
+  }, [value, disabled, focused]);
+  const current = results?.query === value ? results : null;
+  const names = focused && !disabled ? current?.names ?? [] : [];
+  const choose = (name: string) => { onChange(name); setFocused(false); setActive(-1); };
+  return (
+    <div className="relative">
+      <label htmlFor="battleship-answer" className="mb-2 block text-sm">Footballer&apos;s name</label>
+      <input id="battleship-answer" className="w-full rounded-xl border border-border bg-background px-4 py-3"
+        role="combobox" aria-autocomplete="list" aria-expanded={names.length > 0} aria-controls="battleship-player-results"
+        aria-activedescendant={active >= 0 && names[active] ? `battleship-player-${active}` : undefined}
+        disabled={disabled} value={value} onChange={(event) => { onChange(event.target.value); setFocused(true); setActive(-1); }}
+        onFocus={() => setFocused(true)} onBlur={() => setFocused(false)}
+        onKeyDown={(event) => {
+          if (event.key === "Escape") { setFocused(false); setActive(-1); }
+          if ((event.key === "ArrowDown" || event.key === "ArrowUp") && names.length) {
+            event.preventDefault();
+            setActive((index) => (index + (event.key === "ArrowDown" ? 1 : -1) + names.length) % names.length);
+          }
+          if (event.key === "Enter" && active >= 0 && names[active]) { event.preventDefault(); choose(names[active]); }
+        }} autoComplete="off" maxLength={100} placeholder="Type at least 2 letters to search" />
+      {names.length > 0 && (
+        <ul id="battleship-player-results" role="listbox" aria-label="Player search results"
+          className="absolute left-0 right-0 top-full z-20 mt-1 max-h-64 overflow-y-auto rounded-xl border border-border bg-surface shadow-xl">
+          {names.map((name, index) => (
+            <li key={name} id={`battleship-player-${index}`} role="option" aria-selected={active === index}
+              onMouseDown={(event) => event.preventDefault()} onClick={() => choose(name)}
+              className={`cursor-pointer px-4 py-3 text-sm hover:bg-primary-dim ${active === index ? "bg-primary-dim text-primary" : ""}`}>{name}</li>
+          ))}
+        </ul>
+      )}
+      {current?.error && <p role="alert" className="mt-2 text-sm text-warning">{current.error} You can still type a name.</p>}
+      {focused && current && !current.error && !names.length && <p role="status" className="mt-2 text-sm text-fore-muted">No matching player names. You can still type your answer.</p>}
+      <p className="mt-2 text-xs text-fore-muted">Search finds names only, not answers to this square. Choose a name, then fire.</p>
+    </div>
+  );
+}
 
 function Rules() {
   return (
@@ -49,6 +106,8 @@ function Clue({ clue }: { clue: BattleshipClue }) {
         <span className="rounded border border-primary/30 px-2 py-1 text-[10px] uppercase text-primary">{clue.kind}</span>
       )}
       <span>{clue.label}</span>
+      {clue.reference && <span className="text-[10px] text-fore-muted">{clue.reference}</span>}
+      {clue.source && <a href={clue.source} target="_blank" rel="noreferrer" className="text-[10px] text-primary underline">Award source</a>}
     </span>
   );
 }
@@ -92,8 +151,8 @@ function FleetBoard({ view, ships, incoming, interactive, onCell }: {
           data-testid={`fleet-cell-${cell}`}
           aria-label={`${coordinate(cell)}: ${clues.rows[Math.floor(cell / 8)].label}; ${clues.columns[cell % 8].label}${size ? `, size ${size} ship` : ", water"}${shot ? shot.hit ? ", hit" : ", miss" : ""}`}
           className={`min-h-24 rounded-md border text-xs font-bold disabled:cursor-default ${
-            shot?.hit ? "border-red-400 bg-red-500/25 text-red-200"
-              : shot ? "border-border bg-surface text-fore-muted"
+            shot?.hit ? hitStyle
+              : shot ? missStyle
                 : size ? "border-cyan-300 bg-cyan-400/25 text-cyan-100"
                   : "border-border bg-background text-fore-muted hover:border-primary"
           }`}>
@@ -188,17 +247,20 @@ function Battle({ view, busy, attack }: { view: BattleshipView; busy: boolean; a
         <button type="button" className="btn-ghost" aria-pressed={board === "target"} onClick={() => setBoard("target")}>Attack board</button>
         <button type="button" className="btn-ghost" aria-pressed={board === "fleet"} onClick={() => setBoard("fleet")}>Your fleet</button>
       </div>
+      <p className="mt-3 text-xs text-fore-muted">Curated historical answers, not a live or exhaustive transfer database. Clue dates apply.
+        {" "}Award source snapshot checked {view.awardsCheckedAt.slice(0, 10)}.</p>
       {board === "fleet" ? (
         <div className="mt-4 min-w-0 rounded-2xl border border-border bg-surface p-4">
           <h2 className="mb-3 text-xl font-bold">Your fleet</h2>
           <p className="text-sm text-fore-muted">Your opponent answers these clues to attack these positions.</p>
           <FleetBoard view={view} ships={view.ownShips} incoming={incoming} interactive={false} onCell={() => {}} />
-          <p className="mt-3 text-sm text-fore-muted">Numbers show ship sizes. Red squares have been hit; dashes are missed enemy shots.</p>
+          <p className="mt-3 text-sm text-fore-muted">Numbers show ship sizes. Red = hit. Blue = miss.</p>
         </div>
       ) : (
         <div className="mt-4 rounded-2xl border border-border bg-surface p-3 md:p-5">
           <h2 className="text-xl font-bold">Find your opponent&apos;s ships</h2>
           <p className="mt-2 text-sm text-fore-muted">This is your attack board, with different clues from your fleet board. Scroll sideways to see every column. Select a square, then answer below.</p>
+          <p className="mt-2 text-sm"><span className="text-red-400">Red = hit.</span>{" "}<span className="text-blue-400">Blue = miss.</span></p>
           <ClueGrid view={view} label="Scrollable attack board" renderCell={(cell) => {
             const shot = mine.find((item) => item.cell === cell);
             return (
@@ -206,7 +268,7 @@ function Battle({ view, busy, attack }: { view: BattleshipView; busy: boolean; a
                 aria-pressed={selected === cell} aria-label={`${coordinate(cell)}: ${view.rows[Math.floor(cell / 8)].label}; ${view.columns[cell % 8].label}${shot ? shot.hit ? ", hit" : ", miss" : ""}`}
                 data-testid={`target-cell-${cell}`} onClick={() => { setSelected(cell); setAnswer(""); }}
                 className={`min-h-24 rounded-lg border px-1 text-xs font-bold disabled:cursor-default ${
-                  shot?.hit ? "border-red-400 bg-red-500/25 text-red-200" : shot ? "border-border bg-background text-fore-muted"
+                  shot?.hit ? hitStyle : shot ? missStyle
                     : selected === cell ? "border-primary bg-primary-dim text-primary"
                       : targetShips.has(cell) ? "border-warning bg-warning/15"
                         : "border-border bg-background/70 hover:border-primary"
@@ -225,9 +287,7 @@ function Battle({ view, busy, attack }: { view: BattleshipView; busy: boolean; a
             }}>
               <h3 className="font-bold">Target {coordinate(selected)}</h3>
               <p className="text-sm text-fore-muted">Name a footballer matching both criteria: <strong>{view.rows[Math.floor(selected / 8)].label}</strong>; <strong>{view.columns[selected % 8].label}</strong>.</p>
-              <label htmlFor="battleship-answer" className="block text-sm">Footballer&apos;s name</label>
-              <input id="battleship-answer" className="w-full rounded-xl border border-border bg-background px-4 py-3"
-                disabled={!canAttack} value={answer} onChange={(event) => setAnswer(event.target.value)} autoComplete="off" maxLength={150} />
+              <PlayerSearch key={selected} value={answer} onChange={setAnswer} disabled={!canAttack} />
               <button type="submit" className="btn-primary w-full" disabled={!canAttack || !answer.trim()}>Answer and fire</button>
             </form>
           )}

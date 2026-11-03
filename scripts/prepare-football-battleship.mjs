@@ -3,6 +3,8 @@ import "./register-data.mjs";
 import { awardPlayerKey } from "../data/footballNames.ts";
 
 const source = JSON.parse(readFileSync(new URL("../data/quizFootball.generated.json", import.meta.url), "utf8"));
+const awardSource = JSON.parse(readFileSync(new URL("../data/individualAwards.generated.json", import.meta.url), "utf8"));
+const awardById = new Map(awardSource.awards.map((award) => [award.id, award]));
 const output = new URL("../data/footballBattleship.generated.json", import.meta.url);
 const previous = JSON.parse(readFileSync(output, "utf8"));
 // Retain the original four variants and name indices for rooms already in D1.
@@ -52,8 +54,21 @@ function candidates(comp, prepared) {
     const members = new Set(indices.map((index) =>
       playerId(source.records[prepared.facts[index]].name),
     ));
+    const award = kind === "award" ? awardById.get(clue.awardIds[0]) : undefined;
+    const reference = award && clue.label === `${award.label} winner`
+      ? `Recorded winners: ${award.winners[0].season} to ${award.winners.at(-1).season}` : undefined;
+    if (award) {
+      const winners = new Set(award.winners.map(({ name }) => awardPlayerKey(name.replace(/ı/g, "i"))));
+      for (const id of members) {
+        if (!winners.has(awardPlayerKey(names[id].replace(/ı/g, "i")))) {
+          throw new Error(`Incorrect award membership: ${names[id]} / ${clue.label}`);
+        }
+      }
+    }
     conditions.push({
       ...clue,
+      reference,
+      source: award?.source,
       id: `${comp}:${clue.label}`,
       kind,
       identity,
@@ -111,8 +126,8 @@ for (const [comp, prepared] of Object.entries(source.competitions)) {
     if (signatures.has(signature)) continue;
     signatures.add(signature);
     const clue = (index) => {
-      const { id, label, kind, identity, badge, badgeAlt, badgeFallback, awardIds } = pool[index];
-      return { id, label, kind, identity, badge, badgeAlt, badgeFallback, awardIds };
+      const { id, label, kind, identity, badge, badgeAlt, badgeFallback, awardIds, reference, source } = pool[index];
+      return { id, label, kind, identity, badge, badgeAlt, badgeFallback, awardIds, reference, source };
     };
     variants.push({ rows: rows.map(clue), columns: picked.map(clue), answers });
     usedKinds.forEach((kind) => covered.add(kind));
@@ -122,7 +137,7 @@ for (const [comp, prepared] of Object.entries(source.competitions)) {
   }
   competitions[comp] = [...previous.competitions[comp].slice(0, legacyVariantCount), ...variants];
 }
-const content = JSON.stringify({ legacyVariantCount, names, competitions }) + "\n";
+const content = JSON.stringify({ legacyVariantCount, awardsCheckedAt: awardSource.checkedAt, names, competitions }) + "\n";
 if (process.argv.includes("--check")) {
   if (readFileSync(output, "utf8") !== content) throw new Error("Football Battleship snapshot is out of date");
 } else {
