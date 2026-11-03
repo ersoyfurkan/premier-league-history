@@ -12,6 +12,7 @@
     "lint": "eslint",
     "test:stat-games": "node scripts/prepare-quiz-data.mjs --check && node scripts/prepare-football-battleship.mjs --check && node --test scripts/check-stat-games.mjs scripts/check-formation-invasion.mjs scripts/check-football-battleship.mjs",
     "test:battleship": "node scripts/prepare-football-battleship.mjs --check && node --test scripts/check-football-battleship.mjs",
+    "test:minesweeper": "node --test scripts/check-football-minesweeper.mjs",
     "test:formation": "node --test scripts/check-formation-invasion.mjs",
     "data:club-history": "node scripts/refresh-club-history.mjs",
     "data:individual-awards": "node scripts/refresh-individual-awards.mjs",

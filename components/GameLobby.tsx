@@ -135,6 +135,19 @@ export default function GameLobby({ comp }: { comp: Competition }) {
                     </span>
                   </Link>
                   <Link
+                    href={`/game/football-minesweeper?comp=${comp}`}
+                    className="rounded-2xl border border-accent/25 bg-background/60 p-5 text-left transition hover:border-accent/60 hover:bg-accent/5"
+                  >
+                    <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-accent">Online · Same device</p>
+                    <h3 className="mt-2 text-xl font-bold">Football Minesweeper</h3>
+                    <p className="mt-2 text-sm leading-6 text-fore-muted">
+                      Take turns clearing an 8 × 8 pitch. Score goals, flag hidden mines and avoid a red card.
+                    </p>
+                    <span className="mt-4 inline-block font-mono text-[10px] uppercase tracking-[0.12em] text-accent">
+                      Kick off →
+                    </span>
+                  </Link>
+                  <Link
                     href={`/game/formation-invasion?comp=${comp}`}
                     className="rounded-2xl border border-primary/25 bg-background/60 p-5 text-left transition hover:border-primary/60 hover:bg-primary/5"
                   >
