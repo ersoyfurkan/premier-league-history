@@ -1,5 +1,5 @@
 {
- "updatedAt": "2026-11-02T13:01:45.604Z",
+ "updatedAt": "2026-11-03T12:35:50.708Z",
  "comps": {
   "pl": {
    "seasons": [
@@ -371,6 +371,7 @@
     "Chelsea",
     "Liverpool",
     "Brentford",
+    "Everton",
     "AFC Bournemouth",
     "Tottenham Hotspur",
     "Aston Villa",
@@ -378,7 +379,6 @@
     "Leeds United",
     "Newcastle United",
     "Ipswich Town",
-    "Everton",
     "Fulham",
     "Coventry City",
     "Manchester United",
@@ -420,6 +420,11 @@
     {
      "name": "Bryan Mbeumo",
      "club": "Manchester United",
+     "value": 4
+    },
+    {
+     "name": "Thierno Barry",
+     "club": "Everton",
      "value": 4
     },
     {
@@ -480,11 +485,6 @@
     {
      "name": "Bruno Fernandes",
      "club": "Manchester United",
-     "value": 3
-    },
-    {
-     "name": "Thierno Barry",
-     "club": "Everton",
      "value": 3
     }
    ],
@@ -575,6 +575,11 @@
      "value": 2
     },
     {
+     "name": "Harvey Barnes",
+     "club": "Newcastle United",
+     "value": 2
+    },
+    {
      "name": "Diego Gómez",
      "club": "Brighton & Hove Albion",
      "value": 2
@@ -582,11 +587,6 @@
     {
      "name": "Julio Enciso",
      "club": "Ipswich Town",
-     "value": 2
-    },
-    {
-     "name": "Florian Wirtz",
-     "club": "Liverpool",
      "value": 2
     }
    ]
@@ -962,12 +962,12 @@
     "Real Sociedad",
     "Sevilla",
     "Athletic Club",
+    "Deportivo",
     "Villarreal",
     "Celta Vigo",
     "Alavés",
     "Rayo Vallecano",
     "Getafe",
-    "Deportivo",
     "Espanyol",
     "Osasuna",
     "Racing Santander",
@@ -993,6 +993,11 @@
      "value": 10
     },
     {
+     "name": "Ante Budimir",
+     "club": "Osasuna",
+     "value": 8
+    },
+    {
      "name": "Yassir Zabiri",
      "club": "Racing Santander",
      "value": 8
@@ -1000,11 +1005,6 @@
     {
      "name": "Sergio Camello",
      "club": "Rayo Vallecano",
-     "value": 7
-    },
-    {
-     "name": "Ante Budimir",
-     "club": "Osasuna",
      "value": 7
     },
     {
@@ -1559,10 +1559,10 @@
     "Cagliari",
     "Atalanta",
     "Lecce",
+    "Parma",
+    "Fiorentina",
     "Sassuolo",
     "Monza",
-    "Fiorentina",
-    "Parma",
     "Udinese",
     "Venezia"
    ],
@@ -1613,6 +1613,11 @@
      "value": 5
     },
     {
+     "name": "Franco Mastantuono",
+     "club": "Fiorentina",
+     "value": 4
+    },
+    {
      "name": "Gustav Isaksen",
      "club": "Lazio",
      "value": 4
@@ -1661,11 +1666,6 @@
      "name": "Giorgi Kvernadze",
      "club": "Frosinone",
      "value": 3
-    },
-    {
-     "name": "Davide Frattesi",
-     "club": "Lazio",
-     "value": 3
     }
    ],
    "assists": [
@@ -1705,6 +1705,11 @@
      "value": 4
     },
     {
+     "name": "Charles De Ketelaere",
+     "club": "Atalanta",
+     "value": 3
+    },
+    {
      "name": "Nuno Tavares",
      "club": "Lazio",
      "value": 3
@@ -1722,11 +1727,6 @@
     {
      "name": "Nico Paz",
      "club": "Como",
-     "value": 3
-    },
-    {
-     "name": "Charles De Ketelaere",
-     "club": "Atalanta",
      "value": 3
     },
     {
@@ -2518,11 +2518,11 @@
     "AS Monaco",
     "Nice",
     "Lens",
+    "Brest",
     "Lorient",
     "Toulouse",
     "Strasbourg",
     "AJ Auxerre",
-    "Brest",
     "Angers",
     "Troyes",
     "Le Mans",
@@ -2560,6 +2560,11 @@
      "value": 5
     },
     {
+     "name": "Ludovic Ajorque",
+     "club": "Brest",
+     "value": 4
+    },
+    {
      "name": "Florian Thauvin",
      "club": "Lens",
      "value": 4
@@ -2575,6 +2580,11 @@
      "value": 4
     },
     {
+     "name": "Kamory Doumbia",
+     "club": "Brest",
+     "value": 4
+    },
+    {
      "name": "Ferran Torres",
      "club": "Paris Saint-Germain",
      "value": 4
@@ -2582,11 +2592,6 @@
     {
      "name": "Josh Maja",
      "club": "Le Havre AC",
-     "value": 4
-    },
-    {
-     "name": "Kamory Doumbia",
-     "club": "Brest",
      "value": 4
     },
     {
@@ -2622,11 +2627,6 @@
     {
      "name": "Himad Abdelli",
      "club": "Marseille",
-     "value": 3
-    },
-    {
-     "name": "Ludovic Ajorque",
-     "club": "Brest",
      "value": 3
     }
    ],
@@ -2702,6 +2702,11 @@
      "value": 3
     },
     {
+     "name": "Joris Chotard",
+     "club": "Brest",
+     "value": 2
+    },
+    {
      "name": "Maxime López",
      "club": "Paris FC",
      "value": 2
@@ -2724,11 +2729,6 @@
     {
      "name": "Adrien Thomasson",
      "club": "Stade Rennais",
-     "value": 2
-    },
-    {
-     "name": "Lucas Calodat",
-     "club": "Le Mans",
      "value": 2
     }
    ]
@@ -2937,9 +2937,9 @@
     "Erzurum BB",
     "Alanyaspor",
     "Caykur Rizespor",
+    "Genclerbirligi",
     "Konyaspor",
     "Gaziantep FK",
-    "Genclerbirligi",
     "Samsunspor",
     "Eyupspor"
    ],
@@ -3112,6 +3112,11 @@
      "value": 2
     },
     {
+     "name": "Florent Hadergjonaj",
+     "club": "Alanyaspor",
+     "value": 2
+    },
+    {
      "name": "Cláudio Winck",
      "club": "Kasimpasa",
      "value": 2
@@ -3119,6 +3124,11 @@
     {
      "name": "Gokhan Sazdagi",
      "club": "Çorum FK",
+     "value": 2
+    },
+    {
+     "name": "Franco Tongya",
+     "club": "Genclerbirligi",
      "value": 2
     },
     {
@@ -3134,16 +3144,6 @@
     {
      "name": "Andreas Skov Olsen",
      "club": "Istanbul Basaksehir",
-     "value": 2
-    },
-    {
-     "name": "Alexandru Maxim",
-     "club": "Gaziantep FK",
-     "value": 2
-    },
-    {
-     "name": "Mohammed Diomande",
-     "club": "Çorum FK",
      "value": 2
     }
    ]
