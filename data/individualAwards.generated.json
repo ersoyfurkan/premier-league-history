@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-11-02T12:40:05.600Z",
+  "checkedAt": "2026-11-03T20:02:00.742Z",
   "awards": [
     {
       "id": "ballon",
@@ -7022,6 +7022,91 @@
       "imageKind": "labelled-illustration"
     },
     {
+      "id": "copa-player",
+      "label": "Copa America Best Player",
+      "comp": "copa",
+      "page": "Copa América awards",
+      "section": "Best Player",
+      "image": "player",
+      "source": "https://en.wikipedia.org/wiki/Copa_Am%C3%A9rica_awards",
+      "supplementalSources": [
+        "https://www.conmebol.com/noticias/get-messi-y-neymar-los-mejores-jugadores-del-torneo-continental/"
+      ],
+      "winners": [
+        {
+          "name": "Carlos Valderrama",
+          "season": "1987"
+        },
+        {
+          "name": "Rubén Sosa",
+          "season": "1989"
+        },
+        {
+          "name": "Leonardo Rodríguez",
+          "season": "1991"
+        },
+        {
+          "name": "Sergio Goycochea",
+          "season": "1993"
+        },
+        {
+          "name": "Enzo Francescoli",
+          "season": "1995"
+        },
+        {
+          "name": "Ronaldo",
+          "season": "1997"
+        },
+        {
+          "name": "Rivaldo",
+          "season": "1999"
+        },
+        {
+          "name": "Amado Guevara",
+          "season": "2001"
+        },
+        {
+          "name": "Adriano",
+          "season": "2004"
+        },
+        {
+          "name": "Robinho",
+          "season": "2007"
+        },
+        {
+          "name": "Luis Suárez",
+          "season": "2011"
+        },
+        {
+          "name": "Lionel Messi",
+          "season": "2015"
+        },
+        {
+          "name": "Alexis Sánchez",
+          "season": "2016"
+        },
+        {
+          "name": "Dani Alves",
+          "season": "2019"
+        },
+        {
+          "name": "Lionel Messi",
+          "season": "2021"
+        },
+        {
+          "name": "James Rodríguez",
+          "season": "2024"
+        },
+        {
+          "name": "Neymar",
+          "season": "2021"
+        }
+      ],
+      "src": "/awards/copa-player.svg",
+      "fallback": "/awards/copa-player.svg",
+      "imageKind": "labelled-illustration"
+    },
+    {
       "id": "copa-boot",
       "label": "Copa America top scorer",
       "comp": "copa",
@@ -7365,91 +7450,6 @@
       ],
       "src": "/awards/copa-young.svg",
       "fallback": "/awards/copa-young.svg",
-      "imageKind": "labelled-illustration"
-    },
-    {
-      "id": "copa-player",
-      "label": "Copa America Best Player",
-      "comp": "copa",
-      "page": "Copa América awards",
-      "section": "Best Player",
-      "image": "player",
-      "source": "https://en.wikipedia.org/wiki/Copa_Am%C3%A9rica_awards",
-      "supplementalSources": [
-        "https://www.conmebol.com/noticias/get-messi-y-neymar-los-mejores-jugadores-del-torneo-continental/"
-      ],
-      "winners": [
-        {
-          "name": "Carlos Valderrama",
-          "season": "1987"
-        },
-        {
-          "name": "Rubén Sosa",
-          "season": "1989"
-        },
-        {
-          "name": "Leonardo Rodríguez",
-          "season": "1991"
-        },
-        {
-          "name": "Sergio Goycochea",
-          "season": "1993"
-        },
-        {
-          "name": "Enzo Francescoli",
-          "season": "1995"
-        },
-        {
-          "name": "Ronaldo",
-          "season": "1997"
-        },
-        {
-          "name": "Rivaldo",
-          "season": "1999"
-        },
-        {
-          "name": "Amado Guevara",
-          "season": "2001"
-        },
-        {
-          "name": "Adriano",
-          "season": "2004"
-        },
-        {
-          "name": "Robinho",
-          "season": "2007"
-        },
-        {
-          "name": "Luis Suárez",
-          "season": "2011"
-        },
-        {
-          "name": "Lionel Messi",
-          "season": "2015"
-        },
-        {
-          "name": "Alexis Sánchez",
-          "season": "2016"
-        },
-        {
-          "name": "Dani Alves",
-          "season": "2019"
-        },
-        {
-          "name": "Lionel Messi",
-          "season": "2021"
-        },
-        {
-          "name": "James Rodríguez",
-          "season": "2024"
-        },
-        {
-          "name": "Neymar",
-          "season": "2021"
-        }
-      ],
-      "src": "/awards/copa-player.svg",
-      "fallback": "/awards/copa-player.svg",
       "imageKind": "labelled-illustration"
     }
   ]

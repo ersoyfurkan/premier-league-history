@@ -124,7 +124,6 @@ function Clue({ clue }: { clue: BattleshipClue }) {
       )}
       <span>{clue.label}</span>
       {clue.reference && <span className="text-[10px] text-fore-muted">{clue.reference}</span>}
-      {clue.source && <a href={clue.source} target="_blank" rel="noreferrer" className="text-[10px] text-primary underline">Award source</a>}
     </span>
   );
 }
@@ -264,8 +263,7 @@ function Battle({ view, busy, attack }: { view: BattleshipView; busy: boolean; a
         <button type="button" className="btn-ghost" aria-pressed={board === "target"} onClick={() => setBoard("target")}>Attack board</button>
         <button type="button" className="btn-ghost" aria-pressed={board === "fleet"} onClick={() => setBoard("fleet")}>Your fleet</button>
       </div>
-      <p className="mt-3 text-xs text-fore-muted">Curated historical answers, not a live or exhaustive transfer database. Clue dates apply.
-        {" "}Award source snapshot checked {view.awardsCheckedAt.slice(0, 10)}.</p>
+      <p className="mt-3 text-xs text-fore-muted">Curated historical answers, not a live or exhaustive transfer database. Clue dates apply.</p>
       {board === "fleet" ? (
         <div className="mt-4 min-w-0 rounded-2xl border border-border bg-surface p-4">
           <h2 className="mb-3 text-xl font-bold">Your fleet</h2>
