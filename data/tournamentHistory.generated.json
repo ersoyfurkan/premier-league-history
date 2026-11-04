@@ -1,5 +1,5 @@
 {
- "updatedAt": "2026-11-03T12:37:03.259Z",
+ "updatedAt": "2026-11-04T12:46:10.458Z",
  "tournaments": {
   "worldcup": {
    "finals": {
@@ -1699,1018 +1699,7 @@
      ]
     ]
    },
-   "scorers": {
-    "headers": [
-     "Rank",
-     "Player",
-     "Team",
-     "Goals scored",
-     "Matches played",
-     "Goals per match",
-     "Tournaments"
-    ],
-    "rows": [
-     [
-      "1",
-      "Kylian Mbappé",
-      "France",
-      "22",
-      "22",
-      "1.00",
-      "2018, 2022, 2026"
-     ],
-     [
-      "2",
-      "Lionel Messi",
-      "Argentina",
-      "21",
-      "34",
-      "0.62",
-      "2006, (2010), 2014, 2018, 2022, 2026"
-     ],
-     [
-      "3",
-      "Miroslav Klose",
-      "Germany",
-      "16",
-      "24",
-      "0.67",
-      "2002, 2006, 2010, 2014"
-     ],
-     [
-      "4",
-      "Ronaldo",
-      "Brazil",
-      "15",
-      "19",
-      "0.79",
-      ", 1998, 2002, 2006"
-     ],
-     [
-      "5",
-      "Gerd Müller",
-      "West Germany",
-      "14",
-      "13",
-      "1.08",
-      "1970, 1974"
-     ],
-     [
-      "5",
-      "Harry Kane",
-      "England",
-      "14",
-      "18",
-      "0.78",
-      "2018, 2022, 2026"
-     ],
-     [
-      "7",
-      "Just Fontaine",
-      "France",
-      "13",
-      "6",
-      "2.17",
-      "1958"
-     ],
-     [
-      "8",
-      "Pelé",
-      "Brazil",
-      "12",
-      "14",
-      "0.86",
-      "1958, 1962, 1966, 1970"
-     ],
-     [
-      "9",
-      "Sándor Kocsis",
-      "Hungary",
-      "11",
-      "5",
-      "2.20",
-      "1954"
-     ],
-     [
-      "9",
-      "Jürgen Klinsmann",
-      "West Germany, Germany",
-      "11",
-      "17",
-      "0.65",
-      "1990, 1994, 1998"
-     ],
-     [
-      "9",
-      "Cristiano Ronaldo",
-      "Portugal",
-      "11",
-      "27",
-      "0.41",
-      "2006, 2010, 2014, 2018, 2022, 2026"
-     ],
-     [
-      "12",
-      "Helmut Rahn",
-      "West Germany",
-      "10",
-      "10",
-      "1.00",
-      "1954, 1958"
-     ],
-     [
-      "12",
-      "Gary Lineker",
-      "England",
-      "10",
-      "12",
-      "0.83",
-      "1986, 1990"
-     ],
-     [
-      "12",
-      "Gabriel Batistuta",
-      "Argentina",
-      "10",
-      "12",
-      "0.83",
-      "1994, 1998, 2002"
-     ],
-     [
-      "12",
-      "Teófilo Cubillas",
-      "Peru",
-      "10",
-      "13",
-      "0.77",
-      "1970, 1978, (1982)"
-     ],
-     [
-      "12",
-      "Thomas Müller",
-      "Germany",
-      "10",
-      "19",
-      "0.53",
-      "2010, 2014, (2018), (2022)"
-     ],
-     [
-      "12",
-      "Grzegorz Lato",
-      "Poland",
-      "10",
-      "20",
-      "0.50",
-      "1974, 1978, 1982"
-     ],
-     [
-      "18",
-      "Ademir",
-      "Brazil",
-      "9",
-      "6",
-      "1.50",
-      "1950"
-     ],
-     [
-      "18",
-      "Eusébio",
-      "Portugal",
-      "9",
-      "6",
-      "1.50",
-      "1966"
-     ],
-     [
-      "18",
-      "Christian Vieri",
-      "Italy",
-      "9",
-      "9",
-      "1.00",
-      "1998, 2002"
-     ],
-     [
-      "18",
-      "Vavá",
-      "Brazil",
-      "9",
-      "10",
-      "0.90",
-      "1958, 1962"
-     ],
-     [
-      "18",
-      "David Villa",
-      "Spain",
-      "9",
-      "12",
-      "0.75",
-      "2006, 2010, 2014"
-     ],
-     [
-      "18",
-      "Paolo Rossi",
-      "Italy",
-      "9",
-      "14",
-      "0.64",
-      "1978, 1982,"
-     ],
-     [
-      "18",
-      "Neymar",
-      "Brazil",
-      "9",
-      "15",
-      "0.60",
-      "2014, 2018, 2022, 2026"
-     ],
-     [
-      "18",
-      "Jairzinho",
-      "Brazil",
-      "9",
-      "16",
-      "0.56",
-      "(1966), 1970, 1974"
-     ],
-     [
-      "18",
-      "Roberto Baggio",
-      "Italy",
-      "9",
-      "16",
-      "0.56",
-      "1990, 1994, 1998"
-     ],
-     [
-      "18",
-      "Karl-Heinz Rummenigge",
-      "West Germany",
-      "9",
-      "19",
-      "0.47",
-      "1978, 1982, 1986"
-     ],
-     [
-      "18",
-      "Uwe Seeler",
-      "West Germany",
-      "9",
-      "21",
-      "0.43",
-      "1958, 1962, 1966, 1970"
-     ],
-     [
-      "29",
-      "Guillermo Stábile",
-      "Argentina",
-      "8",
-      "4",
-      "2.00",
-      "1930"
-     ],
-     [
-      "29",
-      "Leônidas",
-      "Brazil",
-      "8",
-      "5",
-      "1.60",
-      "1934, 1938"
-     ],
-     [
-      "29",
-      "Óscar Míguez",
-      "Uruguay",
-      "8",
-      "7",
-      "1.14",
-      "1950, 1954"
-     ],
-     [
-      "29",
-      "Jude Bellingham",
-      "England",
-      "8",
-      "13",
-      "0.62",
-      "2022, 2026"
-     ],
-     [
-      "29",
-      "Rivaldo",
-      "Brazil",
-      "8",
-      "14",
-      "0.57",
-      "1998, 2002"
-     ],
-     [
-      "29",
-      "Rudi Völler",
-      "West Germany, Germany",
-      "8",
-      "15",
-      "0.53",
-      "1986, 1990, 1994"
-     ],
-     [
-      "29",
-      "Romelu Lukaku",
-      "Belgium",
-      "8",
-      "18",
-      "0.44",
-      "2014, 2018, (2022), 2026"
-     ],
-     [
-      "29",
-      "Diego Maradona",
-      "Argentina",
-      "8",
-      "21",
-      "0.38",
-      "1982, 1986, (1990), 1994"
-     ],
-     [
-      "37",
-      "Erling Haaland",
-      "Norway",
-      "7",
-      "5",
-      "1.40",
-      "2026"
-     ],
-     [
-      "37",
-      "Oldřich Nejedlý",
-      "Czechoslovakia",
-      "7",
-      "6",
-      "1.17",
-      "1934, 1938"
-     ],
-     [
-      "37",
-      "Lajos Tichy",
-      "Hungary",
-      "7",
-      "8",
-      "0.88",
-      "1958, 1962,"
-     ],
-     [
-      "37",
-      "Careca",
-      "Brazil",
-      "7",
-      "9",
-      "0.78",
-      "1986, 1990"
-     ],
-     [
-      "37",
-      "Johnny Rep",
-      "Netherlands",
-      "7",
-      "13",
-      "0.54",
-      "1974, 1978"
-     ],
-     [
-      "37",
-      "Andrzej Szarmach",
-      "Poland",
-      "7",
-      "13",
-      "0.54",
-      "1974, 1978, 1982"
-     ],
-     [
-      "37",
-      "Hans Schäfer",
-      "West Germany",
-      "7",
-      "15",
-      "0.47",
-      "1954, 1958, (1962)"
-     ],
-     [
-      "37",
-      "Luis Suárez",
-      "Uruguay",
-      "7",
-      "16",
-      "0.44",
-      "2010, 2014, 2018, (2022)"
-     ],
-     [
-      "37",
-      "Ivan Perišić",
-      "Croatia",
-      "7",
-      "21",
-      "0.33",
-      "2014, 2018, 2022, 2026"
-     ],
-     [
-      "46",
-      "Josef Hügi",
-      "Switzerland",
-      "6",
-      "3",
-      "2.00",
-      "1954"
-     ],
-     [
-      "46",
-      "Oleg Salenko",
-      "Russia",
-      "6",
-      "3",
-      "2.00",
-      "1994"
-     ],
-     [
-      "46",
-      "György Sárosi",
-      "Hungary",
-      "6",
-      "5",
-      "1.20",
-      "1934, 1938"
-     ],
-     [
-      "46",
-      "Max Morlock",
-      "West Germany",
-      "6",
-      "5",
-      "1.20",
-      "1954"
-     ],
-     [
-      "46",
-      "Erich Probst",
-      "Austria",
-      "6",
-      "5",
-      "1.20",
-      "1954"
-     ],
-     [
-      "46",
-      "Salvatore Schillaci",
-      "Italy",
-      "6",
-      "7",
-      "0.86",
-      "1990"
-     ],
-     [
-      "46",
-      "Davor Šuker",
-      "Yugoslavia, Croatia",
-      "6",
-      "8",
-      "0.75",
-      ", 1998, (2002)"
-     ],
-     [
-      "46",
-      "Helmut Haller",
-      "West Germany",
-      "6",
-      "9",
-      "0.67",
-      "(1962), 1966, (1970)"
-     ],
-     [
-      "46",
-      "Cody Gakpo",
-      "Netherlands",
-      "6",
-      "9",
-      "0.67",
-      "2022, 2026"
-     ],
-     [
-      "46",
-      "Hristo Stoichkov",
-      "Bulgaria",
-      "6",
-      "10",
-      "0.60",
-      "1994, (1998)"
-     ],
-     [
-      "46",
-      "Diego Forlán",
-      "Uruguay",
-      "6",
-      "10",
-      "0.60",
-      "2002, 2010, (2014)"
-     ],
-     [
-      "46",
-      "Enner Valencia",
-      "Ecuador",
-      "6",
-      "10",
-      "0.60",
-      "2014, 2022, (2026)"
-     ],
-     [
-      "46",
-      "Asamoah Gyan",
-      "Ghana",
-      "6",
-      "11",
-      "0.55",
-      "2006, 2010, 2014"
-     ],
-     [
-      "46",
-      "Bukayo Saka",
-      "England",
-      "6",
-      "11",
-      "0.55",
-      "2022, 2026"
-     ],
-     [
-      "46",
-      "Dennis Bergkamp",
-      "Netherlands",
-      "6",
-      "12",
-      "0.50",
-      "1994, 1998"
-     ],
-     [
-      "46",
-      "Rob Rensenbrink",
-      "Netherlands",
-      "6",
-      "13",
-      "0.46",
-      "1974, 1978"
-     ],
-     [
-      "46",
-      "James Rodríguez",
-      "Colombia",
-      "6",
-      "13",
-      "0.46",
-      "2014, (2018), (2026)"
-     ],
-     [
-      "46",
-      "Rivellino",
-      "Brazil",
-      "6",
-      "15",
-      "0.40",
-      "1970, 1974, (1978)"
-     ],
-     [
-      "46",
-      "Bebeto",
-      "Brazil",
-      "6",
-      "15",
-      "0.40",
-      "(1990), 1994, 1998"
-     ],
-     [
-      "46",
-      "Arjen Robben",
-      "Netherlands",
-      "6",
-      "15",
-      "0.40",
-      "2006, 2010, 2014"
-     ],
-     [
-      "46",
-      "Zbigniew Boniek",
-      "Poland",
-      "6",
-      "16",
-      "0.38",
-      "1978, 1982, (1986)"
-     ],
-     [
-      "46",
-      "Thierry Henry",
-      "France",
-      "6",
-      "17",
-      "0.35",
-      "1998, (2002), 2006, (2010)"
-     ],
-     [
-      "46",
-      "Robin van Persie",
-      "Netherlands",
-      "6",
-      "17",
-      "0.35",
-      "2006, 2010, 2014"
-     ],
-     [
-      "46",
-      "Wesley Sneijder",
-      "Netherlands",
-      "6",
-      "17",
-      "0.35",
-      "(2006), 2010, 2014"
-     ],
-     [
-      "46",
-      "Mario Kempes",
-      "Argentina",
-      "6",
-      "18",
-      "0.33",
-      "(1974), 1978, (1982)"
-     ],
-     [
-      "46",
-      "Ousmane Dembélé",
-      "France",
-      "6",
-      "19",
-      "0.32",
-      "(2018), (2022), 2026"
-     ],
-     [
-      "46",
-      "Lothar Matthäus",
-      "West Germany, Germany",
-      "6",
-      "25",
-      "0.24",
-      "(1982), 1986, 1990, 1994, (1998)"
-     ],
-     [
-      "73",
-      "Pedro Cea",
-      "Uruguay",
-      "5",
-      "4",
-      "1.25",
-      "1930"
-     ],
-     [
-      "73",
-      "Silvio Piola",
-      "Italy",
-      "5",
-      "4",
-      "1.25",
-      "1938"
-     ],
-     [
-      "73",
-      "Gyula Zsengellér",
-      "Hungary",
-      "5",
-      "4",
-      "1.25",
-      "1938"
-     ],
-     [
-      "73",
-      "Peter McParland",
-      "Northern Ireland",
-      "5",
-      "5",
-      "1.00",
-      "1958"
-     ],
-     [
-      "73",
-      "Tomáš Skuhravý",
-      "Czechoslovakia",
-      "5",
-      "5",
-      "1.00",
-      "1990"
-     ],
-     [
-      "73",
-      "Juan Alberto Schiaffino",
-      "Uruguay",
-      "5",
-      "6",
-      "0.83",
-      "1950, 1954"
-     ],
-     [
-      "73",
-      "Geoff Hurst",
-      "England",
-      "5",
-      "6",
-      "0.83",
-      "1966, 1970"
-     ],
-     [
-      "73",
-      "Jon Dahl Tomasson",
-      "Denmark",
-      "5",
-      "6",
-      "0.83",
-      "2002, 2010"
-     ],
-     [
-      "73",
-      "Kai Havertz",
-      "Germany",
-      "5",
-      "6",
-      "0.83",
-      "2022, 2026"
-     ],
-     [
-      "73",
-      "Alessandro Altobelli",
-      "Italy",
-      "5",
-      "7",
-      "0.71",
-      "1982, 1986"
-     ],
-     [
-      "73",
-      "Kennet Andersson",
-      "Sweden",
-      "5",
-      "7",
-      "0.71",
-      "1994"
-     ],
-     [
-      "73",
-      "Fernando Morientes",
-      "Spain",
-      "5",
-      "7",
-      "0.71",
-      "1998, 2002"
-     ],
-     [
-      "73",
-      "Romário",
-      "Brazil",
-      "5",
-      "8",
-      "0.63",
-      "(1990), 1994"
-     ],
-     [
-      "73",
-      "Marc Wilmots",
-      "Belgium",
-      "5",
-      "8",
-      "0.63",
-      ", (1994), 1998, 2002"
-     ],
-     [
-      "73",
-      "Mario Mandžukić",
-      "Croatia",
-      "5",
-      "8",
-      "0.63",
-      "2014, 2018"
-     ],
-     [
-      "73",
-      "Mikel Oyarzabal",
-      "Spain",
-      "5",
-      "8",
-      "0.63",
-      "2026"
-     ],
-     [
-      "73",
-      "Valentin Ivanov",
-      "Soviet Union",
-      "5",
-      "9",
-      "0.56",
-      "1958, 1962"
-     ],
-     [
-      "73",
-      "Emilio Butragueño",
-      "Spain",
-      "5",
-      "9",
-      "0.56",
-      "1986, (1990)"
-     ],
-     [
-      "73",
-      "Roger Milla",
-      "Cameroon",
-      "5",
-      "9",
-      "0.56",
-      "(1982), 1990, 1994"
-     ],
-     [
-      "73",
-      "Tim Cahill",
-      "Australia",
-      "5",
-      "9",
-      "0.56",
-      "2006, 2010, 2014, (2018)"
-     ],
-     [
-      "73",
-      "Vinícius Júnior",
-      "Brazil",
-      "5",
-      "9",
-      "0.56",
-      "2022, 2026"
-     ],
-     [
-      "73",
-      "Hans Krankl",
-      "Austria",
-      "5",
-      "10",
-      "0.50",
-      "1978, 1982"
-     ],
-     [
-      "73",
-      "Raúl",
-      "Spain",
-      "5",
-      "11",
-      "0.45",
-      "1998, 2002, 2006"
-     ],
-     [
-      "73",
-      "Ismaïla Sarr",
-      "Senegal",
-      "5",
-      "11",
-      "0.45",
-      "(2018), 2022, 2026"
-     ],
-     [
-      "73",
-      "Garrincha",
-      "Brazil",
-      "5",
-      "12",
-      "0.42",
-      "(1958), 1962, 1966"
-     ],
-     [
-      "73",
-      "Johan Neeskens",
-      "Netherlands",
-      "5",
-      "12",
-      "0.42",
-      "1974, (1978)"
-     ],
-     [
-      "73",
-      "Fernando Hierro",
-      "Spain",
-      "5",
-      "12",
-      "0.42",
-      ", 1994, 1998, 2002"
-     ],
-     [
-      "73",
-      "Zinedine Zidane",
-      "France",
-      "5",
-      "12",
-      "0.42",
-      "1998, (2002), 2006"
-     ],
-     [
-      "73",
-      "Landon Donovan",
-      "United States",
-      "5",
-      "12",
-      "0.42",
-      "2002, (2006), 2010"
-     ],
-     [
-      "73",
-      "Xherdan Shaqiri",
-      "Switzerland",
-      "5",
-      "12",
-      "0.42",
-      "(2010), 2014, 2018, 2022"
-     ],
-     [
-      "73",
-      "Henrik Larsson",
-      "Sweden",
-      "5",
-      "13",
-      "0.38",
-      "1994, 2002, 2006"
-     ],
-     [
-      "73",
-      "Zico",
-      "Brazil",
-      "5",
-      "14",
-      "0.36",
-      "1978, 1982, (1986)"
-     ],
-     [
-      "73",
-      "Michel Platini",
-      "France",
-      "5",
-      "14",
-      "0.36",
-      "1978, 1982, 1986"
-     ],
-     [
-      "73",
-      "Gonzalo Higuaín",
-      "Argentina",
-      "5",
-      "14",
-      "0.36",
-      "2010, 2014, (2018)"
-     ],
-     [
-      "73",
-      "Lukas Podolski",
-      "Germany",
-      "5",
-      "15",
-      "0.33",
-      "2006, 2010, (2014)"
-     ],
-     [
-      "73",
-      "Julián Alvarez",
-      "Argentina",
-      "5",
-      "15",
-      "0.33",
-      "2022, 2026"
-     ],
-     [
-      "73",
-      "Edinson Cavani",
-      "Uruguay",
-      "5",
-      "17",
-      "0.29",
-      "2010, 2014, 2018, (2022)"
-     ],
-     [
-      "73",
-      "Franz Beckenbauer",
-      "West Germany",
-      "5",
-      "18",
-      "0.28",
-      "1966, 1970, (1974)"
-     ],
-     [
-      "73",
-      "Olivier Giroud",
-      "France",
-      "5",
-      "18",
-      "0.28",
-      "2014, (2018), 2022"
-     ]
-    ]
-   }
+   "scorers": null
   },
   "euros": {
    "finals": {
@@ -3962,12 +2951,1199 @@
    }
   },
   "copa": {
-   "finals": null,
-   "editions": null,
-   "standings": null,
-   "medals": null,
-   "scorers": null,
-   "assists": null
+   "finals": {
+    "headers": [
+     "Ed.",
+     "Year",
+     "Winners",
+     "Score",
+     "Runners-up",
+     "Venue"
+    ],
+    "rows": [
+     [
+      "30",
+      "1975",
+      "Peru",
+      "0–1",
+      "Colombia",
+      "El Campín"
+     ],
+     [
+      "30",
+      "1975",
+      "Peru",
+      "2–0",
+      "Colombia",
+      "Estadio Nacional"
+     ],
+     [
+      "30",
+      "1975",
+      "Peru",
+      "1–0",
+      "Colombia",
+      "Estadio Olímpico"
+     ],
+     [
+      "31",
+      "1979",
+      "Paraguay",
+      "3–0",
+      "Chile",
+      "Defensores del Chaco"
+     ],
+     [
+      "31",
+      "1979",
+      "Paraguay",
+      "0–1",
+      "Chile",
+      "Estadio Nacional"
+     ],
+     [
+      "31",
+      "1979",
+      "Paraguay",
+      "0–0 (a.e.t.)",
+      "Chile",
+      "José Amalfitani"
+     ],
+     [
+      "32",
+      "1983",
+      "Uruguay",
+      "2–0",
+      "Brazil",
+      "Estadio Centenario"
+     ],
+     [
+      "32",
+      "1983",
+      "Uruguay",
+      "1–1",
+      "Brazil",
+      "Fonte Nova"
+     ],
+     [
+      "33",
+      "1987",
+      "Uruguay",
+      "1–0",
+      "Chile",
+      "Monumental"
+     ],
+     [
+      "36",
+      "1993",
+      "Argentina",
+      "2–1",
+      "Mexico",
+      "Monumental"
+     ],
+     [
+      "37",
+      "1995",
+      "Uruguay",
+      "1–1 (5–3 p)",
+      "Brazil",
+      "Estadio Centenario"
+     ],
+     [
+      "38",
+      "1997",
+      "Brazil",
+      "3–1",
+      "Bolivia",
+      "Hernando Siles"
+     ],
+     [
+      "39",
+      "1999",
+      "Brazil",
+      "3–0",
+      "Uruguay",
+      "Defensores del Chaco"
+     ],
+     [
+      "40",
+      "2001",
+      "Colombia",
+      "1–0",
+      "Mexico",
+      "El Campín"
+     ],
+     [
+      "41",
+      "2004",
+      "Brazil",
+      "2–2 (4–2 p)",
+      "Argentina",
+      "Estadio Nacional"
+     ],
+     [
+      "42",
+      "2007",
+      "Brazil",
+      "3–0",
+      "Argentina",
+      "José E. Romero"
+     ],
+     [
+      "43",
+      "2011",
+      "Uruguay",
+      "3–0",
+      "Paraguay",
+      "Monumental"
+     ],
+     [
+      "44",
+      "2015",
+      "Chile",
+      "0–0 (a.e.t.) (4–1 p)",
+      "Argentina",
+      "Estadio Nacional"
+     ],
+     [
+      "45",
+      "2016",
+      "Chile",
+      "0–0 (a.e.t.) (4–2 p)",
+      "Argentina",
+      "MetLife Stadium"
+     ],
+     [
+      "46",
+      "2019",
+      "Brazil",
+      "3–1",
+      "Peru",
+      "Maracanã"
+     ],
+     [
+      "47",
+      "2021",
+      "Argentina",
+      "1–0",
+      "Brazil",
+      "Maracanã"
+     ],
+     [
+      "48",
+      "2024",
+      "Argentina",
+      "1–0 (a.e.t.)",
+      "Colombia",
+      "Hard Rock Stadium"
+     ],
+     [
+      "49",
+      "2028",
+      "",
+      "",
+      "",
+      ""
+     ]
+    ]
+   },
+   "editions": {
+    "headers": [
+     "Year",
+     "Hosts",
+     "Champions",
+     "Winning coach",
+     "Golden Boot (goals)",
+     "Best player"
+    ],
+    "rows": [
+     [
+      "1916",
+      "Argentina",
+      "Uruguay",
+      "Alfredo Foglino",
+      "Isabelino Gradín (3)",
+      "Isabelino Gradín"
+     ],
+     [
+      "1917",
+      "Uruguay",
+      "Uruguay",
+      "Ramón Platero",
+      "Ángel Romano (4)",
+      "Héctor Scarone"
+     ],
+     [
+      "1919",
+      "Brazil",
+      "Brazil",
+      "Haroldo",
+      "Arthur Friedenreich (4), Neco (4)",
+      "Arthur Friedenreich"
+     ],
+     [
+      "1920",
+      "Chile",
+      "Uruguay",
+      "Ernesto Fígoli",
+      "José Pérez (3), Ángel Romano (3)",
+      "José Piendibene"
+     ],
+     [
+      "1921",
+      "Argentina",
+      "Argentina",
+      "Pedro Calomino",
+      "Julio Libonatti (3)",
+      "Américo Tesoriere"
+     ],
+     [
+      "1922",
+      "Brazil",
+      "Brazil",
+      "Laís",
+      "Juan Francia (4)",
+      "Agostinho Fortes Filho"
+     ],
+     [
+      "1923",
+      "Uruguay",
+      "Uruguay",
+      "Leonardo De Lucca",
+      "Vicente Aguirre (3), Pedro Petrone (3)",
+      "José Nasazzi"
+     ],
+     [
+      "1924",
+      "Uruguay",
+      "Uruguay",
+      "Ernesto Meliante",
+      "Pedro Petrone (4)",
+      "Pedro Petrone"
+     ],
+     [
+      "1925",
+      "Argentina",
+      "Argentina",
+      "Américo Tesoriere",
+      "Manuel Seoane (6)",
+      "Manuel Seoane"
+     ],
+     [
+      "1926",
+      "Chile",
+      "Uruguay",
+      "Ernesto Fígoli",
+      "David Arellano (7)",
+      "José Leandro Andrade"
+     ],
+     [
+      "1927",
+      "Peru",
+      "Argentina",
+      "José Lago Millán",
+      "Alfredo Carricaberry (3), Segundo Luna (3), Roberto Figueroa (3), Pedro Petrone (3), Héctor Scarone (3)",
+      "Manuel Seoane"
+     ],
+     [
+      "1929",
+      "Argentina",
+      "Argentina",
+      "Francisco Olazar",
+      "Aurelio González (5)",
+      "Manuel Ferreira"
+     ],
+     [
+      "1935",
+      "Peru",
+      "Uruguay",
+      "Raúl Blanco",
+      "Herminio Masantonio (4)",
+      "José Nasazzi"
+     ],
+     [
+      "1937",
+      "Argentina",
+      "Argentina",
+      "Manuel Seoane",
+      "Raúl Toro Julio (7)",
+      "Vicente de la Mata"
+     ],
+     [
+      "1939",
+      "Peru",
+      "Peru",
+      "Jack Greenwell",
+      "Teodoro Fernández (7)",
+      "Teodoro Fernández"
+     ],
+     [
+      "1941",
+      "Chile",
+      "Argentina",
+      "Guillermo Stábile",
+      "Juan Marvezzi (5)",
+      "Sergio Livingstone"
+     ],
+     [
+      "1942",
+      "Uruguay",
+      "Uruguay",
+      "Pedro Cea",
+      "Herminio Masantonio (7), José Manuel Moreno (7)",
+      "Obdulio Varela"
+     ],
+     [
+      "1945",
+      "Chile",
+      "Argentina",
+      "Guillermo Stábile",
+      "Norberto Méndez (6), Heleno de Freitas (6)",
+      "Domingos da Guia"
+     ],
+     [
+      "1946",
+      "Argentina",
+      "Argentina",
+      "Guillermo Stábile",
+      "José María Medina (7)",
+      "Adolfo Pedernera"
+     ],
+     [
+      "1947",
+      "Ecuador",
+      "Argentina",
+      "Guillermo Stábile",
+      "Nicolás Falero (8)",
+      "José Manuel Moreno"
+     ],
+     [
+      "1949",
+      "Brazil",
+      "Brazil",
+      "Flávio Costa",
+      "Jair (9)",
+      "Ademir"
+     ],
+     [
+      "1953",
+      "Peru",
+      "Paraguay",
+      "Manuel Fleitas Solich",
+      "Francisco Molina (7)",
+      "Heriberto Herrera"
+     ],
+     [
+      "1955",
+      "Chile",
+      "Argentina",
+      "Guillermo Stábile",
+      "Rodolfo Micheli (8)",
+      "Enrique Hormazábal"
+     ],
+     [
+      "1956",
+      "Uruguay",
+      "Uruguay",
+      "Hugo Bagnulo",
+      "Enrique Hormazábal (4)",
+      "Óscar Míguez"
+     ],
+     [
+      "1957",
+      "Peru",
+      "Argentina",
+      "Guillermo Stábile",
+      "Humberto Maschio (9), Javier Ambrois (9)",
+      "Omar Sívori"
+     ],
+     [
+      "1959",
+      "Argentina",
+      "Argentina",
+      "Victorio Spinetto",
+      "Pelé (8)",
+      "Pelé"
+     ],
+     [
+      "1959",
+      "Ecuador",
+      "Uruguay",
+      "Juan Carlos Corazzo",
+      "José Sanfilippo (6)",
+      "Alcides Silveira"
+     ],
+     [
+      "1963",
+      "Bolivia",
+      "Bolivia",
+      "Danilo Alvim",
+      "Carlos Alberto Raffo (6)",
+      "Ramiro Blacut"
+     ],
+     [
+      "1967",
+      "Uruguay",
+      "Uruguay",
+      "Juan Carlos Corazzo",
+      "Luis Artime (5)",
+      "Pedro Rocha"
+     ],
+     [
+      "1975",
+      "Various",
+      "Peru",
+      "Marcos Calderón",
+      "Leopoldo Luque (4), Ernesto Díaz (4)",
+      "Teófilo Cubillas"
+     ],
+     [
+      "1979",
+      "Various",
+      "Paraguay",
+      "Ranulfo Miranda",
+      "Jorge Peredo (4), Eugenio Morel (4)",
+      "Carlos Caszely"
+     ],
+     [
+      "1983",
+      "Various",
+      "Uruguay",
+      "Omar Borrás",
+      "Jorge Burruchaga (3), Roberto Dinamite (3), Carlos Aguilera (3)",
+      "Enzo Francescoli"
+     ],
+     [
+      "1987",
+      "Argentina",
+      "Uruguay",
+      "Roberto Fleitas",
+      "Arnoldo Iguarán (4)",
+      "Carlos Valderrama"
+     ],
+     [
+      "1989",
+      "Brazil",
+      "Brazil",
+      "Sebastião Lazaroni",
+      "Bebeto (6)",
+      "Rubén Sosa"
+     ],
+     [
+      "1991",
+      "Chile",
+      "Argentina",
+      "Alfio Basile",
+      "Gabriel Batistuta (6)",
+      "Leonardo Rodríguez"
+     ],
+     [
+      "1993",
+      "Ecuador",
+      "Argentina",
+      "Alfio Basile",
+      "José Luis Dolgetta (4)",
+      "Sergio Goycochea"
+     ],
+     [
+      "1995",
+      "Uruguay",
+      "Uruguay",
+      "Héctor Núñez",
+      "Gabriel Batistuta (4), Luis García (4)",
+      "Enzo Francescoli"
+     ],
+     [
+      "1997",
+      "Bolivia",
+      "Brazil",
+      "Mário Zagallo",
+      "Luis Hernández (6)",
+      "Ronaldo"
+     ],
+     [
+      "1999",
+      "Paraguay",
+      "Brazil",
+      "Vanderlei Luxemburgo",
+      "Rivaldo (5), Ronaldo (5)",
+      "Rivaldo"
+     ],
+     [
+      "2001",
+      "Colombia",
+      "Colombia",
+      "Francisco Maturana",
+      "Víctor Aristizábal (6)",
+      "Amado Guevara"
+     ],
+     [
+      "2004",
+      "Peru",
+      "Brazil",
+      "Carlos Alberto Parreira",
+      "Adriano (7)",
+      "Adriano"
+     ],
+     [
+      "2007",
+      "Venezuela",
+      "Brazil",
+      "Dunga",
+      "Robinho (6)",
+      "Robinho"
+     ],
+     [
+      "2011",
+      "Argentina",
+      "Uruguay",
+      "Óscar Tabárez",
+      "Paolo Guerrero (5)",
+      "Luis Suárez"
+     ],
+     [
+      "2015",
+      "Chile",
+      "Chile",
+      "Jorge Sampaoli",
+      "Eduardo Vargas (4), Paolo Guerrero (4)",
+      "Lionel Messi"
+     ],
+     [
+      "2016",
+      "United States",
+      "Chile",
+      "Juan Antonio Pizzi",
+      "Eduardo Vargas (6)",
+      "Alexis Sánchez"
+     ],
+     [
+      "2019",
+      "Brazil",
+      "Brazil",
+      "Tite",
+      "Everton (3), Paolo Guerrero (3)",
+      "Dani Alves"
+     ],
+     [
+      "2021",
+      "Brazil",
+      "Argentina",
+      "Lionel Scaloni",
+      "Lionel Messi (4), Luis Díaz (4)",
+      "Lionel Messi"
+     ],
+     [
+      "2024",
+      "United States",
+      "Argentina",
+      "Lionel Scaloni",
+      "Lautaro Martínez (5)",
+      "James Rodríguez"
+     ]
+    ]
+   },
+   "standings": {
+    "headers": [
+     "Rank",
+     "Team",
+     "Part.",
+     "Pld",
+     "W",
+     "D",
+     "L",
+     "GF",
+     "GA",
+     "GD",
+     "Pts"
+    ],
+    "rows": [
+     [
+      "1",
+      "Argentina",
+      "44",
+      "208",
+      "132",
+      "43",
+      "33",
+      "483",
+      "183",
+      "+300",
+      "439"
+     ],
+     [
+      "2",
+      "Uruguay",
+      "46",
+      "212",
+      "115",
+      "40",
+      "57",
+      "421",
+      "226",
+      "+195",
+      "385"
+     ],
+     [
+      "3",
+      "Brazil",
+      "38",
+      "195",
+      "109",
+      "41",
+      "45",
+      "435",
+      "206",
+      "+229",
+      "368"
+     ],
+     [
+      "4",
+      "Chile",
+      "41",
+      "191",
+      "67",
+      "35",
+      "89",
+      "291",
+      "317",
+      "−26",
+      "236"
+     ],
+     [
+      "5",
+      "Paraguay",
+      "39",
+      "180",
+      "64",
+      "43",
+      "73",
+      "267",
+      "311",
+      "−44",
+      "235"
+     ],
+     [
+      "6",
+      "Peru",
+      "34",
+      "164",
+      "58",
+      "40",
+      "66",
+      "230",
+      "258",
+      "−28",
+      "214"
+     ],
+     [
+      "7",
+      "Colombia",
+      "24",
+      "130",
+      "53",
+      "26",
+      "51",
+      "154",
+      "194",
+      "−40",
+      "185"
+     ],
+     [
+      "8",
+      "Bolivia",
+      "29",
+      "122",
+      "20",
+      "26",
+      "76",
+      "109",
+      "308",
+      "−199",
+      "86"
+     ],
+     [
+      "9",
+      "Ecuador",
+      "30",
+      "130",
+      "17",
+      "28",
+      "85",
+      "139",
+      "331",
+      "−192",
+      "79"
+     ],
+     [
+      "10",
+      "Mexico",
+      "11",
+      "51",
+      "20",
+      "14",
+      "17",
+      "67",
+      "63",
+      "+4",
+      "74"
+     ],
+     [
+      "11",
+      "Venezuela",
+      "20",
+      "74",
+      "11",
+      "18",
+      "45",
+      "59",
+      "182",
+      "−123",
+      "51"
+     ],
+     [
+      "12",
+      "Costa Rica",
+      "6",
+      "20",
+      "6",
+      "4",
+      "10",
+      "19",
+      "35",
+      "−16",
+      "22"
+     ],
+     [
+      "13",
+      "United States",
+      "5",
+      "21",
+      "6",
+      "2",
+      "13",
+      "21",
+      "32",
+      "−11",
+      "20"
+     ],
+     [
+      "14",
+      "Honduras",
+      "1",
+      "6",
+      "3",
+      "1",
+      "2",
+      "7",
+      "5",
+      "+2",
+      "10"
+     ],
+     [
+      "15",
+      "Panama",
+      "2",
+      "7",
+      "3",
+      "0",
+      "4",
+      "10",
+      "20",
+      "−10",
+      "9"
+     ],
+     [
+      "16",
+      "Canada",
+      "1",
+      "6",
+      "1",
+      "3",
+      "2",
+      "4",
+      "7",
+      "−3",
+      "6"
+     ],
+     [
+      "17",
+      "Japan",
+      "2",
+      "6",
+      "0",
+      "3",
+      "3",
+      "6",
+      "15",
+      "−9",
+      "3"
+     ],
+     [
+      "18",
+      "Qatar",
+      "1",
+      "3",
+      "0",
+      "1",
+      "2",
+      "2",
+      "5",
+      "−3",
+      "1"
+     ],
+     [
+      "19",
+      "Haiti",
+      "1",
+      "3",
+      "0",
+      "0",
+      "3",
+      "1",
+      "12",
+      "−11",
+      "0"
+     ],
+     [
+      "20",
+      "Jamaica",
+      "3",
+      "9",
+      "0",
+      "0",
+      "9",
+      "1",
+      "16",
+      "−15",
+      "0"
+     ]
+    ]
+   },
+   "medals": {
+    "headers": [
+     "Rank",
+     "Nation",
+     "Gold",
+     "Silver",
+     "Bronze",
+     "Total"
+    ],
+    "rows": [
+     [
+      "1",
+      "Argentina",
+      "16",
+      "14",
+      "5",
+      "35"
+     ],
+     [
+      "2",
+      "Uruguay",
+      "15",
+      "6",
+      "10",
+      "31"
+     ],
+     [
+      "3",
+      "Brazil",
+      "9",
+      "12",
+      "7",
+      "28"
+     ],
+     [
+      "4",
+      "Paraguay",
+      "2",
+      "6",
+      "7",
+      "15"
+     ],
+     [
+      "5",
+      "Chile",
+      "2",
+      "4",
+      "5",
+      "11"
+     ],
+     [
+      "6",
+      "Peru",
+      "2",
+      "1",
+      "8",
+      "11"
+     ],
+     [
+      "7",
+      "Colombia",
+      "1",
+      "2",
+      "5",
+      "8"
+     ],
+     [
+      "8",
+      "Bolivia",
+      "1",
+      "1",
+      "0",
+      "2"
+     ],
+     [
+      "9",
+      "Mexico",
+      "0",
+      "2",
+      "3",
+      "5"
+     ],
+     [
+      "10",
+      "Honduras",
+      "0",
+      "0",
+      "1",
+      "1"
+     ],
+     [
+      "Totals (10 entries)",
+      "Totals (10 entries)",
+      "48",
+      "48",
+      "51",
+      "147"
+     ]
+    ]
+   },
+   "scorers": {
+    "headers": [
+     "Rank",
+     "Player",
+     "Country",
+     "Goals"
+    ],
+    "rows": [
+     [
+      "1",
+      "Norberto Méndez",
+      "Argentina",
+      "17"
+     ],
+     [
+      "1",
+      "Zizinho",
+      "Brazil",
+      "17"
+     ],
+     [
+      "3",
+      "Teodoro Fernández",
+      "Peru",
+      "15"
+     ],
+     [
+      "3",
+      "Severino Varela",
+      "Uruguay",
+      "15"
+     ],
+     [
+      "5",
+      "Paolo Guerrero",
+      "Peru",
+      "14"
+     ],
+     [
+      "5",
+      "Lionel Messi",
+      "Argentina",
+      "14"
+     ],
+     [
+      "5",
+      "Eduardo Vargas",
+      "Chile",
+      "14"
+     ],
+     [
+      "8",
+      "Ademir",
+      "Brazil",
+      "13"
+     ],
+     [
+      "8",
+      "Gabriel Batistuta",
+      "Argentina",
+      "13"
+     ],
+     [
+      "8",
+      "Jair",
+      "Brazil",
+      "13"
+     ],
+     [
+      "8",
+      "José Manuel Moreno",
+      "Argentina",
+      "13"
+     ],
+     [
+      "8",
+      "Héctor Scarone",
+      "Uruguay",
+      "13"
+     ],
+     [
+      "13",
+      "Roberto Porta",
+      "Uruguay",
+      "12"
+     ],
+     [
+      "13",
+      "Ángel Romano",
+      "Uruguay",
+      "12"
+     ],
+     [
+      "15",
+      "Didi",
+      "Brazil",
+      "11"
+     ],
+     [
+      "15",
+      "Herminio Masantonio",
+      "Argentina",
+      "11"
+     ],
+     [
+      "17",
+      "Javier Ambrois",
+      "Uruguay",
+      "10"
+     ],
+     [
+      "17",
+      "Héctor Castro",
+      "Uruguay",
+      "10"
+     ],
+     [
+      "17",
+      "Enrique Hormazábal",
+      "Chile",
+      "10"
+     ],
+     [
+      "17",
+      "Arnoldo Iguarán",
+      "Colombia",
+      "10"
+     ],
+     [
+      "17",
+      "Ángel Labruna",
+      "Argentina",
+      "10"
+     ],
+     [
+      "17",
+      "Lautaro Martínez",
+      "Argentina",
+      "10"
+     ],
+     [
+      "17",
+      "Pedro Petrone",
+      "Uruguay",
+      "10"
+     ],
+     [
+      "17",
+      "Ronaldo",
+      "Brazil",
+      "10"
+     ],
+     [
+      "17",
+      "Óscar Gómez Sánchez",
+      "Peru",
+      "10"
+     ]
+    ]
+   },
+   "assists": {
+    "headers": [
+     "Rank",
+     "Player",
+     "Country",
+     "Assists"
+    ],
+    "rows": [
+     [
+      "1",
+      "Lionel Messi",
+      "Argentina",
+      "18"
+     ],
+     [
+      "2",
+      "Zizinho",
+      "Brazil",
+      "17"
+     ],
+     [
+      "3",
+      "Jair",
+      "Brazil",
+      "9"
+     ],
+     [
+      "3",
+      "James Rodríguez",
+      "Colombia",
+      "9"
+     ],
+     [
+      "5",
+      "Alex",
+      "Brazil",
+      "8"
+     ],
+     [
+      "6",
+      "Denílson",
+      "Brazil",
+      "7"
+     ],
+     [
+      "6",
+      "Ángel Di María",
+      "Argentina",
+      "7"
+     ],
+     [
+      "8",
+      "Juan Roman Riquelme",
+      "Argentina",
+      "6"
+     ],
+     [
+      "8",
+      "Carlos Tevez",
+      "Argentina",
+      "6"
+     ]
+    ]
+   }
   }
  }
 }
