@@ -977,7 +977,7 @@ export const EXTRA_MIDFIELDER_QUESTIONS: Record<string, FormationQuestion[]> = {
     ask("Which Portuguese full-back plays alongside Fernandes for both club and country after joining United from Porto?", "dalot"),
     ask("Which Brazilian holding midfielder joined Fernandes at United from Real Madrid in 2022?", "casemiro"),
     ask("Which Portuguese coach led Fernandes' national team at the 2022 World Cup?", "fernandoSantos"),
-    ask("Which former Belgium coach became Fernandes' Portugal manager in 2023?", "martinez"),
+    ask("Which former Belgium coach became Bruno Fernandes' Portugal manager in 2023?", "martinez"),
     ask("Which cup did Fernandes lift as Manchester United captain at Wembley in May 2024?", "fa"),
     ask("Which UEFA national-team competition did Fernandes win with Portugal in 2019?", "nations"),
     ask("Which Uruguayan striker joined Fernandes at United from Paris Saint-Germain in 2020?", "cavani"),
