@@ -34,7 +34,7 @@ export const bundesligaClubs: BundesligaClub[] = [
   { name: "Borussia Dortmund", short: "Dortmund", espnId: "124", aliases: ["BVB", "Borussia Dortmund"] },
   { name: "Borussia Mönchengladbach", short: "Gladbach", espnId: "268", aliases: ["Mönchengladbach", "Monchengladbach", "Gladbach"] },
   { name: "Eintracht Frankfurt", short: "Frankfurt", espnId: "125", aliases: ["Eintracht", "Frankfurt"] },
-  { name: "FC Augsburg", short: "Augsburg", espnId: "3841", aliases: ["Augsburg"] },
+  { name: "FC augsburg", short: "Augsburg", espnId: "3841", aliases: ["Augsburg"] },
   { name: "1. FC Köln", short: "Köln", espnId: "122", aliases: ["FC Cologne", "Cologne", "Köln", "FC Köln"] },
   { name: "Hamburger SV", short: "Hamburg", espnId: "127", aliases: ["Hamburg SV", "HSV", "Hamburger Sport-Verein"] },
   { name: "Mainz 05", short: "Mainz", espnId: "2950", aliases: ["1. FSV Mainz 05", "Mainz 05"] },
