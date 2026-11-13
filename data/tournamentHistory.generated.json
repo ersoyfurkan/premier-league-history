@@ -1,5 +1,5 @@
 {
- "updatedAt": "2026-11-12T13:31:06.065Z",
+ "updatedAt": "2026-11-13T12:50:14.814Z",
  "tournaments": {
   "worldcup": {
    "finals": {
@@ -1699,1024 +1699,932 @@
      ]
     ]
    },
-   "scorers": {
+   "scorers": null
+  },
+  "euros": {
+   "finals": {
+    "headers": [
+     "Year",
+     "Winners",
+     "Score",
+     "Runners-up",
+     "Venue"
+    ],
+    "rows": [
+     [
+      "1960",
+      "Soviet Union",
+      "2–1 (a.e.t.)",
+      "Yugoslavia",
+      "Parc des Princes"
+     ],
+     [
+      "1964",
+      "Spain",
+      "2–1",
+      "Soviet Union",
+      "Santiago Bernabéu Stadium"
+     ],
+     [
+      "1968",
+      "Italy",
+      "1–1 (a.e.t.)",
+      "Yugoslavia",
+      "Stadio Olimpico"
+     ],
+     [
+      "1968",
+      "Italy",
+      "2–0 (re.)",
+      "Yugoslavia",
+      "Stadio Olimpico"
+     ],
+     [
+      "1972",
+      "West Germany",
+      "3–0",
+      "Soviet Union",
+      "Heysel Stadium"
+     ],
+     [
+      "1976",
+      "Czechoslovakia",
+      "2–2 (a.e.t.), (5–3 pen.)",
+      "West Germany",
+      "Stadion FK Crvena Zvezda"
+     ],
+     [
+      "1980",
+      "West Germany",
+      "2–1",
+      "Belgium",
+      "Stadio Olimpico"
+     ],
+     [
+      "1984",
+      "France",
+      "2–0",
+      "Spain",
+      "Parc des Princes"
+     ],
+     [
+      "1988",
+      "Netherlands",
+      "2–0",
+      "Soviet Union",
+      "Olympiastadion"
+     ],
+     [
+      "1992",
+      "Denmark",
+      "2–0",
+      "Germany",
+      "Ullevi"
+     ],
+     [
+      "1996",
+      "Germany",
+      "2–1 (g.g.)",
+      "Czech Republic",
+      "Wembley Stadium"
+     ],
+     [
+      "2000",
+      "France",
+      "2–1 (g.g.)",
+      "Italy",
+      "Stadion Feijenoord"
+     ],
+     [
+      "2004",
+      "Greece",
+      "1–0",
+      "Portugal",
+      "Estádio da Luz"
+     ],
+     [
+      "2008",
+      "Spain",
+      "1–0",
+      "Germany",
+      "Ernst-Happel-Stadion"
+     ],
+     [
+      "2012",
+      "Spain",
+      "4–0",
+      "Italy",
+      "Olimpiyskiy National Sports Complex"
+     ],
+     [
+      "2016",
+      "Portugal",
+      "1–0 (a.e.t.)",
+      "France",
+      "Stade de France"
+     ],
+     [
+      "2020",
+      "Italy",
+      "1–1 (a.e.t.), (3–2 pen.)",
+      "England",
+      "Wembley Stadium"
+     ],
+     [
+      "2024",
+      "Spain",
+      "2–1",
+      "England",
+      "Olympiastadion"
+     ],
+     [
+      "2028",
+      "",
+      "",
+      "",
+      "Wembley Stadium"
+     ]
+    ]
+   },
+   "editions": {
+    "headers": [
+     "Year",
+     "Hosts",
+     "Champions",
+     "Winning coach",
+     "Top scorer(s) (goals)"
+    ],
+    "rows": [
+     [
+      "1960",
+      "France",
+      "Soviet Union",
+      "Gavriil Kachalin",
+      "François Heutte (2), Valentin Ivanov (2), Viktor Ponedelnik (2), Milan Galić (2), Dražan Jerković (2)"
+     ],
+     [
+      "1964",
+      "Spain",
+      "Spain",
+      "José Villalonga",
+      "Ferenc Bene (2), Dezső Novák (2), Chus Pereda (2)"
+     ],
+     [
+      "1968",
+      "Italy",
+      "Italy",
+      "Ferruccio Valcareggi",
+      "Dragan Džajić (2)"
+     ],
+     [
+      "1972",
+      "Belgium",
+      "West Germany",
+      "Helmut Schön",
+      "Gerd Müller (4)"
+     ],
+     [
+      "1976",
+      "Yugoslavia",
+      "Czechoslovakia",
+      "Václav Ježek",
+      "Dieter Müller (3)"
+     ],
+     [
+      "1980",
+      "Italy",
+      "West Germany",
+      "Jupp Derwall",
+      "Klaus Allofs (3)"
+     ],
+     [
+      "1984",
+      "France",
+      "France",
+      "Michel Hidalgo",
+      "Michel Platini (9)"
+     ],
+     [
+      "1988",
+      "West Germany",
+      "Netherlands",
+      "Rinus Michels",
+      "Marco van Basten (5)"
+     ],
+     [
+      "1992",
+      "Sweden",
+      "Denmark",
+      "Richard Møller Nielsen",
+      "Henrik Larsen (3), Karl-Heinz Riedle (3), Dennis Bergkamp (3), Tomas Brolin (3)"
+     ],
+     [
+      "1996",
+      "England",
+      "Germany",
+      "Berti Vogts",
+      "Alan Shearer (5)"
+     ],
+     [
+      "2000",
+      "Belgium, Netherlands",
+      "France",
+      "Roger Lemerre",
+      "Patrick Kluivert (5), Savo Milošević (5)"
+     ],
+     [
+      "2004",
+      "Portugal",
+      "Greece",
+      "Otto Rehhagel",
+      "Milan Baroš (5)"
+     ],
+     [
+      "2008",
+      "Austria, Switzerland",
+      "Spain",
+      "Luis Aragonés",
+      "David Villa (4)"
+     ],
+     [
+      "2012",
+      "Poland, Ukraine",
+      "Spain",
+      "Vicente del Bosque",
+      "Mario Mandžukić (3), Mario Gómez (3), Mario Balotelli (3), Cristiano Ronaldo (3), Alan Dzagoev (3), Fernando Torres (3)"
+     ],
+     [
+      "2016",
+      "France",
+      "Portugal",
+      "Fernando Santos",
+      "Antoine Griezmann (6)"
+     ],
+     [
+      "2020",
+      "Europe",
+      "Italy",
+      "Roberto Mancini",
+      "Patrik Schick (5), Cristiano Ronaldo (5)"
+     ],
+     [
+      "2024",
+      "Germany",
+      "Spain",
+      "Luis de la Fuente",
+      "Harry Kane (3), Georges Mikautadze (3), Jamal Musiala (3), Cody Gakpo (3), Ivan Schranz (3), Dani Olmo (3)"
+     ]
+    ]
+   },
+   "standings": {
     "headers": [
      "Rank",
-     "Player",
      "Team",
-     "Goals scored",
-     "Matches played",
-     "Goals per match",
-     "Tournaments"
+     "Part.",
+     "Pld",
+     "W",
+     "D",
+     "L",
+     "GF",
+     "GA",
+     "GD",
+     "Pts"
     ],
     "rows": [
      [
       "1",
-      "Kylian Mbappé",
-      "France",
-      "22",
-      "22",
-      "1.00",
-      "2018, 2022, 2026"
+      "Germany",
+      "14",
+      "58",
+      "30",
+      "14",
+      "14",
+      "89",
+      "59",
+      "+30",
+      "104"
      ],
      [
       "2",
-      "Lionel Messi",
-      "Argentina",
-      "21",
-      "34",
-      "0.62",
-      "2006, (2010), 2014, 2018, 2022, 2026"
-     ],
-     [
-      "3",
-      "Miroslav Klose",
-      "Germany",
-      "16",
-      "24",
-      "0.67",
-      "2002, 2006, 2010, 2014"
-     ],
-     [
-      "4",
-      "Ronaldo",
-      "Brazil",
-      "15",
-      "19",
-      "0.79",
-      ", 1998, 2002, 2006"
-     ],
-     [
-      "5",
-      "Gerd Müller",
-      "West Germany",
-      "14",
-      "13",
-      "1.08",
-      "1970, 1974"
-     ],
-     [
-      "5",
-      "Harry Kane",
-      "England",
-      "14",
-      "18",
-      "0.78",
-      "2018, 2022, 2026"
-     ],
-     [
-      "7",
-      "Just Fontaine",
-      "France",
-      "13",
-      "6",
-      "2.17",
-      "1958"
-     ],
-     [
-      "8",
-      "Pelé",
-      "Brazil",
-      "12",
-      "14",
-      "0.86",
-      "1958, 1962, 1966, 1970"
-     ],
-     [
-      "9",
-      "Sándor Kocsis",
-      "Hungary",
-      "11",
-      "5",
-      "2.20",
-      "1954"
-     ],
-     [
-      "9",
-      "Jürgen Klinsmann",
-      "West Germany, Germany",
-      "11",
-      "17",
-      "0.65",
-      "1990, 1994, 1998"
-     ],
-     [
-      "9",
-      "Cristiano Ronaldo",
-      "Portugal",
-      "11",
-      "27",
-      "0.41",
-      "2006, 2010, 2014, 2018, 2022, 2026"
-     ],
-     [
-      "12",
-      "Helmut Rahn",
-      "West Germany",
-      "10",
-      "10",
-      "1.00",
-      "1954, 1958"
-     ],
-     [
-      "12",
-      "Gary Lineker",
-      "England",
-      "10",
-      "12",
-      "0.83",
-      "1986, 1990"
-     ],
-     [
-      "12",
-      "Gabriel Batistuta",
-      "Argentina",
-      "10",
-      "12",
-      "0.83",
-      "1994, 1998, 2002"
-     ],
-     [
-      "12",
-      "Teófilo Cubillas",
-      "Peru",
-      "10",
-      "13",
-      "0.77",
-      "1970, 1978, (1982)"
-     ],
-     [
-      "12",
-      "Thomas Müller",
-      "Germany",
-      "10",
-      "19",
-      "0.53",
-      "2010, 2014, (2018), (2022)"
-     ],
-     [
-      "12",
-      "Grzegorz Lato",
-      "Poland",
-      "10",
-      "20",
-      "0.50",
-      "1974, 1978, 1982"
-     ],
-     [
-      "18",
-      "Ademir",
-      "Brazil",
-      "9",
-      "6",
-      "1.50",
-      "1950"
-     ],
-     [
-      "18",
-      "Eusébio",
-      "Portugal",
-      "9",
-      "6",
-      "1.50",
-      "1966"
-     ],
-     [
-      "18",
-      "Christian Vieri",
-      "Italy",
-      "9",
-      "9",
-      "1.00",
-      "1998, 2002"
-     ],
-     [
-      "18",
-      "Vavá",
-      "Brazil",
-      "9",
-      "10",
-      "0.90",
-      "1958, 1962"
-     ],
-     [
-      "18",
-      "David Villa",
       "Spain",
-      "9",
       "12",
-      "0.75",
-      "2006, 2010, 2014"
-     ],
-     [
-      "18",
-      "Paolo Rossi",
-      "Italy",
-      "9",
-      "14",
-      "0.64",
-      "1978, 1982,"
-     ],
-     [
-      "18",
-      "Neymar",
-      "Brazil",
-      "9",
+      "53",
+      "28",
       "15",
-      "0.60",
-      "2014, 2018, 2022, 2026"
-     ],
-     [
-      "18",
-      "Jairzinho",
-      "Brazil",
-      "9",
-      "16",
-      "0.56",
-      "(1966), 1970, 1974"
-     ],
-     [
-      "18",
-      "Roberto Baggio",
-      "Italy",
-      "9",
-      "16",
-      "0.56",
-      "1990, 1994, 1998"
-     ],
-     [
-      "18",
-      "Karl-Heinz Rummenigge",
-      "West Germany",
-      "9",
-      "19",
-      "0.47",
-      "1978, 1982, 1986"
-     ],
-     [
-      "18",
-      "Uwe Seeler",
-      "West Germany",
-      "9",
-      "21",
-      "0.43",
-      "1958, 1962, 1966, 1970"
-     ],
-     [
-      "29",
-      "Guillermo Stábile",
-      "Argentina",
-      "8",
-      "4",
-      "2.00",
-      "1930"
-     ],
-     [
-      "29",
-      "Leônidas",
-      "Brazil",
-      "8",
-      "5",
-      "1.60",
-      "1934, 1938"
-     ],
-     [
-      "29",
-      "Óscar Míguez",
-      "Uruguay",
-      "8",
-      "7",
-      "1.14",
-      "1950, 1954"
-     ],
-     [
-      "29",
-      "Jude Bellingham",
-      "England",
-      "8",
-      "13",
-      "0.62",
-      "2022, 2026"
-     ],
-     [
-      "29",
-      "Rivaldo",
-      "Brazil",
-      "8",
-      "14",
-      "0.57",
-      "1998, 2002"
-     ],
-     [
-      "29",
-      "Rudi Völler",
-      "West Germany, Germany",
-      "8",
-      "15",
-      "0.53",
-      "1986, 1990, 1994"
-     ],
-     [
-      "29",
-      "Romelu Lukaku",
-      "Belgium",
-      "8",
-      "18",
-      "0.44",
-      "2014, 2018, (2022), 2026"
-     ],
-     [
-      "29",
-      "Diego Maradona",
-      "Argentina",
-      "8",
-      "21",
-      "0.38",
-      "1982, 1986, (1990), 1994"
-     ],
-     [
-      "37",
-      "Erling Haaland",
-      "Norway",
-      "7",
-      "5",
-      "1.40",
-      "2026"
-     ],
-     [
-      "37",
-      "Oldřich Nejedlý",
-      "Czechoslovakia",
-      "7",
-      "6",
-      "1.17",
-      "1934, 1938"
-     ],
-     [
-      "37",
-      "Lajos Tichy",
-      "Hungary",
-      "7",
-      "8",
-      "0.88",
-      "1958, 1962,"
-     ],
-     [
-      "37",
-      "Careca",
-      "Brazil",
-      "7",
-      "9",
-      "0.78",
-      "1986, 1990"
-     ],
-     [
-      "37",
-      "Johnny Rep",
-      "Netherlands",
-      "7",
-      "13",
-      "0.54",
-      "1974, 1978"
-     ],
-     [
-      "37",
-      "Andrzej Szarmach",
-      "Poland",
-      "7",
-      "13",
-      "0.54",
-      "1974, 1978, 1982"
-     ],
-     [
-      "37",
-      "Hans Schäfer",
-      "West Germany",
-      "7",
-      "15",
-      "0.47",
-      "1954, 1958, (1962)"
-     ],
-     [
-      "37",
-      "Luis Suárez",
-      "Uruguay",
-      "7",
-      "16",
-      "0.44",
-      "2010, 2014, 2018, (2022)"
-     ],
-     [
-      "37",
-      "Ivan Perišić",
-      "Croatia",
-      "7",
-      "21",
-      "0.33",
-      "2014, 2018, 2022, 2026"
-     ],
-     [
+      "10",
+      "83",
       "46",
-      "Josef Hügi",
-      "Switzerland",
-      "6",
+      "+37",
+      "99"
+     ],
+     [
       "3",
-      "2.00",
-      "1954"
+      "Italy",
+      "11",
+      "49",
+      "22",
+      "19",
+      "8",
+      "55",
+      "36",
+      "+19",
+      "85"
      ],
      [
-      "46",
-      "Oleg Salenko",
+      "4",
+      "France",
+      "11",
+      "49",
+      "23",
+      "15",
+      "11",
+      "73",
+      "53",
+      "+20",
+      "84"
+     ],
+     [
+      "5",
+      "Netherlands",
+      "11",
+      "45",
+      "23",
+      "9",
+      "13",
+      "75",
+      "48",
+      "+27",
+      "78"
+     ],
+     [
+      "6",
+      "Portugal",
+      "9",
+      "44",
+      "21",
+      "12",
+      "11",
+      "61",
+      "41",
+      "+20",
+      "75"
+     ],
+     [
+      "7",
+      "England",
+      "11",
+      "45",
+      "18",
+      "16",
+      "11",
+      "59",
+      "43",
+      "+16",
+      "70"
+     ],
+     [
+      "8",
+      "Czech Republic",
+      "11",
+      "40",
+      "15",
+      "8",
+      "17",
+      "51",
+      "52",
+      "−1",
+      "53"
+     ],
+     [
+      "9",
       "Russia",
-      "6",
-      "3",
-      "2.00",
-      "1994"
-     ],
-     [
-      "46",
-      "György Sárosi",
-      "Hungary",
-      "6",
-      "5",
-      "1.20",
-      "1934, 1938"
-     ],
-     [
-      "46",
-      "Max Morlock",
-      "West Germany",
-      "6",
-      "5",
-      "1.20",
-      "1954"
-     ],
-     [
-      "46",
-      "Erich Probst",
-      "Austria",
-      "6",
-      "5",
-      "1.20",
-      "1954"
-     ],
-     [
-      "46",
-      "Salvatore Schillaci",
-      "Italy",
-      "6",
-      "7",
-      "0.86",
-      "1990"
-     ],
-     [
-      "46",
-      "Davor Šuker",
-      "Yugoslavia, Croatia",
-      "6",
-      "8",
-      "0.75",
-      ", 1998, (2002)"
-     ],
-     [
-      "46",
-      "Helmut Haller",
-      "West Germany",
-      "6",
-      "9",
-      "0.67",
-      "(1962), 1966, (1970)"
-     ],
-     [
-      "46",
-      "Cody Gakpo",
-      "Netherlands",
-      "6",
-      "9",
-      "0.67",
-      "2022, 2026"
-     ],
-     [
-      "46",
-      "Hristo Stoichkov",
-      "Bulgaria",
-      "6",
-      "10",
-      "0.60",
-      "1994, (1998)"
-     ],
-     [
-      "46",
-      "Diego Forlán",
-      "Uruguay",
-      "6",
-      "10",
-      "0.60",
-      "2002, 2010, (2014)"
-     ],
-     [
-      "46",
-      "Enner Valencia",
-      "Ecuador",
-      "6",
-      "10",
-      "0.60",
-      "2014, 2022, (2026)"
-     ],
-     [
-      "46",
-      "Asamoah Gyan",
-      "Ghana",
-      "6",
-      "11",
-      "0.55",
-      "2006, 2010, 2014"
-     ],
-     [
-      "46",
-      "Bukayo Saka",
-      "England",
-      "6",
-      "11",
-      "0.55",
-      "2022, 2026"
-     ],
-     [
-      "46",
-      "Dennis Bergkamp",
-      "Netherlands",
-      "6",
       "12",
-      "0.50",
-      "1994, 1998"
-     ],
-     [
-      "46",
-      "Rob Rensenbrink",
-      "Netherlands",
-      "6",
+      "36",
       "13",
-      "0.46",
-      "1974, 1978"
-     ],
-     [
-      "46",
-      "James Rodríguez",
-      "Colombia",
-      "6",
-      "13",
-      "0.46",
-      "2014, (2018), (2026)"
-     ],
-     [
-      "46",
-      "Rivellino",
-      "Brazil",
-      "6",
-      "15",
-      "0.40",
-      "1970, 1974, (1978)"
-     ],
-     [
-      "46",
-      "Bebeto",
-      "Brazil",
-      "6",
-      "15",
-      "0.40",
-      "(1990), 1994, 1998"
-     ],
-     [
-      "46",
-      "Arjen Robben",
-      "Netherlands",
-      "6",
-      "15",
-      "0.40",
-      "2006, 2010, 2014"
-     ],
-     [
-      "46",
-      "Zbigniew Boniek",
-      "Poland",
-      "6",
+      "7",
       "16",
-      "0.38",
-      "1978, 1982, (1986)"
+      "40",
+      "52",
+      "−12",
+      "46"
      ],
      [
-      "46",
-      "Thierry Henry",
-      "France",
-      "6",
-      "17",
-      "0.35",
-      "1998, (2002), 2006, (2010)"
+      "10",
+      "Belgium",
+      "7",
+      "26",
+      "12",
+      "3",
+      "11",
+      "33",
+      "30",
+      "+3",
+      "39"
      ],
      [
-      "46",
-      "Robin van Persie",
-      "Netherlands",
-      "6",
-      "17",
-      "0.35",
-      "2006, 2010, 2014"
-     ],
-     [
-      "46",
-      "Wesley Sneijder",
-      "Netherlands",
-      "6",
-      "17",
-      "0.35",
-      "(2006), 2010, 2014"
-     ],
-     [
-      "46",
-      "Mario Kempes",
-      "Argentina",
-      "6",
+      "11",
+      "Denmark",
+      "10",
+      "37",
+      "10",
+      "9",
       "18",
-      "0.33",
-      "(1974), 1978, (1982)"
+      "44",
+      "54",
+      "−10",
+      "39"
      ],
      [
-      "46",
-      "Ousmane Dembélé",
-      "France",
+      "12",
+      "Croatia",
+      "7",
+      "25",
+      "9",
+      "8",
+      "8",
+      "33",
+      "34",
+      "−1",
+      "35"
+     ],
+     [
+      "13",
+      "Sweden",
+      "7",
+      "24",
+      "7",
+      "7",
+      "10",
+      "30",
+      "28",
+      "+2",
+      "28"
+     ],
+     [
+      "14",
+      "Switzerland",
+      "6",
+      "23",
+      "5",
+      "11",
+      "7",
+      "24",
+      "28",
+      "−4",
+      "26"
+     ],
+     [
+      "15",
+      "Turkey",
+      "6",
+      "23",
+      "7",
+      "2",
+      "14",
+      "22",
+      "38",
+      "−16",
+      "23"
+     ],
+     [
+      "16",
+      "Slovakia",
       "6",
       "19",
-      "0.32",
-      "(2018), (2022), 2026"
-     ],
-     [
-      "46",
-      "Lothar Matthäus",
-      "West Germany, Germany",
       "6",
-      "25",
-      "0.24",
-      "(1982), 1986, 1990, 1994, (1998)"
+      "5",
+      "8",
+      "21",
+      "28",
+      "−7",
+      "23"
      ],
      [
-      "73",
-      "Pedro Cea",
-      "Uruguay",
-      "5",
+      "17",
+      "Greece",
       "4",
-      "1.25",
-      "1930"
-     ],
-     [
-      "73",
-      "Silvio Piola",
-      "Italy",
+      "16",
       "5",
-      "4",
-      "1.25",
-      "1938"
-     ],
-     [
-      "73",
-      "Gyula Zsengellér",
-      "Hungary",
-      "5",
-      "4",
-      "1.25",
-      "1938"
-     ],
-     [
-      "73",
-      "Peter McParland",
-      "Northern Ireland",
-      "5",
-      "5",
-      "1.00",
-      "1958"
-     ],
-     [
-      "73",
-      "Tomáš Skuhravý",
-      "Czechoslovakia",
-      "5",
-      "5",
-      "1.00",
-      "1990"
-     ],
-     [
-      "73",
-      "Juan Alberto Schiaffino",
-      "Uruguay",
-      "5",
-      "6",
-      "0.83",
-      "1950, 1954"
-     ],
-     [
-      "73",
-      "Geoff Hurst",
-      "England",
-      "5",
-      "6",
-      "0.83",
-      "1966, 1970"
-     ],
-     [
-      "73",
-      "Jon Dahl Tomasson",
-      "Denmark",
-      "5",
-      "6",
-      "0.83",
-      "2002, 2010"
-     ],
-     [
-      "73",
-      "Kai Havertz",
-      "Germany",
-      "5",
-      "6",
-      "0.83",
-      "2022, 2026"
-     ],
-     [
-      "73",
-      "Alessandro Altobelli",
-      "Italy",
-      "5",
-      "7",
-      "0.71",
-      "1982, 1986"
-     ],
-     [
-      "73",
-      "Kennet Andersson",
-      "Sweden",
-      "5",
-      "7",
-      "0.71",
-      "1994"
-     ],
-     [
-      "73",
-      "Fernando Morientes",
-      "Spain",
-      "5",
-      "7",
-      "0.71",
-      "1998, 2002"
-     ],
-     [
-      "73",
-      "Romário",
-      "Brazil",
-      "5",
+      "3",
       "8",
-      "0.63",
-      "(1990), 1994"
+      "14",
+      "20",
+      "−6",
+      "18"
      ],
      [
-      "73",
-      "Marc Wilmots",
-      "Belgium",
-      "5",
-      "8",
-      "0.63",
-      ", (1994), 1998, 2002"
-     ],
-     [
-      "73",
-      "Mario Mandžukić",
-      "Croatia",
-      "5",
-      "8",
-      "0.63",
-      "2014, 2018"
-     ],
-     [
-      "73",
-      "Mikel Oyarzabal",
-      "Spain",
-      "5",
-      "8",
-      "0.63",
-      "2026"
-     ],
-     [
-      "73",
-      "Valentin Ivanov",
-      "Soviet Union",
-      "5",
-      "9",
-      "0.56",
-      "1958, 1962"
-     ],
-     [
-      "73",
-      "Emilio Butragueño",
-      "Spain",
-      "5",
-      "9",
-      "0.56",
-      "1986, (1990)"
-     ],
-     [
-      "73",
-      "Roger Milla",
-      "Cameroon",
-      "5",
-      "9",
-      "0.56",
-      "(1982), 1990, 1994"
-     ],
-     [
-      "73",
-      "Tim Cahill",
-      "Australia",
-      "5",
-      "9",
-      "0.56",
-      "2006, 2010, 2014, (2018)"
-     ],
-     [
-      "73",
-      "Vinícius Júnior",
-      "Brazil",
-      "5",
-      "9",
-      "0.56",
-      "2022, 2026"
-     ],
-     [
-      "73",
-      "Hans Krankl",
-      "Austria",
-      "5",
+      "18",
+      "Wales",
+      "2",
       "10",
-      "0.50",
-      "1978, 1982"
-     ],
-     [
-      "73",
-      "Raúl",
-      "Spain",
       "5",
-      "11",
-      "0.45",
-      "1998, 2002, 2006"
-     ],
-     [
-      "73",
-      "Ismaïla Sarr",
-      "Senegal",
-      "5",
-      "11",
-      "0.45",
-      "(2018), 2022, 2026"
-     ],
-     [
-      "73",
-      "Garrincha",
-      "Brazil",
-      "5",
-      "12",
-      "0.42",
-      "(1958), 1962, 1966"
-     ],
-     [
-      "73",
-      "Johan Neeskens",
-      "Netherlands",
-      "5",
-      "12",
-      "0.42",
-      "1974, (1978)"
-     ],
-     [
-      "73",
-      "Fernando Hierro",
-      "Spain",
-      "5",
-      "12",
-      "0.42",
-      ", 1994, 1998, 2002"
-     ],
-     [
-      "73",
-      "Zinedine Zidane",
-      "France",
-      "5",
-      "12",
-      "0.42",
-      "1998, (2002), 2006"
-     ],
-     [
-      "73",
-      "Landon Donovan",
-      "United States",
-      "5",
-      "12",
-      "0.42",
-      "2002, (2006), 2010"
-     ],
-     [
-      "73",
-      "Xherdan Shaqiri",
-      "Switzerland",
-      "5",
-      "12",
-      "0.42",
-      "(2010), 2014, 2018, 2022"
-     ],
-     [
-      "73",
-      "Henrik Larsson",
-      "Sweden",
-      "5",
+      "1",
+      "4",
       "13",
-      "0.38",
-      "1994, 2002, 2006"
+      "12",
+      "+1",
+      "16"
      ],
      [
-      "73",
-      "Zico",
-      "Brazil",
-      "5",
+      "19",
+      "Austria",
+      "4",
       "14",
-      "0.36",
-      "1978, 1982, (1986)"
-     ],
-     [
-      "73",
-      "Michel Platini",
-      "France",
-      "5",
+      "4",
+      "2",
+      "8",
       "14",
-      "0.36",
-      "1978, 1982, 1986"
+      "18",
+      "−4",
+      "14"
      ],
      [
-      "73",
-      "Gonzalo Higuaín",
-      "Argentina",
-      "5",
-      "14",
-      "0.36",
-      "2010, 2014, (2018)"
-     ],
-     [
-      "73",
-      "Lukas Podolski",
-      "Germany",
-      "5",
-      "15",
-      "0.33",
-      "2006, 2010, (2014)"
-     ],
-     [
-      "73",
-      "Julián Alvarez",
-      "Argentina",
-      "5",
-      "15",
-      "0.33",
-      "2022, 2026"
-     ],
-     [
-      "73",
-      "Edinson Cavani",
-      "Uruguay",
+      "20",
+      "Poland",
       "5",
       "17",
-      "0.29",
-      "2010, 2014, 2018, (2022)"
+      "2",
+      "8",
+      "7",
+      "14",
+      "21",
+      "−7",
+      "14"
      ],
      [
-      "73",
-      "Franz Beckenbauer",
-      "West Germany",
+      "21",
+      "Hungary",
       "5",
-      "18",
-      "0.28",
-      "1966, 1970, (1974)"
+      "14",
+      "3",
+      "4",
+      "7",
+      "16",
+      "25",
+      "−9",
+      "13"
      ],
      [
-      "73",
-      "Olivier Giroud",
-      "France",
+      "22",
+      "Ukraine",
+      "4",
+      "14",
+      "4",
+      "1",
+      "9",
+      "10",
+      "23",
+      "−13",
+      "13"
+     ],
+     [
+      "23",
+      "Serbia",
+      "6",
+      "17",
+      "3",
+      "4",
+      "10",
+      "23",
+      "41",
+      "−18",
+      "13"
+     ],
+     [
+      "24",
+      "Romania",
+      "6",
+      "20",
+      "2",
+      "6",
+      "12",
+      "14",
+      "27",
+      "−13",
+      "12"
+     ],
+     [
+      "25",
+      "Scotland",
+      "4",
+      "12",
+      "2",
+      "3",
+      "7",
+      "7",
+      "17",
+      "−10",
+      "9"
+     ],
+     [
+      "26",
+      "Iceland",
+      "1",
       "5",
-      "18",
-      "0.28",
-      "2014, (2018), 2022"
+      "2",
+      "2",
+      "1",
+      "8",
+      "9",
+      "−1",
+      "8"
+     ],
+     [
+      "27",
+      "Republic of Ireland",
+      "3",
+      "10",
+      "2",
+      "2",
+      "6",
+      "6",
+      "17",
+      "−11",
+      "8"
+     ],
+     [
+      "28",
+      "Slovenia",
+      "2",
+      "7",
+      "0",
+      "6",
+      "1",
+      "6",
+      "7",
+      "−1",
+      "6"
+     ],
+     [
+      "29",
+      "Norway",
+      "1",
+      "3",
+      "1",
+      "1",
+      "1",
+      "1",
+      "1",
+      "0",
+      "4"
+     ],
+     [
+      "30",
+      "Georgia",
+      "1",
+      "4",
+      "1",
+      "1",
+      "2",
+      "5",
+      "8",
+      "−3",
+      "4"
+     ],
+     [
+      "31",
+      "Albania",
+      "2",
+      "6",
+      "1",
+      "1",
+      "4",
+      "4",
+      "8",
+      "−4",
+      "4"
+     ],
+     [
+      "32",
+      "Bulgaria",
+      "2",
+      "6",
+      "1",
+      "1",
+      "4",
+      "4",
+      "13",
+      "−9",
+      "4"
+     ],
+     [
+      "33",
+      "Northern Ireland",
+      "1",
+      "4",
+      "1",
+      "0",
+      "3",
+      "2",
+      "3",
+      "−1",
+      "3"
+     ],
+     [
+      "34",
+      "Finland",
+      "1",
+      "3",
+      "1",
+      "0",
+      "2",
+      "1",
+      "3",
+      "−2",
+      "3"
+     ],
+     [
+      "35",
+      "Latvia",
+      "1",
+      "3",
+      "0",
+      "1",
+      "2",
+      "1",
+      "5",
+      "−4",
+      "1"
+     ],
+     [
+      "36",
+      "North Macedonia",
+      "1",
+      "3",
+      "0",
+      "0",
+      "3",
+      "2",
+      "8",
+      "−6",
+      "0"
      ]
     ]
-   }
-  },
-  "euros": {
-   "finals": null,
-   "editions": null,
-   "standings": null,
-   "medals": null,
+   },
+   "medals": {
+    "headers": [
+     "Rank",
+     "Team",
+     "Gold",
+     "Silver",
+     "Bronze",
+     "Total"
+    ],
+    "rows": [
+     [
+      "1",
+      "Spain",
+      "4",
+      "1",
+      "1",
+      "6"
+     ],
+     [
+      "2",
+      "West Germany, Germany",
+      "3",
+      "3",
+      "3",
+      "9"
+     ],
+     [
+      "3",
+      "Italy",
+      "2",
+      "2",
+      "1",
+      "5"
+     ],
+     [
+      "4",
+      "France",
+      "2",
+      "1",
+      "2",
+      "5"
+     ],
+     [
+      "5",
+      "Soviet Union, Russia",
+      "1",
+      "3",
+      "1",
+      "5"
+     ],
+     [
+      "6",
+      "Czechoslovakia, Czech Republic",
+      "1",
+      "1",
+      "3",
+      "5"
+     ],
+     [
+      "6",
+      "Portugal",
+      "1",
+      "1",
+      "3",
+      "5"
+     ],
+     [
+      "8",
+      "Netherlands",
+      "1",
+      "0",
+      "5",
+      "6"
+     ],
+     [
+      "9",
+      "Czechoslovakia, Slovakia",
+      "1",
+      "0",
+      "2",
+      "3"
+     ],
+     [
+      "9",
+      "Denmark",
+      "1",
+      "0",
+      "2",
+      "3"
+     ],
+     [
+      "11",
+      "Greece",
+      "1",
+      "0",
+      "0",
+      "1"
+     ],
+     [
+      "12",
+      "England",
+      "0",
+      "2",
+      "2",
+      "4"
+     ],
+     [
+      "13",
+      "Yugoslavia",
+      "0",
+      "2",
+      "0",
+      "2"
+     ],
+     [
+      "14",
+      "Belgium",
+      "0",
+      "1",
+      "1",
+      "2"
+     ],
+     [
+      "15",
+      "Hungary",
+      "0",
+      "0",
+      "1",
+      "1"
+     ],
+     [
+      "15",
+      "Sweden",
+      "0",
+      "0",
+      "1",
+      "1"
+     ],
+     [
+      "15",
+      "Turkey",
+      "0",
+      "0",
+      "1",
+      "1"
+     ],
+     [
+      "15",
+      "Wales",
+      "0",
+      "0",
+      "1",
+      "1"
+     ],
+     [
+      "Totals (18 entries)",
+      "Totals (18 entries)",
+      "18",
+      "17",
+      "30",
+      "65"
+     ]
+    ]
+   },
    "scorers": {
     "headers": [
      "Rank",
