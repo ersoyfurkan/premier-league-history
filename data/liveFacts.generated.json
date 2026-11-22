@@ -1,5 +1,5 @@
 {
- "updatedAt": "2026-11-21T13:12:17.318Z",
+ "updatedAt": "2026-11-22T13:00:38.960Z",
  "comps": {
   "pl": {
    "seasons": [
@@ -368,22 +368,22 @@
     "Arsenal",
     "Brighton & Hove Albion",
     "Manchester City",
-    "Liverpool",
-    "Chelsea",
-    "Everton",
     "AFC Bournemouth",
-    "Brentford",
+    "Liverpool",
     "Leeds United",
-    "Aston Villa",
+    "Everton",
+    "Chelsea",
     "Tottenham Hotspur",
+    "Brentford",
+    "Aston Villa",
     "Newcastle United",
-    "Hull City",
-    "Ipswich Town",
-    "Fulham",
-    "Nottingham Forest",
     "Coventry City",
-    "Manchester United",
+    "Hull City",
+    "Fulham",
+    "Ipswich Town",
+    "Nottingham Forest",
     "Sunderland",
+    "Manchester United",
     "Crystal Palace"
    ],
    "scorers": [
@@ -396,6 +396,11 @@
      "name": "Alexander Isak",
      "club": "Liverpool",
      "value": 7
+    },
+    {
+     "name": "Evanilson",
+     "club": "AFC Bournemouth",
+     "value": 6
     },
     {
      "name": "Thierno Barry",
@@ -418,11 +423,6 @@
      "value": 5
     },
     {
-     "name": "Evanilson",
-     "club": "AFC Bournemouth",
-     "value": 5
-    },
-    {
      "name": "Rayan Cherki",
      "club": "Manchester City",
      "value": 5
@@ -431,6 +431,11 @@
      "name": "João Pedro",
      "club": "Chelsea",
      "value": 5
+    },
+    {
+     "name": "Dominic Calvert-Lewin",
+     "club": "Leeds United",
+     "value": 4
     },
     {
      "name": "Bryan Mbeumo",
@@ -443,13 +448,18 @@
      "value": 4
     },
     {
+     "name": "Noah Okafor",
+     "club": "Leeds United",
+     "value": 4
+    },
+    {
      "name": "Bruno Fernandes",
      "club": "Manchester United",
      "value": 4
     },
     {
-     "name": "Kiernan Dewsbury-Hall",
-     "club": "Everton",
+     "name": "Harvey Barnes",
+     "club": "Newcastle United",
      "value": 3
     },
     {
@@ -463,28 +473,18 @@
      "value": 3
     },
     {
-     "name": "Dominic Calvert-Lewin",
-     "club": "Leeds United",
-     "value": 3
-    },
-    {
      "name": "Martin Ødegaard",
      "club": "Arsenal",
      "value": 3
     },
     {
-     "name": "Kevin Schade",
-     "club": "Brentford",
-     "value": 3
-    },
-    {
-     "name": "Pedro Neto",
-     "club": "Chelsea",
-     "value": 3
-    },
-    {
      "name": "Jack Rudoni",
      "club": "Coventry City",
+     "value": 3
+    },
+    {
+     "name": "Kai Havertz",
+     "club": "Arsenal",
      "value": 3
     }
    ],
@@ -495,11 +495,6 @@
      "value": 5
     },
     {
-     "name": "Pascal Gross",
-     "club": "Brighton & Hove Albion",
-     "value": 4
-    },
-    {
      "name": "Evanilson",
      "club": "AFC Bournemouth",
      "value": 4
@@ -507,6 +502,11 @@
     {
      "name": "John McGinn",
      "club": "Aston Villa",
+     "value": 4
+    },
+    {
+     "name": "Pascal Gross",
+     "club": "Brighton & Hove Albion",
      "value": 4
     },
     {
@@ -520,16 +520,6 @@
      "value": 3
     },
     {
-     "name": "Maxim De Cuyper",
-     "club": "Brighton & Hove Albion",
-     "value": 3
-    },
-    {
-     "name": "Florian Wirtz",
-     "club": "Liverpool",
-     "value": 3
-    },
-    {
      "name": "Josko Gvardiol",
      "club": "Manchester City",
      "value": 3
@@ -537,6 +527,16 @@
     {
      "name": "Morgan Gibbs-White",
      "club": "Nottingham Forest",
+     "value": 3
+    },
+    {
+     "name": "Maxim De Cuyper",
+     "club": "Brighton & Hove Albion",
+     "value": 3
+    },
+    {
+     "name": "Florian Wirtz",
+     "club": "Liverpool",
      "value": 3
     },
     {
@@ -555,6 +555,11 @@
      "value": 3
     },
     {
+     "name": "Johan Manzambi",
+     "club": "Aston Villa",
+     "value": 3
+    },
+    {
      "name": "Antoine Semenyo",
      "club": "Manchester City",
      "value": 3
@@ -562,11 +567,6 @@
     {
      "name": "Ben White",
      "club": "Arsenal",
-     "value": 3
-    },
-    {
-     "name": "Johan Manzambi",
-     "club": "Aston Villa",
      "value": 3
     },
     {
@@ -580,13 +580,13 @@
      "value": 2
     },
     {
-     "name": "Oliver McBurnie",
-     "club": "Hull City",
+     "name": "Harvey Barnes",
+     "club": "Newcastle United",
      "value": 2
     },
     {
-     "name": "Harvey Barnes",
-     "club": "Newcastle United",
+     "name": "Morgan Rogers",
+     "club": "Chelsea",
      "value": 2
     }
    ]
@@ -962,18 +962,18 @@
     "Real Sociedad",
     "Sevilla",
     "Athletic Club",
+    "Alavés",
     "Villarreal",
-    "Deportivo",
     "Espanyol",
+    "Deportivo",
     "Racing Santander",
     "Celta Vigo",
-    "Alavés",
     "Rayo Vallecano",
     "Getafe",
     "Osasuna",
+    "Valencia",
     "Levante",
     "Elche",
-    "Valencia",
     "Málaga"
    ],
    "scorers": [
@@ -1018,9 +1018,19 @@
      "value": 7
     },
     {
+     "name": "Lucas Boyé",
+     "club": "Alavés",
+     "value": 6
+    },
+    {
      "name": "Fer Niño",
      "club": "Elche",
      "value": 6
+    },
+    {
+     "name": "Jude Bellingham",
+     "club": "Real Madrid",
+     "value": 5
     },
     {
      "name": "Álex Baena",
@@ -1030,11 +1040,6 @@
     {
      "name": "Roger Brugué",
      "club": "Levante",
-     "value": 5
-    },
-    {
-     "name": "Lucas Boyé",
-     "club": "Alavés",
      "value": 5
     },
     {
@@ -1053,18 +1058,13 @@
      "value": 4
     },
     {
-     "name": "Jude Bellingham",
-     "club": "Real Madrid",
+     "name": "Mariano Díaz",
+     "club": "Alavés",
      "value": 4
     },
     {
      "name": "Giuliano Simeone",
      "club": "Atlético Madrid",
-     "value": 4
-    },
-    {
-     "name": "Mariano Díaz",
-     "club": "Alavés",
      "value": 4
     },
     {
@@ -1105,13 +1105,18 @@
      "value": 4
     },
     {
-     "name": "Alberto Moleiro",
-     "club": "Villarreal",
+     "name": "Mariano Díaz",
+     "club": "Alavés",
      "value": 4
     },
     {
-     "name": "Mariano Díaz",
+     "name": "Ángel Pérez",
      "club": "Alavés",
+     "value": 4
+    },
+    {
+     "name": "Alberto Moleiro",
+     "club": "Villarreal",
      "value": 4
     },
     {
@@ -1120,8 +1125,13 @@
      "value": 4
     },
     {
-     "name": "Iñigo Vicente",
-     "club": "Racing Santander",
+     "name": "Kylian Mbappé",
+     "club": "Real Madrid",
+     "value": 3
+    },
+    {
+     "name": "Javier Guerra",
+     "club": "Valencia",
      "value": 3
     },
     {
@@ -1132,6 +1142,11 @@
     {
      "name": "Unai López",
      "club": "Rayo Vallecano",
+     "value": 3
+    },
+    {
+     "name": "Iñigo Vicente",
+     "club": "Racing Santander",
      "value": 3
     },
     {
@@ -1160,23 +1175,8 @@
      "value": 3
     },
     {
-     "name": "Ángel Pérez",
-     "club": "Alavés",
-     "value": 3
-    },
-    {
      "name": "Youssouf Fofana",
      "club": "Sevilla",
-     "value": 3
-    },
-    {
-     "name": "Dani Olmo",
-     "club": "Barcelona",
-     "value": 3
-    },
-    {
-     "name": "Job Ochieng",
-     "club": "Real Sociedad",
      "value": 3
     }
    ]
@@ -1546,27 +1546,32 @@
    ],
    "currentTable": [
     "Lazio",
-    "Internazionale",
     "AS Roma",
-    "AC Milan",
+    "Internazionale",
     "Como",
+    "AC Milan",
     "Frosinone",
     "Juventus",
+    "Napoli",
     "Bologna",
     "Cagliari",
-    "Napoli",
-    "Torino",
     "Atalanta",
+    "Torino",
     "Genoa",
     "Lecce",
     "Fiorentina",
-    "Parma",
     "Sassuolo",
+    "Parma",
     "Monza",
     "Venezia",
     "Udinese"
    ],
    "scorers": [
+    {
+     "name": "Donyell Malen",
+     "club": "AS Roma",
+     "value": 12
+    },
     {
      "name": "Gustavo Varela",
      "club": "Monza",
@@ -1578,14 +1583,14 @@
      "value": 8
     },
     {
-     "name": "Donyell Malen",
-     "club": "AS Roma",
-     "value": 8
-    },
-    {
      "name": "Nikola Krstovic",
      "club": "Atalanta",
      "value": 7
+    },
+    {
+     "name": "Tijjani Noslin",
+     "club": "Lazio",
+     "value": 6
     },
     {
      "name": "Marcus Thuram",
@@ -1593,18 +1598,28 @@
      "value": 6
     },
     {
-     "name": "Giacomo Calo",
-     "club": "Frosinone",
-     "value": 5
-    },
-    {
      "name": "Tasos Douvikas",
      "club": "Como",
      "value": 5
     },
     {
+     "name": "Davide Frattesi",
+     "club": "Lazio",
+     "value": 5
+    },
+    {
      "name": "Daniel Maldini",
      "club": "Cagliari",
+     "value": 5
+    },
+    {
+     "name": "Giacomo Calo",
+     "club": "Frosinone",
+     "value": 5
+    },
+    {
+     "name": "Rodrigo Mora",
+     "club": "AS Roma",
      "value": 5
     },
     {
@@ -1618,21 +1633,6 @@
      "value": 5
     },
     {
-     "name": "Franco Mastantuono",
-     "club": "Fiorentina",
-     "value": 4
-    },
-    {
-     "name": "Davide Frattesi",
-     "club": "Lazio",
-     "value": 4
-    },
-    {
-     "name": "Mateo Pellegrino",
-     "club": "Fiorentina",
-     "value": 4
-    },
-    {
      "name": "Gustav Isaksen",
      "club": "Lazio",
      "value": 4
@@ -1643,23 +1643,23 @@
      "value": 4
     },
     {
+     "name": "Franco Mastantuono",
+     "club": "Fiorentina",
+     "value": 4
+    },
+    {
+     "name": "Mateo Pellegrino",
+     "club": "Fiorentina",
+     "value": 4
+    },
+    {
      "name": "Milutin Osmajic",
      "club": "Genoa",
      "value": 4
     },
     {
-     "name": "Tijjani Noslin",
-     "club": "Lazio",
-     "value": 4
-    },
-    {
      "name": "Ché Adams",
      "club": "Torino",
-     "value": 4
-    },
-    {
-     "name": "Rodrigo Mora",
-     "club": "AS Roma",
      "value": 4
     },
     {
@@ -1670,6 +1670,11 @@
    ],
    "assists": [
     {
+     "name": "Wesley",
+     "club": "AS Roma",
+     "value": 5
+    },
+    {
      "name": "Mattia Zaccagni",
      "club": "Lazio",
      "value": 5
@@ -1678,6 +1683,11 @@
      "name": "Juan Miranda",
      "club": "Bologna",
      "value": 5
+    },
+    {
+     "name": "Yan Couto",
+     "club": "Como",
+     "value": 4
     },
     {
      "name": "Giorgi Kvernadze",
@@ -1690,13 +1700,13 @@
      "value": 4
     },
     {
-     "name": "Andy Diouf",
-     "club": "Internazionale",
+     "name": "Tijjani Noslin",
+     "club": "Lazio",
      "value": 4
     },
     {
-     "name": "Tijjani Noslin",
-     "club": "Lazio",
+     "name": "Andy Diouf",
+     "club": "Internazionale",
      "value": 4
     },
     {
@@ -1715,23 +1725,8 @@
      "value": 4
     },
     {
-     "name": "Charles De Ketelaere",
-     "club": "Atalanta",
-     "value": 3
-    },
-    {
-     "name": "Nicolò Cambiaghi",
-     "club": "Bologna",
-     "value": 3
-    },
-    {
      "name": "Matìas Soulè",
      "club": "AS Roma",
-     "value": 3
-    },
-    {
-     "name": "Nuno Tavares",
-     "club": "Lazio",
      "value": 3
     },
     {
@@ -1745,8 +1740,18 @@
      "value": 3
     },
     {
-     "name": "Wesley",
-     "club": "AS Roma",
+     "name": "Charles De Ketelaere",
+     "club": "Atalanta",
+     "value": 3
+    },
+    {
+     "name": "Nicolò Cambiaghi",
+     "club": "Bologna",
+     "value": 3
+    },
+    {
+     "name": "Nuno Tavares",
+     "club": "Lazio",
      "value": 3
     },
     {
@@ -1763,11 +1768,6 @@
      "name": "Diego Moreira",
      "club": "AC Milan",
      "value": 3
-    },
-    {
-     "name": "Danilo Veiga",
-     "club": "Lecce",
-     "value": 2
     }
    ]
   },
@@ -2039,35 +2039,35 @@
     }
    ],
    "currentTable": [
-    "Bayern Munich",
     "Borussia Dortmund",
+    "Bayern Munich",
     "SC Freiburg",
     "RB Leipzig",
     "Bayer Leverkusen",
     "Werder Bremen",
-    "SV Elversberg",
-    "VfB Stuttgart",
-    "TSG Hoffenheim",
     "Eintracht Frankfurt",
+    "VfB Stuttgart",
+    "SV Elversberg",
+    "TSG Hoffenheim",
     "Hamburg SV",
     "Mainz",
-    "SC Paderborn 07",
     "FC Cologne",
+    "SC Paderborn 07",
     "FC Augsburg",
-    "1. FC Union Berlin",
     "Schalke 04",
+    "1. FC Union Berlin",
     "Borussia Mönchengladbach"
    ],
    "scorers": [
     {
-     "name": "Niclas Füllkrug",
-     "club": "Werder Bremen",
+     "name": "Patrik Schick",
+     "club": "Bayer Leverkusen",
      "value": 9
     },
     {
-     "name": "Patrik Schick",
-     "club": "Bayer Leverkusen",
-     "value": 8
+     "name": "Niclas Füllkrug",
+     "club": "Werder Bremen",
+     "value": 9
     },
     {
      "name": "Michael Olise",
@@ -2075,8 +2075,8 @@
      "value": 6
     },
     {
-     "name": "Phillip Tietz",
-     "club": "Mainz",
+     "name": "Jonathan Burkardt",
+     "club": "Eintracht Frankfurt",
      "value": 6
     },
     {
@@ -2085,8 +2085,28 @@
      "value": 6
     },
     {
-     "name": "Jonathan Burkardt",
-     "club": "Eintracht Frankfurt",
+     "name": "Phillip Tietz",
+     "club": "Mainz",
+     "value": 6
+    },
+    {
+     "name": "Rômulo",
+     "club": "RB Leipzig",
+     "value": 6
+    },
+    {
+     "name": "Felix Nmecha",
+     "club": "Borussia Dortmund",
+     "value": 5
+    },
+    {
+     "name": "Antonio Nusa",
+     "club": "RB Leipzig",
+     "value": 5
+    },
+    {
+     "name": "Igor Matanovic",
+     "club": "SC Freiburg",
      "value": 5
     },
     {
@@ -2110,28 +2130,8 @@
      "value": 5
     },
     {
-     "name": "Rômulo",
-     "club": "RB Leipzig",
-     "value": 5
-    },
-    {
      "name": "Harry Kane",
      "club": "Bayern Munich",
-     "value": 4
-    },
-    {
-     "name": "Felix Nmecha",
-     "club": "Borussia Dortmund",
-     "value": 4
-    },
-    {
-     "name": "Antonio Nusa",
-     "club": "RB Leipzig",
-     "value": 4
-    },
-    {
-     "name": "Igor Matanovic",
-     "club": "SC Freiburg",
      "value": 4
     },
     {
@@ -2145,18 +2145,18 @@
      "value": 4
     },
     {
-     "name": "Dayot Upamecano",
-     "club": "Bayern Munich",
-     "value": 3
-    },
-    {
      "name": "Maximilian Eggestein",
      "club": "SC Freiburg",
      "value": 3
     },
     {
-     "name": "Ibrahim Maza",
-     "club": "Bayer Leverkusen",
+     "name": "Dayot Upamecano",
+     "club": "Bayern Munich",
+     "value": 3
+    },
+    {
+     "name": "Joe Scally",
+     "club": "Borussia Mönchengladbach",
      "value": 3
     }
    ],
@@ -2182,6 +2182,11 @@
      "value": 5
     },
     {
+     "name": "Brajan Gruda",
+     "club": "RB Leipzig",
+     "value": 5
+    },
+    {
      "name": "Miguel Gutiérrez",
      "club": "Bayer Leverkusen",
      "value": 4
@@ -2197,9 +2202,9 @@
      "value": 4
     },
     {
-     "name": "Brajan Gruda",
-     "club": "RB Leipzig",
-     "value": 4
+     "name": "Matthias Ginter",
+     "club": "SC Freiburg",
+     "value": 3
     },
     {
      "name": "Michael Olise",
@@ -2207,8 +2212,13 @@
      "value": 3
     },
     {
-     "name": "Matthias Ginter",
+     "name": "Derry Scherhant",
      "club": "SC Freiburg",
+     "value": 3
+    },
+    {
+     "name": "Tidiam Gomis",
+     "club": "RB Leipzig",
      "value": 3
     },
     {
@@ -2227,29 +2237,14 @@
      "value": 3
     },
     {
-     "name": "Derry Scherhant",
-     "club": "SC Freiburg",
-     "value": 3
-    },
-    {
      "name": "Tom Bischof",
      "club": "Bayern Munich",
      "value": 3
     },
     {
-     "name": "Linton Maina",
-     "club": "FC Cologne",
-     "value": 2
-    },
-    {
-     "name": "Nathaniel Brown",
-     "club": "Bayern Munich",
-     "value": 2
-    },
-    {
-     "name": "Hennes Behrens",
-     "club": "FC Augsburg",
-     "value": 2
+     "name": "Christopher Nkunku",
+     "club": "RB Leipzig",
+     "value": 3
     },
     {
      "name": "Jordy Makengo",
@@ -2259,6 +2254,11 @@
     {
      "name": "Lukas Petkov",
      "club": "SV Elversberg",
+     "value": 2
+    },
+    {
+     "name": "Aleix García",
+     "club": "Bayer Leverkusen",
      "value": 2
     }
    ]
@@ -2512,18 +2512,18 @@
     "Paris Saint-Germain",
     "Lille",
     "Paris FC",
-    "Marseille",
     "Lyon",
+    "Marseille",
+    "Brest",
     "Nice",
     "AS Monaco",
     "Stade Rennais",
-    "Brest",
     "Lorient",
     "Lens",
     "Toulouse",
     "Troyes",
-    "Strasbourg",
     "AJ Auxerre",
+    "Strasbourg",
     "Le Mans",
     "Angers",
     "Le Havre AC"
@@ -2555,11 +2555,6 @@
      "value": 6
     },
     {
-     "name": "Josh Maja",
-     "club": "Le Havre AC",
-     "value": 5
-    },
-    {
      "name": "Ludovic Ajorque",
      "club": "Brest",
      "value": 5
@@ -2567,6 +2562,16 @@
     {
      "name": "Florian Thauvin",
      "club": "Lens",
+     "value": 5
+    },
+    {
+     "name": "Ferran Torres",
+     "club": "Paris Saint-Germain",
+     "value": 5
+    },
+    {
+     "name": "Josh Maja",
+     "club": "Le Havre AC",
      "value": 5
     },
     {
@@ -2595,8 +2600,8 @@
      "value": 4
     },
     {
-     "name": "Ferran Torres",
-     "club": "Paris Saint-Germain",
+     "name": "Paris Brunner",
+     "club": "AS Monaco",
      "value": 4
     },
     {
@@ -2605,19 +2610,9 @@
      "value": 4
     },
     {
-     "name": "Paris Brunner",
-     "club": "AS Monaco",
-     "value": 4
-    },
-    {
      "name": "Sebastian Szymanski",
      "club": "Stade Rennais",
      "value": 4
-    },
-    {
-     "name": "Antoine Mille",
-     "club": "Troyes",
-     "value": 3
     },
     {
      "name": "Thomas Jørgensen",
@@ -2627,6 +2622,11 @@
     {
      "name": "Jonathan Clauss",
      "club": "Nice",
+     "value": 3
+    },
+    {
+     "name": "Antoine Mille",
+     "club": "Troyes",
      "value": 3
     }
    ],
@@ -2652,13 +2652,8 @@
      "value": 3
     },
     {
-     "name": "Amine Gouiri",
-     "club": "Marseille",
-     "value": 3
-    },
-    {
-     "name": "Aleksandr Golovin",
-     "club": "AS Monaco",
+     "name": "Jonathan Clauss",
+     "club": "Nice",
      "value": 3
     },
     {
@@ -2687,8 +2682,23 @@
      "value": 3
     },
     {
+     "name": "Amine Gouiri",
+     "club": "Marseille",
+     "value": 3
+    },
+    {
+     "name": "Aleksandr Golovin",
+     "club": "AS Monaco",
+     "value": 3
+    },
+    {
      "name": "Emerson",
      "club": "Marseille",
+     "value": 3
+    },
+    {
+     "name": "Achraf Hakimi",
+     "club": "Paris Saint-Germain",
      "value": 3
     },
     {
@@ -2702,19 +2712,14 @@
      "value": 3
     },
     {
-     "name": "Panos Katseris",
-     "club": "Lorient",
+     "name": "Ousmane Dembélé",
+     "club": "Paris Saint-Germain",
      "value": 3
     },
     {
-     "name": "Kandet Diawara",
-     "club": "Troyes",
-     "value": 2
-    },
-    {
-     "name": "Arsène Kouassi",
+     "name": "Panos Katseris",
      "club": "Lorient",
-     "value": 2
+     "value": 3
     },
     {
      "name": "Joris Chotard",
@@ -2722,13 +2727,8 @@
      "value": 2
     },
     {
-     "name": "Maxime López",
-     "club": "Paris FC",
-     "value": 2
-    },
-    {
-     "name": "Kamory Doumbia",
-     "club": "Brest",
+     "name": "Vanderson",
+     "club": "AS Monaco",
      "value": 2
     }
    ]
@@ -2928,15 +2928,15 @@
     "Trabzonspor",
     "Amed SFK",
     "Besiktas",
-    "Kasimpasa",
     "Fenerbahce",
+    "Kasimpasa",
     "Kocaelispor",
-    "Istanbul Basaksehir",
-    "Çorum FK",
     "Goztepe",
+    "Istanbul Basaksehir",
     "Caykur Rizespor",
-    "Erzurum BB",
+    "Çorum FK",
     "Genclerbirligi",
+    "Erzurum BB",
     "Alanyaspor",
     "Konyaspor",
     "Gaziantep FK",
@@ -2970,8 +2970,18 @@
      "value": 8
     },
     {
+     "name": "Vedat Muriqi",
+     "club": "Fenerbahce",
+     "value": 7
+    },
+    {
      "name": "Adrian Benedyczak",
      "club": "Kasimpasa",
+     "value": 7
+    },
+    {
+     "name": "Mason Greenwood",
+     "club": "Fenerbahce",
      "value": 7
     },
     {
@@ -2980,13 +2990,18 @@
      "value": 7
     },
     {
-     "name": "Vedat Muriqi",
-     "club": "Fenerbahce",
-     "value": 7
-    },
-    {
      "name": "Dia Saba",
      "club": "Amed SFK",
+     "value": 6
+    },
+    {
+     "name": "Berkan Kutlu",
+     "club": "Kocaelispor",
+     "value": 6
+    },
+    {
+     "name": "Ali Sowe",
+     "club": "Caykur Rizespor",
      "value": 6
     },
     {
@@ -2995,24 +3010,9 @@
      "value": 6
     },
     {
-     "name": "Mason Greenwood",
-     "club": "Fenerbahce",
-     "value": 6
-    },
-    {
-     "name": "Berkan Kutlu",
-     "club": "Kocaelispor",
-     "value": 5
-    },
-    {
      "name": "Irfan Can Kahveci",
      "club": "Fenerbahce",
      "value": 5
-    },
-    {
-     "name": "Ali Sowe",
-     "club": "Caykur Rizespor",
-     "value": 4
     },
     {
      "name": "André Henrique",
@@ -3047,17 +3047,22 @@
    ],
    "assists": [
     {
+     "name": "Gabriel Sara",
+     "club": "Galatasaray",
+     "value": 6
+    },
+    {
      "name": "Ernest Muçi",
      "club": "Trabzonspor",
      "value": 6
     },
     {
-     "name": "Gabriel Sara",
-     "club": "Galatasaray",
+     "name": "Oguz Aydin",
+     "club": "Fenerbahce",
      "value": 5
     },
     {
-     "name": "Oguz Aydin",
+     "name": "Kerem Aktürkoglu",
      "club": "Fenerbahce",
      "value": 5
     },
@@ -3069,11 +3074,6 @@
     {
      "name": "Leandro Trossard",
      "club": "Besiktas",
-     "value": 4
-    },
-    {
-     "name": "Kerem Aktürkoglu",
-     "club": "Fenerbahce",
      "value": 4
     },
     {
@@ -3117,11 +3117,6 @@
      "value": 3
     },
     {
-     "name": "Victor Osimhen",
-     "club": "Galatasaray",
-     "value": 3
-    },
-    {
      "name": "Adedire Mebude",
      "club": "Caykur Rizespor",
      "value": 3
@@ -3132,18 +3127,23 @@
      "value": 3
     },
     {
+     "name": "Victor Osimhen",
+     "club": "Galatasaray",
+     "value": 3
+    },
+    {
      "name": "Mithat Pala",
      "club": "Caykur Rizespor",
      "value": 2
     },
     {
-     "name": "Florent Hadergjonaj",
-     "club": "Alanyaspor",
+     "name": "Josafat Mendes",
+     "club": "Samsunspor",
      "value": 2
     },
     {
-     "name": "Cláudio Winck",
-     "club": "Kasimpasa",
+     "name": "Franco Tongya",
+     "club": "Genclerbirligi",
      "value": 2
     }
    ]
