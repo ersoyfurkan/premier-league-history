@@ -1,5 +1,5 @@
 {
- "updatedAt": "2026-11-23T15:38:13.245Z",
+ "updatedAt": "2026-11-24T15:29:07.139Z",
  "comps": {
   "pl": {
    "seasons": [
@@ -370,11 +370,11 @@
     "Manchester City",
     "Liverpool",
     "AFC Bournemouth",
-    "Leeds United",
-    "Everton",
-    "Chelsea",
-    "Tottenham Hotspur",
     "Brentford",
+    "Leeds United",
+    "Chelsea",
+    "Everton",
+    "Tottenham Hotspur",
     "Hull City",
     "Aston Villa",
     "Newcastle United",
@@ -453,6 +453,11 @@
      "value": 4
     },
     {
+     "name": "Keane Lewis-Potter",
+     "club": "Brentford",
+     "value": 4
+    },
+    {
      "name": "Bruno Fernandes",
      "club": "Manchester United",
      "value": 4
@@ -473,18 +478,13 @@
      "value": 3
     },
     {
+     "name": "Kiernan Dewsbury-Hall",
+     "club": "Everton",
+     "value": 3
+    },
+    {
      "name": "Enzo Le Fée",
      "club": "Sunderland",
-     "value": 3
-    },
-    {
-     "name": "Martin Ødegaard",
-     "club": "Arsenal",
-     "value": 3
-    },
-    {
-     "name": "Jack Rudoni",
-     "club": "Coventry City",
      "value": 3
     }
    ],
@@ -512,6 +512,11 @@
     {
      "name": "John McGinn",
      "club": "Aston Villa",
+     "value": 4
+    },
+    {
+     "name": "Jaidon Anthony",
+     "club": "Brentford",
      "value": 4
     },
     {
@@ -582,11 +587,6 @@
     {
      "name": "Tarik Muharemovic",
      "club": "Leeds United",
-     "value": 2
-    },
-    {
-     "name": "Oliver McBurnie",
-     "club": "Hull City",
      "value": 2
     }
    ]
@@ -969,10 +969,10 @@
     "Deportivo",
     "Osasuna",
     "Celta Vigo",
+    "Levante",
     "Rayo Vallecano",
     "Valencia",
     "Getafe",
-    "Levante",
     "Elche",
     "Málaga"
    ],
@@ -1018,6 +1018,11 @@
      "value": 7
     },
     {
+     "name": "Fer Niño",
+     "club": "Elche",
+     "value": 6
+    },
+    {
      "name": "Álex Baena",
      "club": "Atlético Madrid",
      "value": 6
@@ -1025,11 +1030,6 @@
     {
      "name": "Lucas Boyé",
      "club": "Alavés",
-     "value": 6
-    },
-    {
-     "name": "Fer Niño",
-     "club": "Elche",
      "value": 6
     },
     {
@@ -1170,13 +1170,13 @@
      "value": 3
     },
     {
-     "name": "Raphinha",
-     "club": "Barcelona",
+     "name": "José Antonio Morente",
+     "club": "Elche",
      "value": 3
     },
     {
-     "name": "Carlos Soler",
-     "club": "Real Sociedad",
+     "name": "Raphinha",
+     "club": "Barcelona",
      "value": 3
     }
    ]
@@ -1558,11 +1558,11 @@
     "Cagliari",
     "Atalanta",
     "Torino",
+    "Monza",
     "Lecce",
     "Fiorentina",
     "Parma",
     "Sassuolo",
-    "Monza",
     "Udinese",
     "Venezia"
    ],
@@ -1575,7 +1575,7 @@
     {
      "name": "Gustavo Varela",
      "club": "Monza",
-     "value": 9
+     "value": 11
     },
     {
      "name": "Antonio Raimondo",
@@ -1648,16 +1648,6 @@
      "value": 5
     },
     {
-     "name": "Gustav Isaksen",
-     "club": "Lazio",
-     "value": 4
-    },
-    {
-     "name": "Kevin De Bruyne",
-     "club": "Napoli",
-     "value": 4
-    },
-    {
      "name": "Franco Mastantuono",
      "club": "Fiorentina",
      "value": 4
@@ -1665,6 +1655,16 @@
     {
      "name": "Mateo Pellegrino",
      "club": "Fiorentina",
+     "value": 4
+    },
+    {
+     "name": "Gustav Isaksen",
+     "club": "Lazio",
+     "value": 4
+    },
+    {
+     "name": "Kevin De Bruyne",
+     "club": "Napoli",
      "value": 4
     }
    ],
@@ -2930,9 +2930,9 @@
     "Amed SFK",
     "Kasimpasa",
     "Fenerbahce",
+    "Istanbul Basaksehir",
     "Kocaelispor",
     "Goztepe",
-    "Istanbul Basaksehir",
     "Caykur Rizespor",
     "Çorum FK",
     "Genclerbirligi",
@@ -2960,6 +2960,11 @@
      "value": 9
     },
     {
+     "name": "Eldor Shomurodov",
+     "club": "Istanbul Basaksehir",
+     "value": 9
+    },
+    {
      "name": "Mohamed Salah",
      "club": "Trabzonspor",
      "value": 9
@@ -2970,9 +2975,9 @@
      "value": 9
     },
     {
-     "name": "Eldor Shomurodov",
-     "club": "Istanbul Basaksehir",
-     "value": 8
+     "name": "Jesús Ramírez",
+     "club": "Çorum FK",
+     "value": 7
     },
     {
      "name": "Juan",
@@ -3005,11 +3010,6 @@
      "value": 6
     },
     {
-     "name": "Jesús Ramírez",
-     "club": "Çorum FK",
-     "value": 6
-    },
-    {
      "name": "Irfan Can Kahveci",
      "club": "Fenerbahce",
      "value": 5
@@ -3020,13 +3020,13 @@
      "value": 4
     },
     {
-     "name": "Samuel Ballet",
-     "club": "Amed SFK",
+     "name": "Alexandros Kyziridis",
+     "club": "Çorum FK",
      "value": 4
     },
     {
-     "name": "Alexandros Kyziridis",
-     "club": "Çorum FK",
+     "name": "Samuel Ballet",
+     "club": "Amed SFK",
      "value": 4
     },
     {
@@ -3067,6 +3067,11 @@
      "value": 5
     },
     {
+     "name": "Ivan Brnic",
+     "club": "Istanbul Basaksehir",
+     "value": 5
+    },
+    {
      "name": "Gift Orban",
      "club": "Amed SFK",
      "value": 4
@@ -3079,11 +3084,6 @@
     {
      "name": "Alexandros Kyziridis",
      "club": "Çorum FK",
-     "value": 4
-    },
-    {
-     "name": "Ivan Brnic",
-     "club": "Istanbul Basaksehir",
      "value": 4
     },
     {
